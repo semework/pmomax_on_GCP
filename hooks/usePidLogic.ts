@@ -441,7 +441,7 @@ export const usePidLogic = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isBudgeting, setIsBudgeting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [warnings, setWarnings] = useState<string[]>([]);
+  // Remove warnings state; only fatal errors are surfaced
   const [lastAssistantCreatedAt, setLastAssistantCreatedAt] = useState<number | null>(null);
   const [lastParsedText, setLastParsedText] = useState<string>('');
   const [lastParsedTextLength, setLastParsedTextLength] = useState<number>(0);
@@ -478,7 +478,6 @@ export const usePidLogic = () => {
     setPid(null);
     setGeneralNotes('');
     setAiAssistantHistory([]);
-    setWarnings([]);
     setError(null);
     setLastAssistantCreatedAt(null);
     requestAnimationFrame(scrollColumnsTop);
@@ -541,15 +540,13 @@ export const usePidLogic = () => {
           });
         }
         const budgetWarnings = Array.isArray(budgetEnv?.warnings) ? budgetEnv.warnings : [];
-        if (budgetWarnings.length) {
-          setWarnings((prev) => [...prev, ...budgetWarnings]);
-        }
+        // Budget warnings are not surfaced; keep baseline silently
       } catch (e: any) {
         if (e?.message === 'USER_CANCELLED' || e?.code === 'USER_CANCELLED') return;
         const msg = isTimeoutError(e)
           ? 'Budget enrichment timed out — using deterministic baseline.'
           : normalizeErrorMessage(e, 'Budget generation failed.');
-        setWarnings((prev) => [...prev, msg]);
+        // Do not surface budget errors as warnings
       } finally {
         setIsBudgeting(false);
         budgetAbortRef.current = null;
@@ -584,7 +581,6 @@ export const usePidLogic = () => {
     demoAbortRef.current = controller;
     setIsLoading(true);
     setError(null);
-    setWarnings([]);
     setAiAssistantHistory([]);
     try {
       // Small delay so spinners show consistently
@@ -597,20 +593,18 @@ export const usePidLogic = () => {
         setGeneralNotes('RoadRunner is the internal codename. Use this space to capture high-level notes.');
         setAiAssistantHistory([
           { role: 'assistant', content: 'Demo data loaded. Ask me to add a risk, refine an objective, or adjust dates.' },
-          ...(budgetWarnings.length ? [{ role: 'assistant', content: `⚠️ Budget needs more inputs: ${budgetWarnings.join(' ')}` }] : []),
+          // No budget warnings in chat
         ]);
-        if (budgetWarnings.length) setWarnings(budgetWarnings);
+        // Do not surface budget warnings
       });
       requestBudgetForPid(demoPid as any, demoPid.notesBackground || '');
       requestAnimationFrame(scrollColumnsTop);
     } catch (e: any) {
       if (controller.signal.aborted) return;
       if (e?.message && e.message.includes('429')) {
-        setError('Too many requests. Please wait a moment and try again.');
-        setWarnings(['Too many requests. Please wait a moment and try again.']);
+        // Do not surface 429 errors; show neutral spinner
       } else {
         setError('Failed to load demo data. Please try again.');
-        setWarnings(['Demo data could not be loaded.']);
       }
     } finally {
       setIsLoading(false);
@@ -636,11 +630,9 @@ export const usePidLogic = () => {
     } catch (e: any) {
       if (controller.signal.aborted) return;
       if (e?.message && e.message.includes('429')) {
-        setError('Too many requests. Please wait a moment and try again.');
-        setWarnings(['Too many requests. Please wait a moment and try again.']);
+        // Do not surface 429 errors; show neutral spinner
       } else {
         setError('Failed to create new document.');
-        setWarnings(['Failed to create new document.']);
       }
     } finally {
       setIsLoading(false);
@@ -657,8 +649,7 @@ export const usePidLogic = () => {
       const notesToken = notesChunkTokenRef.current;
       setIsLoading(true);
       setError(null);
-      setWarnings([]);
-      const localWarnings: string[] = [...initialWarnings];
+      // No local warnings
       try {
         // Cancel any previous in-flight parse before starting a new one.
         if (parseAbortRef.current) {
@@ -685,9 +676,7 @@ export const usePidLogic = () => {
 
         const capped = capWords(text, MAX_WORDS);
         const safeText = capped.text;
-        if (capped.truncated) {
-          localWarnings.push(`Input exceeded ~${MAX_PAGES} pages; only the first ${MAX_PAGES} pages were parsed.`);
-        }
+        // Do not surface truncation warnings
 
         const parseKey = `${model || 'default'}:${hashText(safeText)}`;
         if (parseInFlightKey.current === parseKey || lastParseRequestKey.current === parseKey) {
@@ -718,17 +707,12 @@ export const usePidLogic = () => {
         }
 
         const merged = normalizePid(env.pid);
-        const mergedWarnings = [
-          ...(Array.isArray(env.warnings) ? env.warnings : []),
-          ...localWarnings,
-        ];
         const notesText = String(merged.notesBackground || '');
         const chunkSize = 2000;
         if (notesText.length > 10000) {
           const firstChunk = notesText.slice(0, chunkSize);
           startTransition(() => {
             setPid({ ...merged, notesBackground: firstChunk });
-            setWarnings(mergedWarnings);
             setError(null);
           });
           let offset = chunkSize;
@@ -747,7 +731,6 @@ export const usePidLogic = () => {
         } else {
           startTransition(() => {
             setPid(merged);
-            setWarnings(mergedWarnings);
             setError(null);
           });
         }
@@ -770,7 +753,6 @@ export const usePidLogic = () => {
           ? 'Parsing is taking too long for this document. I parsed what I could—try splitting the file or removing images.'
           : normalizeErrorMessage(e, 'Parsing failed due to an unexpected error.');
         setError(msg);
-        setWarnings([msg]);
         return { ok: false as const, error: msg };
       } finally {
         setIsLoading(false);
