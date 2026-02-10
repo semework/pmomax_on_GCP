@@ -1,0 +1,286 @@
+.
+├── ,env
+├── accessibility_statement.docx
+├── ACCESSIBILITY.md
+├── AI_ASSISTANT_TRANSCRIPT_PROOF.md
+├── App.tsx
+├── Archive 2.zip
+├── Archive.zip
+├── CHANGELOG_PENDING.md
+├── cloudbuild.yaml
+├── compliance_actions_progress.md
+├── compliance_report.json
+├── compliance_report.md
+├── components
+│   ├── __tests__
+│   │   └── GanttChart.acceptance.test.ts
+│   ├── AIAssistantPanel.tsx
+│   ├── Archive.zip
+│   ├── ArtDecoGantt.tsx
+│   ├── BlueprintCADGantt.tsx
+│   ├── BrutalistGantt.tsx
+│   ├── CandyStripeGantt.tsx
+│   ├── ColorPicker.tsx
+│   ├── CompactTable.tsx
+│   ├── ConstructionHazardGantt.tsx
+│   ├── ContactUsButton.tsx
+│   ├── ConversationalAssistant.tsx
+│   ├── CreateMode.tsx
+│   ├── CreatePanel.tsx
+│   ├── ErrorBoundary.tsx
+│   ├── Field.tsx
+│   ├── FuturistGantt.tsx
+│   ├── GanttChart.tsx
+│   ├── GanttToolbar.tsx
+│   ├── GeneralNotesPanel.tsx
+│   ├── Header.tsx
+│   ├── HelpButton.tsx
+│   ├── HelpModal.tsx
+│   ├── Icons.tsx
+│   ├── InputPanel.tsx
+│   ├── LeftSidebar.tsx
+│   ├── LoadingOverlay.tsx
+│   ├── MainContent.tsx
+│   ├── MinimalistGantt.tsx
+│   ├── MonochromeMatrixGantt.tsx
+│   ├── NavPanel.tsx
+│   ├── NeonCyberGridGantt.tsx
+│   ├── OrganicFlowGantt.tsx
+│   ├── OutputPanel.tsx
+│   ├── PaperSketchGantt.tsx
+│   ├── PastelBlocksGantt.tsx
+│   ├── PidSchemaView.tsx
+│   ├── RetroTerminalGantt.tsx
+│   ├── Section.tsx
+│   ├── Table.tsx
+│   ├── TableOfContents.tsx
+│   ├── ThemeContext.tsx
+│   ├── UserGuideModal.tsx
+│   ├── WelcomeIconsRow.tsx
+│   └── WelcomePanel.tsx
+├── data
+│   ├── demoData.ts
+│   └── demoText.ts
+├── DEBUG_VALIDATION.md
+├── default.conf.template
+├── DELIVERABLES_SUMMARY.md
+├── deploy.sh
+├── dist
+│   ├── App_screenshots
+│   │   ├── app_populated.png
+│   │   ├── app_screenshots
+│   │   │   ├── app_populated.png
+│   │   │   ├── assistant_blank.png
+│   │   │   ├── assistant_conversation_two_turns.png
+│   │   │   ├── create_ai_assistant_create.png
+│   │   │   ├── create_ai_assistant_new_project_bottom.png
+│   │   │   ├── create_ai_assistant_new_project.png
+│   │   │   ├── create_ai_assistant.png
+│   │   │   ├── export_panel_visible.png
+│   │   │   ├── export_pdf_opened.png
+│   │   │   ├── export_word_opened.png
+│   │   │   ├── general_notes_filled.png
+│   │   │   ├── help_modal_open.png
+│   │   │   ├── help_modal_scrolled.png
+│   │   │   ├── navigation_new.png
+│   │   │   ├── parsing_input_demo_text.png
+│   │   │   ├── parsing_loading_state.png
+│   │   │   ├── people_governance.png
+│   │   │   ├── risks_mitigations_issues.png
+│   │   │   ├── scope_constraints_new.png
+│   │   │   ├── start_home_empty.png
+│   │   │   ├── start_left_panel_clean.png
+│   │   │   ├── team_milestone_deliverables.png
+│   │   │   ├── unfilled_navigation_new.png
+│   │   │   ├── user_guide_bottom.png
+│   │   │   └── user_guide_top.png
+│   │   ├── app_screenshots.zip
+│   │   ├── assistant_blank.png
+│   │   ├── assistant_conversation_two_turns.png
+│   │   ├── create_ai_assistant_create.png
+│   │   ├── create_ai_assistant_new_project_bottom.png
+│   │   ├── create_ai_assistant_new_project.png
+│   │   ├── create_ai_assistant.png
+│   │   ├── export_panel_visible.png
+│   │   ├── export_pdf_opened.png
+│   │   ├── export_word_opened.png
+│   │   ├── general_notes_filled.png
+│   │   ├── help_modal_open.png
+│   │   ├── help_modal_scrolled.png
+│   │   ├── navigation_new.png
+│   │   ├── parsing_input_demo_text.png
+│   │   ├── parsing_loading_state.png
+│   │   ├── people_governance.png
+│   │   ├── risks_mitigations_issues.png
+│   │   ├── scope_constraints_new.png
+│   │   ├── start_home_empty.png
+│   │   ├── start_left_panel_clean.png
+│   │   ├── team_milestone_deliverables.png
+│   │   ├── unfilled_navigation_new.png
+│   │   ├── user_guide_bottom.png
+│   │   └── user_guide_top.png
+│   ├── App_screenshots 2
+│   ├── assets
+│   │   └── index-5tqQOzhz.js
+│   ├── assets 2
+│   ├── index 2.html
+│   ├── index.html
+│   ├── lib
+│   │   ├── pdf.min.js
+│   │   └── pdf.worker.min.js
+│   ├── lib 2
+│   ├── logos
+│   │   ├── icon.png
+│   │   └── pmomax_logo.png
+│   ├── logos 2
+│   ├── pmomax-bootstrap 2.js
+│   ├── pmomax-bootstrap.js
+│   ├── pmomax-landing 2.css
+│   ├── pmomax-landing.css
+│   ├── pmomax-tailwind-config 2.js
+│   ├── pmomax-tailwind-config.js
+│   ├── workers
+│   │   └── pdf-worker.js
+│   └── workers 2
+├── docker-entrypoint.sh
+├── Dockerfile
+├── docx.worker.ts
+├── e2e
+│   └── full_app_e2e.spec.ts
+├── globals.d.ts
+├── hooks
+│   ├── useActiveSection.ts
+│   └── usePidLogic.ts
+├── index.html
+├── index.tsx
+├── lib
+│   ├── cache.mjs
+│   ├── dataMapper.js
+│   ├── dataMapper.ts
+│   ├── export.ts
+│   ├── exportUtils.ts
+│   ├── ganttPresets.ts
+│   ├── ganttUtils.ts
+│   ├── geminiAssistant.ts
+│   ├── geminiConfig.ts
+│   ├── geminiJson.js
+│   ├── geminiParse.ts
+│   ├── localParser.js
+│   ├── localParser.ts
+│   ├── logger.mjs
+│   ├── parseUpload.ts
+│   ├── pdfWorkerPool.ts
+│   ├── performanceMonitor.ts
+│   ├── pidSchema.js
+│   ├── resetLogic.ts
+│   ├── usageMetrics.mjs
+│   ├── utils.ts
+│   └── validatePMOMaxPID.ts
+├── line_counts.csv
+├── line_counts.json
+├── master_chunk_01_executive_overview.md
+├── MASTER_PROMPT_VERTEX_EDITED.txt
+├── master_toc_placeholder.md
+├── merge_docx_instructions.txt
+├── metadata.json
+├── openapi.yaml
+├── package-lock 2.json
+├── package-lock 3.json
+├── package-lock.json
+├── package.json
+├── performance_after.json
+├── performance_before.json
+├── performance_report.md
+├── PERFORMANCE_TABLES.md
+├── playwright-report.json
+├── playwright.config.ts
+├── PMOMax_Component_Changes_Summary.docx
+├── PMOMAX_GANTT_ACCEPTANCE_CHECKLIST.md
+├── pmomax-docs.html
+├── pmomax-landing.css
+├── PRIVACY.md
+├── public
+│   ├── App_screenshots
+│   │   ├── app_populated.png
+│   │   ├── app_screenshots
+│   │   │   ├── app_populated.png
+│   │   │   ├── assistant_blank.png
+│   │   │   ├── assistant_conversation_two_turns.png
+│   │   │   ├── create_ai_assistant_create.png
+│   │   │   ├── create_ai_assistant_new_project_bottom.png
+│   │   │   ├── create_ai_assistant_new_project.png
+│   │   │   ├── create_ai_assistant.png
+│   │   │   ├── export_panel_visible.png
+│   │   │   ├── export_pdf_opened.png
+│   │   │   ├── export_word_opened.png
+│   │   │   ├── general_notes_filled.png
+│   │   │   ├── help_modal_open.png
+│   │   │   ├── help_modal_scrolled.png
+│   │   │   ├── navigation_new.png
+│   │   │   ├── parsing_input_demo_text.png
+│   │   │   ├── parsing_loading_state.png
+│   │   │   ├── people_governance.png
+│   │   │   ├── risks_mitigations_issues.png
+│   │   │   ├── scope_constraints_new.png
+│   │   │   ├── start_home_empty.png
+│   │   │   ├── start_left_panel_clean.png
+│   │   │   ├── team_milestone_deliverables.png
+│   │   │   ├── unfilled_navigation_new.png
+│   │   │   ├── user_guide_bottom.png
+│   │   │   └── user_guide_top.png
+│   │   ├── app_screenshots.zip
+│   │   ├── assistant_blank.png
+│   │   ├── assistant_conversation_two_turns.png
+│   │   ├── create_ai_assistant_create.png
+│   │   ├── create_ai_assistant_new_project_bottom.png
+│   │   ├── create_ai_assistant_new_project.png
+│   │   ├── create_ai_assistant.png
+│   │   ├── export_panel_visible.png
+│   │   ├── export_pdf_opened.png
+│   │   ├── export_word_opened.png
+│   │   ├── general_notes_filled.png
+│   │   ├── help_modal_open.png
+│   │   ├── help_modal_scrolled.png
+│   │   ├── navigation_new.png
+│   │   ├── parsing_input_demo_text.png
+│   │   ├── parsing_loading_state.png
+│   │   ├── people_governance.png
+│   │   ├── risks_mitigations_issues.png
+│   │   ├── scope_constraints_new.png
+│   │   ├── start_home_empty.png
+│   │   ├── start_left_panel_clean.png
+│   │   ├── team_milestone_deliverables.png
+│   │   ├── unfilled_navigation_new.png
+│   │   ├── user_guide_bottom.png
+│   │   └── user_guide_top.png
+│   ├── lib
+│   │   ├── pdf.min.js
+│   │   └── pdf.worker.min.js
+│   ├── logos
+│   │   ├── icon.png
+│   │   └── pmomax_logo.png
+│   ├── pmomax-bootstrap.js
+│   ├── pmomax-landing.css
+│   ├── pmomax-tailwind-config.js
+│   └── workers
+│       └── pdf-worker.js
+├── QA_REPORT_CHECKLIST.md
+├── README.md
+├── sbom-pmo-architect-0.0.1.json
+├── sbom-pmo-architect-0.1.0.json
+├── sbom-pmo-architect-1.0.16.json
+├── server 2.mjs
+├── server.mjs
+├── SLA.md
+├── SUPPORT.md
+├── TERMS.md
+├── tree
+├── tsconfig.json
+├── types.ts
+├── vite.config.ts
+├── vuln-report-pmo-architect-0.0.1.json
+├── vuln-report-pmo-architect-0.1.0.json
+├── vuln-report-pmo-architect-1.0.16.json
+└── VULNERABILITY_POLICY.md
+
+25 directories, 259 files

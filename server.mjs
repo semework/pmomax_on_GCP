@@ -1,3 +1,15 @@
+// --- AI Job Queue (Parse + Budget) ---
+const aiJobQueue = [];
+const aiJobResults = new Map();
+const AI_CONCURRENCY_LIMIT = 2;
+let aiActiveJobs = 0;
+
+function enqueueAiJob(type, payload) {
+  const jobId = randomUUID();
+  aiJobQueue.push({ jobId, type, payload });
+  aiJobResults.set(jobId, { status: 'queued' });
+  return jobId;
+}
 // Section E: Simple field validation/normalization after parse
 function validatePidShape(pid) {
   if (!pid || typeof pid !== 'object') return;
@@ -41,16 +53,22 @@ function validatePidShape(pid) {
 import express from 'express';
 import dotenv from 'dotenv';
 import multer from 'multer';
-import { docxToText } from './server/docxParse.js';
 import * as XLSX from 'xlsx';
 import cors from 'cors';
-import rateLimit from 'express-rate-limit';
+// Removed express-rate-limit for /api/ai; replaced with job queue
 import path from 'node:path';
 import fs from 'node:fs';
 import { randomUUID } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 
 dotenv.config();
+// --- Crash-hardening: log unexpected errors instead of silent process death ---
+process.on('unhandledRejection', (reason) => {
+  console.error('[UNHANDLED_REJECTION]', reason);
+});
+process.on('uncaughtException', (err) => {
+  console.error('[UNCAUGHT_EXCEPTION]', err);
+});
 
 // Optional Gemini SDK (only used if available + API key present)
 let GoogleGenerativeAI = null;
@@ -117,13 +135,7 @@ app.use(cors({
 app.use(express.json({ limit: '5mb' }));
 
 // Rate limiting for AI endpoints
-const aiLimiter = rateLimit({
-  windowMs: 60 * 1000,
-  max: 120,
-  standardHeaders: true,
-  legacyHeaders: false,
-});
-app.use('/api/ai', aiLimiter);
+// Removed aiLimiter setup; will use job queue for AI endpoints
 
 // Multer for file uploads
 const upload = multer({ limits: { fileSize: 10 * 1024 * 1024 } }); // 10MB max
@@ -157,6 +169,20 @@ const clampText = (text) => {
   const raw = String(text || '');
   if (raw.length <= PARSE_HARD_MAX_CHARS) return { text: raw, truncated: false };
   return { text: raw.slice(0, PARSE_HARD_MAX_CHARS), truncated: true };
+};
+// Normalize extracted text so downstream heuristics are stable.
+const normalizeText = (text) => {
+  const raw = String(text || '');
+  if (!raw) return '';
+  return raw
+    // Drop control chars that frequently appear in extracted text.
+    .replace(/[\u0000-\u001f\u007f]/g, ' ')
+    // Collapse long punctuation/line art that can dominate PDFs.
+    .replace(/[-–—_]{3,}/g, ' ')
+    .replace(/[|•·]{3,}/g, ' ')
+    // Collapse whitespace.
+    .replace(/\s+/g, ' ')
+    .trim();
 };
 const normalizeExtractedText = (text) => {
   const raw = String(text || '');
@@ -203,99 +229,101 @@ function decodeTextBuffer(buffer) {
   }
   return utf8;
 }
+
+
+async function docxBufferToText(buf) {
+  // Robust DOCX extraction: try buffer first, then temp-path fallback for older mammoth builds.
+  const mammothMod = await import("mammoth");
+  const mammoth = mammothMod?.default ?? mammothMod;
+  const buffer = Buffer.isBuffer(buf) ? buf : Buffer.from(buf || []);
+  try {
+    const result = await mammoth.extractRawText({ buffer });
+    return normalizeText(result?.value || "");
+  } catch (e) {
+    const msg = safeErrorMessage(e, "");
+    if (!msg.toLowerCase().includes("could not find file in options")) {
+      throw e;
+    }
+    // Fallback: write to /tmp and pass path (Cloud Run/Node supports /tmp)
+    const tmp = path.join("/tmp", `upload_${Date.now()}_${Math.random().toString(16).slice(2)}.docx`);
+    await fsp.writeFile(tmp, buffer);
+    try {
+      const result2 = await mammoth.extractRawText({ path: tmp });
+      return normalizeText(result2?.value || "");
+    } finally {
+      try { await fsp.unlink(tmp); } catch (_) {}
+    }
+  }
+}
+
 function enforceWordLimit(text) {
   const wc = countWords(text);
   return wc > MAX_WORDS;
 }
 
-async function extractPdfTextInBatches(buffer, options = {}) {
-  const { batchSize = 5, hardTimeoutMs = 8000 } = options;
-  const pdfjsLib = await import('pdfjs-dist/legacy/build/pdf.js');
-  const loadingTask = pdfjsLib.getDocument({
-    data: buffer,
-    disableWorker: true,
-    verbosity: 0,
-  });
-  let pdf;
-  try {
-    pdf = await loadingTask.promise;
-  } catch (err) {
-    const msg = (err && err.message ? String(err.message) : '').toLowerCase();
-    if (err?.name === 'PasswordException' || msg.includes('password')) {
-      const e = new Error('File is encrypted');
-      e.code = 'ENCRYPTED';
-      throw e;
-    }
-    throw err;
-  }
-  const totalPages = Number(pdf?.numPages || 0);
-  const pagesToProcess = Math.min(totalPages, INTERNAL_MAX_PAGES);
-  const truncatedByPages = totalPages > INTERNAL_MAX_PAGES;
 
-  const pagesText = [];
-  const warnings = [];
-  let failedPages = 0;
-  const effectiveBatch = pagesToProcess > 10 ? batchSize : pagesToProcess;
-
-  for (let start = 1; start <= pagesToProcess; start += effectiveBatch) {
-    const end = Math.min(pagesToProcess, start + effectiveBatch - 1);
-    const batchWork = (async () => {
-      for (let p = start; p <= end; p++) {
-        try {
-          const page = await pdf.getPage(p);
-          const content = await page.getTextContent();
-          const strings = (content.items || [])
-            .map((item) => (item && typeof item.str === 'string' ? item.str : ''))
-            .filter(Boolean);
-          pagesText.push(strings.join(' ').replace(/\s+/g, ' ').trim());
-        } catch (err) {
-          failedPages += 1;
-          warnings.push(`Failed to extract page ${p}; returning partial results.`);
-        }
+let _pdfjsPromise = null;
+async function getPdfJs() {
+  if (_pdfjsPromise) return _pdfjsPromise;
+  _pdfjsPromise = (async () => {
+    const candidates = [
+      "pdfjs-dist/legacy/build/pdf.mjs",
+      "pdfjs-dist/legacy/build/pdf.js",
+      "pdfjs-dist/build/pdf.mjs",
+      "pdfjs-dist/build/pdf.js",
+    ];
+    let lastErr = null;
+    for (const p of candidates) {
+      try {
+        const mod = await import(p);
+        return mod?.default ?? mod;
+      } catch (e) {
+        lastErr = e;
       }
-      return { timedOut: false };
-    })();
-
-    const batchTimeout = new Promise((resolve) => {
-      setTimeout(() => resolve({ timedOut: true }), hardTimeoutMs);
-    });
-
-    const result = await Promise.race([batchWork, batchTimeout]);
-    if (result?.timedOut) {
-      warnings.push(`Extraction timed out after ${Math.round(hardTimeoutMs / 1000)}s; returning partial results.`);
-      return {
-        text: pagesText.join('\n\n'),
-        pagesProcessed: pagesText.length,
-        totalPages,
-        timedOut: true,
-        truncatedByPages,
-        failedPages,
-        warnings,
-      };
     }
-  }
-
-  return {
-    text: pagesText.join('\n\n'),
-    pagesProcessed: pagesText.length,
-    totalPages,
-    timedOut: false,
-    truncatedByPages,
-    failedPages,
-    warnings,
-  };
+    const hint = "pdfjs-dist build not found. Ensure pdfjs-dist is installed and includes legacy/build or build.";
+    const err = new Error(hint);
+    err.cause = lastErr;
+    throw err;
+  })();
+  return _pdfjsPromise;
 }
 
-async function extractPdfTextAlternate(buffer) {
-  try {
-    const mod = await import('pdf-parse');
-    const pdfParse = mod?.default ?? mod;
-    if (typeof pdfParse !== 'function') return { text: '' };
-    const data = await pdfParse(buffer, { max: INTERNAL_MAX_PAGES });
-    return { text: String(data?.text || '') };
-  } catch {
-    return { text: '' };
+
+async function extractPdfTextInBatches(pdfBuffer, maxChars = 900000) {
+  const pdfjs = await getPdfJs();
+  const loadingTask = pdfjs.getDocument({ data: new Uint8Array(pdfBuffer), disableWorker: true });
+  const pdf = await loadingTask.promise;
+
+  const numPages = pdf.numPages || 0;
+  let out = [];
+  let totalChars = 0;
+
+  for (let pageNum = 1; pageNum <= numPages; pageNum++) {
+    const page = await pdf.getPage(pageNum);
+    const content = await page.getTextContent();
+    const strings = (content?.items || []).map(it => (it && typeof it.str === "string") ? it.str : "").filter(Boolean);
+    const pageText = normalizeText(strings.join(" "));
+    if (pageText) {
+      out.push(pageText);
+      totalChars += pageText.length;
+      if (totalChars >= maxChars) break;
+    }
   }
+
+  return out.join("\n\n");
+}
+
+
+async function extractPdfTextAlternate(pdfBuffer) {
+  // Alternate extraction: try pdfjs first (again), then pdf-parse if available.
+  try {
+    return await extractPdfTextInBatches(pdfBuffer, 900000);
+  } catch (_) {}
+
+  const pdfParse = (await import("pdf-parse")).default;
+  const data = await pdfParse(pdfBuffer);
+  return normalizeText(data?.text || "");
 }
 
 async function runWithTimeout(promise, ms) {
@@ -344,11 +372,14 @@ app.post('/api/parse-docx', upload.single('file'), async (req, res) => {
   try {
     const file = req.file;
     if (!file) return res.status(400).send('No file uploaded');
+    console.log(`[DEBUG] DOCX Filename: ${file.originalname}`);
+    console.log(`[DEBUG] DOCX MIME Type: ${file.mimetype}`);
+    console.log(`[DEBUG] DOCX Buffer Size: ${file.buffer?.length || 0}`);
     if (!isDocxFile(file)) {
       return res.status(400).json({ error: 'Invalid file type' });
     }
     try {
-      const text = await docxToText(file.buffer);
+      const text = await docxBufferToText(file.buffer);
       res.type('text/plain').send(text);
     } catch (err) {
       const msg = safeErrorMessage(err, 'Failed to parse DOCX');
@@ -401,7 +432,10 @@ async function parseUploadedFile(file, startMs = Date.now()) {
   if (!file?.size) throw new Error('File is empty.');
 
   if (isDocxFile(file)) {
-    const text = await docxToText(file.buffer);
+    const text = await docxBufferToText(file.buffer);
+    if (isNearEmptyText(text)) {
+      throw Object.assign(new Error('DOCX contained no extractable text.'), { code: 'EMPTY_EXTRACT' });
+    }
     const exceeded = enforceWordLimit(text);
     const capped = clampText(text);
     const warnings = capped.truncated ? ['Document truncated to server limit.'] : [];
@@ -461,38 +495,49 @@ async function parseUploadedFile(file, startMs = Date.now()) {
     return { ok: true, text: String(finalText), length: String(finalText).length, durationMs, truncated, warnings };
   }
 
-  if (isSpreadsheetFile(file)) {
-    const warnings = [];
-    const MAX_ROWS = 200;
-    const MAX_COLS = 30;
-    let text = '';
-    const workbook = XLSX.read(file.buffer, { type: 'buffer' });
-    workbook.SheetNames.forEach((sheetName) => {
-      const sheet = workbook.Sheets[sheetName];
-      const rows = XLSX.utils.sheet_to_json(sheet, { header: 1, blankrows: false }) || [];
-      let maxCols = 0;
-      text += `Sheet: ${sheetName}\n`;
-      rows.slice(0, MAX_ROWS).forEach((row) => {
-        const cols = Array.isArray(row) ? row.slice(0, MAX_COLS) : [];
-        maxCols = Math.max(maxCols, Array.isArray(row) ? row.length : 0);
-        text += `${cols.map((v) => String(v ?? '').trim()).join('\t').trim()}\n`;
-      });
-      if (rows.length > MAX_ROWS) warnings.push(`Sheet "${sheetName}" truncated to ${MAX_ROWS} rows.`);
-      if (maxCols > MAX_COLS) warnings.push(`Sheet "${sheetName}" truncated to ${MAX_COLS} columns.`);
-      text += '\n';
-    });
-    const exceeded = enforceWordLimit(text);
-    const capped = clampText(text);
-    if (capped.truncated) warnings.push('Document truncated to server limit.');
-    if (exceeded) warnings.push('Document exceeds the 50-page limit; truncated to the first 50 pages.');
-    if (isNearEmptyText(capped.text)) {
-      return buildAiFallbackResult(file, warnings, startMs);
-    }
-    const durationMs = Math.max(1, Date.now() - startMs);
-    return { ok: true, text: String(capped.text), length: String(capped.text).length, durationMs, truncated: capped.truncated, warnings };
-  }
+  
+if (isSpreadsheetFile(file)) {
+  try {
+    const XLSXMod = await import('xlsx');
+    const XLSX = XLSXMod?.default ?? XLSXMod;
 
-  if (isTextFile(file)) {
+    // Read workbook from buffer (supports .xlsx, .xls in most cases).
+    const wb = XLSX.read(file.buffer, { type: 'buffer', cellDates: true });
+
+    const parts = [];
+    for (const sheetName of (wb.SheetNames || []).slice(0, 20)) {
+      const ws = wb.Sheets?.[sheetName];
+      if (!ws) continue;
+
+      // CSV preserves a compact, readable representation for tables.
+      const csv = XLSX.utils.sheet_to_csv(ws, { FS: '\t' });
+      if (csv && csv.trim()) {
+        parts.push(`--- Sheet: ${sheetName} ---\n${csv}`);
+        continue;
+      }
+
+      // Fallback to row arrays if CSV is empty.
+      const rows = XLSX.utils.sheet_to_json(ws, { header: 1, blankrows: false, raw: false });
+      if (rows && rows.length) {
+        const tsv = rows
+          .slice(0, 5000)
+          .map((r) => (Array.isArray(r) ? r.map((c) => String(c ?? '')).join('\t') : String(r ?? '')))
+          .join('\n');
+        parts.push(`--- Sheet: ${sheetName} ---\n${tsv}`);
+      }
+    }
+
+    const combined = normalizeText(parts.join('\n\n'));
+    if (combined) return { ok: true, ...clampText(combined) };
+    // If empty, fall through to text-based extraction / AI.
+  } catch (err) {
+    console.warn('[extract][xlsx] failed; falling back to text/AI:', err?.message || err);
+    // fall through
+  }
+}
+
+if (isTextFile(file)) {
+
     const text = decodeTextBuffer(file.buffer);
     const exceeded = enforceWordLimit(text);
     const capped = clampText(text);
@@ -630,16 +675,179 @@ function makeEmptyPid() {
   };
 }
 
+
 function buildFallbackPidFromText(text) {
-  const src = String(text || '').trim();
-  const firstLine = src.split(/\r?\n/).find((l) => l.trim()) || 'Untitled Project';
-  const title = firstLine.slice(0, 120).trim() || 'Untitled Project';
-  const summary = src.split(/(?<=[.!?])\s+/).slice(0, 2).join(' ').slice(0, 600);
-  return {
-    titleBlock: { projectTitle: title, subtitle: 'Project Initiation Document', generatedOn: '' },
-    executiveSummary: summary || `This PID summarizes the source document for "${title}".`,
-    notesBackground: src.slice(0, 1200),
+  const src = normalizeText(String(text || ""));
+  const lines = src.split(/\r?\n/);
+  const firstNonEmpty = lines.find(l => l.trim().length > 0) || "";
+  const titleGuess = firstNonEmpty.slice(0, 120);
+
+  const headingName = (l) => l
+    .replace(/^#+\s*/, "")
+    .replace(/[:\-–—]+\s*$/, "")
+    .trim()
+    .toLowerCase();
+
+  const isHeading = (l) => {
+    const t = l.trim();
+    if (!t) return false;
+    if (t.length > 90) return false;
+    if (/^#+\s+/.test(t)) return true;
+    if (/:$/.test(t) && t.length <= 60) return true;
+    if (/^[A-Z][A-Za-z0-9 &/(),.'\-]{2,}$/.test(t) && !/^[-*•\d]/.test(t)) return true;
+    return false;
   };
+
+  const grabSection = (aliases) => {
+    const aliasSet = new Set(aliases.map(a => a.toLowerCase()));
+    let start = -1;
+    for (let i = 0; i < lines.length; i++) {
+      const t = lines[i].trim();
+      if (!t) continue;
+      if (isHeading(t) && aliasSet.has(headingName(t))) {
+        start = i + 1;
+        break;
+      }
+    }
+    if (start === -1) return "";
+    let out = [];
+    for (let i = start; i < lines.length; i++) {
+      const t = lines[i].trim();
+      if (isHeading(t) && t.length <= 90) break;
+      out.push(lines[i]);
+    }
+    return normalizeText(out.join("\n"));
+  };
+
+  const bullets = (sectionText) => {
+    const arr = [];
+    for (const raw of String(sectionText || "").split(/\r?\n/)) {
+      const t = raw.trim();
+      if (!t) continue;
+      const m = t.match(/^([-*•]|\d+[.)])\s+(.*)$/);
+      if (m) arr.push(m[2].trim());
+    }
+    return arr;
+  };
+
+  const execSummary = grabSection(["executive summary", "summary", "overview"]);
+  const problem = grabSection(["problem statement", "problem", "challenge", "background"]);
+  const businessCase = grabSection(["business case", "justification", "rationale", "value proposition"]);
+  const objectivesTxt = grabSection(["objectives", "goals", "aims"]);
+  const kpisTxt = grabSection(["kpis", "key performance indicators", "metrics", "success metrics"]);
+  const scopeInTxt = grabSection(["in scope", "scope inclusions"]);
+  const scopeOutTxt = grabSection(["out of scope", "scope exclusions"]);
+  const assumptionsTxt = grabSection(["assumptions"]);
+  const constraintsTxt = grabSection(["constraints"]);
+  const depsTxt = grabSection(["dependencies"]);
+  const stakeholdersTxt = grabSection(["stakeholders"]);
+  const timelineTxt = grabSection(["timeline", "schedule", "roadmap"]);
+  const milestonesTxt = grabSection(["milestones"]);
+  const deliverablesTxt = grabSection(["deliverables", "outputs"]);
+  const budgetTxt = grabSection(["budget", "cost", "budget summary"]);
+  const resourcesTxt = grabSection(["resources", "staffing", "team"]);
+  const risksTxt = grabSection(["risks", "risk register"]);
+  const mitigationsTxt = grabSection(["mitigations", "contingencies"]);
+  const issuesTxt = grabSection(["issues", "decisions", "log"]);
+  const commsTxt = grabSection(["communication plan", "communications", "comms"]);
+  const governanceTxt = grabSection(["governance", "approvals"]);
+  const complianceTxt = grabSection(["compliance", "security", "privacy"]);
+  const openQTxt = grabSection(["open questions", "next steps"]);
+  const notesTxt = grabSection(["notes", "appendix"]);
+
+  const objectives = bullets(objectivesTxt).map(o => ({ objective: o }));
+  const kpis = bullets(kpisTxt).map(k => ({ name: k }));
+
+  const pid = {
+    titleBlock: { projectTitle: titleGuess },
+    executiveSummary: execSummary,
+    problemStatement: problem,
+    businessCase,
+    objectivesSmart: objectives,
+    kpis,
+    scopeInclusions: bullets(scopeInTxt),
+    scopeExclusions: bullets(scopeOutTxt),
+    assumptions: bullets(assumptionsTxt),
+    constraints: bullets(constraintsTxt),
+    dependencies: bullets(depsTxt),
+    stakeholders: bullets(stakeholdersTxt).map(n => ({ name: n })),
+    timelineOverview: timelineTxt,
+    milestones: bullets(milestonesTxt).map(n => ({ name: n })),
+    deliverablesOutputs: bullets(deliverablesTxt).map(n => ({ name: n })),
+    budgetSummary: budgetTxt ? { notes: budgetTxt } : {},
+    resourcesPlan: resourcesTxt,
+    risks: bullets(risksTxt).map(n => ({ risk: n })),
+    mitigationsContingencies: bullets(mitigationsTxt).map(n => ({ mitigation: n })),
+    issuesDecisionsLog: bullets(issuesTxt).map(n => ({ item: n })),
+    communicationsPlan: commsTxt,
+    governanceApprovals: governanceTxt,
+    complianceSecurityPrivacy: complianceTxt,
+    openQuestionsNextSteps: openQTxt,
+    notesBackground: notesTxt,
+  };
+
+  return pid;
+}
+
+
+
+function pidToLegacyFields(pid) {
+  const p = pid || {};
+  const tb = p.titleBlock || {};
+  const joinLines = (v) => Array.isArray(v) ? v.map(x => (typeof x === "string" ? x : JSON.stringify(x))).join("\n") : (typeof v === "string" ? v : (v ? JSON.stringify(v) : ""));
+  const list = (arr, key1, key2) => (Array.isArray(arr) ? arr.map(o => (o && typeof o === "object") ? (o[key1] || o[key2] || JSON.stringify(o)) : String(o)) : []).filter(Boolean).join("\n");
+  const f = {};
+
+  // Project
+  f["fld-project-name"] = String(tb.projectTitle || "");
+  f["fld-project-id"] = String((tb.projectId || p.projectId || "").toString());
+
+  // Core narrative
+  f["fld-exec"] = String(p.executiveSummary || "");
+  f["fld-problem"] = String(p.problemStatement || "");
+  f["fld-business-case"] = String(p.businessCase || "");
+
+  // Goals & success
+  f["fld-objectives"] = list(p.objectivesSmart, "objective", "name");
+  f["fld-kpis"] = list(p.kpis, "name", "metric");
+
+  // Scope / assumptions / constraints / deps
+  f["fld-scope-inclusions"] = joinLines(p.scopeInclusions);
+  f["fld-scope-exclusions"] = joinLines(p.scopeExclusions);
+  f["fld-assumptions"] = joinLines(p.assumptions);
+  f["fld-constraints-notes"] = joinLines(p.constraints);
+  f["fld-dependencies-notes"] = joinLines(p.dependencies);
+
+  // People
+  f["fld-stakeholders-notes"] = list(p.stakeholders, "name", "role");
+  f["fld-sponsor-notes"] = String(p.sponsor || "");
+  f["fld-project-manager-notes"] = String(p.projectManager || "");
+  f["fld-raci-notes"] = joinLines(p.raci || p.raciMatrix);
+
+  // Timeline / deliverables / work breakdown
+  f["fld-timeline-overview"] = String(p.timelineOverview || "");
+  f["fld-milestones"] = list(p.milestones, "name", "title");
+  f["fld-deliverables-notes"] = list(p.deliverablesOutputs, "name", "deliverable");
+  f["fld-work-breakdown-notes"] = joinLines(p.workBreakdownNotes || p.workBreakdown);
+
+  // Budget / resources
+  const bs = (p.budgetSummary && typeof p.budgetSummary === "object") ? p.budgetSummary : {};
+  f["fld-budget-notes"] = String(bs.notes || (typeof p.budgetSummary === "string" ? p.budgetSummary : ""));
+  f["fld-resources-notes"] = String(p.resourcesPlan || "");
+
+  // Risks / mitigations / issues
+  f["fld-risks"] = list(p.risks, "risk", "name");
+  f["fld-mitigations"] = list(p.mitigationsContingencies, "mitigation", "name");
+  f["fld-issues"] = list(p.issuesDecisionsLog, "item", "issue");
+
+  // Plans / governance / compliance / questions
+  f["fld-comms-plan-notes"] = String(p.communicationsPlan || "");
+  f["fld-governance-approvals-notes"] = String(p.governanceApprovals || "");
+  f["fld-compliance-notes"] = String(p.complianceSecurityPrivacy || "");
+  f["fld-open-questions"] = String(p.openQuestionsNextSteps || "");
+  f["notes-area"] = String(p.notesBackground || "");
+
+  return f;
 }
 
 function mergeWithEmptyPid(parsed) {
@@ -914,48 +1122,71 @@ function applyDeterministicBudget(pid, contextText = '') {
 }
 
 async function geminiJson(modelName, systemPrompt, userText) {
-  // --- Gemini Model Selection and Fallback ---
-  // Primary model: process.env.GEMINI_MODEL or 'gemini-pro-2.5'
-  // Fallback model: process.env.GEMINI_FALLBACK_MODEL or 'gemini-2.5-flash'
-  // Endpoint: https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent
   if (!GoogleGenerativeAI) throw new Error('Gemini SDK not available.');
   const key = process.env.GOOGLE_API_KEY;
   if (!key) throw new Error('GOOGLE_API_KEY not set.');
   const genAI = new GoogleGenerativeAI(key);
-  const prompt = `${systemPrompt}\n\nINPUT:\n${userText}\n\nOUTPUT:`;
 
-  const tryModel = async (name) => {
-    // This is where the model name is swapped for fallback if needed
-    const model = genAI.getGenerativeModel({ model: name });
-    const result = await model.generateContent(prompt);
-    return result?.response?.text?.() || '';
-  };
+  const modelsToTry = [
+    modelName,
+    process.env.GEMINI_MODEL,
+    process.env.GEMINI_FALLBACK_MODEL,
+    'gemini-2.5-flash',
+  ].filter((v, i, a) => typeof v === 'string' && v.trim() && a.indexOf(v) === i);
 
-  try {
-    // Try primary model first
-    return await tryModel(modelName);
-  } catch (e) {
-    // If primary fails, try fallback model
-    const fallback = process.env.GEMINI_FALLBACK_MODEL || 'gemini-2.5-flash';
-    if (fallback && fallback !== modelName) {
-      return await tryModel(fallback);
+  const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+  const jitter = (base) => Math.round(base * (0.7 + Math.random() * 0.6));
+
+  let lastErr = null;
+  for (const name of modelsToTry) {
+    for (let attempt = 0; attempt < 3; attempt++) {
+      try {
+        const model = genAI.getGenerativeModel({
+          model: name,
+          systemInstruction: systemPrompt,
+        });
+        const result = await model.generateContent({
+          contents: [{ role: 'user', parts: [{ text: userText }] }],
+          generationConfig: {
+            temperature: 0,
+            responseMimeType: 'application/json',
+          },
+        });
+        return String(result?.response?.text?.() || '');
+      } catch (e) {
+        lastErr = e;
+        const msg = String(e?.message || '').toLowerCase();
+        const isThrottle = msg.includes('429') || msg.includes('resource') || msg.includes('quota') || msg.includes('rate');
+        if (isThrottle && attempt < 2) {
+          await sleep(jitter(800 * Math.pow(2, attempt)));
+          continue;
+        }
+        break;
+      }
     }
-    throw e;
   }
+  throw lastErr || new Error('Gemini call failed.');
 }
 
 function extractFirstJsonObject(text) {
+  const s = String(text || '').trim();
+  if (!s) throw new Error('Empty AI response');
+  const fence = s.match(/```(?:json)?\s*([\s\S]*?)\s*```/i);
+  const candidate = String(fence?.[1] || s).trim();
+  try { return JSON.parse(candidate); } catch { /* continue */ }
+
   let depth = 0;
   let start = -1;
-  for (let i = 0; i < text.length; i++) {
-    if (text[i] === '{') {
+  for (let i = 0; i < candidate.length; i++) {
+    if (candidate[i] === '{') {
       if (depth === 0) start = i;
       depth++;
-    } else if (text[i] === '}') {
+    } else if (candidate[i] === '}') {
       depth--;
       if (depth === 0 && start !== -1) {
-        const candidate = text.slice(start, i + 1);
-        return JSON.parse(candidate);
+        const slice = candidate.slice(start, i + 1);
+        try { return JSON.parse(slice); } catch { /* ignore */ }
+        start = -1;
       }
     }
   }
@@ -1058,7 +1289,7 @@ async function prepareParseText(text, modelName) {
   let parseText = text;
   if (text.length > 80000 || countWords(text) > 10000) {
     parseText = heuristicCondenseText(text);
-    warnings.push('Input was condensed to key lines for faster parsing.');
+    if (process.env.DEBUG_PARSE_WARNINGS === '1') warnings.push('Input was condensed to key lines for faster parsing.');
   }
   if (parseText.length > 60000 && GoogleGenerativeAI && process.env.GOOGLE_API_KEY) {
     try {
@@ -1066,10 +1297,10 @@ async function prepareParseText(text, modelName) {
       const summary = await geminiJson(fastModel, PARSE_SUMMARY_PROMPT, parseText);
       if (summary && typeof summary === 'string' && summary.trim().length > 200) {
         parseText = summary.trim();
-        warnings.push('Input was summarized with a fast model to avoid timeouts.');
+        if (process.env.DEBUG_PARSE_WARNINGS === '1') warnings.push('Input was summarized with a fast model to avoid timeouts.');
       }
     } catch {
-      warnings.push('Fast summary step failed; used condensed input.');
+      if (process.env.DEBUG_PARSE_WARNINGS === '1') warnings.push('Fast summary step failed; used condensed input.');
     }
   }
   return { parseText, warnings };
@@ -1220,67 +1451,69 @@ app.post('/api/ai/parse', async (req, res) => {
     const parseText = prep.parseText;
     const prepWarnings = prep.warnings || [];
 
-    // Try AI extraction first
-    let aiObj = null;
+    
+// Try AI extraction first (best effort). Never let AI failure break parsing.
+    let aiObj = {};
     let aiWarnings = [];
     let aiRaw = null;
+
     try {
       aiRaw = await geminiJson(modelName, PARSE_SYSTEM_PROMPT, parseText);
-      aiObj = extractFirstJsonObject(aiRaw);
-    } catch (err) {
-      aiWarnings.push('AI parse failed or returned invalid JSON.');
-    }
-
-    // Deterministic parse for all fields
-    let deterministicFields = {};
-    try {
-      const { localParse } = await import('./lib/localParser.js');
-      const detResult = localParse(parseText);
-      if (detResult && detResult.parse_success && detResult.data && detResult.data.fields) {
-        deterministicFields = detResult.data.fields;
+      const extracted = extractFirstJsonObject(aiRaw);
+      if (extracted && typeof extracted === "object") {
+        aiObj = extracted;
+      } else {
+        aiWarnings.push("AI parse returned no JSON object.");
       }
-    } catch (err) {
-      aiWarnings.push('Deterministic parse failed.');
+    } catch (e) {
+      aiWarnings.push("AI parse failed or returned invalid JSON.");
+      aiObj = {};
     }
 
-    // Merge: for each field, prefer AI, else deterministic, else empty
-    const FIELD_KEYS = [
-      "fld-project-name", "fld-project-id", "fld-version", "fld-date", "fld-owner",
-      "fld-sponsor", "fld-exec", "fld-problem", "fld-business-case",
-      "fld-scope-inclusions", "fld-scope-exclusions", "fld-assumptions",
-      "fld-constraints-notes", "fld-dependencies-notes",
-      "fld-stakeholders-notes", "fld-timeline-overview", "fld-deliverables-notes",
-      "fld-budget-notes", "fld-contingency-pct", "fld-tax-pct", "fld-resources-tools",
-      "fld-risks-notes", "fld-mitigations-notes", "fld-issues-decisions-notes",
-      "fld-comms-plan-notes", "fld-governance-approvals-notes", "fld-compliance-notes",
-      "fld-open-questions", "notes-area",
-    ];
-    const mergedFields = {};
+    // Deterministic parse (server-side heuristic; no external localParser dependency)
+    const detPid = buildFallbackPidFromText(parseText);
+    let detFields = pidToLegacyFields(detPid);
+
+    // Collect AI legacy fields from either aiObj.fields or top-level fld-* keys
+    const aiFields = {};
+    if (aiObj && typeof aiObj === "object") {
+      if (aiObj.fields && typeof aiObj.fields === "object") {
+        Object.assign(aiFields, aiObj.fields);
+      }
+      for (const [k, v] of Object.entries(aiObj)) {
+        if (k.startsWith("fld-") || k === "notes-area") aiFields[k] = v;
+      }
+    }
+
+    // Merge fields: deterministic first, AI overrides
+    const mergedFields = { ...detFields, ...aiFields };
     for (const k of FIELD_KEYS) {
-      mergedFields[k] = (aiObj && aiObj[k]) ? aiObj[k] : (deterministicFields[k] || "");
+      if (mergedFields[k] == null) mergedFields[k] = "";
     }
 
-    // Merge tables if needed (future: for now, just use AI or deterministic)
-    let mergedTables = {};
-    if (aiObj && aiObj.tables) {
-      mergedTables = aiObj.tables;
-    } else if (deterministicFields.tables) {
-      mergedTables = deterministicFields.tables;
-    }
+    // Merge tables (AI overrides)
+    const mergedTables = {
+      ...(detPid.tables && typeof detPid.tables === "object" ? detPid.tables : {}),
+      ...(aiObj.tables && typeof aiObj.tables === "object" ? aiObj.tables : {}),
+    };
 
-    // Compose PID object
-    const pid = applyDeterministicBudget(mergeWithEmptyPid({ ...aiObj, ...{ fields: mergedFields, tables: mergedTables } }));
+    // Merge canonical PID content: deterministic base, AI overrides if it provided those keys
+    const pidInput = { ...detPid, ...aiObj, fields: mergedFields, tables: mergedTables };
+    const pid = applyDeterministicBudget(mergeWithEmptyPid(pidInput));
     try {
       validatePidShape(pid);
     } catch (err) {
       const fallback = applyDeterministicBudget(mergeWithEmptyPid(buildFallbackPidFromText(parseText)));
-      const warnings = [...prepWarnings, ...aiWarnings, 'Parsed PID failed validation; returned a lightweight PID from extracted text.'];
+      const warnings = (process.env.DEBUG_PARSE_WARNINGS === '1')
+        ? [...prepWarnings, ...aiWarnings, 'Parsed PID failed validation; returned a lightweight PID from extracted text.']
+        : [...aiWarnings];
       const durationMs = Math.max(1, Date.now() - startMs);
       return sendJson(res, { ok: true, pid: fallback, warnings, durationMs, length: parseText.length });
     }
 
     const durationMs = Math.max(1, Date.now() - startMs);
-    return sendJson(res, { ok: true, pid, warnings: [...prepWarnings, ...aiWarnings], durationMs, length: parseText.length });
+    const userWarnings = (process.env.DEBUG_PARSE_WARNINGS === '1') ? [...prepWarnings, ...aiWarnings] : [...aiWarnings];
+    return sendJson(res, { ok: true, pid, warnings: userWarnings, durationMs, length: parseText.length });
   } catch (e) {
     const msg = safeErrorMessage(e, 'Parse failed.');
     console.error('Unexpected /api/ai/parse error:', e);

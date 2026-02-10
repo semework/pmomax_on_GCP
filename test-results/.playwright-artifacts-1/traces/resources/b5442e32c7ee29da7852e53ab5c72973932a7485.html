@@ -1,0 +1,91 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PMOMax PID Architect</title>
+
+    <!-- Tailwind CDN for layout + custom brand colors -->
+    <script>
+      (function () {
+        const originalWarn = console.warn;
+        console.warn = function (...args) {
+          if (
+            typeof args[0] === 'string' &&
+            args[0].includes('cdn.tailwindcss.com should not be used in production')
+          ) {
+            return;
+          }
+          return originalWarn.apply(console, args);
+        };
+      })();
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+        <script src="/pmomax-tailwind-config.js"></script>
+
+        <!-- Design System & Landing Styles -->
+        <link rel="stylesheet" href="/design-system.css" />
+        <link rel="stylesheet" href="/pmomax-landing.css" />
+
+
+    <!-- CRITICAL: Load all external libraries synchronously BEFORE React -->
+    <!-- Gantt Chart library -->
+    <script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
+
+    <!-- Document parsing libraries -->
+    <script src="https://unpkg.com/mammoth@1.7.2/mammoth.browser.min.js"></script>
+    
+    <!-- PDF.js v2.16.105 UMD (local files, guaranteed load order) -->
+    <!-- Excel parsing library (Load BEFORE JSZip to avoid clobbering) -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    
+
+    <!-- Export libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://unpkg.com/jspdf-autotable@3.8.2/dist/jspdf.plugin.autotable.js"></script>
+    <script type="module" crossorigin src="/assets/index-Dmk7ycm6.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/mammoth-DQLZigHX.js">
+  </head>
+  <body class="bg-brand-dark text-brand-text antialiased" data-theme="dark" style="background-color:#020617;color:#E5E7EB;">
+    <div id="root"></div>
+
+    <style>
+  .pmomax-gold-button {
+    @apply inline-flex items-center justify-center rounded-md border border-amber-300 bg-gradient-to-r from-amber-200 via-amber-100 to-amber-200 text-slate-900 font-semibold shadow-sm px-3 py-1.5 text-xs sm:text-[13px] transition focus:outline-none focus:ring-2 focus:ring-amber-300 focus:ring-offset-1 focus:ring-offset-slate-950;
+  }
+  .pmomax-gold-button:hover:not(:disabled) {
+    @apply from-amber-100 via-amber-50 to-amber-100 shadow-md -translate-y-0.5;
+  }
+  .pmomax-gold-button:disabled {
+    @apply opacity-60 cursor-not-allowed;
+  }
+</style>
+
+    <script>
+      (function () {
+        const ua = navigator.userAgent || '';
+        const isBrave = navigator.brave && typeof navigator.brave.isBrave === 'function';
+        const isSafari = /Safari/.test(ua) && !/Chrome|Chromium|Edg|OPR/.test(ua);
+        const isChrome = /Chrome\//.test(ua) && !/Edg\//.test(ua) && !/OPR\//.test(ua);
+
+        if (isBrave) {
+          document.body.setAttribute('data-browser', 'brave');
+        } else if (isSafari) {
+          document.body.setAttribute('data-browser', 'safari');
+        } else if (isChrome) {
+          document.body.setAttribute('data-browser', 'chrome');
+        }
+      })();
+    </script>
+
+    <!-- Verify all libraries loaded before starting React -->
+    <script src="/pmomax-bootstrap.js"></script>
+    
+
+    <!-- React / Vite entrypoint: prefer TypeScript entrypoints -->
+    <!-- Use the .tsx entry so Vite serves the source during dev and avoids built JS duplicates -->
+  </body>
+</html>
+

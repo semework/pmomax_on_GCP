@@ -1,0 +1,4 @@
+   REVISION                 ACTIVE  SERVICE        DEPLOYED                 DEPLOYED BY
+[31;1mX[39;0m  pmo-architect-00003-brq          pmo-architect  2026-02-10 01:00:51 UTC  mulugetas@katalyststreet.com
+[31;1mX[39;0m  pmo-architect-00002-tz6          pmo-architect  2026-02-10 00:53:30 UTC  mulugetas@katalyststreet.com
+[31;1mX[39;0m  pmo-architect-00001-gpj          pmo-architect  2026-02-10 00:47:46 UTC  mulugetas@katalyststreet.com

@@ -1,0 +1,251 @@
+# Master Documentation Merge Instructions
+
+**Purpose:** Combine individual Word document chunks into a single master documentation file.
+
+**Date:** November 25, 2025  
+**Target:** PMOMax_PID_Architect_Master_Documentation.docx
+
+---
+
+## Prerequisites
+
+- Microsoft Word (version 2016 or later recommended)
+- All chunk files (.docx) in the same directory
+- Stable working directory (do not move files during merge)
+
+---
+
+## Merge Process (Manual Concatenation)
+
+### Step 1: Open First Chunk
+1. Open **master_chunk_01_executive_overview.docx** in Microsoft Word
+2. File > Save As > **PMOMax_Master_Documentation.docx** (new filename)
+3. Leave this document open
+
+### Step 2: Insert Remaining Chunks (In Order)
+For each subsequent chunk (02-07), repeat these steps:
+
+1. Place cursor at the **end** of the document (Ctrl+End / Cmd+End)
+2. Insert a **page break** (Ctrl+Enter / Cmd+Return)
+3. Click: **Insert** tab > **Text** group > **Object** dropdown > **Text from File...**
+4. Navigate to chunk file (e.g., master_chunk_02_architecture.docx)
+5. Click **Insert**
+6. Verify content appears correctly
+7. Remove any duplicate headers between chunks if needed
+8. Repeat for next chunk
+
+**Order of Insertion:**
+1. master_chunk_01_executive_overview.docx (already open)
+2. master_chunk_02_architecture_deployment.docx
+3. master_chunk_03_security_privacy_compliance.docx
+4. master_chunk_04_api_billing_monitoring.docx
+5. master_chunk_05_support_sla_accessibility.docx
+6. master_chunk_06_test_methodology_results.docx
+7. master_chunk_07_risk_roadmap_appendices.docx
+
+### Step 3: Clean Up Formatting
+After all chunks inserted:
+
+1. **Remove Chunk Markers:**
+   - Find and delete all lines: `[END OF CHUNK X – CONTINUE WITH CHUNK X+1]`
+   - Use Find & Replace (Ctrl+H / Cmd+H)
+   - Find: `[END OF CHUNK*]` (with wildcards enabled)
+   - Replace with: (leave blank)
+
+2. **Standardize Heading Styles:**
+   - Review all headings for consistent styling
+   - Ensure Heading 1, 2, 3 levels are correct
+   - Fix any style inconsistencies between chunks
+
+3. **Check Page Breaks:**
+   - Ensure each major section starts on new page
+   - Remove excessive blank pages if any
+
+4. **Verify Links:**
+   - Internal cross-references may need updating
+   - Table of contents will be generated in next step
+
+### Step 4: Generate Table of Contents
+1. Place cursor on page 2 (after cover page / title page)
+2. Click: **References** tab > **Table of Contents**
+3. Choose: **Automatic Table 1** or **Automatic Table 2**
+4. If prompted: "Replace existing table?" Click **Yes**
+
+**TOC Settings (Custom):**
+- Right-click TOC > "Update Field" > "Update entire table"
+- Or: References > Update Table > Update entire table
+
+### Step 5: Add Page Numbers
+1. Click: **Insert** tab > **Header & Footer** group > **Page Number**
+2. Choose position: Bottom of Page > Plain Number 3 (centered)
+3. Options:
+   - ☑ Different First Page (no number on cover page)
+   - Page numbering starts at: 1
+
+### Step 6: Review & Finalize
+1. **Spell Check:** Review > Spelling & Grammar
+2. **Readability:** Review > Read Aloud (optional)
+3. **Accessibility Check:** Review > Check Accessibility
+4. **Document Properties:**
+   - File > Info > Properties
+   - Title: "PMOMax PID Architect - Master Documentation"
+   - Author: Your organization
+   - Version: 1.0
+
+### Step 7: Save Final Document
+1. File > Save As
+2. Filename: **PMOMax_PID_Architect_Master_Documentation_v1.0.docx**
+3. Format: Word Document (.docx)
+4. **Optional:** Also save as PDF for distribution
+   - File > Save As > PDF
+
+---
+
+## Alternative Method: Using PowerShell (Windows Only)
+
+```powershell
+# PowerShell script to merge Word documents
+$word = New-Object -ComObject Word.Application
+$word.Visible = $false
+
+# Open first chunk
+$doc = $word.Documents.Open("C:\path\to\master_chunk_01_executive_overview.docx")
+
+# Insert remaining chunks
+$chunks = @(
+    "master_chunk_02_architecture_deployment.docx",
+    "master_chunk_03_security_privacy_compliance.docx",
+    "master_chunk_04_api_billing_monitoring.docx",
+    "master_chunk_05_support_sla_accessibility.docx",
+    "master_chunk_06_test_methodology_results.docx",
+    "master_chunk_07_risk_roadmap_appendices.docx"
+)
+
+foreach ($chunk in $chunks) {
+    $range = $doc.Content
+    $range.Collapse([Microsoft.Office.Interop.Word.WdCollapseDirection]::wdCollapseEnd)
+    $range.InsertFile("C:\path\to\$chunk")
+}
+
+# Save merged document
+$doc.SaveAs("C:\path\to\PMOMax_Master_Documentation.docx")
+$doc.Close()
+$word.Quit()
+```
+
+---
+
+## Alternative Method: Using Python + python-docx
+
+```python
+from docx import Document
+from docx.oxml.xmlchemy import OxmlElement
+
+def merge_docx(files_list, output):
+    merged_document = Document(files_list[0])
+    
+    for file in files_list[1:]:
+        sub_doc = Document(file)
+        
+        # Add page break before new chunk
+        merged_document.add_page_break()
+        
+        # Append all elements from sub-document
+        for element in sub_doc.element.body:
+            merged_document.element.body.append(element)
+    
+    merged_document.save(output)
+
+# Usage
+chunks = [
+    'master_chunk_01_executive_overview.docx',
+    'master_chunk_02_architecture_deployment.docx',
+    'master_chunk_03_security_privacy_compliance.docx',
+    'master_chunk_04_api_billing_monitoring.docx',
+    'master_chunk_05_support_sla_accessibility.docx',
+    'master_chunk_06_test_methodology_results.docx',
+    'master_chunk_07_risk_roadmap_appendices.docx'
+]
+
+merge_docx(chunks, 'PMOMax_Master_Documentation.docx')
+```
+
+---
+
+## Troubleshooting
+
+### Issue: Styles don't match between chunks
+**Solution:** 
+- Copy all text from problematic chunk
+- Paste using "Keep Text Only" option
+- Reapply styles manually
+
+### Issue: Page breaks in wrong places
+**Solution:**
+- Show formatting marks (Ctrl+Shift+8 / Cmd+Shift+8)
+- Delete unwanted breaks
+- Insert breaks where needed (Ctrl+Enter / Cmd+Return)
+
+### Issue: Table of contents doesn't update
+**Solution:**
+- Right-click TOC > Update Field > Update entire table
+- Or delete TOC and regenerate from References tab
+
+### Issue: Images or tables misaligned
+**Solution:**
+- Right-click element > Format Picture/Table
+- Text Wrapping: "In Line with Text"
+- Alignment: Center or Left as appropriate
+
+### Issue: File size too large
+**Solution:**
+- Compress images: File > Compress Pictures
+- Remove embedded fonts: File > Options > Save > Uncheck "Embed fonts"
+- Save as PDF for smaller file size
+
+---
+
+## Verification Checklist
+
+After merging, verify:
+
+- [ ] All 7 chunks present in correct order
+- [ ] Chunk markers removed (`[END OF CHUNK...]`)
+- [ ] Table of contents generated and accurate
+- [ ] Page numbers correct (starts at 1, no number on cover)
+- [ ] Heading styles consistent (H1, H2, H3)
+- [ ] No excessive blank pages
+- [ ] All tables formatted properly
+- [ ] All code blocks readable
+- [ ] Document properties filled (title, author, version)
+- [ ] Spell check passed
+- [ ] Accessibility check passed (or issues documented)
+- [ ] File saved with correct name
+- [ ] PDF version generated (optional)
+
+---
+
+## Expected Document Statistics
+
+**After merge, the master document should contain approximately:**
+- **Pages:** 90-100 pages
+- **Sections:** 7 major sections
+- **Tables:** 15+ detailed tables
+- **Headings:** 100+ heading entries
+- **Words:** 25,000-30,000 words
+- **File Size:** 2-5 MB (Word), 1-3 MB (PDF)
+
+---
+
+## Support
+
+If you encounter issues during the merge process:
+- **Technical:** Contact engineering team
+- **Formatting:** Microsoft Word Help (F1)
+- **Automation:** Refer to PowerShell/Python scripts above
+
+---
+
+**Instructions Version:** 1.0  
+**Last Updated:** November 25, 2025  
+**Compatible With:** Microsoft Word 2016+, LibreOffice Writer 6.0+

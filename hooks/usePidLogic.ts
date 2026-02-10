@@ -39,14 +39,10 @@ async function fetchWithTimeoutAndBackoff(url: string, init: RequestInit = {}, m
       if (externalSignal.aborted) {
         controller.abort((externalSignal as any).reason ?? 'Abort');
       } else {
-        externalSignal.addEventListener(
-          'abort',
-          () => controller!.abort((externalSignal as any).reason ?? 'Abort'),
-          { once: true },
-        );
-      }
-    }
-    try {
+          // Cancel any previous in-flight parse before starting a new one.
+          if (parseAbortRef.current) {
+            parseAbortRef.current.abort('UserCancel');
+          }
       const res = await fetch(url, { ...init, signal: controller.signal });
       if (res.status !== 429 && res.status !== 503) {
         clearTimeout(id);
@@ -75,12 +71,105 @@ async function fetchWithTimeoutAndBackoff(url: string, init: RequestInit = {}, m
     }
   }
   throw lastErr;
-}
+        const startRes = await fetch('/api/ai/parse/start', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(model ? { text: safeText, model } : { text: safeText }),
+          signal: controller.signal,
+        });
+        if (!startRes.ok) {
+          throw new Error('Failed to start parse job.');
+        }
+        const { jobId } = await startRes.json();
+        if (!jobId) throw new Error('No jobId returned from server.');
 
-// Keep column scroll positions tidy
-const scrollColumnsTop = () => {
-  document.querySelectorAll('[data-col-scroll]').forEach((el) => {
-    if (el) (el as HTMLElement).scrollTop = 0;
+        // Step 2: Poll for status with hard timeout and max attempts
+        let pollCount = 0;
+        let done = false;
+        let lastError = null;
+        const maxPollAttempts = 40; // ~60s max
+        const pollStart = Date.now();
+        while (!done && pollCount < maxPollAttempts && Date.now() - pollStart < 60000) {
+          if (controller.signal.aborted) throw new Error('USER_CANCELLED');
+          await new Promise((r) => setTimeout(r, 1500 + Math.random() * 500));
+          pollCount++;
+          let statusRes;
+          try {
+            statusRes = await fetch(`/api/ai/parse/status/${jobId}`);
+          } catch (e) {
+            lastError = e;
+            continue;
+          }
+          if (statusRes.status === 404) {
+            setError('Server restarted; please run extraction again.');
+            setIsLoading(false);
+            return { ok: false as const, error: 'Server restarted' };
+          }
+          if (!statusRes.ok) {
+            lastError = new Error('Failed to poll parse status.');
+            continue;
+          }
+          const statusJson = await statusRes.json();
+          if (statusJson.status === 'completed') {
+            const env = statusJson.result;
+            if (!env || typeof env !== 'object') {
+              throw new Error('Parse API returned an unexpected response.');
+            }
+            if (env.ok !== true) {
+              const eAny: any = env as any;
+              const structuredMsg = typeof eAny?.error?.message === 'string' ? eAny.error.message : null;
+              const errMsg = structuredMsg || safeErrorMessage(eAny?.error ?? eAny?.errorMessage ?? eAny);
+              throw new Error(errMsg || 'Parse failed.');
+            }
+            const merged = normalizePid(env.pid);
+            const notesText = String(merged.notesBackground || '');
+            const chunkSize = 2000;
+            if (notesText.length > 10000) {
+              const firstChunk = notesText.slice(0, chunkSize);
+              startTransition(() => {
+                setPid({ ...merged, notesBackground: firstChunk });
+                setError(null);
+              });
+              let offset = chunkSize;
+              const pump = () => {
+                if (notesChunkTokenRef.current !== notesToken) return;
+                if (offset >= notesText.length) return;
+                const next = notesText.slice(offset, offset + chunkSize);
+                offset += chunkSize;
+                setPid((prev) => {
+                  if (!prev) return prev;
+                  return { ...prev, notesBackground: `${prev.notesBackground || ''}${next}` };
+                });
+                requestAnimationFrame(pump);
+              };
+              requestAnimationFrame(pump);
+            } else {
+              startTransition(() => {
+                setPid(merged);
+                setError(null);
+              });
+            }
+            setLastParsedText(String(text || ''));
+            setLastParsedTextLength(String(text || '').length);
+            requestBudgetForPid(merged, merged.notesBackground || safeText || '');
+            requestAnimationFrame(scrollColumnsTop);
+            perfMonitor.logEvent('parse_document', performance.now() - start, {
+              textLength: text.length,
+            });
+            lastParseRequestKey.current = parseKey;
+            return { ok: true as const };
+          } else if (statusJson.status === 'failed') {
+            setError(statusJson.error || 'Parse failed.');
+            setIsLoading(false);
+            return { ok: false as const, error: statusJson.error || 'Parse failed.' };
+          }
+        }
+        if (pollCount >= maxPollAttempts || Date.now() - pollStart >= 60000) {
+          setError('Parse timed out. Please try again.');
+          setIsLoading(false);
+          return { ok: false as const, error: 'Parse timed out.' };
+        }
+        throw lastError || new Error('Parse polling failed.');
   });
 };
 
@@ -488,7 +577,10 @@ export const usePidLogic = () => {
       if (!pidData || isBudgeting) return;
       const rows = normalizeBudgetItems(pidData?.budgetCostBreakdown, 'deterministic');
       const isDeterministicOnly = rows.length > 0 && rows.every((r: any) => r?.source === 'deterministic');
-      if (rows.length > 0 && !isDeterministicOnly) return;
+      if (rows.length > 0 && !isDeterministicOnly) {
+        setError('Budget enrichment failed: AI did not return valid items.');
+        return;
+      }
 
       const baselinePid = applyDeterministicBudget(mergeWithEmptyPid(pidData), contextText);
       const baselineItems = normalizeBudgetItems(baselinePid.budgetCostBreakdown, 'deterministic');
@@ -539,13 +631,9 @@ export const usePidLogic = () => {
             budgetSummary: mergedSummary,
           });
         }
-        const budgetWarnings = Array.isArray(budgetEnv?.warnings) ? budgetEnv.warnings : [];
         // Budget warnings are not surfaced; keep baseline silently
       } catch (e: any) {
         if (e?.message === 'USER_CANCELLED' || e?.code === 'USER_CANCELLED') return;
-        const msg = isTimeoutError(e)
-          ? 'Budget enrichment timed out — using deterministic baseline.'
-          : normalizeErrorMessage(e, 'Budget generation failed.');
         // Do not surface budget errors as warnings
       } finally {
         setIsBudgeting(false);
@@ -553,7 +641,7 @@ export const usePidLogic = () => {
         if (budgetInFlightKey.current === budgetKey) budgetInFlightKey.current = '';
       }
     },
-    [isBudgeting],
+    [isBudgeting, mergeWithEmptyPid, applyDeterministicBudget, normalizeBudgetItems, normalizeBudgetSummary, buildBudgetSummary, setPid, hashText, lastBudgetRequestKey, budgetInFlightKey, postJson],
   );
 
   useEffect(() => {
@@ -811,20 +899,8 @@ const askAssistant = useCallback(
     }
     assistantInFlightKey.current = assistantKey;
 
-    // Support quick client-side apply of a previously returned assistant draft
-    const lowerTrim = trimmedQuestion.toLowerCase();
-    if (lowerTrim === 'apply' || lowerTrim === 'apply draft' || lowerTrim === 'apply the draft') {
-      if (!assistantDraft) {
-        setError('No assistant draft is available to apply. Ask the assistant to draft a PID first.');
-        setIsLoading(false);
-        return;
-      }
-      setPid(() => normalizePid(assistantDraft));
-      setAssistantDraft(null);
-      setAiAssistantHistory((prev) => [...prev, { role: 'assistant', content: '✅ Assistant draft applied to the PID.' }]);
-      setIsLoading(false);
-      return;
-    }
+    // Remove 'apply' gating: always immediately apply any assistant draft to the PID
+    // (No-op: 'apply' command is now ignored, as drafts are always auto-applied)
 
     // Handle simple "what do you do" introductions entirely client-side
     const lowerQ = trimmedQuestion.toLowerCase();
@@ -910,92 +986,52 @@ const askAssistant = useCallback(
       const hadPid = !!pid;
       let applied = false;
       if (pid) {
-        // Only apply assistant changes if assistant explicitly allows applying (res.apply !== false)
-        const allowApply = res.apply !== false;
-        if (allowApply) {
-          if (res.pid && isPlainObject(res.pid)) {
-            setPid(() => normalizePid(res.pid));
-            applied = true;
-          } else if (res.pidData && isPlainObject(res.pidData)) {
-            setPid(() => normalizePid(res.pidData));
-            applied = true;
-          } else if (res.patch && isPlainObject(res.patch)) {
-            setPid((prev) => {
-              const base = prev && isPlainObject(prev) ? prev : makeEmptyPid();
-              return normalizePid({ ...(base as any), ...(res.patch as any) });
-            });
-            applied = true;
-          } else if (typeof res.reply === 'string') {
-            // Fallback: try to parse JSON from the reply (either {patch} or full pid)
-            const parsed = tryParseJsonObject(res.reply);
-            if (parsed && isPlainObject(parsed)) {
-              if ((parsed as any).titleBlock || (parsed as any).executiveSummary) {
-                setPid(() => normalizePid(parsed));
-                applied = true;
-              } else {
-                setPid((prev) => {
-                  const base = prev && isPlainObject(prev) ? prev : makeEmptyPid();
-                  return normalizePid({ ...(base as any), ...(parsed as any) });
-                });
-                applied = true;
-              }
-            }
-          }
-        }
-        else {
-          // Assistant returned a draft but did not request auto-apply — save it locally so user can "apply" later
-          try {
-            if (res.pid && isPlainObject(res.pid)) {
-              setAssistantDraft(() => normalizePid(res.pid));
-              setAiAssistantHistory((h) => [...h, { role: 'assistant', content: 'A draft PID is available. Say "apply" to merge it into the current PID.' }]);
-            } else if (res.pidData && isPlainObject(res.pidData)) {
-              setAssistantDraft(() => normalizePid(res.pidData));
-              setAiAssistantHistory((h) => [...h, { role: 'assistant', content: 'A draft PID is available. Say "apply" to merge it into the current PID.' }]);
-            } else if (res.patch && isPlainObject(res.patch)) {
-              // Save patch as a draft by merging with current pid or empty pid
-              setAssistantDraft(() => normalizePid({ ...(pid as any), ...(res.patch as any) }));
-              setAiAssistantHistory((h) => [...h, { role: 'assistant', content: 'A draft patch is available. Say "apply" to merge it into the current PID.' }]);
-            }
-          } catch (err) {
-            // ignore draft-save failures
-          }
-        }
-      } else {
-        // No existing PID: allow assistant to create a fresh PID when it returns one.
-        // But treat assistant-created PIDs as drafts unless assistant sets apply===true.
-        const allowApply = res.apply !== false;
-        if (allowApply) {
-          if (res.pid && isPlainObject(res.pid)) {
-            setPid(() => normalizePid(res.pid));
-            applied = true;
-          } else if (res.pidData && isPlainObject(res.pidData)) {
-            setPid(() => normalizePid(res.pidData));
-            applied = true;
-          } else if (res.patch && isPlainObject(res.patch)) {
-            setPid(() => normalizePid({ ...(makeEmptyPid() as any), ...(res.patch as any) }));
-            applied = true;
-          } else if (typeof res.reply === 'string') {
-            const parsed = tryParseJsonObject(res.reply);
-            if (parsed && isPlainObject(parsed)) {
+        // Always immediately apply any assistant draft to the PID, regardless of 'apply' flag
+        if (res.pid && isPlainObject(res.pid)) {
+          setPid(() => normalizePid(res.pid));
+          applied = true;
+        } else if (res.pidData && isPlainObject(res.pidData)) {
+          setPid(() => normalizePid(res.pidData));
+          applied = true;
+        } else if (res.patch && isPlainObject(res.patch)) {
+          setPid((prev) => {
+            const base = prev && isPlainObject(prev) ? prev : makeEmptyPid();
+            return normalizePid({ ...(base as any), ...(res.patch as any) });
+          });
+          applied = true;
+        } else if (typeof res.reply === 'string') {
+          // Fallback: try to parse JSON from the reply (either {patch} or full pid)
+          const parsed = tryParseJsonObject(res.reply);
+          if (parsed && isPlainObject(parsed)) {
+            if ((parsed as any).titleBlock || (parsed as any).executiveSummary) {
               setPid(() => normalizePid(parsed));
+              applied = true;
+            } else {
+              setPid((prev) => {
+                const base = prev && isPlainObject(prev) ? prev : makeEmptyPid();
+                return normalizePid({ ...(base as any), ...(parsed as any) });
+              });
               applied = true;
             }
           }
         }
-        else {
-          try {
-            if (res.pid && isPlainObject(res.pid)) {
-              setAssistantDraft(() => normalizePid(res.pid));
-              setAiAssistantHistory((h) => [...h, { role: 'assistant', content: 'A draft PID is available. Say "apply" to make it the active PID.' }]);
-            } else if (res.pidData && isPlainObject(res.pidData)) {
-              setAssistantDraft(() => normalizePid(res.pidData));
-              setAiAssistantHistory((h) => [...h, { role: 'assistant', content: 'A draft PID is available. Say "apply" to make it the active PID.' }]);
-            } else if (res.patch && isPlainObject(res.patch)) {
-              setAssistantDraft(() => normalizePid({ ...(makeEmptyPid() as any), ...(res.patch as any) }));
-              setAiAssistantHistory((h) => [...h, { role: 'assistant', content: 'A draft patch is available. Say "apply" to make it the active PID.' }]);
-            }
-          } catch (err) {
-            // ignore
+      }
+      } else {
+        // No existing PID: always immediately apply any assistant-created PID or patch
+        if (res.pid && isPlainObject(res.pid)) {
+          setPid(() => normalizePid(res.pid));
+          applied = true;
+        } else if (res.pidData && isPlainObject(res.pidData)) {
+          setPid(() => normalizePid(res.pidData));
+          applied = true;
+        } else if (res.patch && isPlainObject(res.patch)) {
+          setPid(() => normalizePid({ ...(makeEmptyPid() as any), ...(res.patch as any) }));
+          applied = true;
+        } else if (typeof res.reply === 'string') {
+          const parsed = tryParseJsonObject(res.reply);
+          if (parsed && isPlainObject(parsed)) {
+            setPid(() => normalizePid(parsed));
+            applied = true;
           }
         }
       }

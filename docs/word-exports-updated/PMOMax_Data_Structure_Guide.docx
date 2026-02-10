@@ -1,0 +1,22 @@
+# PMOMax Data Structure Guide (Updated)
+
+## Overview
+PMOMax supports multiple input and output formats for PID data:
+- Input: .docx, .pdf, .txt, .json, .xlsx, .md, .csv
+- Output: Word (.docx), PDF, JSON
+
+## Data Model
+- **Project**: Contains metadata, sections, and attachments
+- **Section**: Title, content, AI suggestions
+- **Attachment**: Linked files, images, or tables
+
+## Export Logic
+- Export preserves all structure, formatting, and metadata
+- SBOM and vulnerability reports included in compliance exports
+
+## Best Practices
+- Use JSON export for integrations
+- Use Word/PDF for formal documentation
+
+---
+*This markdown is the source for the updated Word Data Structure Guide export.*

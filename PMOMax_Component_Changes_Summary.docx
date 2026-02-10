@@ -1,0 +1,114 @@
+# PMOMax Component Changes Summary
+
+This document lists the exact changes made to six key files in the `components` folder, including code snippets for each change.
+
+---
+
+## 1. Header.tsx
+**Changes:**
+- Added a "User Guide" button to the top-right, styled and accessible.
+- Updated props to support opening the User Guide modal.
+
+**Code Snippet:**
+```tsx
+<button
+  onClick={onUserGuide}
+  className="px-3 py-1.5 rounded-md border border-brand-border bg-brand-panel hover:bg-brand-border text-sm"
+  aria-label="Open User Guide"
+>
+  <HelpIcon className="w-5 h-5 mr-1" /> User Guide
+</button>
+```
+
+---
+
+## 2. UserGuideModal.tsx (new file)
+**Changes:**
+- Created a modal component for the full User Manual.
+- Included headings, table of contents, icons, and responsive design.
+- Ensured accessibility (keyboard navigation, Escape to close, ARIA attributes).
+
+**Code Snippet:**
+```tsx
+export const UserGuideModal = ({ open, onClose }) => (
+  <div role="dialog" aria-modal="true" ...>
+    <header>
+      <h2>User Manual</h2>
+      <button onClick={onClose} aria-label="Close">×</button>
+    </header>
+    <nav> {/* Table of Contents */} </nav>
+    <section> {/* Manual Content with icons/headings */} </section>
+  </div>
+);
+```
+
+---
+
+## 3. MainContent.tsx
+**Changes:**
+- Removed the ❓ User Guide reference from the middle panel.
+- Enhanced the welcome/empty state with icons, bullet points, and contextual help buttons for each major section.
+- Improved visual excitement and intuitiveness.
+
+**Code Snippet:**
+```tsx
+// Removed old ❓ User Guide button
+// Added contextual help buttons and icons to each section
+<button onClick={() => onHelp?.('objectives')} ...>?</button>
+```
+
+---
+
+## 4. AIAssistantPanel.tsx
+**Changes:**
+- Updated error messaging to reference `gemini-2.0-flash`.
+- Ensured error messages are clear and actionable.
+
+**Code Snippet:**
+```tsx
+<div>
+  {error && (
+    <div>
+      Error: Gemini model (gemini-2.0-flash) unavailable. Please check your API key.
+    </div>
+  )}
+</div>
+```
+
+---
+
+## 5. HelpModal.tsx
+**Changes:**
+- Ensured modal accessibility: keyboard navigation, Escape to close, ARIA attributes.
+
+**Code Snippet:**
+```tsx
+<div
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="help-modal-title"
+  ...
+>
+  <button onClick={onClose} ...>
+    <X className="w-5 h-5" />
+    <span className="sr-only">Close</span>
+  </button>
+</div>
+```
+
+---
+
+## 6. Icons.tsx
+**Changes:**
+- Added/updated SVG icons for use in buttons, panels, and modal content.
+
+**Code Snippet:**
+```tsx
+export const HelpIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <svg ...>...</svg>
+);
+```
+
+---
+
+If you need the full diff for any file, let me know which file to show in detail.

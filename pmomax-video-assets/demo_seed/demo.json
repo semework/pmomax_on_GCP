@@ -1,0 +1,22 @@
+{
+  "titleBlock":{
+    "projectTitle":"RoadRunner Support Workspace",
+    "subtitle":"Project Initiation Document",
+    "generatedOn":"2026-01-30"
+  },
+  "executiveSummary":"Pilot to unify chat, SMS and voice into a single agent workspace to reduce time-to-first-response and improve CSAT.",
+  "objectivesSmart":[{"objective":"Launch Agent Workspace MVP","successMeasure":"Pilot live by 2026-02-17"}],
+  "governanceApprovals":[{"gate":"Pilot invite freeze","signoffRequirement":"PM + Eng Lead + Ops Head"}],
+  "workBreakdownTasks":[
+    {"name":"Kickoff","start":"2025-10-29","end":"2025-10-29","owner":"Priya","status":"Done","priority":"High","kind":"governance"},
+    {"name":"Instrumentation","start":"2025-10-29","end":"2025-11-10","owner":"Julia","status":"Done","priority":"High","kind":"analytics"},
+    {"name":"Prototype UI","start":"2025-11-17","end":"2025-11-28","owner":"Lina","status":"Done","priority":"High","kind":"frontend"},
+    {"name":"Backend APIs","start":"2025-12-01","end":"2025-12-19","owner":"Marco","status":"Planned","priority":"High","kind":"backend"},
+    {"name":"Integration","start":"2026-01-05","end":"2026-01-23","owner":"Team","status":"Planned","priority":"High","kind":"integration"},
+    {"name":"Performance Tests","start":"2025-12-08","end":"2026-01-05","owner":"Julia","status":"Planned","priority":"High","kind":"qa"},
+    {"name":"Security Review","start":"2026-01-05","end":"2026-01-31","owner":"Avery","status":"Planned","priority":"High","kind":"security"},
+    {"name":"Pilot Launch","start":"2026-02-17","end":"2026-02-17","owner":"Sponsor","status":"Planned","priority":"High","kind":"launch"}
+  ],
+  "risks":[{"risk":"Call spikes","probability":"Medium","impact":"High"}],
+  "complianceSecurityPrivacy":[{"requirement":"PII masking for exports","notes":"Mask PII before export for pilot"}]
+}

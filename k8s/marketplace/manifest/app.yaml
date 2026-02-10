@@ -1,0 +1,42 @@
+# Minimal manifest placeholder for Marketplace packaging
+# In a full implementation this would reference the same Deployment/Service
+# definitions used in k8s/base (or an overlay), parameterized by the schema.
+
+apiVersion: v1
+kind: List
+items:
+  - apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: pmomax-pid-architect
+      labels:
+        app: pmomax-pid-architect
+    spec:
+      replicas: 2
+      selector:
+        matchLabels:
+          app: pmomax-pid-architect
+      template:
+        metadata:
+          labels:
+            app: pmomax-pid-architect
+        spec:
+          containers:
+            - name: app
+              image: us-east1-docker.pkg.dev/katalyststreet-public/apps/pmo-architect:1.0.18
+              ports:
+                - containerPort: 8080
+  - apiVersion: v1
+    kind: Service
+    metadata:
+      name: pmomax-pid-architect
+      labels:
+        app: pmomax-pid-architect
+    spec:
+      type: LoadBalancer
+      selector:
+        app: pmomax-pid-architect
+      ports:
+        - name: http
+          port: 80
+          targetPort: 8080

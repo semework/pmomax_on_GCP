@@ -1,0 +1,26 @@
+# PMOMax Application Guide (Updated)
+
+## Overview
+PMOMax provides a unified, gold-themed interface for PID creation, analysis, and export. All assistants and panels now share a common state and visual style.
+
+## Key UI Changes
+- **Paste area**: Drag-and-drop file support, large instruction text.
+- **Browse & Upload**: Up arrow icon, explicit file types, improved instructions.
+- **Load Demo**: Single-line layout, button right.
+- **Clear**: Resets all state.
+
+## Workflow
+1. **Clear**: Resets everything.
+2. **Upload/Drop/Paste**: Use any method to input data.
+3. **Parse**: Extracts PID structure.
+4. **Edit/AI**: Use assistants for smart editing.
+5. **Export**: Download in multiple formats.
+
+## Supported File Types
+- .docx, .pdf, .txt, .json, .xlsx, .md, .csv
+
+## Documentation
+- Help and User Guide are fully updated for all new features and layouts.
+
+---
+*This markdown is the authoritative source for the updated Word Application Guide export.*

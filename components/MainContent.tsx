@@ -46,7 +46,7 @@ const MainContent: React.FC<MainContentProps> = ({ pidData, onReset, onHelp, onL
   const [ganttBgCustom, setGanttBgCustom] = useState<string>('#0A0A0A');
   const [exportError, setExportError] = useState<string | null>(null);
   const [ownerFilter, setOwnerFilter] = useState<string[]>([]);
-  // ...existing code...
+  // (removed template marker)
 
   // Sync bar height + saved style name when preset changes
   useEffect(() => {
@@ -1656,7 +1656,7 @@ useEffect(() => {
           )}
         </Section>
       )}
-      // ...existing code...
+      {/* removed template marker */}
     </main>
   );
 };

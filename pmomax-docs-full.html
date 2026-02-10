@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>PMOMax — Complete Documentation</title>
+  <meta name="description" content="PMOMax (PID Architect) — full product, developer, and user guide including Risk & Compliance features" />
+  <style>
+    :root{--bg:#0b0b0d;--panel:#0f1720;--muted:#9aa4b2;--accent:#fbbf24;--glass:rgba(255,255,255,0.04)}
+    body{font-family:Inter,system-ui,Segoe UI,Arial,sans-serif;background:linear-gradient(180deg,var(--bg),#040404);color:#e6eef6;margin:0;padding:28px}
+    a{color:var(--accent)}
+    main{max-width:1100px;margin:0 auto}
+    h1{color:var(--accent);font-size:2.2rem;margin:0 0 8px}
+    h2{color:#fff;margin:20px 0 6px}
+    p{color:#cfe3f9;line-height:1.5}
+    .card{background:var(--panel);border-radius:10px;padding:18px;margin-bottom:16px;border:1px solid rgba(255,191,36,0.06)}
+    pre{background:#05060a;padding:12px;border-radius:8px;overflow:auto;color:#e6eef6}
+    table{width:100%;border-collapse:collapse;margin:8px 0}
+    th,td{padding:8px;border:1px solid rgba(255,255,255,0.04);text-align:left}
+    .small{color:var(--muted);font-size:0.92rem}
+    .muted{color:var(--muted)}
+    ul{margin:8px 0 12px}
+    code{background:#071022;padding:2px 6px;border-radius:6px}
+  </style>
+</head>
+<body>
+  <main>
+    <h1>PMOMax — Complete Product, User & Developer Documentation</h1>
+    <p class="small">Version: 2026-01-27 — canonical single-page reference. Maintainers: update this file when features or deployment steps change.</p>
+
+    <section class="card">
+      <h2>Executive summary</h2>
+      <p>PMOMax (PID Architect) extracts structured Project Initiation Documents (PIDs) from unstructured inputs and transforms them into board-ready planning artifacts: objectives, scope, schedule, risks, governance, budget and exports. It combines a deterministic parser, a Gemini-based AI assistant, specialized Risk & Compliance agents, a Gantt visualizer with multiple style presets, and an export suite (DOCX/PDF/JSON/ZIP).</p>
+    </section>
+
+    <section class="card">
+      <h2>What's included</h2>
+      <ul>
+        <li>Deterministic Input Parser (28-field PMOMax PID schema)</li>
+        <li>AI Assistant powered by Gemini (interactive drafting & summarization)</li>
+        <li>Risk & Compliance Agents — automated scans, proactive precompute, and Governance merging</li>
+        <li>Gantt Visualizer — critical path, multiple styles, exports</li>
+        <li>Exports — DOCX/PPTX/PDF/JSON/ZIP (scripts under <code>scripts/</code>)</li>
+        <li>Dev & Deploy helpers — Vite dev server, <code>deploy.sh</code>, <code>deploy-gke.sh</code></li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2>New / Important functional notes (2026)</h2>
+      <ul>
+        <li><strong>Risk & Compliance agents:</strong> when a PID is generated the client proactively POSTs to <code>/api/ai/risk</code> and <code>/api/ai/compliance</code> to compute agent outputs. Results are merged into the Governance and Risks sections so agent buttons are instant.</li>
+        <li><strong>Precompute strategy:</strong> Agents run on PID load/creation; UI shows precomputed results and marks when results are from agents vs. user-entered items.</li>
+        <li><strong>Create input improvements:</strong> the Create flow supports paste, upload, or drop — added safe drop handler and fallback prompt seeding for quick project drafts.</li>
+        <li><strong>Single TypeScript entrypoint:</strong> `App.tsx` is canonical; compiled `.js` duplicates are quarantined and ignored for builds.</li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2>User guide highlights</h2>
+      <h3>Start a project</h3>
+      <p>Open the web app and either: Paste text, Upload a Word/PDF/XLSX, or Drop files into the Create panel. The parser extracts the canonical fields into a draft PID. If parsing is unavailable, use the Create flow to seed a project from prompts.</p>
+
+      <h3>Using the AI Assistant</h3>
+      <p>The Assistant is field-aware and returns answers grounded in the current PID data. Use it to:</p>
+      <ul>
+        <li>Draft or rewrite sections (Executive Summary, Objectives)</li>
+        <li>Ask for enumerations ("List missing mitigations") — the assistant quotes actual PID fields</li>
+        <li>Request short board-ready bullets or longer narrative drafts</li>
+      </ul>
+
+      <h3>Risk & Compliance workflow</h3>
+      <p>Two specialized agents analyze the PID:</p>
+      <table>
+        <thead><tr><th>Agent</th><th>Output</th><th>Where it's shown</th></tr></thead>
+        <tbody>
+          <tr><td>Risk agent</td><td>List of identified risks, severity, suggested mitigations</td><td>Risks panel + included in exported Governance</td></tr>
+          <tr><td>Compliance agent</td><td>Missing governance controls, suggested owners</td><td>Governance panel + admin summary</td></tr>
+        </tbody>
+      </table>
+      <p class="muted">Behavior: Agents are run automatically on PID creation/updates. Agent outputs are merged with existing user-entered items; buttons in the Governance/Risks panels will show precomputed content for low-latency UX.</p>
+
+      <h3>Exports & sharing</h3>
+      <p>Use the Export menu to generate DOCX, PDF, JSON, or a ZIP bundle containing the PID and Gantt visuals. If you programmatically regenerate Word/PPTX, use the Python scripts in <code>scripts/</code> (requires <code>python-docx</code> / <code>python-pptx</code>).</p>
+    </section>
+
+    <section class="card">
+      <h2>Developer guide</h2>
+      <h3>Local dev</h3>
+      <pre><code># Install dependencies
+npm install
+
+# Dev server (Vite)
+npm run dev
+
+# Build
+npm run build
+
+# Preview built site
+npm run preview
+</code></pre>
+      <p class="small">Notes: If AI parsing needs credentials, set <code>GOOGLE_API_KEY</code> in your environment. Use demo data via <code>data/demoData.ts</code> for offline tests.</p>
+
+      <h3>API endpoints</h3>
+      <table>
+        <thead><tr><th>Endpoint</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td><code>POST /api/ai/parse</code></td><td>Accepts plain text or parsed PDF conversion; returns <code>{ ok:true, pid: PMOMaxPID }</code></td></tr>
+          <tr><td><code>POST /api/ai/assistant</code></td><td>Conversation and drafting calls to Gemini</td></tr>
+          <tr><td><code>POST /api/ai/risk</code></td><td>Return risk analysis array; called proactively by client</td></tr>
+          <tr><td><code>POST /api/ai/compliance</code></td><td>Return compliance suggestions; called proactively by client</td></tr>
+          <tr><td><code>GET /api/health</code></td><td>Basic health check</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Schema & validation</h3>
+      <p>The canonical PMOMax PID schema (28 fields) is defined in <code>types.ts</code> and validated by <code>lib/validatePMOMaxPID.ts</code>. Parsers and assistant prompts rely on strict JSON outputs — see <code>lib/parseUpload.ts</code> for the schema prompt used to instruct the LLM.</p>
+    </section>
+
+    <section class="card">
+      <h2>Deployment (Cloud Run example)</h2>
+      <pre><code># From repo root (packaged source deploy)
+gcloud run deploy YOUR_SERVICE_NAME --source . --region YOUR_REGION --platform managed
+
+# Or build and push image
+gcloud builds submit --tag gcr.io/PROJECT/pmomax:TAG .
+gcloud run deploy YOUR_SERVICE_NAME --image gcr.io/PROJECT/pmomax:TAG --region YOUR_REGION --platform managed
+</code></pre>
+      <p class="muted">Ensure <code>.gcloudignore</code> excludes <code>docs/</code>, Office temp files (<code>~$*</code>), and large archives to avoid upload crashes.</p>
+    </section>
+
+    <section class="card">
+      <h2>Troubleshooting & common fixes</h2>
+      <ul>
+        <li><strong>gcloud crash about missing temp file:</strong> search and remove Office lock files (<code>~$*</code>) under <code>docs/</code>, or ensure they are listed in <code>.gcloudignore</code>/.dockerignore. Use <code>gcloud meta list-files-for-upload --source .</code> to see uploads.</li>
+        <li><strong>Chrome landing flicker:</strong> confirm <code>App.tsx</code> is the SPA entry and that inline background fallbacks are present to avoid flash-of-white.</li>
+        <li><strong>Slow agent responses:</strong> Risk & Compliance are precomputed on PID load to keep buttons fast; check server `/api/ai/risk` & `/api/ai/compliance` latency and use caching.</li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2>Operations & security</h2>
+      <ul>
+        <li>Store API keys in Secret Manager; example code reads secrets in <code>server.mjs</code>.</li>
+        <li>Use Firestore for PID state; backups and retention should be part of your infra plan.</li>
+        <li>For Enterprise, prefer dedicated projects and SSO (Identity Platform) and consider running the model calls from a VPC/private egress.</li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2>Pricing & Marketplace</h2>
+      <p>See <a href="docs/PMOMax_Business_Pricing.md">PMOMax_Business_Pricing.md</a> and <a href="docs/PMOMax_Pricing_Tiers_and_PricingLogic.md">PMOMax_Pricing_Tiers_and_PricingLogic.md</a> for detailed tiered pricing using Gemini Pro 3.0 unit rates and worked examples.</p>
+    </section>
+
+    <section class="card">
+      <h2>Appendix — quick commands</h2>
+      <pre><code># Show files gcloud will upload
+gcloud meta list-files-for-upload --source . | sed -n '1,300p'
+
+# Quick search for Office temp files
+find docs -type f -name "~$*" -print
+
+# Move large duplicates to quarantine (run from repo root)
+mkdir -p ../_pmo0001_quarantine && mv "pmo001_current2" ../_pmo0001_quarantine/ || true
+</code></pre>
+    </section>
+
+    <footer class="card small">
+      <p class="small">This page was generated/updated: 2026-01-27. Source files: <code>pmomax-docs.html</code>, <code>components/MainContent.tsx</code>, <code>docs/PMOMax_Business_Pricing.md</code>. Maintainers: please keep this file in sync with feature changes and deployment notes.</p>
+    </footer>
+  </main>
+</body>
+</html>

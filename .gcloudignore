@@ -1,0 +1,145 @@
+# ===============================
+# Core exclusions (ALWAYS ignore)
+# ===============================
+
+# Node / build artifacts
+node_modules
+node_modules/**
+dist
+dist/**
+dist 2
+dist 2/**
+build
+build/**
+coverage
+coverage/**
+
+# Logs
+logs
+logs/**
+*.log
+
+# Vite / temp
+.vite
+.vite/**
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode
+.idea
+
+# Git / archives (CRITICAL - prevents uploading 900MB+ of SDK tarballs)
+.git
+.git/**
+.gitignore
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+google-cloud-sdk*
+google-cloud-sdk*.tar.gz
+google-cloud-sdk*/**
+
+# Python / local envs
+venv
+.venv
+__pycache__
+__pycache__/**
+
+# ===============================
+# PMOMax-specific large folders
+# ===============================
+
+# Screenshots, marketing, docs (NOT needed for container)
+public/App_screenshots
+public/App_screenshots/**
+public/app_screenshots.zip
+public/for_intro
+public/for_intro/**
+pmomax-video-assets
+pmomax-video-assets/**
+pmomax-video-assets.zip
+
+# Documentation / reports
+docs
+docs/**
+*.md
+*.docx
+*.pptx
+*.pdf
+*.csv
+*.xlsx
+*.png
+*.svg
+*.drawio.xml
+
+# Allow app logos in public
+!public/logos/
+!public/logos/**
+
+# Performance, metrics, SBOMs
+metrics
+metrics/**
+sbom-*.json
+vuln-report-*.json
+performance_*.json
+
+# Quarantine / duplicates
+__quarantine_duplicates__
+__quarantine_duplicates__/**
+duplicates_review*
+duplicates_review*/**
+_patch_steps
+_patch_steps/**
+archived_js_duplicates
+archived_js_duplicates/**
+
+# ===============================
+# Backup / copies (DO NOT BUILD)
+# ===============================
+
+PMOMAXX_COPY
+PMOMAXX_COPY/**
+PMOMAXX2
+PMOMAXX2/**
+PMOMax_corrected
+PMOMax_corrected/**
+
+# Test artifacts
+test-results
+test-results/**
+test-fixtures
+test-fixtures/**
+playwright-report
+playwright-report/**
+
+# ===============================
+# Temporary build contexts
+# ===============================
+
+/tmp
+/tmp/**
+.trash_node_modules_*
+.trash_node_modules_*/**
+
+# ===============================
+# Allowlist (IMPORTANT)
+# ===============================
+# Everything else NOT excluded above is INCLUDED
+# This ensures the following are kept:
+#
+# - Dockerfile
+# - .dockerignore
+# - deploy.sh / deploy-gke.sh
+# - package.json / package-lock.json
+# - index.html
+# - main.tsx / App.tsx
+# - components/
+# - hooks/
+# - lib/
+# - public/logos (small images only)
+# - public/workers
+# - server.mjs
+# - server/
+

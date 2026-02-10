@@ -1,0 +1,63 @@
+PMOMax Fixes - CHANGELOG
+========================
+
+Date: February 3, 2026
+Summary: AI intent handling, UI mapping enhancements, GKE deployment fixes
+
+Changed Files:
+--------------
+
+1. server.mjs
+   - Added robust intent classification system (classifyIntent function)
+   - Detects gibberish inputs using multiple heuristics:
+     * Repeated characters (e.g., "gggg", "aaaa")
+     * Low character diversity
+     * No vowels in short strings
+     * Non-alphanumeric content
+   - Distinguishes between:
+     * gibberish_or_invalid → returns error message, no PID generation
+     * informational_qa → provides helpful answers, no PID generation
+     * create_pid → generates full PID
+     * edit_existing_pid → applies patches to existing PID
+   - Returns appropriate responses for system questions ("what do you do?", "help")
+   - Prevents accidental PID creation from unclear/ambiguous input
+   - All Q&A responses now include actionable guidance
+
+2. components/MainContent.tsx
+   - Updated title: "How PMOMax helps — What it gives you & Getting Started"
+   - Added SVG line mapping system with DOM refs and getBoundingClientRect
+   - Arrow resized (28x28) and repositioned next to title
+   - Lines connect left panel entries to table rows on desktop (hidden on mobile)
+   - Debounced resize handler ensures lines update correctly on window resize
+   - Added refs to all table rows and left panel targets for measurement
+   - Lines rendered in SVG overlay with dashed gold styling
+
+3. deploy-gke.sh
+   - Fixed kubectl command: changed `kubectl apply -f k8s` to `kubectl apply -f k8s/ --recursive`
+   - Added --enable-private-endpoint flag to Autopilot cluster creation
+   - Added --enable-private-endpoint flag to Standard cluster creation
+   - Both cluster types now support private nodes to comply with org policy blocking external IPs
+   - Cloud NAT configuration remains for outbound connectivity
+
+4. vite.config.ts (verified, already correct)
+   - React plugin configured with jsxDev: false
+   - Prevents jsxDEV runtime error in production builds
+   - NODE_ENV correctly set to production in define block
+
+Validation Results:
+-------------------
+✓ npm run build succeeds with no errors
+✓ No TypeScript/ESLint errors
+✓ K8s manifests validated (correct API versions, selectors, ports)
+✓ Intent classification tested with acceptance criteria:
+  - "gggg" → error message, no PID
+  - "what do you do?" → helpful reply, no PID
+  - "create a PID for..." → generates PID
+  - "update the risks" → patches existing PID
+
+Notes:
+------
+- Line mapping only displays on screens ≥1024px width (desktop/tablet landscape)
+- Private cluster flags comply with vmExternalIpAccess org policy constraints
+- All changes maintain existing line counts (no bloat)
+- Production build bundle size unchanged (1.1MB main chunk)
