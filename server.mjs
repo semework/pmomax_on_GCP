@@ -60,6 +60,39 @@ import path from 'node:path';
 import fs from 'node:fs';
 import { randomUUID } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
+// Canonical FIELD_KEYS for legacy field mapping (for completeness, not used for PID shape)
+const FIELD_KEYS = [
+  'fld-project-name',
+  'fld-project-id',
+  'fld-exec',
+  'fld-problem',
+  'fld-business-case',
+  'fld-objectives',
+  'fld-kpis',
+  'fld-scope-inclusions',
+  'fld-scope-exclusions',
+  'fld-assumptions',
+  'fld-constraints-notes',
+  'fld-dependencies-notes',
+  'fld-stakeholders-notes',
+  'fld-sponsor-notes',
+  'fld-project-manager-notes',
+  'fld-raci-notes',
+  'fld-timeline-overview',
+  'fld-milestones',
+  'fld-deliverables-notes',
+  'fld-work-breakdown-notes',
+  'fld-budget-notes',
+  'fld-resources-notes',
+  'fld-risks',
+  'fld-mitigations',
+  'fld-issues',
+  'fld-comms-plan-notes',
+  'fld-governance-approvals-notes',
+  'fld-compliance-notes',
+  'fld-open-questions',
+  'notes-area',
+];
 
 dotenv.config();
 // --- Crash-hardening: log unexpected errors instead of silent process death ---
@@ -629,9 +662,10 @@ function asArray(v) {
   return Array.isArray(v) ? v : [];
 }
 
+// Returns a fully canonical, complete PMOMaxPID object with all fields/groups (empty if not present)
 function makeEmptyPid() {
   return {
-    titleBlock: { projectTitle: '', subtitle: '', generatedOn: '' },
+    titleBlock: { projectTitle: '', subtitle: '', generatedOn: '', projectId: '' },
     executiveSummary: '',
     problemStatement: '',
     businessCaseExpectedValue: '',
@@ -644,13 +678,14 @@ function makeEmptyPid() {
     dependencies: [],
     stakeholders: [],
     projectSponsor: { name: '', role: '' },
-    projectManagerOwner: { name: '' },
+    projectManagerOwner: { name: '', role: '' },
     teamRaci: [],
     timelineOverview: '',
     milestones: [],
     workBreakdownTasks: [],
+    criticalPathBoxes: [],
     budgetCostBreakdown: [],
-    budgetSummary: null,
+    budgetSummary: { currency: 'USD', totalCostUsd: 0, subtotalByRoleUsd: {}, notes: [] },
     resourcesTools: [],
     risks: [],
     mitigationsContingencies: [],
@@ -660,6 +695,12 @@ function makeEmptyPid() {
     complianceSecurityPrivacy: [],
     openQuestionsNextSteps: [],
     notesBackground: '',
+    deliverablesOutputs: [],
+    resourcesPlan: '',
+    communicationsPlan: '',
+    raci: [],
+    workBreakdownNotes: '',
+    // Add any other canonical fields/groups from demoData.ts as needed
   };
 }
 
@@ -838,39 +879,43 @@ function pidToLegacyFields(pid) {
   return f;
 }
 
+// Ensures the returned PID object always has all canonical fields/groups, never missing any
 function mergeWithEmptyPid(parsed) {
   const base = makeEmptyPid();
   if (!parsed || !isPlainObject(parsed)) return base;
-
   const out = { ...base, ...parsed };
-
+  // Deep merge for nested objects/arrays
   out.titleBlock = { ...base.titleBlock, ...(parsed.titleBlock || {}) };
   out.projectSponsor = { ...base.projectSponsor, ...(parsed.projectSponsor || {}) };
   out.projectManagerOwner = { ...base.projectManagerOwner, ...(parsed.projectManagerOwner || {}) };
-
-  // arrays
-  out.objectivesSmart = asArray(out.objectivesSmart);
-  out.kpis = asArray(out.kpis);
-  out.scopeInclusions = asArray(out.scopeInclusions);
-  out.scopeExclusions = asArray(out.scopeExclusions);
-  out.assumptions = asArray(out.assumptions);
-  out.constraints = asArray(out.constraints);
-  out.dependencies = asArray(out.dependencies);
-  out.stakeholders = asArray(out.stakeholders);
-  out.teamRaci = asArray(out.teamRaci);
-  out.milestones = asArray(out.milestones);
-  out.workBreakdownTasks = asArray(out.workBreakdownTasks);
-  out.budgetCostBreakdown = asArray(out.budgetCostBreakdown);
-  out.budgetSummary = isPlainObject(out.budgetSummary) ? out.budgetSummary : null;
-  out.resourcesTools = asArray(out.resourcesTools);
-  out.risks = asArray(out.risks);
-  out.mitigationsContingencies = asArray(out.mitigationsContingencies);
-  out.issuesDecisionsLog = asArray(out.issuesDecisionsLog);
-  out.communicationPlan = asArray(out.communicationPlan);
-  out.governanceApprovals = asArray(out.governanceApprovals);
-  out.complianceSecurityPrivacy = asArray(out.complianceSecurityPrivacy);
-  out.openQuestionsNextSteps = asArray(out.openQuestionsNextSteps);
-
+  out.budgetSummary = { ...base.budgetSummary, ...(parsed.budgetSummary || {}) };
+  out.criticalPathBoxes = Array.isArray(parsed.criticalPathBoxes) ? parsed.criticalPathBoxes : base.criticalPathBoxes;
+  out.deliverablesOutputs = Array.isArray(parsed.deliverablesOutputs) ? parsed.deliverablesOutputs : base.deliverablesOutputs;
+  out.resourcesTools = Array.isArray(parsed.resourcesTools) ? parsed.resourcesTools : base.resourcesTools;
+  out.raci = Array.isArray(parsed.raci) ? parsed.raci : base.raci;
+  out.teamRaci = Array.isArray(parsed.teamRaci) ? parsed.teamRaci : base.teamRaci;
+  out.workBreakdownTasks = Array.isArray(parsed.workBreakdownTasks) ? parsed.workBreakdownTasks : base.workBreakdownTasks;
+  out.mitigationsContingencies = Array.isArray(parsed.mitigationsContingencies) ? parsed.mitigationsContingencies : base.mitigationsContingencies;
+  out.issuesDecisionsLog = Array.isArray(parsed.issuesDecisionsLog) ? parsed.issuesDecisionsLog : base.issuesDecisionsLog;
+  out.communicationPlan = Array.isArray(parsed.communicationPlan) ? parsed.communicationPlan : base.communicationPlan;
+  out.governanceApprovals = Array.isArray(parsed.governanceApprovals) ? parsed.governanceApprovals : base.governanceApprovals;
+  out.complianceSecurityPrivacy = Array.isArray(parsed.complianceSecurityPrivacy) ? parsed.complianceSecurityPrivacy : base.complianceSecurityPrivacy;
+  out.openQuestionsNextSteps = Array.isArray(parsed.openQuestionsNextSteps) ? parsed.openQuestionsNextSteps : base.openQuestionsNextSteps;
+  out.risks = Array.isArray(parsed.risks) ? parsed.risks : base.risks;
+  out.kpis = Array.isArray(parsed.kpis) ? parsed.kpis : base.kpis;
+  out.objectivesSmart = Array.isArray(parsed.objectivesSmart) ? parsed.objectivesSmart : base.objectivesSmart;
+  out.scopeInclusions = Array.isArray(parsed.scopeInclusions) ? parsed.scopeInclusions : base.scopeInclusions;
+  out.scopeExclusions = Array.isArray(parsed.scopeExclusions) ? parsed.scopeExclusions : base.scopeExclusions;
+  out.assumptions = Array.isArray(parsed.assumptions) ? parsed.assumptions : base.assumptions;
+  out.constraints = Array.isArray(parsed.constraints) ? parsed.constraints : base.constraints;
+  out.dependencies = Array.isArray(parsed.dependencies) ? parsed.dependencies : base.dependencies;
+  out.stakeholders = Array.isArray(parsed.stakeholders) ? parsed.stakeholders : base.stakeholders;
+  out.milestones = Array.isArray(parsed.milestones) ? parsed.milestones : base.milestones;
+  out.budgetCostBreakdown = Array.isArray(parsed.budgetCostBreakdown) ? parsed.budgetCostBreakdown : base.budgetCostBreakdown;
+  out.resourcesPlan = typeof parsed.resourcesPlan === 'string' ? parsed.resourcesPlan : base.resourcesPlan;
+  out.communicationsPlan = typeof parsed.communicationsPlan === 'string' ? parsed.communicationsPlan : base.communicationsPlan;
+  out.workBreakdownNotes = typeof parsed.workBreakdownNotes === 'string' ? parsed.workBreakdownNotes : base.workBreakdownNotes;
+  out.notesBackground = typeof parsed.notesBackground === 'string' ? parsed.notesBackground : base.notesBackground;
   return out;
 }
 
@@ -1434,28 +1479,33 @@ app.post('/api/ai/parse', async (req, res) => {
       return sendJson(res, { ok: false, error: msg }, 400);
     }
 
-    const modelName = process.env.GEMINI_MODEL || 'gemini-pro-2.5';
+    const modelName = process.env.GEMINI_MODEL || process.env.GEMINI_FALLBACK_MODEL || 'gemini-2.0-flash-001';
     const prep = await prepareParseText(text, modelName);
     const parseText = prep.parseText;
     const prepWarnings = prep.warnings || [];
 
-    
-// Try AI extraction first (best effort). Never let AI failure break parsing.
+    // Try AI extraction first (best effort). Never let AI failure break parsing.
+    // We attempt a primary model and (if different) a fallback model.
     let aiObj = {};
     let aiWarnings = [];
     let aiRaw = null;
 
-    try {
-      aiRaw = await geminiJson(modelName, PARSE_SYSTEM_PROMPT, parseText);
-      const extracted = extractFirstJsonObject(aiRaw);
-      if (extracted && typeof extracted === "object") {
-        aiObj = extracted;
-      } else {
-        aiWarnings.push("AI parse returned no JSON object.");
+    const fallbackModelName = process.env.GEMINI_FALLBACK_MODEL || 'gemini-2.0-flash-001';
+    const modelTryOrder = [modelName, fallbackModelName].filter((m, i, a) => m && a.indexOf(m) === i);
+
+    for (const m of modelTryOrder) {
+      try {
+        aiRaw = await geminiJson(m, PARSE_SYSTEM_PROMPT, parseText);
+        const extracted = extractFirstJsonObject(aiRaw);
+        if (extracted && typeof extracted === 'object' && Object.keys(extracted).length > 0) {
+          aiObj = extracted;
+          break;
+        } else {
+          aiWarnings.push(`AI parse returned no JSON object (model: ${m}).`);
+        }
+      } catch (e) {
+        aiWarnings.push(`AI parse failed or returned invalid JSON (model: ${m}).`);
       }
-    } catch (e) {
-      aiWarnings.push("AI parse failed or returned invalid JSON.");
-      aiObj = {};
     }
 
     // Deterministic parse (server-side heuristic; no external localParser dependency)
@@ -1528,7 +1578,7 @@ app.post('/api/ai/budget', async (req, res) => {
       return sendJson(res, { ok: true, pid: baseResponsePid, warnings: ['AI budget not configured; deterministic baseline applied.'] });
     }
 
-    const modelName = process.env.GEMINI_BUDGET_MODEL || process.env.GEMINI_MODEL || 'gemini-pro-2.5';
+    const modelName = process.env.GEMINI_BUDGET_MODEL || process.env.GEMINI_MODEL || process.env.GEMINI_FALLBACK_MODEL || 'gemini-2.0-flash-001';
     const sourceText = String(req.body?.text || '');
 
     const budgetInput = `PID JSON:\n${JSON.stringify(pidData).slice(0, 14000)}\n\nContext:\n${contextText.slice(0, 6000)}\n\nSource Text:\n${sourceText.slice(0, 6000)}`;
@@ -1985,7 +2035,7 @@ app.post('/api/ai/assistant', async (req, res) => {
         process.env.GEMINI_ASSISTANT_QA_MODEL ||
         process.env.GEMINI_ASSISTANT_MODEL ||
         process.env.GEMINI_MODEL ||
-        'gemini-pro-2.5';
+        'gemini-2.0-flash-001';
       const fallbackModel = process.env.GEMINI_FALLBACK_MODEL || 'gemini-2.5-flash';
       const qaModel = genAI.getGenerativeModel({ model: modelName });
 
@@ -2055,7 +2105,7 @@ ${recentQA}
       modelOverride ||
       process.env.GEMINI_ASSISTANT_MODEL ||
       process.env.GEMINI_MODEL ||
-      'gemini-pro-2.5';
+      'gemini-2.0-flash-001';
 
     const key = process.env.GOOGLE_API_KEY;
     const genAI = new GoogleGenerativeAI(key);
