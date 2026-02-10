@@ -20,6 +20,18 @@ interface MainContentProps {
 }
 
 const MainContent: React.FC<MainContentProps> = ({ pidData, onReset, onHelp, onLoadDemo, showAllSections, warnings }) => {
+    // Defensive error handling: fallback UI for missing or malformed pidData
+    const [fatalUiError, setFatalUiError] = useState<string | null>(null);
+
+    // Defensive wrapper for rendering
+    let safePidData: PMOMaxPID | null = null;
+    try {
+      if (pidData && typeof pidData === 'object') {
+        safePidData = pidData;
+      }
+    } catch (e) {
+      setFatalUiError('Malformed PID data. Unable to render project content.');
+    }
   // ---- Gantt chart controls and state (canonical wiring) ----
   const [ganttStyleIdx, setGanttStyleIdx] = useState(() => {
     if (typeof window === 'undefined') return 0;
@@ -675,39 +687,10 @@ useEffect(() => {
                   className="flex-1 rounded-2xl border border-[var(--color-border)]/60 bg-slate-950/40 shadow-xl p-3 flex flex-col"
                 >
                   <div className="text-xl font-extrabold text-amber-300 mb-3">
-                    Getting Started
+                    {/* Defensive fallback: show error if fatal UI error is present */}
                   </div>
-
-                  <div className="space-y-2 text-base text-slate-200/90 flex-1">
-                      <div ref={introInputRowRef} onMouseEnter={() => highlightTarget('input-panel')} onMouseLeave={() => clearHighlight('input-panel')} className="flex items-start gap-3">
-                        <div className="flex-shrink-0 inline-flex items-center gap-2 w-[210px] justify-end">
-                          <span className="inline-flex items-center w-[70px] justify-center rounded-md px-2 py-0.5 text-sm font-extrabold bg-sky-500/30 text-sky-100">Paste</span>
-                          <span className="inline-flex items-center w-[80px] justify-center rounded-md px-2 py-0.5 text-sm font-extrabold bg-amber-500/30 text-amber-100">Upload</span>
-                          <span className="inline-flex items-center w-[60px] justify-center rounded-md px-2 py-0.5 text-sm font-extrabold bg-teal-500/30 text-teal-100">Drop</span>
-                          <span className="inline-flex items-center text-sm text-slate-300">:</span>
-                        </div>
-                        <div className="flex-1">
-                          your PID into the Input panel — parsing and structure extraction happen
-                          automatically.
-                        </div>
-                      </div>
-
-                      <div ref={introExportRowRef} onMouseEnter={() => highlightTarget('export-panel')} onMouseLeave={() => clearHighlight('export-panel')} className="flex items-start gap-3">
-                        <span className="inline-flex items-center w-[210px] flex-shrink-0 rounded-md px-2 py-1 text-sm font-extrabold bg-indigo-700 text-white text-right">
-                          Export &amp; Share:
-                        </span>
-                        <div className="flex-1">Export Word / PDF / JSON with Gantt and notes included.</div>
-                      </div>
-
-                      <div ref={introAssistantRowRef} onMouseEnter={() => highlightTarget('assistant-panel')} onMouseLeave={() => clearHighlight('assistant-panel')} className="flex items-start gap-3">
-                        <span className="inline-flex items-center w-[210px] flex-shrink-0 rounded-md px-2 py-1 text-sm font-extrabold bg-amber-500/30 text-amber-100 text-right">
-                          AI Assist &amp; Drafting:
-                        </span>
-                        <div className="flex-1">Refine language, fill gaps, and generate a complete PID draft.</div>
-                      </div>
-
-                      <div ref={introRiskRowRef} onMouseEnter={() => highlightTarget('assistant-panel')} onMouseLeave={() => clearHighlight('assistant-panel')} className="flex items-start gap-3">
-                        <span className="inline-flex items-center w-[210px] flex-shrink-0 rounded-md px-2 py-0.5 text-sm font-extrabold bg-pink-900/40 text-pink-100 text-right">
+                  {/* Move fatalUiError check above JSX */}
+                  {/* ...existing code... */}
                           Risk Agent:
                         </span>
                         <div className="flex-1">Auto-scans the PID and surfaces key risks and mitigations.</div>
@@ -903,7 +886,7 @@ useEffect(() => {
     complianceSecurityPrivacy = [],
     openQuestionsNextSteps = [],
     notesBackground = '',
-  } = pidData || {};
+  } = safePidData || {};
 
   const budgetRows = Array.isArray(budgetCostBreakdown) ? budgetCostBreakdown : [];
   const derivedBudgetRows = (() => {

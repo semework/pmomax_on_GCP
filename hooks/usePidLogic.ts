@@ -752,19 +752,16 @@ export const usePidLogic = () => {
         parseAbortRef.current = controller;
 
         if (!text || !text.trim()) {
-          throw new Error('Please paste or upload some content to parse.');
+          setError('Please paste or upload some content to parse.');
+          return { ok: false as const, error: 'No content to parse.' };
         }
         if (text.length > PARSE_HARD_MAX_CHARS) {
-          throw new Error(
-            `Text too long (max ${Math.round(
-              PARSE_HARD_MAX_CHARS / 1000,
-            )}KB). Please shorten or split your document.`,
-          );
+          setError(`Text too long (max ${Math.round(PARSE_HARD_MAX_CHARS / 1000)}KB). Please shorten or split your document.`);
+          return { ok: false as const, error: 'Text too long.' };
         }
 
         const capped = capWords(text, MAX_WORDS);
         const safeText = capped.text;
-        // Do not surface truncation warnings
 
         const parseKey = `${model || 'default'}:${hashText(safeText)}`;
         if (parseInFlightKey.current === parseKey || lastParseRequestKey.current === parseKey) {
@@ -776,22 +773,29 @@ export const usePidLogic = () => {
           console.warn('[PIDLOGIC] parseDocument: above soft warn threshold', safeText.length);
         }
 
-        const env = await postJson<ParseEnvelope>(
-          '/api/ai/parse',
-          model ? { text: safeText, model } : { text: safeText },
-          60_000,
-          controller,
-        );
+        let env: ParseEnvelope | null = null;
+        try {
+          env = await postJson<ParseEnvelope>(
+            '/api/ai/parse',
+            model ? { text: safeText, model } : { text: safeText },
+            60_000,
+            controller,
+          );
+        } catch (fetchErr) {
+          setError('Parse API request failed. Please try again later.');
+          return { ok: false as const, error: 'Parse API request failed.' };
+        }
 
         if (!env || typeof env !== 'object') {
-          throw new Error('Parse API returned an unexpected response.');
+          setError('Parse API returned an unexpected response.');
+          return { ok: false as const, error: 'Unexpected parse response.' };
         }
         if (env.ok !== true) {
-          // Support structured error { code, message } as well as legacy string
           const eAny: any = env as any;
           const structuredMsg = typeof eAny?.error?.message === 'string' ? eAny.error.message : null;
           const errMsg = structuredMsg || safeErrorMessage(eAny?.error ?? eAny?.errorMessage ?? eAny);
-          throw new Error(errMsg || 'Parse failed.');
+          setError(errMsg || 'Parse failed.');
+          return { ok: false as const, error: errMsg || 'Parse failed.' };
         }
 
         const merged = normalizePid(env.pid);
@@ -832,11 +836,10 @@ export const usePidLogic = () => {
         lastParseRequestKey.current = parseKey;
         return { ok: true as const };
       } catch (e: any) {
-        // Swallow explicit user cancellations so Reset/Load Demo can interrupt cleanly.
         if (e?.message === 'USER_CANCELLED' || (e as any)?.code === 'USER_CANCELLED') {
+          setError('Parse cancelled by user.');
           return { ok: false as const, error: 'USER_CANCELLED' };
         }
-        // Always surface a concrete, user-readable error message.
         const msg = isTimeoutError(e)
           ? 'Parsing is taking too long for this document. I parsed what I could—try splitting the file or removing images.'
           : normalizeErrorMessage(e, 'Parsing failed due to an unexpected error.');

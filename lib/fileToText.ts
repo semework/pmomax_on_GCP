@@ -257,194 +257,214 @@ async function docxToTextClient(file: File): Promise<FileTextResult> {
 }
 
 export async function fileToText(file: File): Promise<FileTextResult> {
-  const name = file?.name || '';
-  const ext = name.split('.').pop()?.toLowerCase() || '';
-  const isBrowser = typeof window !== 'undefined' && typeof window.document !== 'undefined';
-  const supportedExts = new Set(['pdf', 'docx', 'txt', 'md', 'csv', 'xls', 'xlsx']);
+  try {
+    const name = file?.name || '';
+    const ext = name.split('.').pop()?.toLowerCase() || '';
+    const isBrowser = typeof window !== 'undefined' && typeof window.document !== 'undefined';
+    const supportedExts = new Set(['pdf', 'docx', 'txt', 'md', 'csv', 'xls', 'xlsx']);
 
-  if (!file || typeof file.size !== 'number') {
-    return { text: `[Empty file] ${name || 'Unnamed file'}`.trim(), warnings: [], truncated: false };
-  }
+    if (!file || typeof file.size !== 'number') {
+      return { text: `[Empty file] ${name || 'Unnamed file'}`.trim(), warnings: [], truncated: false };
+    }
 
-  if (file.size === 0) {
-    return { text: `[Empty file] ${name || 'Unnamed file'}`.trim(), warnings: [], truncated: false };
-  }
+    if (file.size === 0) {
+      return { text: `[Empty file] ${name || 'Unnamed file'}`.trim(), warnings: [], truncated: false };
+    }
 
-  const SERVER_FALLBACK_BYTES = 900_000;
-  const SOFT_WARN_BYTES = 250_000;
+    const SERVER_FALLBACK_BYTES = 900_000;
+    const SOFT_WARN_BYTES = 250_000;
 
-  if (file && typeof file.size === 'number' && file.size > 25_000_000) {
-    console.warn('[fileToText] Large file detected; parsing may take longer.');
-  }
+    if (file && typeof file.size === 'number' && file.size > 25_000_000) {
+      console.warn('[fileToText] Large file detected; parsing may take longer.');
+    }
 
-  // DOCX: prefer server (more consistent), then fallback to browser mammoth
-  if (ext === 'docx') {
-    let lastErr: any = null;
-    try {
-      const result = isBrowser ? await docxToTextServer(file) : { text: '', warnings: [], truncated: false };
-      if (!result.text || looksBinary(result.text)) throw new Error('DOCX parse returned empty or binary.');
-      return await ensureNonEmpty(result, file);
-    } catch (e) {
-      lastErr = e;
+    // DOCX: prefer server (more consistent), then fallback to browser mammoth
+    if (ext === 'docx') {
+      let lastErr: any = null;
       try {
+        const result = isBrowser ? await docxToTextServer(file) : { text: '', warnings: [], truncated: false };
+        if (!result.text || looksBinary(result.text)) throw new Error('DOCX parse returned empty or binary.');
+        return await ensureNonEmpty(result, file);
+      } catch (e) {
+        lastErr = e;
+        try {
+          if (isBrowser && file.size > SERVER_FALLBACK_BYTES) {
+            return await ensureNonEmpty(await parseViaServer(file), file);
+          }
+          const result = isBrowser
+            ? await docxToTextClient(file)
+            : withWordCap(await (await import('./wordToText')).wordToText(await file.arrayBuffer()));
+          if (!result.text || looksBinary(result.text)) throw new Error('DOCX parse (client) returned empty or binary.');
+          return await ensureNonEmpty(result, file);
+        } catch (err) {
+          lastErr = err;
+          if (supportedExts.has(ext)) {
+            return ensureNonEmpty({ text: '', warnings: [], truncated: false }, file);
+          }
+          // Defensive fallback: return a safe placeholder string instead of throwing
+          const fallback = `[No extractable text] DOCX file. If this document is scanned or image-based, run OCR and try again.`;
+          console.error('[fileToText] DOCX extraction error:', normalizeError(lastErr).message);
+          return ensureNonEmpty({ text: fallback, warnings: ['DOCX extraction failed; using placeholder.'], truncated: false }, file);
+        }
+      }
+    }
+
+    // PDF
+    if (ext === 'pdf') {
+      try {
+        if (isBrowser) {
+          try {
+            return await ensureNonEmpty(await parseViaServer(file), file);
+          } catch (serverErr) {
+            const tooLargeForClient = file.size > SOFT_WARN_BYTES;
+            if (tooLargeForClient) {
+              return ensureNonEmpty({ text: '', warnings: ['PDF parsing fell back to placeholder.'], truncated: false }, file);
+            }
+            console.warn('[fileToText] PDF server parse failed, falling back to client parser.', serverErr);
+          }
+        }
+
+        let pdfToText;
+        try {
+          pdfToText = (await import('./pdfToText')).pdfToText;
+        } catch (importErr) {
+          if (!isBrowser) {
+            return { text: `[PDF parse skipped: unavailable in this environment] ${name || 'Unnamed file'}`.trim(), warnings: [], truncated: false };
+          }
+          throw new Error('PDF parsing is not available in this environment. Please ensure pdfjs-dist is installed and supported.');
+        }
         if (isBrowser && file.size > SERVER_FALLBACK_BYTES) {
           return await ensureNonEmpty(await parseViaServer(file), file);
         }
-        const result = isBrowser
-          ? await docxToTextClient(file)
-          : withWordCap(await (await import('./wordToText')).wordToText(await file.arrayBuffer()));
-        if (!result.text || looksBinary(result.text)) throw new Error('DOCX parse (client) returned empty or binary.');
-        return await ensureNonEmpty(result, file);
+        const out = await pdfToText(file);
+        if (!out || looksBinary(out)) throw new Error('PDF parse returned empty or binary.');
+        return await ensureNonEmpty(withWordCap(out), file);
       } catch (err) {
-        lastErr = err;
+        const msg = normalizeError(err).message || 'Failed to parse PDF.';
+        if (isBrowser && (msg.toLowerCase().includes('fallback to server') || file.size > SOFT_WARN_BYTES)) {
+          return await ensureNonEmpty(await parseViaServer(file), file);
+        }
         if (supportedExts.has(ext)) {
           return ensureNonEmpty({ text: '', warnings: [], truncated: false }, file);
         }
-        throw new Error('Failed to parse DOCX: ' + normalizeError(lastErr).message);
+        // Defensive fallback: return a safe placeholder string instead of throwing
+        const fallback = `[No extractable text] PDF file. If this document is scanned or image-based, run OCR and try again.`;
+        console.error('[fileToText] PDF extraction error:', msg);
+        return ensureNonEmpty({ text: fallback, warnings: ['PDF extraction failed; using placeholder.'], truncated: false }, file);
       }
     }
-  }
 
-  // PDF
-  if (ext === 'pdf') {
-    try {
-      if (isBrowser) {
-        try {
-          return await ensureNonEmpty(await parseViaServer(file), file);
-        } catch (serverErr) {
-          const tooLargeForClient = file.size > SOFT_WARN_BYTES;
-          if (tooLargeForClient) {
-            return ensureNonEmpty({ text: '', warnings: ['PDF parsing fell back to placeholder.'], truncated: false }, file);
-          }
-          console.warn('[fileToText] PDF server parse failed, falling back to client parser.', serverErr);
-        }
-      }
-
-      let pdfToText;
+    // CSV parsing
+    if (ext === 'csv') {
       try {
-        pdfToText = (await import('./pdfToText')).pdfToText;
-      } catch (importErr) {
-        if (!isBrowser) {
-          return { text: `[PDF parse skipped: unavailable in this environment] ${name || 'Unnamed file'}`.trim(), warnings: [], truncated: false };
+        if (isBrowser) {
+          try {
+            return await ensureNonEmpty(await parseViaServer(file), file);
+          } catch (serverErr) {
+            if (file.size > SOFT_WARN_BYTES) {
+              return ensureNonEmpty({ text: '', warnings: ['CSV parsing fell back to placeholder.'], truncated: false }, file);
+            }
+            console.warn('[fileToText] CSV server parse failed, falling back to client parser.', serverErr);
+          }
         }
-        throw new Error('PDF parsing is not available in this environment. Please ensure pdfjs-dist is installed and supported.');
+        const text = await file.text();
+        if (!text || !text.trim()) return { text: 'CSV file is empty.', warnings: [], truncated: false };
+        if (looksBinary(text)) throw new Error('CSV file appears to be binary or corrupt.');
+        const lines = text.split(/\r?\n/).filter(Boolean);
+        // If only one line or not a table, just return the raw text
+        if (lines.length < 2 || lines[0].split(',').length < 2) {
+          if (text.trim()) return withWordCap(text);
+          // If not binary but empty, return a user-friendly message
+          return { text: 'CSV file is empty.', warnings: [], truncated: false };
+        }
+        const headers = lines[0].split(',').map(h => h.trim());
+        const rows = lines.slice(1).map(line => line.split(',').map(c => c.trim()));
+        let mdTable = '| ' + headers.join(' | ') + ' |\n| ' + headers.map(() => '---').join(' | ') + ' |\n';
+        rows.forEach(row => {
+          mdTable += '| ' + row.join(' | ') + ' |\n';
+        });
+        if (mdTable.trim()) return await ensureNonEmpty(withWordCap(mdTable), file);
+        // Fallback: return raw text if markdown table is empty
+        if (text.trim()) return await ensureNonEmpty(withWordCap(text), file);
+        // If not binary but empty, return a user-friendly message
+        return { text: 'CSV file is empty.', warnings: [], truncated: false };
+      } catch (err) {
+        if (supportedExts.has(ext)) {
+          return ensureNonEmpty({ text: '', warnings: [], truncated: false }, file);
+        }
+        // Defensive fallback: return a safe placeholder string instead of throwing
+        const fallback = `[No extractable text] CSV file. If this document is corrupt or binary, check the file contents.`;
+        console.error('[fileToText] CSV extraction error:', normalizeError(err).message);
+        return ensureNonEmpty({ text: fallback, warnings: ['CSV extraction failed; using placeholder.'], truncated: false }, file);
       }
+    }
+
+    // Spreadsheet (XLS/XLSX) -> CSV text
+    if (ext === 'xls' || ext === 'xlsx') {
+      if (file.size === 0) return { text: 'Spreadsheet is empty.', warnings: [], truncated: false };
+      let lastErr: any = null;
+      try {
+        if (isBrowser) {
+          try {
+            return await ensureNonEmpty(await parseViaServer(file), file);
+          } catch (serverErr) {
+            if (file.size > SOFT_WARN_BYTES) {
+              return ensureNonEmpty({ text: '', warnings: ['Spreadsheet parsing fell back to placeholder.'], truncated: false }, file);
+            }
+            console.warn('[fileToText] Spreadsheet server parse failed, falling back to client parser.', serverErr);
+          }
+        }
+        const arrayBuffer = await file.arrayBuffer();
+        const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+        let text = '';
+        workbook.SheetNames.forEach((sheetName) => {
+          const sheet = workbook.Sheets[sheetName];
+          text += XLSX.utils.sheet_to_csv(sheet) + '\n';
+        });
+        if (text.trim() && !looksBinary(text)) return await ensureNonEmpty(withWordCap(text), file);
+      } catch (err) {
+        lastErr = err;
+      }
+      // Fallback: try reading as plain text
+      try {
+        const t = await file.text();
+        if (t.trim() && !looksBinary(t)) return await ensureNonEmpty(withWordCap(t), file);
+      } catch (err2) {
+        lastErr = err2;
+      }
+      // If both fail, throw a clear, user-friendly error so callers can surface it
+      if (supportedExts.has(ext)) {
+        return ensureNonEmpty({ text: '', warnings: [], truncated: false }, file);
+      }
+      // Defensive fallback: return a safe placeholder string instead of throwing
+      const fallback = `[No extractable text] Spreadsheet file. If this document is corrupt or binary, check the file contents.`;
+      console.error('[fileToText] Spreadsheet extraction error:', normalizeError(lastErr).message);
+      return ensureNonEmpty({ text: fallback, warnings: ['Spreadsheet extraction failed; using placeholder.'], truncated: false }, file);
+    }
+
+    // TXT, MD, fallback: read as text
+    try {
       if (isBrowser && file.size > SERVER_FALLBACK_BYTES) {
         return await ensureNonEmpty(await parseViaServer(file), file);
       }
-      const out = await pdfToText(file);
-      if (!out || looksBinary(out)) throw new Error('PDF parse returned empty or binary.');
-      return await ensureNonEmpty(withWordCap(out), file);
-    } catch (err) {
-      const msg = normalizeError(err).message || 'Failed to parse PDF.';
-      if (isBrowser && (msg.toLowerCase().includes('fallback to server') || file.size > SOFT_WARN_BYTES)) {
-        return await ensureNonEmpty(await parseViaServer(file), file);
-      }
-      if (supportedExts.has(ext)) {
-        return ensureNonEmpty({ text: '', warnings: [], truncated: false }, file);
-      }
-      throw new Error('Failed to parse PDF: ' + msg);
-    }
-  }
-
-  // CSV parsing
-  if (ext === 'csv') {
-    try {
-      if (isBrowser) {
-        try {
-          return await ensureNonEmpty(await parseViaServer(file), file);
-        } catch (serverErr) {
-          if (file.size > SOFT_WARN_BYTES) {
-            return ensureNonEmpty({ text: '', warnings: ['CSV parsing fell back to placeholder.'], truncated: false }, file);
-          }
-          console.warn('[fileToText] CSV server parse failed, falling back to client parser.', serverErr);
-        }
-      }
-      const text = await file.text();
-      if (!text || !text.trim()) return { text: 'CSV file is empty.', warnings: [], truncated: false };
-      if (looksBinary(text)) throw new Error('CSV file appears to be binary or corrupt.');
-      const lines = text.split(/\r?\n/).filter(Boolean);
-      // If only one line or not a table, just return the raw text
-      if (lines.length < 2 || lines[0].split(',').length < 2) {
-        if (text.trim()) return withWordCap(text);
-        // If not binary but empty, return a user-friendly message
-        return { text: 'CSV file is empty.', warnings: [], truncated: false };
-      }
-      const headers = lines[0].split(',').map(h => h.trim());
-      const rows = lines.slice(1).map(line => line.split(',').map(c => c.trim()));
-      let mdTable = '| ' + headers.join(' | ') + ' |\n| ' + headers.map(() => '---').join(' | ') + ' |\n';
-      rows.forEach(row => {
-        mdTable += '| ' + row.join(' | ') + ' |\n';
-      });
-      if (mdTable.trim()) return await ensureNonEmpty(withWordCap(mdTable), file);
-      // Fallback: return raw text if markdown table is empty
-      if (text.trim()) return await ensureNonEmpty(withWordCap(text), file);
-      // If not binary but empty, return a user-friendly message
-      return { text: 'CSV file is empty.', warnings: [], truncated: false };
+      const buf = await file.arrayBuffer();
+      const t = decodeTextBuffer(buf);
+      if (!t.trim()) return { text: `[Empty file] ${name || 'Unnamed file'}`.trim(), warnings: [], truncated: false };
+      if (looksBinary(t)) throw new Error('File appears to be binary, corrupt, or empty.');
+      return await ensureNonEmpty(withWordCap(t), file);
     } catch (err) {
       if (supportedExts.has(ext)) {
         return ensureNonEmpty({ text: '', warnings: [], truncated: false }, file);
       }
-      throw new Error('Failed to parse CSV: ' + normalizeError(err).message);
+      // Defensive fallback: return a safe placeholder string instead of throwing
+      const fallback = `[No extractable text] Text file. If this document is corrupt or binary, check the file contents.`;
+      console.error('[fileToText] TXT/MD extraction error:', normalizeError(err).message);
+      return ensureNonEmpty({ text: fallback, warnings: ['TXT/MD extraction failed; using placeholder.'], truncated: false }, file);
     }
-  }
-
-  // Spreadsheet (XLS/XLSX) -> CSV text
-  if (ext === 'xls' || ext === 'xlsx') {
-    if (file.size === 0) return { text: 'Spreadsheet is empty.', warnings: [], truncated: false };
-    let lastErr: any = null;
-    try {
-      if (isBrowser) {
-        try {
-          return await ensureNonEmpty(await parseViaServer(file), file);
-        } catch (serverErr) {
-          if (file.size > SOFT_WARN_BYTES) {
-            return ensureNonEmpty({ text: '', warnings: ['Spreadsheet parsing fell back to placeholder.'], truncated: false }, file);
-          }
-          console.warn('[fileToText] Spreadsheet server parse failed, falling back to client parser.', serverErr);
-        }
-      }
-      const arrayBuffer = await file.arrayBuffer();
-      const workbook = XLSX.read(arrayBuffer, { type: 'array' });
-      let text = '';
-      workbook.SheetNames.forEach((sheetName) => {
-        const sheet = workbook.Sheets[sheetName];
-        text += XLSX.utils.sheet_to_csv(sheet) + '\n';
-      });
-      if (text.trim() && !looksBinary(text)) return await ensureNonEmpty(withWordCap(text), file);
-    } catch (err) {
-      lastErr = err;
-    }
-    // Fallback: try reading as plain text
-    try {
-      const t = await file.text();
-      if (t.trim() && !looksBinary(t)) return await ensureNonEmpty(withWordCap(t), file);
-    } catch (err2) {
-      lastErr = err2;
-    }
-    // If both fail, throw a clear, user-friendly error so callers can surface it
-    if (supportedExts.has(ext)) {
-      return ensureNonEmpty({ text: '', warnings: [], truncated: false }, file);
-    }
-    throw new Error(
-      'Could not extract readable text from this spreadsheet. Try saving as CSV or check the file contents.'
-    );
-  }
-
-  // TXT, MD, fallback: read as text
-  try {
-    if (isBrowser && file.size > SERVER_FALLBACK_BYTES) {
-      return await ensureNonEmpty(await parseViaServer(file), file);
-    }
-    const buf = await file.arrayBuffer();
-    const t = decodeTextBuffer(buf);
-    if (!t.trim()) return { text: `[Empty file] ${name || 'Unnamed file'}`.trim(), warnings: [], truncated: false };
-    if (looksBinary(t)) throw new Error('File appears to be binary, corrupt, or empty.');
-    return await ensureNonEmpty(withWordCap(t), file);
-  } catch (err) {
-    if (supportedExts.has(ext)) {
-      return ensureNonEmpty({ text: '', warnings: [], truncated: false }, file);
-    }
-    throw new Error('Failed to read file: ' + normalizeError(err).message);
+  } catch (fatalErr) {
+    // Defensive fallback: return a safe placeholder string instead of throwing
+    const fallback = `[No extractable text] Unknown file type or fatal error. If this document is corrupt or binary, check the file contents.`;
+    console.error('[fileToText] Fatal extraction error:', normalizeError(fatalErr).message);
+    return { text: fallback, warnings: ['Fatal extraction failed; using placeholder.'], truncated: false };
   }
 }

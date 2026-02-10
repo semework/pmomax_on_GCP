@@ -34,7 +34,7 @@ async function loadMammoth(): Promise<MammothModule> {
 	return (mod?.default ?? mod) as MammothModule;
 }
 
-function toArrayBuffer(input: ArrayBuffer | Uint8Array | any): ArrayBuffer {
+async function toArrayBuffer(input: ArrayBuffer | Uint8Array | any): Promise<ArrayBuffer> {
 	if (input instanceof ArrayBuffer) return input;
 	if (input instanceof Uint8Array) {
 		// Respect byteOffset/byteLength so we don't leak a larger underlying buffer.
@@ -47,34 +47,36 @@ function toArrayBuffer(input: ArrayBuffer | Uint8Array | any): ArrayBuffer {
 			const ab = input.buffer as ArrayBuffer;
 			return ab;
 		} catch {
-			// ignore
-		}
-	}
+			try {
+				const mammoth = await loadMammoth();
+				try {
+					const size = (input && typeof input === 'object' && (input.byteLength || input.length)) || 0;
+					if (size && size > 25_000_000) {
+						console.warn('[wordToText] Large DOCX detected; parsing may take longer.');
+					}
+				} catch {
+					// ignore size detection failures
+				}
 
-	throw new Error('Unsupported input type for wordToText');
-}
+				// Node path: Buffer is best.
+				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+				// @ts-ignore
+				if (isNodeRuntime() && typeof Buffer !== 'undefined' && Buffer.isBuffer(input)) {
+					// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+					// @ts-ignore
+					const res = await mammoth.extractRawText({ buffer: input });
+					return String(res?.value || '').trim();
+				}
 
-export async function wordToText(input: ArrayBuffer | Uint8Array | any): Promise<string> {
-	try {
-		const mammoth = await loadMammoth();
-
-		try {
-			const size = (input && typeof input === 'object' && (input.byteLength || input.length)) || 0;
-			if (size && size > 25_000_000) {
-				console.warn('[wordToText] Large DOCX detected; parsing may take longer.');
+				// Browser (or non-Buffer) path: ArrayBuffer
+				const ab = toArrayBuffer(input as any);
+				const res = await mammoth.extractRawText({ arrayBuffer: ab });
+				return String(res?.value || '').trim();
+			} catch (err: any) {
+				// Defensive fallback: return a safe string instead of throwing
+				const fallbackText = `[No extractable text] DOCX parsing failed.\n\n${safeErrorMessage(err)}`;
+				return fallbackText;
 			}
-		} catch {
-			// ignore size detection failures
-		}
-
-		// Node path: Buffer is best.
-		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-		// @ts-ignore
-		if (isNodeRuntime() && typeof Buffer !== 'undefined' && Buffer.isBuffer(input)) {
-			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-			// @ts-ignore
-			const res = await mammoth.extractRawText({ buffer: input });
-			return String(res?.value || '').trim();
 		}
 
 		// Browser (or non-Buffer) path: ArrayBuffer

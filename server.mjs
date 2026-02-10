@@ -114,7 +114,8 @@ function sendJson(res, payload, status = 200) {
   let safePayload = payload;
   try {
     safePayload = JSON.parse(JSON.stringify(payload));
-  } catch {
+  } catch (err) {
+    console.error('[server.mjs] Response serialization error:', err);
     safePayload = { ok: false, error: 'Failed to serialize response.' };
   }
   res.status(status);
@@ -448,51 +449,37 @@ async function parseUploadedFile(file, startMs = Date.now()) {
   }
 
   if (isPdfFile(file)) {
-    let parsed;
-    try {
-      parsed = await extractPdfTextInBatches(file.buffer, { batchSize: 5, hardTimeoutMs: 12000 });
-    } catch (err) {
-      if (err?.code === 'ENCRYPTED') {
-        const e = new Error('File is encrypted. Please provide an unlocked copy.');
-        e.code = 'ENCRYPTED';
-        throw e;
-      }
-      throw err;
-    }
-    const warnings = Array.isArray(parsed?.warnings) ? [...parsed.warnings] : [];
+    let parsed = null;
+    let warnings = [];
     let truncated = false;
-    if (parsed?.timedOut) {
-      truncated = true;
-      warnings.push('Partial extraction (timeout). Results may be incomplete.');
-    }
-    // No truncation warnings for page limits
-    if (parsed?.pagesProcessed && parsed?.totalPages && parsed.pagesProcessed < parsed.totalPages) {
-      truncated = true;
-      warnings.push('Partial extraction (some pages were not processed). Results may be incomplete.');
-    }
-    if (parsed?.failedPages) {
-      truncated = true;
-      warnings.push('Partial extraction (some pages failed). Results may be incomplete.');
-    }
-    const capped = clampText(parsed?.text || '');
-    let finalText = String(capped.text || '');
-    if (capped.truncated) {
-      truncated = true;
-      warnings.push('Document truncated to server limit.');
-    }
-    if (isNearEmptyText(finalText)) {
-      const alt = await extractPdfTextAlternate(file.buffer);
-      const altCapped = clampText(alt?.text || '');
-      const altText = String(altCapped.text || '');
-      if (!isNearEmptyText(altText) && altText.length > finalText.length + 200) {
-        finalText = altText;
+    let finalText = '';
+    try {
+      parsed = await extractPdfTextInBatches(file.buffer, 900000);
+      warnings = Array.isArray(parsed?.warnings) ? [...parsed.warnings] : [];
+      finalText = String(parsed || '');
+      const capped = clampText(finalText);
+      finalText = capped.text;
+      if (capped.truncated) {
+        truncated = true;
+        warnings.push('Document truncated to server limit.');
       }
+      if (isNearEmptyText(finalText)) {
+        const alt = await extractPdfTextAlternate(file.buffer);
+        const altCapped = clampText(alt?.text || '');
+        const altText = String(altCapped.text || '');
+        if (!isNearEmptyText(altText) && altText.length > finalText.length + 200) {
+          finalText = altText;
+        }
+      }
+      if (isNearEmptyText(finalText)) {
+        return buildAiFallbackResult(file, warnings, startMs);
+      }
+      const durationMs = Math.max(1, Date.now() - startMs);
+      return { ok: true, text: String(finalText), length: String(finalText).length, durationMs, truncated, warnings };
+    } catch (err) {
+      warnings.push(safeErrorMessage(err, 'PDF extraction failed'));
+      return { ok: false, error: safeErrorMessage(err, 'PDF extraction failed'), warnings };
     }
-    if (isNearEmptyText(finalText)) {
-      return buildAiFallbackResult(file, warnings, startMs);
-    }
-    const durationMs = Math.max(1, Date.now() - startMs);
-    return { ok: true, text: String(finalText), length: String(finalText).length, durationMs, truncated, warnings };
   }
 
   

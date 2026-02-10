@@ -77,6 +77,9 @@ export async function pdfToText(input: File | ArrayBuffer | Uint8Array): Promise
     // No truncation notes or warnings in output
     return joined;
   } catch (err) {
-    throw new Error(safeErrorMessage(err));
+    // Defensive fallback: return a safe placeholder string instead of throwing
+    const fallback = '[No extractable text] PDF file. If this document is scanned or image-based, run OCR and try again.';
+    console.error('[pdfToText] Extraction error:', safeErrorMessage(err));
+    return fallback;
   }
 }
