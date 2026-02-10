@@ -176,12 +176,12 @@ const normalizeText = (text) => {
   const raw = String(text || '');
   if (!raw) return '';
   return raw
-    // Drop control chars that frequently appear in extracted text.
     .replace(/[\u0000-\u001f\u007f]/g, ' ')
-    // Collapse long punctuation/line art that can dominate PDFs.
     .replace(/[-–—_]{3,}/g, ' ')
     .replace(/[|•·]{3,}/g, ' ')
-    // Collapse whitespace.
+    .replace(/[ \t]+\n/g, '\n')
+    .replace(/\r\n/g, '\n')
+    .replace(/\n{3,}/g, '\n\n')
     .replace(/\s+/g, ' ')
     .trim();
 };
@@ -293,7 +293,9 @@ async function getPdfJs() {
 
 async function extractPdfTextInBatches(pdfBuffer, maxChars = 900000) {
   const pdfjs = await getPdfJs();
-  const loadingTask = pdfjs.getDocument({ data: new Uint8Array(pdfBuffer), disableWorker: true });
+  const raw = Buffer.isBuffer(pdfBuffer) ? pdfBuffer : Buffer.from(pdfBuffer);
+  const data = new Uint8Array(raw);
+  const loadingTask = pdfjs.getDocument({ data, disableWorker: true });
   const pdf = await loadingTask.promise;
 
   const numPages = pdf.numPages || 0;
@@ -429,124 +431,123 @@ async function respondWithAiFallback(res, file, warnings = [], startMs = Date.no
 const extractJobs = new Map();
 
 async function parseUploadedFile(file, startMs = Date.now()) {
-  if (!file) throw new Error('No file uploaded');
-  if (!file?.size) throw new Error('File is empty.');
-
-  if (isDocxFile(file)) {
-    const text = await docxBufferToText(file.buffer);
-    if (isNearEmptyText(text)) {
-      throw Object.assign(new Error('DOCX contained no extractable text.'), { code: 'EMPTY_EXTRACT' });
-    }
-    const exceeded = enforceWordLimit(text);
-    const capped = clampText(text);
-    const warnings = capped.truncated ? ['Document truncated to server limit.'] : [];
-    if (exceeded) warnings.push('Document exceeds the 50-page limit; truncated to the first 50 pages.');
-    if (isNearEmptyText(capped.text)) {
-      return buildAiFallbackResult(file, warnings, startMs);
-    }
-    const durationMs = Math.max(1, Date.now() - startMs);
-    return { ok: true, text: String(capped.text), length: String(capped.text).length, durationMs, truncated: capped.truncated, warnings };
-  }
-
-  if (isPdfFile(file)) {
-    let parsed = null;
-    let warnings = [];
-    let truncated = false;
-    let finalText = '';
-    try {
-      parsed = await extractPdfTextInBatches(file.buffer, 900000);
-      warnings = Array.isArray(parsed?.warnings) ? [...parsed.warnings] : [];
-      finalText = String(parsed || '');
-      const capped = clampText(finalText);
-      finalText = capped.text;
-      if (capped.truncated) {
-        truncated = true;
-        warnings.push('Document truncated to server limit.');
-      }
-      if (isNearEmptyText(finalText)) {
-        const alt = await extractPdfTextAlternate(file.buffer);
-        const altCapped = clampText(alt?.text || '');
-        const altText = String(altCapped.text || '');
-        if (!isNearEmptyText(altText) && altText.length > finalText.length + 200) {
-          finalText = altText;
-        }
-      }
-      if (isNearEmptyText(finalText)) {
+  if (!file) return { ok: false, error: 'No file uploaded' };
+  if (!file?.size) return { ok: false, error: 'File is empty.' };
+  try {
+    if (isDocxFile(file)) {
+      const text = await docxBufferToText(file.buffer);
+      const exceeded = enforceWordLimit(text);
+      const capped = clampText(text);
+      const warnings = capped.truncated ? ['Document truncated to server limit.'] : [];
+      if (exceeded) warnings.push('Document exceeds the 50-page limit; truncated to the first 50 pages.');
+      if (isNearEmptyText(capped.text)) {
         return buildAiFallbackResult(file, warnings, startMs);
       }
       const durationMs = Math.max(1, Date.now() - startMs);
-      return { ok: true, text: String(finalText), length: String(finalText).length, durationMs, truncated, warnings };
-    } catch (err) {
-      warnings.push(safeErrorMessage(err, 'PDF extraction failed'));
-      return { ok: false, error: safeErrorMessage(err, 'PDF extraction failed'), warnings };
+      return { ok: true, text: String(capped.text), length: String(capped.text).length, durationMs, truncated: capped.truncated, warnings };
     }
-  }
 
-  
-if (isSpreadsheetFile(file)) {
-  try {
-    const XLSXMod = await import('xlsx');
-    const XLSX = XLSXMod?.default ?? XLSXMod;
-
-    // Read workbook from buffer (supports .xlsx, .xls in most cases).
-    const wb = XLSX.read(file.buffer, { type: 'buffer', cellDates: true });
-
-    const parts = [];
-    for (const sheetName of (wb.SheetNames || []).slice(0, 20)) {
-      const ws = wb.Sheets?.[sheetName];
-      if (!ws) continue;
-
-      // CSV preserves a compact, readable representation for tables.
-      const csv = XLSX.utils.sheet_to_csv(ws, { FS: '\t' });
-      if (csv && csv.trim()) {
-        parts.push(`--- Sheet: ${sheetName} ---\n${csv}`);
-        continue;
-      }
-
-      // Fallback to row arrays if CSV is empty.
-      const rows = XLSX.utils.sheet_to_json(ws, { header: 1, blankrows: false, raw: false });
-      if (rows && rows.length) {
-        const tsv = rows
-          .slice(0, 5000)
-          .map((r) => (Array.isArray(r) ? r.map((c) => String(c ?? '')).join('\t') : String(r ?? '')))
-          .join('\n');
-        parts.push(`--- Sheet: ${sheetName} ---\n${tsv}`);
+    if (isPdfFile(file)) {
+      let parsed = null;
+      let warnings = [];
+      let truncated = false;
+      let finalText = '';
+      try {
+        parsed = await extractPdfTextInBatches(file.buffer, 900000);
+        warnings = Array.isArray(parsed?.warnings) ? [...parsed.warnings] : [];
+        finalText = String(parsed || '');
+        const capped = clampText(finalText);
+        finalText = capped.text;
+        if (capped.truncated) {
+          truncated = true;
+          warnings.push('Document truncated to server limit.');
+        }
+        if (isNearEmptyText(finalText)) {
+          const alt = await extractPdfTextAlternate(file.buffer);
+          const altCapped = clampText(alt?.text || '');
+          const altText = String(altCapped.text || '');
+          if (!isNearEmptyText(altText) && altText.length > finalText.length + 200) {
+            finalText = altText;
+          }
+        }
+        if (isNearEmptyText(finalText)) {
+          return buildAiFallbackResult(file, warnings, startMs);
+        }
+        const durationMs = Math.max(1, Date.now() - startMs);
+        return { ok: true, text: String(finalText), length: String(finalText).length, durationMs, truncated, warnings };
+      } catch (err) {
+        warnings.push(safeErrorMessage(err, 'PDF extraction failed'));
+        return { ok: false, error: safeErrorMessage(err, 'PDF extraction failed'), warnings };
       }
     }
 
-    const combined = normalizeText(parts.join('\n\n'));
-    if (combined) return { ok: true, ...clampText(combined) };
-    // If empty, fall through to text-based extraction / AI.
-  } catch (err) {
-    console.warn('[extract][xlsx] failed; falling back to text/AI:', err?.message || err);
-    // fall through
-  }
-}
+    if (isSpreadsheetFile(file)) {
+      try {
+        const XLSXMod = await import('xlsx');
+        const XLSX = XLSXMod?.default ?? XLSXMod;
+        const raw = Buffer.isBuffer(file.buffer) ? file.buffer : Buffer.from(file.buffer);
+        let wb;
+        try {
+          wb = XLSX.read(raw, {
+            type: 'buffer',
+            cellDates: true,
+            cellText: true,
+            dense: true,
+          });
+        } catch (e) {
+          return { ok: false, error: `XLSX_PARSE_FAILED: ${e?.message || String(e)}` };
+        }
+        const names = wb.SheetNames || [];
+        if (!names.length) return { ok: true, text: '', warnings: ['Spreadsheet contains no sheets.'], truncated: false };
+        let out = '';
+        for (const name of names) {
+          const sheet = wb.Sheets?.[name];
+          if (!sheet) continue;
+          const rows = XLSX.utils.sheet_to_json(sheet, {
+            header: 1,
+            blankrows: false,
+            raw: false,
+            defval: '',
+          }) || [];
+          out += `# Sheet: ${name}\n`;
+          for (const row of rows) {
+            out += (Array.isArray(row) ? row : []).map(v => String(v ?? '')).join('\t') + '\n';
+          }
+          out += '\n';
+        }
+        const normalized = normalizeText(out);
+        const capped = clampText(normalized);
+        return { ok: true, text: capped.text, length: capped.text.length, truncated: capped.truncated, warnings: [] };
+      } catch (err) {
+        return { ok: false, error: safeErrorMessage(err, 'XLSX extraction failed'), warnings: [] };
+      }
+    }
 
-if (isTextFile(file)) {
-
-    const text = decodeTextBuffer(file.buffer);
-    const exceeded = enforceWordLimit(text);
-    const capped = clampText(text);
-    const warnings = capped.truncated ? ['Document truncated to server limit.'] : [];
-    if (exceeded) warnings.push('Document exceeds the 50-page limit; truncated to the first 50 pages.');
-    if (!capped.text || !String(capped.text).trim()) {
-      const fallbackText = buildEmptyFallbackText(file?.originalname || '');
+    if (isTextFile(file)) {
+      const text = decodeTextBuffer(file.buffer);
+      const exceeded = enforceWordLimit(text);
+      const capped = clampText(normalizeText(text));
+      const warnings = capped.truncated ? ['Document truncated to server limit.'] : [];
+      if (exceeded) warnings.push('Document exceeds the 50-page limit; truncated to the first 50 pages.');
+      if (!capped.text || !String(capped.text).trim()) {
+        const fallbackText = buildEmptyFallbackText(file?.originalname || '');
+        const durationMs = Math.max(1, Date.now() - startMs);
+        return {
+          ok: true,
+          text: fallbackText,
+          length: fallbackText.length,
+          durationMs,
+          truncated: capped.truncated,
+          warnings: [...warnings, 'Text file contains no extractable content.'],
+        };
+      }
       const durationMs = Math.max(1, Date.now() - startMs);
-      return {
-        ok: true,
-        text: fallbackText,
-        length: fallbackText.length,
-        durationMs,
-        truncated: capped.truncated,
-        warnings: [...warnings, 'Text file contains no extractable content.'],
-      };
+      return { ok: true, text: String(capped.text), length: String(capped.text).length, durationMs, truncated: capped.truncated, warnings };
     }
-    const durationMs = Math.max(1, Date.now() - startMs);
-    return { ok: true, text: String(capped.text), length: String(capped.text).length, durationMs, truncated: capped.truncated, warnings };
+    return { ok: false, error: 'Unsupported file type' };
+  } catch (err) {
+    return { ok: false, error: safeErrorMessage(err, 'Extraction failed'), warnings: [] };
   }
-
-  throw new Error('Unsupported file type');
 }
 
 // Async extraction job start

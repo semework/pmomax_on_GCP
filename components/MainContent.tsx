@@ -9,6 +9,8 @@ import { demoData } from '../data/demoData';
 import { safeErrorMessage } from '../lib/safeError';
 import { VirtualizedList } from './VirtualizedList';
 import { computeDeterministicBudget } from '../lib/budgetDeterministic';
+// ...rest of MainContent_fixed2.tsx content...
+// (Full content from MainContent_fixed2.tsx should be placed here)
 
 interface MainContentProps {
   pidData: PMOMaxPID | null;
@@ -692,7 +694,7 @@ useEffect(() => {
                   {/* Move fatalUiError check above JSX */}
                   {/* ...existing code... */}
                           Risk Agent:
-                        </span>
+                        </div>
                         <div className="flex-1">Auto-scans the PID and surfaces key risks and mitigations.</div>
                       </div>
 
@@ -847,10 +849,7 @@ useEffect(() => {
               {/* Kept for rollback/testing: prior verbose intro (disabled by default)
                   IMPORTANT: moved out of JSX to prevent any hidden tag mismatch from breaking builds.
                   See LEGACY_INTRO_DISABLED block comment at bottom of this file. */}
-            </div>
-          </div>
-        </div>
-      </main>
+          </main>
     );
   }
 

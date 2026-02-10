@@ -26,6 +26,9 @@ function normalizeExtractedText(text: string): string {
     .replace(/[\u0000-\u001f\u007f]/g, ' ')
     .replace(/[-–—_]{3,}/g, ' ')
     .replace(/[|•·]{3,}/g, ' ')
+    .replace(/[ \t]+\n/g, '\n')
+    .replace(/\r\n/g, '\n')
+    .replace(/\n{3,}/g, '\n\n')
     .replace(/\s+/g, ' ')
     .trim();
 }
@@ -41,31 +44,31 @@ function isNearEmptyText(text: string): boolean {
 }
 
 function decodeTextBuffer(buffer: ArrayBuffer): string {
-  const views = [
-    { encoding: 'utf-8' },
-    { encoding: 'utf-16le' },
-    { encoding: 'utf-16be' },
-    { encoding: 'latin1' },
-  ];
-  let best = '';
-  let bestScore = -Infinity;
-  for (const v of views) {
-    try {
-      const text = new TextDecoder(v.encoding, { fatal: false }).decode(buffer);
-      const sample = text.slice(0, 4000);
-      if (!sample) continue;
-      const nullCount = (sample.match(/\u0000/g) || []).length;
-      const printable = (sample.match(/[\x20-\x7E\n\r\t]/g) || []).length;
-      const score = printable - nullCount * 8;
-      if (score > bestScore) {
-        bestScore = score;
-        best = text;
+  // Canonical decode for text buffers (matches server)
+  if (!buffer) return '';
+  try {
+    const arr = new Uint8Array(buffer);
+    if (arr.length >= 2) {
+      const b0 = arr[0];
+      const b1 = arr[1];
+      if (b0 === 0xff && b1 === 0xfe) return new TextDecoder('utf-16le').decode(buffer);
+      if (b0 === 0xfe && b1 === 0xff) {
+        // Swap bytes for utf-16be
+        const swapped = new Uint8Array(arr.length);
+        for (let i = 0; i < arr.length - 1; i += 2) {
+          swapped[i] = arr[i + 1];
+          swapped[i + 1] = arr[i];
+        }
+        return new TextDecoder('utf-16le').decode(swapped);
       }
-    } catch {
-      // ignore
+      if (arr.length >= 3 && b0 === 0xef && b1 === 0xbb && arr[2] === 0xbf) {
+        return new TextDecoder('utf-8').decode(buffer);
+      }
     }
+    return new TextDecoder('utf-8').decode(buffer);
+  } catch {
+    return '';
   }
-  return best;
 }
 
 function capWords(text: string, maxWords: number): { text: string; truncated: boolean } {
@@ -448,7 +451,7 @@ export async function fileToText(file: File): Promise<FileTextResult> {
         return await ensureNonEmpty(await parseViaServer(file), file);
       }
       const buf = await file.arrayBuffer();
-      const t = decodeTextBuffer(buf);
+      const t = normalizeExtractedText(decodeTextBuffer(buf));
       if (!t.trim()) return { text: `[Empty file] ${name || 'Unnamed file'}`.trim(), warnings: [], truncated: false };
       if (looksBinary(t)) throw new Error('File appears to be binary, corrupt, or empty.');
       return await ensureNonEmpty(withWordCap(t), file);
