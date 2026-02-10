@@ -338,54 +338,93 @@ useEffect(() => {
         mainContentRef.current.scrollTop = 0;
       } catch {}
     }
+  }, [pidData]);  const pidSig = useMemo(() => {
+    if (!pidData) return '';
+    try {
+      return JSON.stringify({
+        t: pidData.titleBlock?.projectTitle || '',
+        es: (pidData.executiveSummary || '').slice(0, 400),
+        ps: (pidData.problemStatement || '').slice(0, 400),
+        bc: (pidData.businessCaseExpectedValue || '').slice(0, 400),
+        objN: pidData.objectivesSmart?.length ?? 0,
+        kpiN: pidData.kpis?.length ?? 0,
+        scopeInN: pidData.scopeInclusions?.length ?? 0,
+        scopeOutN: pidData.scopeExclusions?.length ?? 0,
+        mN: pidData.milestones?.length ?? 0,
+        wN: pidData.workBreakdownTasks?.length ?? 0,
+        budgetN: pidData.budgetCostBreakdown?.length ?? 0,
+      });
+    } catch {
+      // If serialization fails, use a changing signature so we don't block agents.
+      return String(Date.now());
+    }
   }, [pidData]);
 
-  // Whenever a PID is generated/loaded, proactively run Risk & Compliance agents
+  // Whenever a PID is generated/loaded, proactively run Risk & Compliance agents.
+  // Guarded by pidSig so we don't spam agents when pidData object identity changes.
   useEffect(() => {
-    let ac = new AbortController();
+    if (!pidData || !pidSig) return;
+
+    // If agents already populated these sections, don't re-run.
+    const hasRisk = Array.isArray(pidData.risks) && pidData.risks.length > 0;
+    const hasCompliance = Array.isArray(pidData.complianceSecurityPrivacy) && pidData.complianceSecurityPrivacy.length > 0;
+    if (hasRisk && hasCompliance) return;
+
+    const abort = new AbortController();
+
     const runAgents = async () => {
-      if (!pidData) return;
       try {
         setAgentLoading({ risk: true, compliance: true });
+        setAgentError({ risk: null, compliance: null });
+
+        const payload = { pid: pidData };
 
         // Risk agent
         try {
-          const r = await fetch('/api/ai/risk', {
+          const res = await fetch('/api/ai/risk', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ pidData }),
-            signal: ac.signal,
+            body: JSON.stringify(payload),
+            signal: abort.signal,
           });
-          const jr = await r.json();
-          if (jr && jr.ok && Array.isArray(jr.risks)) setAgentRisks(jr.risks);
-        } catch (e) {
-          // ignore per-user environment; keep null
-        } finally {
-          setAgentLoading((s) => ({ ...s, risk: false }));
+          const json = await res.json();
+          if (!res.ok) throw new Error(json?.error || `Risk agent error (${res.status})`);
+          setAgentResults((prev) => ({ ...prev, risk: json }));
+        } catch (err: any) {
+          if (!abort.signal.aborted) {
+            setAgentError((prev) => ({ ...prev, risk: err?.message || 'Risk agent failed' }));
+          }
         }
 
         // Compliance agent
         try {
-          const c = await fetch('/api/ai/compliance', {
+          const res = await fetch('/api/ai/compliance', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ pidData }),
-            signal: ac.signal,
+            body: JSON.stringify(payload),
+            signal: abort.signal,
           });
-          const jc = await c.json();
-          if (jc && jc.ok && Array.isArray(jc.checklist)) setAgentCompliance(jc.checklist);
-        } catch (e) {
-          // ignore
-        } finally {
-          setAgentLoading((s) => ({ ...s, compliance: false }));
+          const json = await res.json();
+          if (!res.ok) throw new Error(json?.error || `Compliance agent error (${res.status})`);
+          setAgentResults((prev) => ({ ...prev, compliance: json }));
+        } catch (err: any) {
+          if (!abort.signal.aborted) {
+            setAgentError((prev) => ({ ...prev, compliance: err?.message || 'Compliance agent failed' }));
+          }
         }
-      } catch (e) {}
+      } finally {
+        if (!abort.signal.aborted) {
+          setAgentLoading({ risk: false, compliance: false });
+        }
+      }
     };
 
     runAgents();
-    return () => ac.abort();
-  }, [pidData]);
 
+    return () => {
+      abort.abort();
+    };
+  }, [pidSig]);
   // Export current #gantt-fig as PNG/JPEG/SVG at 2× with active background
   const handleExport = async (type: 'svg' | 'png' | 'jpeg') => {
     setExportError(null);

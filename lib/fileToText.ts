@@ -359,47 +359,37 @@ export async function fileToText(file: File): Promise<FileTextResult> {
 
     // CSV parsing
     if (ext === 'csv') {
+      // Prefer client-side reading for CSV to avoid server-side false negatives.
+      // (Server parsing is still used as a fallback for unusual encodings.)
       try {
-        if (isBrowser) {
-          try {
-            return await ensureNonEmpty(await parseViaServer(file), file);
-          } catch (serverErr) {
-            if (file.size > SOFT_WARN_BYTES) {
-              return ensureNonEmpty({ text: '', warnings: ['CSV parsing fell back to placeholder.'], truncated: false }, file);
-            }
-            console.warn('[fileToText] CSV server parse failed, falling back to client parser.', serverErr);
-          }
+        const raw = await file.text();
+        const text = String(raw || '').trim();
+        if (text.length > 0) {
+          const truncated = text.length > MAX_CHARS;
+          const clipped = truncated ? text.slice(0, MAX_CHARS) : text;
+          return ensureNonEmpty(
+            {
+              text: withWordCap(clipped),
+              warnings: truncated ? ['CSV text was truncated for client preview.'] : [],
+              truncated,
+            },
+            file,
+          );
         }
-        const text = await file.text();
-        if (!text || !text.trim()) return { text: 'CSV file is empty.', warnings: [], truncated: false };
-        if (looksBinary(text)) throw new Error('CSV file appears to be binary or corrupt.');
-        const lines = text.split(/\r?\n/).filter(Boolean);
-        // If only one line or not a table, just return the raw text
-        if (lines.length < 2 || lines[0].split(',').length < 2) {
-          if (text.trim()) return withWordCap(text);
-          // If not binary but empty, return a user-friendly message
-          return { text: 'CSV file is empty.', warnings: [], truncated: false };
-        }
-        const headers = lines[0].split(',').map(h => h.trim());
-        const rows = lines.slice(1).map(line => line.split(',').map(c => c.trim()));
-        let mdTable = '| ' + headers.join(' | ') + ' |\n| ' + headers.map(() => '---').join(' | ') + ' |\n';
-        rows.forEach(row => {
-          mdTable += '| ' + row.join(' | ') + ' |\n';
-        });
-        if (mdTable.trim()) return await ensureNonEmpty(withWordCap(mdTable), file);
-        // Fallback: return raw text if markdown table is empty
-        if (text.trim()) return await ensureNonEmpty(withWordCap(text), file);
-        // If not binary but empty, return a user-friendly message
-        return { text: 'CSV file is empty.', warnings: [], truncated: false };
-      } catch (err) {
-        if (supportedExts.has(ext)) {
-          return ensureNonEmpty({ text: '', warnings: [], truncated: false }, file);
-        }
-        // Defensive fallback: return a safe placeholder string instead of throwing
-        const fallback = `[No extractable text] CSV file. If this document is corrupt or binary, check the file contents.`;
-        console.error('[fileToText] CSV extraction error:', normalizeError(err).message);
-        return ensureNonEmpty({ text: fallback, warnings: ['CSV extraction failed; using placeholder.'], truncated: false }, file);
+      } catch {
+        // fall through to server
       }
+
+      if (isBrowser) {
+        try {
+          return await ensureNonEmpty(await parseViaServer(file), file);
+        } catch (serverErr) {
+          console.warn('CSV server parse failed, falling back to empty text:', serverErr);
+          return ensureNonEmpty({ text: '', warnings: ['CSV parsing failed.'], truncated: false }, file);
+        }
+      }
+
+      return ensureNonEmpty({ text: '', warnings: ['CSV parsing not available in this environment.'], truncated: false }, file);
     }
 
     // Spreadsheet (XLS/XLSX) -> CSV text
