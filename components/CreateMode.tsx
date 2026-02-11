@@ -483,13 +483,16 @@ export const CreateMode = (props: CreateModeProps) => {
 		} catch {}
 		activeControllerRef.current = null;
 
-		// Restore initial create state: clear everything and un-collapse top area
+		// Fully clear all create mode state
 		setDraftPid(null);
 		setChat([]);
 		setSelectedExampleId(null);
 		setChatInput('');
 		setLastError(null);
-		setStickyCollapsed(false); // Always show top assistant/examples after reset
+		setStickyCollapsed(false);
+		// Remove any PID from chat or examples
+		// If there are any other refs or state that could hold a PID, clear them here
+		// (future-proof: add more clears if new state is added)
 	};
 
 	const handleFileDrop = async (e: React.DragEvent<HTMLDivElement>) => {
