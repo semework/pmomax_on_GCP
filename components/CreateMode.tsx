@@ -483,12 +483,13 @@ export const CreateMode = (props: CreateModeProps) => {
 		} catch {}
 		activeControllerRef.current = null;
 
-		// Clear the draft so the Create view stays empty until user action
+		// Restore initial create state: clear everything and un-collapse top area
 		setDraftPid(null);
 		setChat([]);
 		setSelectedExampleId(null);
 		setChatInput('');
 		setLastError(null);
+		setStickyCollapsed(false); // Always show top assistant/examples after reset
 	};
 
 	const handleFileDrop = async (e: React.DragEvent<HTMLDivElement>) => {
