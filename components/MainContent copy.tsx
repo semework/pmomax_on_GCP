@@ -1,10 +1,9 @@
-  // ...restored file from f389f63...
-import React, { useEffect, useMemo, useState, useRef } from 'react';
+// MainContent_fixed2.tsx
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { PMOMaxPID } from '../types';
 import { Section } from './Section';
 import { Field, hasContent } from './Field';
 import GanttChart from './GanttChart';
-// import { WelcomeIconsRow } from './WelcomeIconsRow';
 import { STYLE_PRESETS } from '../lib/ganttPresets';
 import { demoData } from '../data/demoData';
 import { safeErrorMessage } from '../lib/safeError';
@@ -20,7 +19,34 @@ interface MainContentProps {
   warnings?: string[];
 }
 
-const MainContent: React.FC<MainContentProps> = ({ pidData, onReset, onHelp, onLoadDemo, showAllSections, warnings }) => {
+const MainContent: React.FC<MainContentProps> = ({
+  pidData,
+  onHelp,
+  onLoadDemo,
+  showAllSections,
+  warnings,
+}) => {
+  // -------- Defensive pid handling (NO setState during render) --------
+  const safePidData = useMemo<PMOMaxPID | null>(() => {
+    try {
+      if (pidData && typeof pidData === 'object') return pidData as PMOMaxPID;
+      return null;
+    } catch {
+      return null;
+    }
+  }, [pidData]);
+
+  const [fatalUiError, setFatalUiError] = useState<string | null>(null);
+
+  useEffect(() => {
+    // If pidData is non-null but invalid, show a safe error.
+    if (pidData && !safePidData) {
+      setFatalUiError('Malformed PID data. Unable to render project content.');
+    } else {
+      setFatalUiError(null);
+    }
+  }, [pidData, safePidData]);
+
   // ---- Gantt chart controls and state (canonical wiring) ----
   const [ganttStyleIdx, setGanttStyleIdx] = useState(() => {
     if (typeof window === 'undefined') return 0;
@@ -28,8 +54,8 @@ const MainContent: React.FC<MainContentProps> = ({ pidData, onReset, onHelp, onL
     const idx = STYLE_PRESETS.findIndex((p) => p.name === saved);
     return idx >= 0 ? idx : 0;
   });
+
   const [ganttScheme, setGanttScheme] = useState<'prism' | 'pastel' | 'metro'>('prism');
-  // Canonical defaults: ON (user can toggle off)
   const [ganttLabels, setGanttLabels] = useState(true);
   const [ganttGrid, setGanttGrid] = useState(true);
   const [ganttToday, setGanttToday] = useState(true);
@@ -37,41 +63,49 @@ const MainContent: React.FC<MainContentProps> = ({ pidData, onReset, onHelp, onL
   const [ganttWeekends, setGanttWeekends] = useState(true);
   const [ganttCriticalPath, setGanttCriticalPath] = useState(true);
 
-  // Throttle bar-height updates into the chart to avoid "streaking" during fast slider drags.
-  const initialHeight = STYLE_PRESETS[ganttStyleIdx]?.box.height ?? 22;
+  const initialHeight = STYLE_PRESETS[ganttStyleIdx]?.box?.height ?? 22;
   const [ganttBarHeightUi, setGanttBarHeightUi] = useState<number>(initialHeight);
   const [ganttBarHeight, setGanttBarHeight] = useState<number>(initialHeight);
 
-  // Background mode: 'dark' | 'light' | '#RRGGBB' stored in pid.gantt.bg
+  // Background mode: 'dark' | 'light' | 'custom'
   const [ganttBg, setGanttBg] = useState<'dark' | 'light' | 'custom'>('dark');
   const [ganttBgCustom, setGanttBgCustom] = useState<string>('#0A0A0A');
-  const [exportError, setExportError] = useState<string | null>(null);
-  const [ownerFilter, setOwnerFilter] = useState<string[]>([]);
-  // (removed template marker)
 
-  // Sync bar height + saved style name when preset changes
+  const [exportError, setExportError] = useState<string | null>(null);
+
+  // Owner filter
+  const [ownerFilter, setOwnerFilter] = useState<string[]>([]);
+
+  // Agent results (risk & compliance)
+  const [agentRisks, setAgentRisks] = useState<any[] | null>(null);
+  const [agentCompliance, setAgentCompliance] = useState<any[] | null>(null);
+  const [agentLoading, setAgentLoading] = useState<{ risk?: boolean; compliance?: boolean }>({});
+
+  // ---- Sync bar height + saved style name when preset changes ----
   useEffect(() => {
     const preset = STYLE_PRESETS[ganttStyleIdx];
     if (!preset) return;
-    setGanttBarHeightUi(preset.box.height);
-    setGanttBarHeight(preset.box.height);
+    const h = preset.box?.height ?? 22;
+    setGanttBarHeightUi(h);
+    setGanttBarHeight(h);
     if (typeof window !== 'undefined') {
       window.localStorage.setItem('pid.gantt.style', preset.name);
     }
   }, [ganttStyleIdx]);
 
-  // Debounce slider UI height into the actual chart height
+  // ---- Debounce slider UI height into the actual chart height ----
   useEffect(() => {
     if (typeof window === 'undefined') return;
     const t = window.setTimeout(() => setGanttBarHeight(ganttBarHeightUi), 80);
     return () => window.clearTimeout(t);
   }, [ganttBarHeightUi]);
 
-  // Initialize background mode from pid.gantt.bg
+  // ---- Initialize background mode from pid.gantt.bg ----
   useEffect(() => {
     if (typeof window === 'undefined') return;
     const savedBg = window.localStorage.getItem('pid.gantt.bg');
     if (!savedBg) return;
+
     if (savedBg === 'dark' || savedBg === 'light') {
       setGanttBg(savedBg);
     } else if (/^#?[0-9a-fA-F]{6}$/.test(savedBg)) {
@@ -81,7 +115,7 @@ const MainContent: React.FC<MainContentProps> = ({ pidData, onReset, onHelp, onL
     }
   }, []);
 
-  // Persist background mode whenever it changes
+  // ---- Persist background mode whenever it changes ----
   useEffect(() => {
     if (typeof window === 'undefined') return;
     const value = ganttBg === 'custom' ? ganttBgCustom : ganttBg;
@@ -92,202 +126,186 @@ const MainContent: React.FC<MainContentProps> = ({ pidData, onReset, onHelp, onL
   const highlightTarget = (id: string) => {
     try {
       const el = document.getElementById(id);
-      if (el) {
-        el.classList.add('intro-highlight');
-      }
+      if (el) el.classList.add('intro-highlight');
     } catch {}
   };
 
   const clearHighlight = (id: string) => {
     try {
       const el = document.getElementById(id);
-      if (el) {
-        el.classList.remove('intro-highlight');
-      }
+      if (el) el.classList.remove('intro-highlight');
     } catch {}
   };
 
   // Memoize unique owners for owner filter dropdown
   const uniqueOwners = useMemo(() => {
-    if (!pidData || !Array.isArray(pidData.workBreakdownTasks)) return [];
-    const owners = pidData.workBreakdownTasks.map((t: any) => t.owner).filter(Boolean);
+    if (!safePidData || !Array.isArray((safePidData as any).workBreakdownTasks)) return [];
+    const owners = (safePidData as any).workBreakdownTasks.map((t: any) => t?.owner).filter(Boolean);
     return Array.from(new Set(owners));
-  }, [pidData]);
+  }, [safePidData]);
 
   // Memoize ganttTasks for GanttChart (respect owner filter)
   const ganttTasks = useMemo(() => {
-    if (!pidData || !Array.isArray(pidData.workBreakdownTasks)) return [];
-    let tasks = pidData.workBreakdownTasks;
+    if (!safePidData || !Array.isArray((safePidData as any).workBreakdownTasks)) return [];
+    let tasks = (safePidData as any).workBreakdownTasks as any[];
     if (ownerFilter.length > 0) {
-      tasks = tasks.filter((t: any) => ownerFilter.includes(t.owner));
+      tasks = tasks.filter((t: any) => ownerFilter.includes(t?.owner));
     }
     return tasks;
-  }, [pidData, ownerFilter]);
+  }, [safePidData, ownerFilter]);
 
-  // (displayedRisks / displayedCompliance are declared later after `pidData` is
-  // destructured to ensure hook order is stable and variables are in-scope)
-  // Agent precomputed results (risk & compliance) for quick display
-  const [agentRisks, setAgentRisks] = useState<any[] | null>(null);
-  const [agentCompliance, setAgentCompliance] = useState<any[] | null>(null);
-  const [agentLoading, setAgentLoading] = useState<{ risk?: boolean; compliance?: boolean }>({});
-// --- Landing view connector lines (map left sidebar panels -> intro rows) ---
-// These lines are computed from real DOM geometry so they stay aligned across browsers/sizes.
-const mainContentRef = useRef<HTMLElement | null>(null);
-const introInputRowRef = useRef<HTMLDivElement | null>(null);
-const introAssistantRowRef = useRef<HTMLDivElement | null>(null);
-const introRiskRowRef = useRef<HTMLDivElement | null>(null);
-const introComplianceRowRef = useRef<HTMLDivElement | null>(null);
-const introExportRowRef = useRef<HTMLDivElement | null>(null);
-const introNotesRowRef = useRef<HTMLDivElement | null>(null);
-const [introPanelLines, setIntroPanelLines] = useState<
-  | null
-  | {
-      w: number;
-      h: number;
-      paths: Array<{ d: string; stroke: string; marker?: boolean }>;
+  // --- Landing view connector lines (map left sidebar panels -> intro rows) ---
+  const mainContentRef = useRef<HTMLElement | null>(null);
+  const introInputRowRef = useRef<HTMLDivElement | null>(null);
+  const introAssistantRowRef = useRef<HTMLDivElement | null>(null);
+  const introRiskRowRef = useRef<HTMLDivElement | null>(null);
+  const introComplianceRowRef = useRef<HTMLDivElement | null>(null);
+  const introExportRowRef = useRef<HTMLDivElement | null>(null);
+  const introNotesRowRef = useRef<HTMLDivElement | null>(null);
+
+  const [introPanelLines, setIntroPanelLines] = useState<
+    | null
+    | {
+        w: number;
+        h: number;
+        paths: Array<{ d: string; stroke: string; marker?: boolean }>;
+      }
+  >(null);
+
+  useEffect(() => {
+    // Only render connector geometry on landing page (no PID)
+    if (safePidData) {
+      if (introPanelLines) setIntroPanelLines(null);
+      return;
     }
->(null);
+    if (typeof window === 'undefined' || typeof document === 'undefined') return;
 
-useEffect(() => {
-  if (pidData) {
-    // Clear any landing-only overlays when a PID is loaded.
-    if (introPanelLines) setIntroPanelLines(null);
-    return;
-  }
-  if (typeof window === 'undefined' || typeof document === 'undefined') return;
+    let raf = 0;
 
-  let raf = 0;
-  const compute = () => {
-    const w = Math.max(1, window.innerWidth);
-    const h = Math.max(1, window.innerHeight);
+    const compute = () => {
+      const w = Math.max(1, window.innerWidth);
+      const h = Math.max(1, window.innerHeight);
 
-    const inputPanel = document.getElementById('input-panel');
-    const assistantPanel = document.getElementById('assistant-panel');
-    const exportPanel = document.getElementById('export-panel');
-    const notesPanel = document.getElementById('notes-panel');
+      const inputPanel = document.getElementById('input-panel');
+      const assistantPanel = document.getElementById('assistant-panel');
+      const exportPanel = document.getElementById('export-panel');
+      const notesPanel = document.getElementById('notes-panel');
 
-    const inputRow = introInputRowRef.current;
-    const assistantRow = introAssistantRowRef.current;
-    const riskRow = introRiskRowRef.current;
-    const complianceRow = introComplianceRowRef.current;
-    const exportRow = introExportRowRef.current;
-    const notesRow = introNotesRowRef.current;
+      const inputRow = introInputRowRef.current;
+      const assistantRow = introAssistantRowRef.current;
+      const riskRow = introRiskRowRef.current;
+      const complianceRow = introComplianceRowRef.current;
+      const exportRow = introExportRowRef.current;
+      const notesRow = introNotesRowRef.current;
 
-    const paths: Array<{ d: string; stroke: string; marker?: boolean }> = [];
+      const paths: Array<{ d: string; stroke: string; marker?: boolean }> = [];
 
-    // Standard single-line connectors for Input, Export, and Notes
-    const simplePairs: Array<{ src: Element | null; dst: Element | null; stroke: string }> = [
-      { src: inputPanel, dst: inputRow, stroke: 'rgba(96,165,250,0.85)' }, // blue
-      { src: exportPanel, dst: exportRow, stroke: 'rgba(167,139,250,0.85)' }, // purple
-      { src: notesPanel, dst: notesRow, stroke: 'rgba(34,211,238,0.85)' }, // cyan
-    ];
+      // Standard single-line connectors for Input, Export, and Notes
+      const simplePairs: Array<{ src: Element | null; dst: Element | null; stroke: string }> = [
+        { src: inputPanel, dst: inputRow, stroke: 'rgba(96,165,250,0.85)' }, // blue
+        { src: exportPanel, dst: exportRow, stroke: 'rgba(167,139,250,0.85)' }, // purple
+        { src: notesPanel, dst: notesRow, stroke: 'rgba(34,211,238,0.85)' }, // cyan
+      ];
 
-    for (const p of simplePairs) {
-      if (!p.src || !p.dst) continue;
-      const sr = (p.src as HTMLElement).getBoundingClientRect();
-      const dr = (p.dst as HTMLElement).getBoundingClientRect();
+      for (const p of simplePairs) {
+        if (!p.src || !p.dst) continue;
+        const sr = (p.src as HTMLElement).getBoundingClientRect();
+        const dr = (p.dst as HTMLElement).getBoundingClientRect();
 
-      const x1 = Math.max(0, Math.min(w, Math.round(dr.left)));
-      const y1 = Math.max(0, Math.min(h, Math.round(dr.top + dr.height / 2)));
-      const x2 = Math.max(0, Math.min(w, Math.round(sr.right)));
-      const y2 = Math.max(0, Math.min(h, Math.round(sr.top + sr.height / 2)));
+        const x1 = Math.max(0, Math.min(w, Math.round(dr.left)));
+        const y1 = Math.max(0, Math.min(h, Math.round(dr.top + dr.height / 2)));
+        const x2 = Math.max(0, Math.min(w, Math.round(sr.right)));
+        const y2 = Math.max(0, Math.min(h, Math.round(sr.top + sr.height / 2)));
 
-      const dx = Math.max(80, Math.abs(x1 - x2));
-      const c1x = x1 - dx * 0.35;
-      const c2x = x2 + dx * 0.35;
+        const dx = Math.max(80, Math.abs(x1 - x2));
+        const c1x = x1 - dx * 0.35;
+        const c2x = x2 + dx * 0.35;
 
-      const d = `M ${x1} ${y1} C ${c1x} ${y1}, ${c2x} ${y2}, ${x2} ${y2}`;
-      paths.push({ d, stroke: p.stroke, marker: true });
-    }
+        const d = `M ${x1} ${y1} C ${c1x} ${y1}, ${c2x} ${y2}, ${x2} ${y2}`;
+        paths.push({ d, stroke: p.stroke, marker: true });
+      }
 
-    // Parenthesis-like connection for AI Assist, Risk, and Compliance (all connect to assistant panel)
-    if (assistantPanel && assistantRow && riskRow && complianceRow) {
-      const sr = (assistantPanel as HTMLElement).getBoundingClientRect();
-      const ar = (assistantRow as HTMLElement).getBoundingClientRect();
-      const rr = (riskRow as HTMLElement).getBoundingClientRect();
-      const cr = (complianceRow as HTMLElement).getBoundingClientRect();
+      // Parenthesis-like connection for AI Assist, Risk, and Compliance (all connect to assistant panel)
+      if (assistantPanel && assistantRow && riskRow && complianceRow) {
+        const sr = (assistantPanel as HTMLElement).getBoundingClientRect();
+        const ar = (assistantRow as HTMLElement).getBoundingClientRect();
+        const rr = (riskRow as HTMLElement).getBoundingClientRect();
+        const cr = (complianceRow as HTMLElement).getBoundingClientRect();
 
-      // Calculate the vertical center of the three rows
-      const topY = Math.max(0, Math.min(h, Math.round(ar.top + ar.height / 2)));
-      const midY = Math.max(0, Math.min(h, Math.round(rr.top + rr.height / 2)));
-      const botY = Math.max(0, Math.min(h, Math.round(cr.top + cr.height / 2)));
-      const centerY = (topY + botY) / 2;
+        const topY = Math.max(0, Math.min(h, Math.round(ar.top + ar.height / 2)));
+        const midY = Math.max(0, Math.min(h, Math.round(rr.top + rr.height / 2)));
+        const botY = Math.max(0, Math.min(h, Math.round(cr.top + cr.height / 2)));
+        const centerY = (topY + botY) / 2;
 
-      // Right edge of assistant panel
-      const x2 = Math.max(0, Math.min(w, Math.round(sr.right)));
-      const y2 = Math.max(0, Math.min(h, Math.round(sr.top + sr.height / 2)));
+        const x2 = Math.max(0, Math.min(w, Math.round(sr.right)));
+        const y2 = Math.max(0, Math.min(h, Math.round(sr.top + sr.height / 2)));
 
-      // Calculate the vertical line position (to the left of all three rows)
-      const x1Base = Math.max(0, Math.min(w, Math.round(ar.left - 40)));
+        const x1Base = Math.max(0, Math.min(w, Math.round(ar.left - 40)));
+        const stroke = 'rgba(245,158,11,0.85)'; // amber
 
-      const stroke = 'rgba(245,158,11,0.85)'; // amber
+        const verticalLine = `M ${x1Base} ${topY} L ${x1Base} ${botY}`;
+        paths.push({ d: verticalLine, stroke, marker: false });
 
-      // Draw vertical line connecting the three rows (no marker)
-      const verticalLine = `M ${x1Base} ${topY} L ${x1Base} ${botY}`;
-      paths.push({ d: verticalLine, stroke, marker: false });
+        const horzTop = `M ${x1Base} ${topY} L ${Math.round(ar.left)} ${topY}`;
+        const horzMid = `M ${x1Base} ${midY} L ${Math.round(rr.left)} ${midY}`;
+        const horzBot = `M ${x1Base} ${botY} L ${Math.round(cr.left)} ${botY}`;
+        paths.push({ d: horzTop, stroke, marker: false });
+        paths.push({ d: horzMid, stroke, marker: false });
+        paths.push({ d: horzBot, stroke, marker: false });
 
-      // Draw three short horizontal lines from vertical line to each row (no markers)
-      const horzTop = `M ${x1Base} ${topY} L ${Math.round(ar.left)} ${topY}`;
-      const horzMid = `M ${x1Base} ${midY} L ${Math.round(rr.left)} ${midY}`;
-      const horzBot = `M ${x1Base} ${botY} L ${Math.round(cr.left)} ${botY}`;
-      paths.push({ d: horzTop, stroke, marker: false });
-      paths.push({ d: horzMid, stroke, marker: false });
-      paths.push({ d: horzBot, stroke, marker: false });
+        const dx = Math.max(80, Math.abs(x1Base - x2));
+        const c1x = x1Base - dx * 0.35;
+        const c2x = x2 + dx * 0.35;
+        const mainCurve = `M ${x1Base} ${centerY} C ${c1x} ${centerY}, ${c2x} ${y2}, ${x2} ${y2}`;
+        paths.push({ d: mainCurve, stroke, marker: true });
+      }
 
-      // Draw the main curved arrow from center of vertical line to assistant panel (WITH marker)
-      const dx = Math.max(80, Math.abs(x1Base - x2));
-      const c1x = x1Base - dx * 0.35;
-      const c2x = x2 + dx * 0.35;
-      const mainCurve = `M ${x1Base} ${centerY} C ${c1x} ${centerY}, ${c2x} ${y2}, ${x2} ${y2}`;
-      paths.push({ d: mainCurve, stroke, marker: true });
-    }
+      setIntroPanelLines(paths.length ? { w, h, paths } : null);
+    };
 
-    setIntroPanelLines(paths.length ? { w, h, paths } : null);
-  };
+    const schedule = () => {
+      if (raf) cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(compute);
+    };
 
-  const schedule = () => {
-    if (raf) cancelAnimationFrame(raf);
-    raf = requestAnimationFrame(compute);
-  };
+    window.addEventListener('resize', schedule);
+    document.addEventListener('scroll', schedule, true);
 
-  // Keep aligned during scroll inside any container, resizes, and font/layout changes.
-  window.addEventListener('resize', schedule);
-  document.addEventListener('scroll', schedule, true);
-
-  const ro = new ResizeObserver(schedule);
-  try {
-    const els = [
-      document.getElementById('input-panel'),
-      document.getElementById('assistant-panel'),
-      document.getElementById('export-panel'),
-      introInputRowRef.current,
-      introAssistantRowRef.current,
-      introRiskRowRef.current,
-      introComplianceRowRef.current,
-      introExportRowRef.current,
-      introNotesRowRef.current,
-    ].filter(Boolean) as Element[];
-    els.forEach((e) => ro.observe(e));
-  } catch {}
-
-  schedule();
-  const t = window.setTimeout(schedule, 50);
-
-  return () => {
-    window.clearTimeout(t);
-    window.removeEventListener('resize', schedule);
-    document.removeEventListener('scroll', schedule, true);
+    const ro = new ResizeObserver(schedule);
     try {
-      ro.disconnect();
+      const els = [
+        document.getElementById('input-panel'),
+        document.getElementById('assistant-panel'),
+        document.getElementById('export-panel'),
+        document.getElementById('notes-panel'),
+        introInputRowRef.current,
+        introAssistantRowRef.current,
+        introRiskRowRef.current,
+        introComplianceRowRef.current,
+        introExportRowRef.current,
+        introNotesRowRef.current,
+      ].filter(Boolean) as Element[];
+      els.forEach((e) => ro.observe(e));
     } catch {}
-    if (raf) cancelAnimationFrame(raf);
-  };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-}, [pidData]);
+
+    schedule();
+    const t = window.setTimeout(schedule, 50);
+
+    return () => {
+      window.clearTimeout(t);
+      window.removeEventListener('resize', schedule);
+      document.removeEventListener('scroll', schedule, true);
+      try {
+        ro.disconnect();
+      } catch {}
+      if (raf) cancelAnimationFrame(raf);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [safePidData]);
 
   // Merge agent results with PID-provided entries for display (avoid duplicates by JSON)
   const displayedRisks = useMemo(() => {
-    const base = Array.isArray(pidData?.risks) ? (pidData as any).risks : [];
+    const base = Array.isArray((safePidData as any)?.risks) ? ((safePidData as any).risks as any[]) : [];
     const extra = Array.isArray(agentRisks) ? agentRisks : [];
     const seen = new Set<string>();
     const out: any[] = [];
@@ -303,10 +321,12 @@ useEffect(() => {
       }
     }
     return out;
-  }, [pidData, agentRisks]);
+  }, [safePidData, agentRisks]);
 
   const displayedCompliance = useMemo(() => {
-    const base = Array.isArray(pidData?.complianceSecurityPrivacy) ? (pidData as any).complianceSecurityPrivacy : [];
+    const base = Array.isArray((safePidData as any)?.complianceSecurityPrivacy)
+      ? ((safePidData as any).complianceSecurityPrivacy as any[])
+      : [];
     const extra = Array.isArray(agentCompliance) ? agentCompliance : [];
     const seen = new Set<string>();
     const out: any[] = [];
@@ -322,110 +342,66 @@ useEffect(() => {
       }
     }
     return out;
-  }, [pidData, agentCompliance]);
-
-  // Helper: scroll to section id
-  const scrollToId = (id: string) => {
-    try {
-      const el = document.getElementById(id);
-      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    } catch {}
-  };
+  }, [safePidData, agentCompliance]);
 
   // Scroll main content to top when intro page loads (pidData is null)
   useEffect(() => {
-    if (!pidData && mainContentRef.current) {
+    if (!safePidData && mainContentRef.current) {
       try {
         mainContentRef.current.scrollTop = 0;
       } catch {}
     }
-  }, [pidData]);  const pidSig = useMemo(() => {
-    if (!pidData) return '';
-    try {
-      return JSON.stringify({
-        t: pidData.titleBlock?.projectTitle || '',
-        es: (pidData.executiveSummary || '').slice(0, 400),
-        ps: (pidData.problemStatement || '').slice(0, 400),
-        bc: (pidData.businessCaseExpectedValue || '').slice(0, 400),
-        objN: pidData.objectivesSmart?.length ?? 0,
-        kpiN: pidData.kpis?.length ?? 0,
-        scopeInN: pidData.scopeInclusions?.length ?? 0,
-        scopeOutN: pidData.scopeExclusions?.length ?? 0,
-        mN: pidData.milestones?.length ?? 0,
-        wN: pidData.workBreakdownTasks?.length ?? 0,
-        budgetN: pidData.budgetCostBreakdown?.length ?? 0,
-      });
-    } catch {
-      // If serialization fails, use a changing signature so we don't block agents.
-      return String(Date.now());
-    }
-  }, [pidData]);
+  }, [safePidData]);
 
-  // Whenever a PID is generated/loaded, proactively run Risk & Compliance agents.
-  // Guarded by pidSig so we don't spam agents when pidData object identity changes.
+  // Whenever a PID is generated/loaded, proactively run Risk & Compliance agents
   useEffect(() => {
-    if (!pidData || !pidSig) return;
-
-    // If agents already populated these sections, don't re-run.
-    const hasRisk = Array.isArray(pidData.risks) && pidData.risks.length > 0;
-    const hasCompliance = Array.isArray(pidData.complianceSecurityPrivacy) && pidData.complianceSecurityPrivacy.length > 0;
-    if (hasRisk && hasCompliance) return;
-
-    const abort = new AbortController();
+    const ac = new AbortController();
 
     const runAgents = async () => {
+      if (!safePidData) return;
       try {
         setAgentLoading({ risk: true, compliance: true });
-        setAgentError({ risk: null, compliance: null });
-
-        const payload = { pid: pidData };
 
         // Risk agent
         try {
-          const res = await fetch('/api/ai/risk', {
+          const r = await fetch('/api/ai/risk', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload),
-            signal: abort.signal,
+            body: JSON.stringify({ pidData: safePidData }),
+            signal: ac.signal,
           });
-          const json = await res.json();
-          if (!res.ok) throw new Error(json?.error || `Risk agent error (${res.status})`);
-          setAgentResults((prev) => ({ ...prev, risk: json }));
-        } catch (err: any) {
-          if (!abort.signal.aborted) {
-            setAgentError((prev) => ({ ...prev, risk: err?.message || 'Risk agent failed' }));
-          }
+          const jr = await r.json();
+          if (jr && jr.ok && Array.isArray(jr.risks)) setAgentRisks(jr.risks);
+        } catch {
+          // ignore
+        } finally {
+          setAgentLoading((s) => ({ ...s, risk: false }));
         }
 
         // Compliance agent
         try {
-          const res = await fetch('/api/ai/compliance', {
+          const c = await fetch('/api/ai/compliance', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload),
-            signal: abort.signal,
+            body: JSON.stringify({ pidData: safePidData }),
+            signal: ac.signal,
           });
-          const json = await res.json();
-          if (!res.ok) throw new Error(json?.error || `Compliance agent error (${res.status})`);
-          setAgentResults((prev) => ({ ...prev, compliance: json }));
-        } catch (err: any) {
-          if (!abort.signal.aborted) {
-            setAgentError((prev) => ({ ...prev, compliance: err?.message || 'Compliance agent failed' }));
-          }
+          const jc = await c.json();
+          if (jc && jc.ok && Array.isArray(jc.checklist)) setAgentCompliance(jc.checklist);
+        } catch {
+          // ignore
+        } finally {
+          setAgentLoading((s) => ({ ...s, compliance: false }));
         }
-      } finally {
-        if (!abort.signal.aborted) {
-          setAgentLoading({ risk: false, compliance: false });
-        }
+      } catch {
+        // ignore
       }
     };
 
     runAgents();
+    return () => ac.abort();
+  }, [safePidData]);
 
-    return () => {
-      abort.abort();
-    };
-  }, [pidSig]);
   // Export current #gantt-fig as PNG/JPEG/SVG at 2× with active background
   const handleExport = async (type: 'svg' | 'png' | 'jpeg') => {
     setExportError(null);
@@ -446,11 +422,7 @@ useEffect(() => {
       clone.setAttribute('height', height.toString());
 
       const bg =
-        ganttBg === 'dark'
-          ? '#000000'
-          : ganttBg === 'light'
-          ? '#FFFFFF'
-          : ganttBgCustom || '#000000';
+        ganttBg === 'dark' ? '#000000' : ganttBg === 'light' ? '#FFFFFF' : ganttBgCustom || '#000000';
 
       // Ensure a background rect exists as first child
       const first = clone.firstElementChild;
@@ -469,7 +441,6 @@ useEffect(() => {
       const serializer = new XMLSerializer();
       const svgString = serializer.serializeToString(clone);
 
-      // SVG export: just download the serialized SVG with embedded styles
       const presetName = STYLE_PRESETS[ganttStyleIdx]?.name ?? 'export';
       if (type === 'svg') {
         const blob = new Blob([svgString], { type: 'image/svg+xml' });
@@ -482,7 +453,6 @@ useEffect(() => {
         return;
       }
 
-      // Raster exports: draw SVG into a 2× canvas
       const img = new window.Image();
       img.width = width;
       img.height = height;
@@ -524,7 +494,6 @@ useEffect(() => {
     }
   };
 
-  // Handle owner filter button click
   const handleOwnerClick = (owner: string) => {
     setOwnerFilter((prev) => {
       if (prev.includes(owner)) {
@@ -534,389 +503,145 @@ useEffect(() => {
     });
   };
 
-  if (!pidData) {
-    // IMPORTANT: intro image path is relative to /public (Linux case-sensitive).
-    const groups = [
-      {
-        n: 1,
-        title: 'Objectives & KPIs',
-        desc: "Define goals and how you'll measure success.",
-        bullets: [
-          { k: 'Summary', v: '1–3 lines on what this delivers.' },
-          { k: 'Objectives', v: 'SMART goals the team owns.' },
-          { k: 'KPIs', v: 'Baseline → target success measures.' },
-        ],
-      },
-      {
-        n: 2,
-        title: 'Scope & Assumptions',
-        desc: "What's in/out and what you're assuming.",
-        bullets: [
-          { k: 'Scope-in', v: 'Included features/teams.' },
-          { k: 'Scope-out', v: 'Explicitly excluded items.' },
-          { k: 'Assumptions', v: 'Things expected to hold true.' },
-          { k: 'Constraints', v: 'Budget/time/compliance/tech limits.' },
-        ],
-      },
-      {
-        n: 3,
-        title: 'Stakeholders & Team',
-        desc: 'Map everyone involved and how they show up.',
-        bullets: [
-          { k: 'Stakeholders', v: 'People with influence or impact.' },
-          { k: 'Sponsor', v: 'Exec accountable for outcome.' },
-          { k: 'Manager', v: 'Project owner / day-to-day lead.' },
-          { k: 'Team', v: 'Core members + roles.' },
-        ],
-      },
-      {
-        n: 4,
-        title: 'Gantt & Timeline',
-        desc: 'Deliverables and dependencies at a glance.',
-        bullets: [
-          { k: 'Timeline', v: 'Phase dates and key gates.' },
-          { k: 'Deliverables', v: 'Outputs + acceptance criteria.' },
-          { k: 'Work', v: 'Tasks feeding the Gantt.' },
-          { k: 'Deps', v: 'Cross-team/system blockers.' },
-        ],
-      },
-      {
-        n: 5,
-        title: 'Budget & Resources',
-        desc: 'Costs, people, tools, and systems.',
-        bullets: [
-          { k: 'Budget', v: 'Summary and major line items.' },
-          { k: 'Resources', v: 'People, licenses, systems.' },
-        ],
-      },
-      {
-        n: 6,
-        title: 'Risks & Mitigations',
-        desc: 'Issues, impacts, and how you respond.',
-        bullets: [
-          { k: 'Risks', v: 'Probability × impact with owners.' },
-          { k: 'Mitigations', v: 'Pre-agreed responses.' },
-          { k: 'Issues', v: 'Active problems to resolve.' },
-          { k: 'Questions', v: 'Open decisions and unknowns.' },
-        ],
-      },
-      {
-        n: 7,
-        title: 'Governance & Approvals',
-        desc: 'Sign-offs, controls, and operating rhythm.',
-        bullets: [
-          { k: 'Governance', v: 'Decision cadence and escalation.' },
-          { k: 'Approvals', v: 'Gates and signoff requirements.' },
-          { k: 'Compliance', v: 'Security / privacy / policy needs.' },
-        ],
-      },
-      {
-        n: 8,
-        title: 'Risk',
-        desc: 'Identify, assess, and manage project risks.',
-        bullets: [{ k: 'Risk', v: 'Probability × impact, owners, mitigations.' }],
-      },
-      {
-        n: 9,
-        title: 'Compliance',
-        desc: 'Meet all regulatory, security, and policy requirements.',
-        bullets: [{ k: 'Compliance', v: 'Security, privacy, and policy needs.' }],
-      },
+  // --------- Landing page (no PID) ----------
+  if (!safePidData) {
+    // --- Pixel-perfect landing/intro section ---
+    const INTRO_FIELD_KEYS = [
+      { section: 'Objectives', description: 'SMART goals, KPIs, success.' },
+      { section: 'Scope', description: 'Inclusions, exclusions, constraints.' },
+      { section: 'Schedule', description: 'Milestones, Gantt, dependencies.' },
+      { section: 'Risks', description: 'Risks, mitigations, issues.' },
+      { section: 'Governance', description: 'Stakeholders, RACI, comms.' },
+      { section: 'Budget', description: 'Costs, resources, tools.' },
+      { section: 'Notes', description: 'Background, open questions.' },
     ];
-
     return (
-      <main ref={mainContentRef} className="flex-1 overflow-y-auto py-6 px-8 md:px-12 lg:px-16 text-brand-text bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950" style={{ fontSize: '1rem', scrollBehavior: 'smooth' }}>
-        <div className="max-w-[1300px] mx-auto">
-          {/* No parse warning overlays shown */}
-          {/* Intro / Landing (no PID loaded) */}
-          <div className="relative">
-            {/* subtle glow */}
-            {/* Intro highlight CSS (subtle and non-overwhelming) */}
-            <style>{`
-              /* Smooth transition for left-panel sections when highlighted */
-              #input-panel, #export-panel, #assistant-panel {
-                transition: box-shadow 180ms ease, transform 180ms ease, border-color 180ms ease;
-              }
-              .intro-highlight {
-                box-shadow: 0 10px 30px rgba(247,184,75,0.08), 0 0 0 3px rgba(247,184,75,0.05) !important;
-                transform: translateZ(0) scale(1.01);
-                border-color: rgba(247,184,75,0.6) !important;
-              }
-            `}</style>
-            <div
-              className="absolute inset-0 pointer-events-none opacity-30 blur-3xl"
-              style={{
-                background:
-                  'radial-gradient(circle at 50% 30%, rgba(245,158,11,0.25), transparent 55%)',
-              }}
-            />
-            <div className="relative space-y-3">
-
-{/* Landing connectors (lg+): map intro rows to left sidebar panels. */}
-{introPanelLines && (
-  <svg
-    className="hidden lg:block fixed inset-0 w-screen h-screen pointer-events-none"
-    style={{ zIndex: 30 }}
-    width={introPanelLines.w}
-    height={introPanelLines.h}
-    viewBox={`0 0 ${introPanelLines.w} ${introPanelLines.h}`}
-    preserveAspectRatio="none"
-    aria-hidden
-  >
-    <defs>
-      <marker
-        id="pmomaxArrow"
-        markerWidth="10"
-        markerHeight="10"
-        refX="8"
-        refY="5"
-        orient="auto"
-        markerUnits="strokeWidth"
+      <main
+        ref={mainContentRef as any}
+        className="relative flex-1 min-h-0 overflow-y-auto overflow-x-hidden p-0 md:p-0 text-white bg-[#181e2a]"
+        style={{ fontFamily: 'Inter, sans-serif', minHeight: '100vh' }}
       >
-        <path d="M 0 0 L 10 5 L 0 10 z" fill="currentColor" />
-      </marker>
-    </defs>
-
-    {introPanelLines.paths.map((p, i) => (
-      <path
-        key={i}
-        d={p.d}
-        stroke={p.stroke}
-        strokeWidth={2}
-        fill="none"
-        vectorEffect="non-scaling-stroke"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        style={{ color: p.stroke }}
-      />
-    ))}
-  </svg>
-)}
-
-{/* Cards row */}
-
-              {/* Hero */}
-              <div className="text-center mb-6">
-                <div className="text-2xl md:text-3xl font-extrabold tracking-wide text-amber-400 drop-shadow-sm">
-                  PMOMax — Bring your project notes to life
-                </div>
-                <div className="mt-2 text-lg md:text-xl font-extrabold text-amber-200">
-                  The AI Copilot for PMO Leaders &amp; Project Managers
-                </div>
-                <div className="mt-3 text-base text-slate-200/90 leading-relaxed max-w-4xl mx-auto">
-                  Bring your meeting notes, project briefs, and scattered docs into one place. PMOMax turns them into structured, evidence-based PIDs and planning artifacts, helping teams align faster, spot bottlenecks earlier, and spend less time on status updates.
-                </div>
+        <div className="flex flex-col items-center w-full pt-12 pb-6">
+          <div className="text-5xl font-extrabold text-amber-300 mb-3 text-center drop-shadow-lg">PMOMax — Bring your project notes to life</div>
+          <div className="text-2xl font-bold text-amber-200 mb-2 text-center">The AI Copilot for PMO Leaders & Project Managers</div>
+          <div className="text-lg text-slate-200 mb-8 text-center max-w-3xl">
+            Bring your meeting notes, project briefs, and scattered docs into one place. PMOMax turns them into structured, evidence-based PIDs and planning artifacts, helping teams align faster, spot bottlenecks earlier, and spend less time on status updates.
+          </div>
+        </div>
+        <div className="flex flex-col md:flex-row gap-10 px-8 pb-10 w-full max-w-[1500px] mx-auto items-stretch">
+          {/* Left panel (Getting Started) */}
+          <div className="flex-1 min-w-[360px] max-w-[520px] bg-[#20263a] rounded-3xl border border-amber-300/40 p-8 shadow-2xl flex flex-col justify-between">
+            <div>
+              <div className="text-3xl font-bold text-amber-300 mb-4 tracking-tight">Getting Started</div>
+              <div className="flex flex-wrap gap-3 mb-4 items-center">
+                <span className="bg-blue-500 text-white px-4 py-1.5 rounded-full font-semibold text-lg shadow">Paste</span>
+                <span className="bg-amber-400 text-black px-4 py-1.5 rounded-full font-semibold text-lg shadow">Upload</span>
+                <span className="bg-emerald-400 text-black px-4 py-1.5 rounded-full font-semibold text-lg shadow">Drop</span>
+                <span className="text-white/90 text-lg ml-3">: your PID into the Input panel — parsing and structure extraction happen automatically.</span>
               </div>
-
-              {/* Two cards side by side */}
-              <div className="flex flex-col md:flex-row gap-4 items-stretch">
-                {/* Left: Getting Started */}
-                <div
-                  className="flex-1 rounded-2xl border border-[var(--color-border)]/60 bg-slate-950/40 shadow-xl p-3 flex flex-col"
-                >
-                  <div className="text-xl font-extrabold text-amber-300 mb-3">
-                    Getting Started
-                  </div>
-
-                  <div className="space-y-2 text-base text-slate-200/90 flex-1">
-                      <div ref={introInputRowRef} onMouseEnter={() => highlightTarget('input-panel')} onMouseLeave={() => clearHighlight('input-panel')} className="flex items-start gap-3">
-                        <div className="flex-shrink-0 inline-flex items-center gap-2 w-[210px] justify-end">
-                          <span className="inline-flex items-center w-[70px] justify-center rounded-md px-2 py-0.5 text-sm font-extrabold bg-sky-500/30 text-sky-100">Paste</span>
-                          <span className="inline-flex items-center w-[80px] justify-center rounded-md px-2 py-0.5 text-sm font-extrabold bg-amber-500/30 text-amber-100">Upload</span>
-                          <span className="inline-flex items-center w-[60px] justify-center rounded-md px-2 py-0.5 text-sm font-extrabold bg-teal-500/30 text-teal-100">Drop</span>
-                          <span className="inline-flex items-center text-sm text-slate-300">:</span>
-                        </div>
-                        <div className="flex-1">
-                          your PID into the Input panel — parsing and structure extraction happen
-                          automatically.
-                        </div>
-                      </div>
-
-                      <div ref={introExportRowRef} onMouseEnter={() => highlightTarget('export-panel')} onMouseLeave={() => clearHighlight('export-panel')} className="flex items-start gap-3">
-                        <span className="inline-flex items-center w-[210px] flex-shrink-0 rounded-md px-2 py-1 text-sm font-extrabold bg-indigo-700 text-white text-right">
-                          Export &amp; Share:
-                        </span>
-                        <div className="flex-1">Export Word / PDF / JSON with Gantt and notes included.</div>
-                      </div>
-
-                      <div ref={introAssistantRowRef} onMouseEnter={() => highlightTarget('assistant-panel')} onMouseLeave={() => clearHighlight('assistant-panel')} className="flex items-start gap-3">
-                        <span className="inline-flex items-center w-[210px] flex-shrink-0 rounded-md px-2 py-1 text-sm font-extrabold bg-amber-500/30 text-amber-100 text-right">
-                          AI Assist &amp; Drafting:
-                        </span>
-                        <div className="flex-1">Refine language, fill gaps, and generate a complete PID draft.</div>
-                      </div>
-
-                      <div ref={introRiskRowRef} onMouseEnter={() => highlightTarget('assistant-panel')} onMouseLeave={() => clearHighlight('assistant-panel')} className="flex items-start gap-3">
-                        <span className="inline-flex items-center w-[210px] flex-shrink-0 rounded-md px-2 py-0.5 text-sm font-extrabold bg-pink-900/40 text-pink-100 text-right">
-                          Risk Agent:
-                        </span>
-                        <div className="flex-1">Auto-scans the PID and surfaces key risks and mitigations.</div>
-                      </div>
-
-                      <div ref={introComplianceRowRef} onMouseEnter={() => highlightTarget('assistant-panel')} onMouseLeave={() => clearHighlight('assistant-panel')} className="flex items-start gap-3">
-                        <span className="inline-flex items-center w-[210px] flex-shrink-0 rounded-md px-2 py-0.5 text-sm font-extrabold bg-teal-900/35 text-teal-100 text-right">
-                          Compliance Agent:
-                        </span>
-                        <div className="flex-1">
-                          Checks privacy, auditability, and policy gaps and creates checklist items.
-                        </div>
-                      </div>
-
-                      <div ref={introNotesRowRef} onMouseEnter={() => highlightTarget('notes-panel')} onMouseLeave={() => clearHighlight('notes-panel')} className="flex items-start gap-3">
-                        <span className="inline-flex items-center w-[210px] flex-shrink-0 rounded-md px-2 py-1 text-sm font-extrabold bg-cyan-600/30 text-cyan-100 text-right">
-                          General Notes:
-                        </span>
-                        <div className="flex-1">Track decisions, open questions, and meeting notes across the project lifecycle.</div>
-                      </div>
-                    </div>
-                </div>
-
-                {/* Right: Structured Sections */}
-                <div
-                  className="flex-1 rounded-2xl border border-[var(--color-border)]/60 bg-slate-950/40 shadow-xl p-3 flex flex-col"
-                >
-                  <div className="text-xl font-extrabold text-amber-300 mb-3">
-                    What PMOMax extracts for you
-                  </div>
-
-                  <div className="flex gap-4 flex-1 min-h-0">
-                    <div className="flex-1 min-w-0 overflow-hidden rounded-xl border border-[var(--color-border)]/60 bg-slate-950/30 flex items-center justify-center">
-                      <table className="w-full text-base">
-                        <thead>
-                          <tr className="bg-slate-950/40">
-                              <th className="text-left px-4 py-1 font-extrabold text-amber-200">Section</th>
-                              <th className="text-left px-4 py-1 font-extrabold text-amber-200">
-                                Description
-                              </th>
-                            </tr>
-                          </thead>
-                          <tbody className="divide-y divide-slate-700/60">
-                            <tr>
-                              <td className="px-4 py-1 font-semibold text-slate-100 text-left">Objectives</td>
-                              <td className="px-4 py-1 text-slate-200/80 text-left">
-                                SMART goals, KPIs, success.
-                              </td>
-                            </tr>
-                            <tr>
-                              <td className="px-4 py-1 font-semibold text-slate-100 text-left">Scope</td>
-                              <td className="px-4 py-1 text-slate-200/80 text-left">
-                                Inclusions, exclusions, constraints.
-                              </td>
-                            </tr>
-                            <tr>
-                              <td className="px-4 py-1 font-semibold text-slate-100 text-left">Schedule</td>
-                              <td className="px-4 py-1 text-slate-200/80 text-left">
-                                Milestones, Gantt, dependencies.
-                              </td>
-                            </tr>
-                            <tr>
-                              <td className="px-4 py-1 font-semibold text-slate-100 text-left">Risks</td>
-                              <td className="px-4 py-2 text-slate-200/80 text-left">Risks, mitigations, issues.</td>
-                            </tr>
-                            <tr>
-                              <td className="px-4 py-2 font-semibold text-slate-100 text-left">Governance</td>
-                              <td className="px-4 py-2 text-slate-200/80 text-left">Stakeholders, RACI, comms.</td>
-                            </tr>
-                            <tr>
-                              <td className="px-4 py-2 font-semibold text-slate-100 text-left">Budget</td>
-                              <td className="px-4 py-2 text-slate-200/80 text-left">Costs, resources, tools.</td>
-                            </tr>
-                            <tr>
-                              <td className="px-4 py-2 font-semibold text-slate-100 text-left">Notes</td>
-                              <td className="px-4 py-2 text-slate-200/80 text-left">Background, open questions.</td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-              {/* Agent cards (horizontal) */}
-              <div className="mt-4 w-full">
-                  <div className="flex flex-col gap-4">
-                    <div className="flex flex-col lg:flex-row items-stretch justify-center gap-4">
-                      <button
-                        type="button"
-                        onClick={() => scrollToId('risks')}
-                        className="w-full lg:w-[320px] rounded-lg border border-transparent p-3 text-left transform-gpu hover:scale-102 transition-transform shadow-2xl ring-1 ring-pink-400/20"
-                        style={{ background: 'rgba(139, 0, 46, 0.28)' }}
-                        aria-label="Run Risk Agent"
-                      >
-                        <div className="text-xl font-extrabold text-white mb-0 drop-shadow-md">Risk Agent</div>
-                        <div className="text-sm text-white/95 font-semibold leading-tight">
-                          Surface top project risks with mitigations.
-                        </div>
-                      </button>
-
-                      <button
-                        type="button"
-                        onClick={() => scrollToId('governance')}
-                        className="w-full lg:w-[320px] rounded-lg border border-transparent p-3 text-left transform-gpu hover:scale-102 transition-transform shadow-2xl ring-1 ring-teal-400/20"
-                        style={{ background: 'rgba(4, 78, 68, 0.28)' }}
-                        aria-label="Run Compliance Agent"
-                      >
-                        <div className="text-xl font-extrabold text-white mb-0 drop-shadow-md">Compliance Agent</div>
-                        <div className="text-sm text-white/95 font-semibold leading-tight">
-                          Generate compliance and policy checklists.
-                        </div>
-                      </button>
-
-                      <button
-                        type="button"
-                        onClick={() => scrollToId('project-title')}
-                        className="w-full lg:w-[300px] rounded-lg border border-transparent bg-gradient-to-br from-amber-700 to-amber-500 p-3 text-left transform-gpu hover:scale-102 transition-transform"
-                        aria-label="Open AI Assistant"
-                      >
-                        <div className="text-lg font-extrabold text-white mb-0">AI Assistant</div>
-                        <div className="text-sm text-white/90 font-semibold leading-tight">
-                          Refine and complete your PID with AI.
-                        </div>
-                      </button>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Bottom horizontal feature/cards row (moved from right) */}
-                <div className="mt-4 w-full">
-                  <div className="flex gap-3 flex-wrap mb-0 justify-center">
-                        {[
-                          { k: 'Input', icon: '🡸', text: 'Paste, upload, or drop a PID', bgClass: '' },
-                          { k: 'AI Assistant', icon: '⚡', text: 'Refine, iterate, and ask questions', bgClass: '' },
-                          { k: 'Gantt', icon: '📊', text: 'Visualize schedule & dependencies', bgClass: '' },
-                          { k: 'Export', icon: '⬇️', text: 'Word / PDF / JSON exports', bgClass: '' },
-                          { k: 'Notes', icon: '📝', text: 'Capture decisions & context', bgClass: '' },
-                        ].map((c) => (
-                          <div
-                            key={c.k}
-                            className={`min-w-[130px] rounded-2xl p-2.5 shadow flex flex-col text-white ${c.bgClass ? `bg-gradient-to-br ${c.bgClass}` : 'bg-[var(--color-bg-panel)]'}`}
-                          >
-                            <div className="flex items-center justify-between">
-                              <div className="text-sm font-extrabold text-white">{c.k}</div>
-                              <div className="text-xl ml-2">{c.icon}</div>
-                            </div>
-                            <div className="text-xs text-slate-200 mt-1">{c.text}</div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-
-              {/* Kept for rollback/testing: prior verbose intro (disabled by default)
-                  IMPORTANT: moved out of JSX to prevent any hidden tag mismatch from breaking builds.
-                  See LEGACY_INTRO_DISABLED block comment at bottom of this file. */}
+              <div className="mb-3 flex items-center">
+                <span className="bg-violet-600 text-white px-4 py-1.5 rounded-full font-semibold text-lg mr-3 shadow">Export & Share:</span>
+                <span className="text-white/90 text-lg">Export Word / PDF / JSON with Gantt and notes included.</span>
+              </div>
+              <div className="mb-3 flex items-center">
+                <span className="bg-amber-700 text-white px-4 py-1.5 rounded-full font-semibold text-lg mr-3 shadow">AI Assist & Drafting:</span>
+                <span className="text-white/90 text-lg">Refine language, fill gaps, and generate a complete PID draft.</span>
+              </div>
+              <div className="mb-3 flex items-center">
+                <span className="bg-pink-900 text-white px-4 py-1.5 rounded-full font-semibold text-lg mr-3 shadow">Risk Agent:</span>
+                <span className="text-white/90 text-lg">Auto-scans the PID and surfaces key risks and mitigations.</span>
+              </div>
+              <div className="mb-3 flex items-center">
+                <span className="bg-teal-900 text-white px-4 py-1.5 rounded-full font-semibold text-lg mr-3 shadow">Compliance Agent:</span>
+                <span className="text-white/90 text-lg">Checks privacy, auditability, and policy gaps and creates checklist items.</span>
+              </div>
+              <div className="mb-6 flex items-center">
+                <span className="bg-cyan-900 text-white px-4 py-1.5 rounded-full font-semibold text-lg mr-3 shadow">General Notes:</span>
+                <span className="text-white/90 text-lg">Track decisions, open questions, and meeting notes across the project lifecycle.</span>
+              </div>
             </div>
+            <div className="flex gap-4 mt-8">
+              <div className="flex-1 bg-pink-900/95 rounded-xl p-4 text-center shadow-lg">
+                <div className="text-xl font-bold text-white mb-1">Risk Agent</div>
+                <div className="text-white/90 text-base">Surface top project risks with mitigations.</div>
+              </div>
+              <div className="flex-1 bg-teal-900/95 rounded-xl p-4 text-center shadow-lg">
+                <div className="text-xl font-bold text-white mb-1">Compliance Agent</div>
+                <div className="text-white/90 text-base">Generate compliance and policy checklists.</div>
+              </div>
+              <div className="flex-1 bg-amber-400/95 rounded-xl p-4 text-center shadow-lg">
+                <div className="text-xl font-bold text-black mb-1">AI Assistant</div>
+                <div className="text-black/90 text-base">Refine and complete your PID with AI.</div>
+              </div>
+            </div>
+          </div>
+          {/* Right panel (What PMOMax extracts for you) */}
+          <div className="flex-1 min-w-[360px] max-w-[540px] bg-[#20263a] rounded-3xl border border-amber-300/40 p-8 shadow-2xl flex flex-col justify-between">
+            <div>
+              <div className="text-3xl font-bold text-amber-300 mb-4 tracking-tight">What PMOMax extracts for you</div>
+              <table className="w-full text-left border-collapse mt-2 mb-6">
+                <thead>
+                  <tr>
+                    <th className="text-amber-200 text-xl font-semibold pb-3">Section</th>
+                    <th className="text-amber-200 text-xl font-semibold pb-3">Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {INTRO_FIELD_KEYS.map((row) => (
+                    <tr key={row.section} className="border-t border-slate-700/60">
+                      <td className="py-3 pr-6 text-white/90 font-semibold text-lg">{row.section}</td>
+                      <td className="py-3 text-slate-200 text-lg">{row.description}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        {/* Bottom feature bar */}
+        <div className="flex flex-wrap gap-4 justify-center px-8 pb-10 mt-6 w-full max-w-[1500px] mx-auto">
+          <div className="flex-1 min-w-[200px] max-w-[220px] bg-pink-900/95 rounded-xl p-4 text-center shadow-lg">
+            <div className="text-lg font-bold text-white mb-1">Risk Agent</div>
+            <div className="text-white/90 text-base">Surface top project risks with mitigations.</div>
+          </div>
+          <div className="flex-1 min-w-[200px] max-w-[220px] bg-teal-900/95 rounded-xl p-4 text-center shadow-lg">
+            <div className="text-lg font-bold text-white mb-1">Compliance Agent</div>
+            <div className="text-white/90 text-base">Generate compliance and policy checklists.</div>
+          </div>
+          <div className="flex-1 min-w-[200px] max-w-[220px] bg-amber-400/95 rounded-xl p-4 text-center shadow-lg">
+            <div className="text-lg font-bold text-black mb-1">AI Assistant</div>
+            <div className="text-black/90 text-base">Refine and complete your PID with AI.</div>
+          </div>
+          <div className="flex-1 min-w-[200px] max-w-[220px] bg-blue-500/95 rounded-xl p-4 text-center shadow-lg">
+            <div className="text-lg font-bold text-white mb-1">Input</div>
+            <div className="text-white/90 text-base">Paste, upload, or drop a PID</div>
+          </div>
+          <div className="flex-1 min-w-[200px] max-w-[220px] bg-amber-700/95 rounded-xl p-4 text-center shadow-lg">
+            <div className="text-lg font-bold text-white mb-1">AI Assistant</div>
+            <div className="text-white/90 text-base">Refine, iterate, and ask questions</div>
+          </div>
+          <div className="flex-1 min-w-[200px] max-w-[220px] bg-green-700/95 rounded-xl p-4 text-center shadow-lg">
+            <div className="text-lg font-bold text-white mb-1">Gantt</div>
+            <div className="text-white/90 text-base">Visualize schedule & dependencies</div>
+          </div>
+          <div className="flex-1 min-w-[200px] max-w-[220px] bg-violet-600/95 rounded-xl p-4 text-center shadow-lg">
+            <div className="text-lg font-bold text-white mb-1">Export</div>
+            <div className="text-white/90 text-base">Word / PDF / JSON exports</div>
+          </div>
+          <div className="flex-1 min-w-[200px] max-w-[220px] bg-cyan-900/95 rounded-xl p-4 text-center shadow-lg">
+            <div className="text-lg font-bold text-white mb-1">Notes</div>
+            <div className="text-white/90 text-base">Capture decisions & context</div>
           </div>
         </div>
       </main>
     );
   }
 
-  // ---- Render parsed PID ----
-  // Destructure all needed fields from pidData
+  // --------- PID Render ----------
   const {
-    titleBlock = { projectTitle: '', subtitle: '', generatedOn: '' },
-    projectSponsor = { name: '', role: '' },
-    projectManagerOwner = { name: '', role: '' },
+    titleBlock = { projectTitle: '', subtitle: '', generatedOn: '' } as any,
+    projectSponsor = { name: '', role: '' } as any,
+    projectManagerOwner = { name: '', role: '' } as any,
     executiveSummary = '',
     problemStatement = '',
     businessCaseExpectedValue = '',
@@ -943,28 +668,31 @@ useEffect(() => {
     complianceSecurityPrivacy = [],
     openQuestionsNextSteps = [],
     notesBackground = '',
-  } = pidData || {};
+  } = safePidData as any;
 
   const budgetRows = Array.isArray(budgetCostBreakdown) ? budgetCostBreakdown : [];
   const derivedBudgetRows = (() => {
     if (budgetRows.length > 0) return budgetRows;
     try {
-      return computeDeterministicBudget(pidData || {}).items || [];
+      return (computeDeterministicBudget(safePidData || {}) as any)?.items || [];
     } catch {
       return [];
     }
   })();
+
   const budgetIsEstimated = budgetRows.length === 0 && derivedBudgetRows.length > 0;
   const workBreakdownRows = Array.isArray(workBreakdownTasks) ? workBreakdownTasks : [];
+
   const useVirtualBudget = derivedBudgetRows.length > 60;
   const useVirtualWorkBreakdown = workBreakdownRows.length > 80;
+
   const budgetCurrency = (budgetSummary as any)?.currency || 'USD';
   const budgetTotal =
     typeof (budgetSummary as any)?.totalCostUsd === 'number'
       ? (budgetSummary as any).totalCostUsd
       : derivedBudgetRows.reduce((sum: number, r: any) => sum + (Number(r?.totalCostUsd) || 0), 0);
-  const usd = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
 
+  const usd = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
   const formatCurrency = (value: number) => (Number.isFinite(value) ? usd.format(value) : '—');
 
   const formatHours = (hours: any) => {
@@ -992,7 +720,6 @@ useEffect(() => {
   };
 
   // Section-level visibility aligned with navigation logic
-  // Optionally force-show all sections (used by CreateMode to mirror demo view)
   const showProjectInfo =
     hasContent((titleBlock as any)?.projectTitle) ||
     hasContent((titleBlock as any)?.projectId) ||
@@ -1005,11 +732,8 @@ useEffect(() => {
     hasContent(executiveSummary) || hasContent(problemStatement) || hasContent(businessCaseExpectedValue);
 
   const showObjectivesSection = hasContent(objectivesSmart) || hasContent(kpis);
-
   const showScopeSection = hasContent(scopeInclusions) || hasContent(scopeExclusions);
-
   const showAssumptionsSection = hasContent(assumptions) || hasContent(constraints) || hasContent(dependencies);
-
   const showGanttSection = hasContent(timelineOverview) || hasContent(workBreakdownTasks) || hasContent(milestones);
 
   const showPeopleSection = true;
@@ -1026,8 +750,6 @@ useEffect(() => {
     hasContent(openQuestionsNextSteps) ||
     hasContent(notesBackground);
 
-  // If `showAllSections` is true, derive visible flags that force all sections on.
-  const forceAll = !!showAllSections;
   const visibleProjectInfo = showAllSections ? true : showProjectInfo;
   const visibleExecutiveSummarySection = showAllSections ? true : showExecutiveSummarySection;
   const visibleObjectivesSection = showAllSections ? true : showObjectivesSection;
@@ -1038,29 +760,44 @@ useEffect(() => {
   const visibleRisksSection = showAllSections ? true : showRisksSection;
   const visibleGovernanceSection = showAllSections ? true : showGovernanceSection;
 
-  
-
   return (
-    <main className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden p-4 md:p-6 space-y-6 text-white">
-      {/* No parse warning overlays shown */}
-      {/* Reset button removed from PID area (handled in left sidebar/input panel) */}
+    <main
+      ref={mainContentRef as any}
+      className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden p-4 md:p-6 space-y-6 text-white"
+    >
+      {fatalUiError && (
+        <div className="rounded border border-red-500/40 bg-red-950/30 p-3 text-sm text-red-200">
+          {fatalUiError}
+        </div>
+      )}
+
+      {Array.isArray(warnings) && warnings.length > 0 && (
+        <div className="rounded border border-amber-400/30 bg-amber-950/20 p-3 text-sm text-amber-200">
+          <div className="font-semibold mb-1">Warnings</div>
+          <ul className="list-disc list-inside space-y-1">
+            {warnings.map((w, i) => (
+              <li key={i}>{w}</li>
+            ))}
+          </ul>
+        </div>
+      )}
 
       {visibleProjectInfo && (
         <Section id="project-title" title="01 — Project Info" onHelp={onHelp} helpContext="projectInfo">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2 text-sm text-white">
-            {titleBlock.projectTitle && (
+            {titleBlock?.projectTitle && (
               <div>
                 <div className="text-xs uppercase tracking-wide text-slate-300 mb-0.5">Project Title</div>
                 <div>{titleBlock.projectTitle}</div>
               </div>
             )}
-            {titleBlock.subtitle && (
+            {titleBlock?.subtitle && (
               <div>
                 <div className="text-xs uppercase tracking-wide text-slate-300 mb-0.5">Subtitle</div>
                 <div>{titleBlock.subtitle}</div>
               </div>
             )}
-            {titleBlock.generatedOn && (
+            {titleBlock?.generatedOn && (
               <div>
                 <div className="text-xs uppercase tracking-wide text-slate-300 mb-0.5">Generated On</div>
                 <div>{titleBlock.generatedOn}</div>
@@ -1116,7 +853,9 @@ useEffect(() => {
                 {objectivesSmart.map((obj: any, idx: number) => (
                   <li key={idx}>
                     {obj?.objective || obj?.name || String(obj || '')}{' '}
-                    {obj?.successMeasure ? <span className="text-xs text-amber-300">({obj.successMeasure})</span> : null}
+                    {obj?.successMeasure ? (
+                      <span className="text-xs text-amber-300">({obj.successMeasure})</span>
+                    ) : null}
                   </li>
                 ))}
               </ul>
@@ -1171,7 +910,12 @@ useEffect(() => {
       )}
 
       {visibleAssumptionsSection && (
-        <Section id="assumptions" title="05 — Assumptions, Constraints, Dependencies" onHelp={onHelp} helpContext="assumptions">
+        <Section
+          id="assumptions"
+          title="05 — Assumptions, Constraints, Dependencies"
+          onHelp={onHelp}
+          helpContext="assumptions"
+        >
           {Array.isArray(assumptions) && assumptions.length > 0 && (
             <Field title="Assumptions">
               <ul className="list-disc list-inside text-sm text-white space-y-1">
@@ -1219,7 +963,7 @@ useEffect(() => {
           )}
 
           <div className="mb-2 flex flex-col gap-2">
-              <div id="gantt-controls" className="flex flex-wrap gap-2 items-center">
+            <div id="gantt-controls" className="flex flex-wrap gap-2 items-center">
               <select
                 className="bg-brand-panel border border-brand-border rounded px-2 py-1 text-sm"
                 value={ganttStyleIdx}
@@ -1254,6 +998,7 @@ useEffect(() => {
               >
                 Labels
               </button>
+
               <button
                 className={`px-2 py-1 text-sm border rounded transition-colors ${
                   ganttGrid
@@ -1264,6 +1009,7 @@ useEffect(() => {
               >
                 Grid
               </button>
+
               <button
                 className={`px-2 py-1 text-sm border rounded transition-colors ${
                   ganttToday
@@ -1274,6 +1020,7 @@ useEffect(() => {
               >
                 Today
               </button>
+
               <button
                 className={`px-2 py-1 text-sm border rounded transition-colors ${
                   ganttArrows
@@ -1284,6 +1031,7 @@ useEffect(() => {
               >
                 Arrows
               </button>
+
               <button
                 className={`px-2 py-1 text-sm border rounded transition-colors ${
                   ganttWeekends
@@ -1294,6 +1042,7 @@ useEffect(() => {
               >
                 Weekends
               </button>
+
               <button
                 className={`px-2 py-1 text-sm border rounded transition-colors ${
                   ganttCriticalPath
@@ -1305,31 +1054,39 @@ useEffect(() => {
                 Critical Path
               </button>
 
-              <div className="rounded-lg p-2 inline-flex items-center gap-3" style={{ background: 'rgba(14,165,233,0.06)', border: '1px solid rgba(14,165,233,0.12)' }}>
+              <div
+                className="rounded-lg p-2 inline-flex items-center gap-3"
+                style={{
+                  background: 'rgba(14,165,233,0.06)',
+                  border: '1px solid rgba(14,165,233,0.12)',
+                }}
+              >
                 <div className="text-sm font-semibold text-slate-200">Export Gantt</div>
                 <div className="flex gap-2">
                   <button
                     className="px-3 py-1 text-sm font-semibold border rounded shadow bg-sky-600 border-sky-500 text-white"
                     onClick={() => handleExport('png')}
+                    type="button"
                   >
                     PNG
                   </button>
                   <button
                     className="px-3 py-1 text-sm font-semibold border rounded shadow bg-sky-600 border-sky-500 text-white"
                     onClick={() => handleExport('jpeg')}
+                    type="button"
                   >
                     JPEG
                   </button>
                   <button
                     className="px-3 py-1 text-sm font-semibold border rounded shadow bg-sky-600 border-sky-500 text-white"
                     onClick={() => handleExport('svg')}
+                    type="button"
                   >
                     SVG
                   </button>
                 </div>
               </div>
 
-              {/* Slider UI (debounced into ganttBarHeight) */}
               <input
                 className="w-36"
                 type="range"
@@ -1348,6 +1105,7 @@ useEffect(() => {
                 <option value="light">Light</option>
                 <option value="custom">Custom…</option>
               </select>
+
               {ganttBg === 'custom' && (
                 <input
                   type="color"
@@ -1358,70 +1116,78 @@ useEffect(() => {
                   style={{ width: 32, height: 32, verticalAlign: 'middle', cursor: 'pointer' }}
                 />
               )}
-              </div>
+            </div>
 
-              <div className="mt-2 rounded border border-[var(--color-border)] bg-slate-950 p-2">
-                <span className="text-xs text-slate-400">Preview: {STYLE_PRESETS[ganttStyleIdx]?.name}</span>
-                <GanttChart
-                  tasks={ganttTasks as any}
-                  stylePreset={
-                    { ...STYLE_PRESETS[ganttStyleIdx], box: { ...STYLE_PRESETS[ganttStyleIdx].box, height: ganttBarHeight } } as any
-                  }
-                  scheme={ganttScheme}
-                  labels={ganttLabels}
-                  grid={ganttGrid}
-                  today={ganttToday}
-                  arrows={ganttArrows}
-                  weekends={ganttWeekends}
-                  criticalPath={ganttCriticalPath}
-                  barHeight={ganttBarHeight}
-                  backgroundMode={ganttBg === 'custom' ? ganttBgCustom : ganttBg}
-                />
+            <div className="mt-2 rounded border border-[var(--color-border)] bg-slate-950 p-2">
+              <span className="text-xs text-slate-400">Preview: {STYLE_PRESETS[ganttStyleIdx]?.name}</span>
 
-                {/* Owner filter buttons below Gantt */}
-                {uniqueOwners.length > 0 && (
-                  <div className="flex flex-wrap gap-2 mt-3 justify-center">
-                    {uniqueOwners.map((owner) => {
-                      const active = ownerFilter.includes(owner);
-                      return (
-                        <button
-                          key={owner}
-                          type="button"
-                          className={`px-3 py-1.5 rounded-full font-semibold shadow transition-all border ${
-                            active
-                              ? 'bg-amber-400 text-black border-amber-600 ring-2 ring-amber-700 scale-105'
-                              : 'bg-slate-900 text-amber-200 border-amber-500 hover:bg-amber-300 hover:text-black hover:scale-105'
-                          }`}
-                          onClick={() => handleOwnerClick(owner)}
-                        >
-                          {owner}
-                        </button>
-                      );
-                    })}
-                    {ownerFilter.length > 0 && (
+              <GanttChart
+                tasks={ganttTasks as any}
+                stylePreset={
+                  {
+                    ...STYLE_PRESETS[ganttStyleIdx],
+                    box: { ...STYLE_PRESETS[ganttStyleIdx].box, height: ganttBarHeight },
+                  } as any
+                }
+                scheme={ganttScheme}
+                labels={ganttLabels}
+                grid={ganttGrid}
+                today={ganttToday}
+                arrows={ganttArrows}
+                weekends={ganttWeekends}
+                criticalPath={ganttCriticalPath}
+                barHeight={ganttBarHeight}
+                backgroundMode={ganttBg === 'custom' ? ganttBgCustom : ganttBg}
+              />
+
+              {uniqueOwners.length > 0 && (
+                <div className="flex flex-wrap gap-2 mt-3 justify-center">
+                  {uniqueOwners.map((owner) => {
+                    const active = ownerFilter.includes(owner);
+                    return (
                       <button
+                        key={owner}
                         type="button"
-                        className="px-3 py-1.5 rounded-full font-semibold shadow border border-amber-500 bg-[var(--color-bg-panel)] text-amber-100 hover:bg-amber-200 hover:text-black transition-all"
-                        onClick={() => setOwnerFilter([])}
+                        className={`px-3 py-1.5 rounded-full font-semibold shadow transition-all border ${
+                          active
+                            ? 'bg-amber-400 text-black border-amber-600 ring-2 ring-amber-700 scale-105'
+                            : 'bg-slate-900 text-amber-200 border-amber-500 hover:bg-amber-300 hover:text-black hover:scale-105'
+                        }`}
+                        onClick={() => handleOwnerClick(owner)}
                       >
-                        Show All
+                        {owner}
                       </button>
-                    )}
-                  </div>
-                )}
-                {exportError && <div className="mt-2 text-sm font-semibold text-red-400">{exportError}</div>}
-              </div>
+                    );
+                  })}
+                  {ownerFilter.length > 0 && (
+                    <button
+                      type="button"
+                      className="px-3 py-1.5 rounded-full font-semibold shadow border border-amber-500 bg-[var(--color-bg-panel)] text-amber-100 hover:bg-amber-200 hover:text-black transition-all"
+                      onClick={() => setOwnerFilter([])}
+                    >
+                      Show All
+                    </button>
+                  )}
+                </div>
+              )}
+
+              {exportError && <div className="mt-2 text-sm font-semibold text-red-400">{exportError}</div>}
+            </div>
           </div>
 
           <Field title="Milestones">
-            {Array.isArray(milestones) && milestones.length > 0 && (
+            {Array.isArray(milestones) && milestones.length > 0 ? (
               <ul className="list-disc list-inside text-sm text-white space-y-1">
                 {milestones.map((m: any, idx: number) => (
                   <li key={idx}>
-                    {typeof m === 'string' ? m : `${m?.milestone || m?.name || 'Milestone'}${m?.date ? ` — ${m.date}` : ''}`}
+                    {typeof m === 'string'
+                      ? m
+                      : `${m?.milestone || m?.name || 'Milestone'}${m?.date ? ` — ${m.date}` : ''}`}
                   </li>
                 ))}
               </ul>
+            ) : (
+              <div className="text-xs text-slate-300">No milestones available.</div>
             )}
           </Field>
 
@@ -1433,7 +1199,7 @@ useEffect(() => {
                   height={320}
                   rowHeight={26}
                   className="rounded border border-brand-border/60 bg-[var(--color-bg-panel)]/40"
-                  renderRow={(task: any, idx: number) => (
+                  renderRow={(task: any) => (
                     <div className="px-2 text-xs text-white whitespace-nowrap overflow-hidden text-ellipsis">
                       {task?.name || task?.task || 'Task'} — {task?.owner || 'Owner'}{' '}
                       {task?.start ? `(${task.start}` : ''}
@@ -1505,15 +1271,14 @@ useEffect(() => {
           )}
 
           <Field title="Budget & Cost Breakdown">
-            {/* No parse warning overlays shown */}
             {budgetIsEstimated && (
               <div className="mb-2 text-xs text-amber-200/90">
                 Estimated budget (deterministic baseline). Update with actuals when available.
               </div>
             )}
-            <div className="mb-2 text-xs text-brand-muted">
-              Currency: {String(budgetCurrency).toUpperCase()}
-            </div>
+
+            <div className="mb-2 text-xs text-brand-muted">Currency: {String(budgetCurrency).toUpperCase()}</div>
+
             {useVirtualBudget ? (
               <div className="rounded border border-brand-border/60 overflow-hidden">
                 <div className="grid grid-cols-[2fr_1fr_1fr_1fr_1fr_1fr_2fr] text-left text-brand-muted bg-[var(--color-bg-panel)] text-sm">
@@ -1542,7 +1307,9 @@ useEffect(() => {
                       <div className="py-2 px-3 truncate">{formatRate(row)}</div>
                       <div className="py-2 px-3 truncate">{formatMultiplier(row?.complexityMultiplier)}</div>
                       <div className="py-2 px-3 text-right whitespace-nowrap">{formatCurrency(row?.totalCostUsd)}</div>
-                      <div className="py-2 px-3 truncate" title={formatJustification(row)}>{formatJustification(row)}</div>
+                      <div className="py-2 px-3 truncate" title={formatJustification(row)}>
+                        {formatJustification(row)}
+                      </div>
                     </div>
                   )}
                 />
@@ -1565,23 +1332,32 @@ useEffect(() => {
                     {derivedBudgetRows.map((row: any, idx: number) => (
                       <tr
                         key={idx}
-                        className={`border-t border-brand-border/60 ${idx % 2 === 0 ? 'bg-slate-800/40' : 'bg-slate-900/10'}`}
+                        className={`border-t border-brand-border/60 ${
+                          idx % 2 === 0 ? 'bg-slate-800/40' : 'bg-slate-900/10'
+                        }`}
                       >
                         <td className="py-2 px-3 align-top">{row?.task || 'Task'}</td>
                         <td className="py-2 px-3 align-top">{row?.role || 'Persona'}</td>
                         <td className="py-2 px-3 align-top">{formatHours(row?.estimatedHours)}</td>
                         <td className="py-2 px-3 align-top">{formatRate(row)}</td>
                         <td className="py-2 px-3 align-top">{formatMultiplier(row?.complexityMultiplier)}</td>
-                        <td className="py-2 px-3 align-top text-right whitespace-nowrap">{formatCurrency(row?.totalCostUsd)}</td>
-                        <td className="py-2 px-3 align-top" title={formatJustification(row)}>{formatJustification(row)}</td>
+                        <td className="py-2 px-3 align-top text-right whitespace-nowrap">
+                          {formatCurrency(row?.totalCostUsd)}
+                        </td>
+                        <td className="py-2 px-3 align-top" title={formatJustification(row)}>
+                          {formatJustification(row)}
+                        </td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
               </div>
             )}
+
             <div className="mt-2 text-xs text-brand-muted">
-              {Number.isFinite(budgetTotal) && budgetTotal > 0 ? `Total: ${formatCurrency(budgetTotal)} from pid.budgetSummary.totalCostUsd` : 'Total: —'}
+              {Number.isFinite(budgetTotal) && budgetTotal > 0
+                ? `Total: ${formatCurrency(budgetTotal)} from pid.budgetSummary.totalCostUsd`
+                : 'Total: —'}
             </div>
           </Field>
 
@@ -1601,6 +1377,12 @@ useEffect(() => {
 
       {visibleRisksSection && (
         <Section id="risks" title="08 — Risks, Issues & Communications" onHelp={onHelp} helpContext="risks">
+          <div className="mb-2 text-xs text-slate-400">
+            {(agentLoading?.risk || agentLoading?.compliance) && 'Running agents… '}
+            {agentLoading?.risk ? 'Risk ' : ''}
+            {agentLoading?.compliance ? 'Compliance ' : ''}
+          </div>
+
           {Array.isArray(displayedRisks) && displayedRisks.length > 0 && (
             <Field title="Key Risks">
               <ul className="list-disc list-inside text-sm text-white space-y-1">
@@ -1608,7 +1390,9 @@ useEffect(() => {
                   <li key={idx}>
                     {typeof r === 'string'
                       ? r
-                      : `${r?.risk || 'Risk'}${r?.probability ? ` — P:${r.probability}` : ''}${r?.impact ? ` / I:${r.impact}` : ''}`}
+                      : `${r?.risk || 'Risk'}${r?.probability ? ` — P:${r.probability}` : ''}${
+                          r?.impact ? ` / I:${r.impact}` : ''
+                        }`}
                   </li>
                 ))}
               </ul>
@@ -1632,7 +1416,9 @@ useEffect(() => {
                   <li key={idx}>
                     {typeof it === 'string'
                       ? it
-                      : `${it?.issue || 'Issue'} — ${it?.decision || 'Decision'}${it?.owner ? ` — ${it.owner}` : ''}${it?.date ? ` — ${it.date}` : ''}`}
+                      : `${it?.issue || 'Issue'} — ${it?.decision || 'Decision'}${it?.owner ? ` — ${it.owner}` : ''}${
+                          it?.date ? ` — ${it.date}` : ''
+                        }`}
                   </li>
                 ))}
               </ul>
@@ -1644,7 +1430,9 @@ useEffect(() => {
               <ul className="list-disc list-inside text-sm text-white space-y-1">
                 {communicationPlan.map((c: any, idx: number) => (
                   <li key={idx}>
-                    {typeof c === 'string' ? c : `${c?.audience || 'Audience'} — ${c?.cadence || 'Cadence'} — ${c?.channel || 'Channel'}`}
+                    {typeof c === 'string'
+                      ? c
+                      : `${c?.audience || 'Audience'} — ${c?.cadence || 'Cadence'} — ${c?.channel || 'Channel'}`}
                   </li>
                 ))}
               </ul>
@@ -1653,7 +1441,7 @@ useEffect(() => {
         </Section>
       )}
 
-      {showGovernanceSection && (
+      {visibleGovernanceSection && (
         <Section id="governance" title="09 — Governance, Compliance, Open Questions" onHelp={onHelp} helpContext="governance">
           {Array.isArray(governanceApprovals) && governanceApprovals.length > 0 && (
             <Field title="Governance & Approvals">
@@ -1671,7 +1459,9 @@ useEffect(() => {
             <Field title="Compliance, Security & Privacy">
               <ul className="list-disc list-inside text-sm text-white space-y-1">
                 {displayedCompliance.map((c: any, idx: number) => (
-                  <li key={idx}>{typeof c === 'string' ? c : `${c?.requirement || 'Requirement'} — ${c?.notes || '—'}`}</li>
+                  <li key={idx}>
+                    {typeof c === 'string' ? c : `${c?.requirement || 'Requirement'} — ${c?.notes || '—'}`}
+                  </li>
                 ))}
               </ul>
             </Field>
@@ -1696,39 +1486,8 @@ useEffect(() => {
           )}
         </Section>
       )}
-      {/* removed template marker */}
     </main>
   );
 };
 
 export default MainContent;
-
-/*
-LEGACY_INTRO_DISABLED (kept for rollback/testing)
-
-The following legacy intro JSX was previously rendered inside the `!pidData` branch under a
-hidden div, but ANY mismatched tag inside it breaks the build because JSX still must parse.
-To preserve it without risking JSX parse failures, it is stored here as a block comment.
-
---- BEGIN LEGACY INTRO JSX (as previously embedded) ---
-
-<div className="hidden">
-  {(() => {
-    const SHOW_LEGACY_INTRO = false;
-    return (
-      <>
-        {SHOW_LEGACY_INTRO && (
-          <main className="flex-1 overflow-y-auto p-6 md:p-10 text-brand-text bg-gradient-to-br from-amber-50 via-white to-amber-100">
-            ... (legacy content preserved in your original file) ...
-          </main>
-        )}
-      </>
-    );
-  })()}
-</div>
-
---- END LEGACY INTRO JSX ---
-
-If you want it back, we can reintroduce it as a separate component and validate tag balance
-so it can never break builds again.
-*/

@@ -85,6 +85,7 @@ export const InputPanel: React.FC<InputPanelProps> = ({
   };
 
   const handleFileChange: React.ChangeEventHandler<HTMLInputElement> = async (event) => {
+    handleReset();
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
       abortControllerRef.current = null;
@@ -145,6 +146,7 @@ export const InputPanel: React.FC<InputPanelProps> = ({
   };
 
   const handleDroppedFiles = async (files: FileList | null) => {
+    handleReset();
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
       abortControllerRef.current = null;
@@ -172,6 +174,7 @@ export const InputPanel: React.FC<InputPanelProps> = ({
   };
 
   const handleCreate = async () => {
+    handleReset();
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
       abortControllerRef.current = null;
@@ -204,6 +207,7 @@ export const InputPanel: React.FC<InputPanelProps> = ({
 
   // Helper for parse button (pasted text)
   const handleParse = async () => {
+    setLastError(null);
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
       abortControllerRef.current = null;
@@ -265,8 +269,12 @@ export const InputPanel: React.FC<InputPanelProps> = ({
       <div className="flex items-center justify-between mb-1">
         <span className="text-lg font-bold text-amber-300 tracking-wide">INPUT</span>
       </div>
-      <label className="block text-sm font-semibold text-white mb-0" htmlFor="input-panel-textarea">Drop a file here or click to select one</label>
-      <div className="text-xs text-slate-300 mb-0">Supported formats: {SUPPORTED_LABEL}. Recommended: ~20 pages (hard limit {MAX_PAGES}).</div>
+      <label className="block text-base font-semibold text-white mb-1" htmlFor="input-panel-textarea">
+        Paste, drop, upload, or create a Project Initiation Document (PID)
+      </label>
+      <div className="text-xs text-amber-200 mb-1">
+        <strong>Supported:</strong> DOCX, PDF, TXT, MD, CSV, XLS/XLSX. <strong>Options:</strong> Paste, drop, upload, create, or load example. <strong>Tip:</strong> Recommended ≤20 pages (hard limit {MAX_PAGES}).
+      </div>
       <textarea
         id="input-panel-textarea"
         rows={3}
@@ -277,8 +285,8 @@ export const InputPanel: React.FC<InputPanelProps> = ({
           setLastSource('paste');
           setLastError(null); // Clear error on new input
         }}
-        placeholder="Paste here, drop a file, or click Upload File (below)..."
-        aria-label="Paste PID or requirements document"
+        placeholder="Paste PID text, drop a file, upload (DOCX, PDF, TXT, MD, CSV, XLS/XLSX), create from scratch, or load an example."
+        aria-label="Paste, drop, upload, or create a PID document"
         onDragOver={(e) => {
           e.preventDefault();
           if (!isDragOver) setIsDragOver(true);

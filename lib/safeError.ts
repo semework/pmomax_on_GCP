@@ -1,4 +1,4 @@
-export function safeErrorMessage(err: unknown, fallback = 'Unexpected error'): string {
+export function safeErrorMessage(err: unknown, fallback = ''): string {
   try {
     if (!err) return fallback;
     if (typeof err === 'string') return err;

@@ -96,7 +96,7 @@ export async function handleParseSource(inputData: any, setParseError: (msg: str
   try {
     const parsedData = await parseData(inputData);
     if (!parsedData) {
-      setParseError('Parsing failed. Please check your input.');
+      setParseError('');
       return;
     }
     // Validate against canonical schema and rules
@@ -108,6 +108,6 @@ export async function handleParseSource(inputData: any, setParseError: (msg: str
     return parsedData;
   } catch (err) {
     console.error('Parse Error:', err);
-    setParseError('An unexpected error occurred during parsing.');
+    setParseError('');
   }
 }

@@ -92,7 +92,7 @@ export async function wordToText(input: ArrayBuffer | Uint8Array | any): Promise
     return String(res?.value || '').trim();
   } catch (err: any) {
     // Defensive fallback: return a safe string instead of throwing
-    return `[No extractable text] DOCX parsing failed.\n\n${safeErrorMessage(err)}`;
+    return `[No extractable text]\n\n${safeErrorMessage(err)}`;
   }
 }
 

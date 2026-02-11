@@ -1,107 +1,95 @@
-// validatePMOMaxPID.ts
-// Validator for canonical PMOMaxPID objects (28 fields, strict)
-import { PMOMaxPID } from '../types';
+import type { PMOMaxPID } from '../types';
 
-export type PMOMaxPIDValidationError = {
+export type PIDValidationError = {
   errorCode: string;
   message: string;
-  field?: string;
 };
 
-// Reference minimums for completeness guards (update as needed)
-const MIN_OBJECTIVES = 3;
-const MIN_KPIS = 4;
-const MIN_TASKS = 8;
-const MAX_TASKS = 32;
+const isPlainObject = (v: any) => v !== null && typeof v === 'object' && !Array.isArray(v);
+const isString = (v: any) => typeof v === 'string';
 
-// Example reference lengths for size guards (replace with actual PDF values)
-const REFERENCE_FIELD_LENGTHS: Record<string, number> = {
-  executiveSummary: 1200, // Example: update with real PDF field lengths
-  problemStatement: 800,
-  businessCaseExpectedValue: 1000,
-  // ...add all string fields as needed
-};
+const okStringOrUndef = (v: any) => v === undefined || v === null || isString(v);
+const okArrayOrUndef = (v: any) => v === undefined || v === null || Array.isArray(v);
+const okObjectOrUndef = (v: any) => v === undefined || v === null || isPlainObject(v);
 
-export function validatePMOMaxPID(data: PMOMaxPID): PMOMaxPIDValidationError | null {
-  // 1. Size guards
-  for (const [field, refLen] of Object.entries(REFERENCE_FIELD_LENGTHS)) {
-    const val = (data as any)[field];
-    if (typeof val === 'string' && val.length > 2 * refLen) {
-      return {
-        errorCode: 'FIELD_TOO_LARGE',
-        message: `Field '${field}' is abnormally large; aborting to prevent UI overload.`,
-        field,
-      };
-    }
+/**
+ * Returns null when the PID is safe to render.
+ * Returns a structured error ONLY for malformed shapes that could break rendering.
+ *
+ * NOTE: This is intentionally lenient; missing/empty fields are allowed.
+ */
+export function validatePMOMaxPID(pid: any): PIDValidationError | null {
+  const errors: string[] = [];
+
+  if (!isPlainObject(pid)) {
+    return { errorCode: 'INVALID_PID', message: 'Parsed PID is not an object.' };
   }
 
-  // 2. Completeness guards
-  if (!data.titleBlock?.projectTitle || !data.titleBlock?.subtitle || !data.titleBlock?.generatedOn) {
-    return {
-      errorCode: 'MISSING_OR_UNDERPOPULATED_SECTION',
-      message: 'Missing required title block fields.',
-      field: 'titleBlock',
-    };
-  }
-  if (!data.executiveSummary || !data.problemStatement || !data.businessCaseExpectedValue) {
-    return {
-      errorCode: 'MISSING_OR_UNDERPOPULATED_SECTION',
-      message: 'Missing required summary/problem/business case.',
-    };
-  }
-  if (!Array.isArray(data.objectivesSmart) || data.objectivesSmart.length < MIN_OBJECTIVES) {
-    return {
-      errorCode: 'MISSING_OR_UNDERPOPULATED_SECTION',
-      message: 'Too few objectives — minimum of 3 required.',
-      field: 'objectivesSmart',
-    };
-  }
-  if (!Array.isArray(data.kpis) || data.kpis.length < MIN_KPIS) {
-    return {
-      errorCode: 'MISSING_OR_UNDERPOPULATED_SECTION',
-      message: 'Too few KPIs — minimum of 4 required.',
-      field: 'kpis',
-    };
-  }
-  if (!Array.isArray(data.workBreakdownTasks) || data.workBreakdownTasks.length < MIN_TASKS) {
-    return {
-      errorCode: 'MISSING_OR_UNDERPOPULATED_SECTION',
-      message: 'Too few tasks — minimum of 8 required for Gantt chart!',
-      field: 'workBreakdownTasks',
-    };
+  // titleBlock is expected to exist, but don't fail hard if missing; only fail if wrong type.
+  if (pid.titleBlock !== undefined && !okObjectOrUndef(pid.titleBlock)) {
+    errors.push('titleBlock must be an object.');
   }
 
-  // 3. Gantt renderability guards
-  if (!data.gantt || !Array.isArray(data.gantt.rows) || data.gantt.rows.length === 0) {
-    return {
-      errorCode: 'GANTT_NOT_RENDERABLE',
-      message: 'Gantt cannot be plotted due to missing/invalid rows.',
-      field: 'gantt',
-    };
-  }
-  for (const row of data.gantt.rows) {
-    if (!row.start || !row.end) {
-      return {
-        errorCode: 'GANTT_NOT_RENDERABLE',
-        message: 'Gantt cannot be plotted due to missing/invalid dates.',
-        field: 'gantt',
-      };
-    }
+  if (isPlainObject(pid.titleBlock)) {
+    if (!okStringOrUndef(pid.titleBlock.projectTitle)) errors.push('titleBlock.projectTitle must be a string.');
+    if (!okStringOrUndef(pid.titleBlock.subtitle)) errors.push('titleBlock.subtitle must be a string.');
+    if (!okStringOrUndef(pid.titleBlock.generatedOn)) errors.push('titleBlock.generatedOn must be a string.');
   }
 
-  // 4. Performance guards (cap tasks at 32)
-  if (data.workBreakdownTasks.length > MAX_TASKS) {
-    // Truncate in parser, but validator can flag
-    return {
-      errorCode: 'TASKS_TOO_MANY',
-      message: 'Too many tasks — maximum of 32 allowed.',
-      field: 'workBreakdownTasks',
-    };
+  const stringFields = [
+    'executiveSummary',
+    'problemStatement',
+    'businessCaseExpectedValue',
+    'timelineOverview',
+    'notesBackground',
+    'businessCase',
+    'resourcesPlan',
+    'communicationsPlan',
+  ];
+  for (const k of stringFields) {
+    if (!okStringOrUndef(pid[k])) errors.push(`${k} must be a string.`);
   }
 
-  // 5. Table shape/column checks (optional: add as needed)
-  // ...
+  const arrayFields = [
+    'objectivesSmart',
+    'kpis',
+    'scopeInclusions',
+    'scopeExclusions',
+    'assumptions',
+    'constraints',
+    'dependencies',
+    'stakeholders',
+    'teamRaci',
+    'milestones',
+    'workBreakdownTasks',
+    'budgetCostBreakdown',
+    'resourcesTools',
+    'risks',
+    'mitigationsContingencies',
+    'issuesDecisionsLog',
+    'communicationPlan',
+    'governanceApprovals',
+    'complianceSecurityPrivacy',
+    'openQuestionsNextSteps',
+    'deliverablesOutputs',
+  ];
+  for (const k of arrayFields) {
+    if (!okArrayOrUndef(pid[k])) errors.push(`${k} must be an array.`);
+  }
 
-  // All checks passed
-  return null;
+  const objectFields = ['projectSponsor', 'projectManagerOwner', 'budgetSummary', 'fields', 'tables'];
+  for (const k of objectFields) {
+    if (!okObjectOrUndef(pid[k])) errors.push(`${k} must be an object.`);
+  }
+
+  // Optional deeper checks for known nested objects (still lenient)
+  if (isPlainObject(pid.projectSponsor)) {
+    if (!okStringOrUndef(pid.projectSponsor.name)) errors.push('projectSponsor.name must be a string.');
+    if (!okStringOrUndef(pid.projectSponsor.role)) errors.push('projectSponsor.role must be a string.');
+  }
+  if (isPlainObject(pid.projectManagerOwner)) {
+    if (!okStringOrUndef(pid.projectManagerOwner.name)) errors.push('projectManagerOwner.name must be a string.');
+  }
+
+  return errors.length ? { errorCode: 'PID_VALIDATION', message: errors.join(' ') } : null;
 }

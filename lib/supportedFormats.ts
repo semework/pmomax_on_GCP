@@ -1,16 +1,11 @@
 // lib/supportedFormats.ts
 // Central place for all supported input formats and hard limits.
 
-export const MAX_PAGES = 50; // UI only
-
-// Conservative word-per-page heuristic for plain text inputs (client + server).
-// Used as a hard gate to keep parsing stable for uploads/paste.
+export const MAX_PAGES = 112; // UI only, for 50,000 words at 450/page
 export const WORDS_PER_PAGE = 450;
-
-// Internal parse cap (all formats): ~55 pages, not shown in UI
-export const INTERNAL_MAX_PAGES = 55;
-export const INTERNAL_MAX_WORDS = INTERNAL_MAX_PAGES * WORDS_PER_PAGE;
-export const MAX_WORDS = MAX_PAGES * WORDS_PER_PAGE;
+export const INTERNAL_MAX_PAGES = 112;
+export const INTERNAL_MAX_WORDS = 50_000;
+export const MAX_WORDS = INTERNAL_MAX_WORDS;
 
 export const SUPPORTED_EXTENSIONS = [
   '.docx',

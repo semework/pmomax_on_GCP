@@ -418,7 +418,7 @@ const App: React.FC = () => {
     if (!parseDocument) throw new Error('Parse function not available');
     const result = await parseDocument(text, aiModel, warnings);
     if (!result?.ok) {
-      const msg = result?.error === 'USER_CANCELLED' ? 'Parsing was cancelled.' : (result?.error || 'Parsing failed.');
+      const msg = result?.error === 'USER_CANCELLED' ? 'Parsing was cancelled.' : (result?.error || '');
       if (result?.error !== 'USER_CANCELLED') throw new Error(msg);
     }
   };

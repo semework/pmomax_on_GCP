@@ -34,6 +34,7 @@ RUN npm ci --omit=dev
 COPY --from=build /app/dist ./dist
 COPY --from=build /app/lib ./lib
 COPY --from=build /app/server ./server
+COPY --from=build /app/data ./data
 COPY server.mjs ./server.mjs
 
 EXPOSE 8080

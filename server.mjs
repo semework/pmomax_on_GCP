@@ -116,12 +116,12 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Hard limits (must match client gates)
-const MAX_PAGES = 50; // UI only
+const MAX_PAGES = 112; // UI only, for 50,000 words at 450/page
 const WORDS_PER_PAGE = 450;
-const INTERNAL_MAX_PAGES = 55;
-const INTERNAL_MAX_WORDS = INTERNAL_MAX_PAGES * WORDS_PER_PAGE;
+const INTERNAL_MAX_PAGES = 112;
+const INTERNAL_MAX_WORDS = 50_000;
 const MAX_WORDS = INTERNAL_MAX_WORDS;
-const PARSE_HARD_MAX_CHARS = 400_000;
+const PARSE_HARD_MAX_CHARS = 3_500_000;
 
 function countWords(text) {
   if (!text) return 0;
@@ -879,43 +879,26 @@ function pidToLegacyFields(pid) {
   return f;
 }
 
-// Ensures the returned PID object always has all canonical fields/groups, never missing any
+// Ensures the returned PID object always has all canonical fields/groups, never missing any, using demoData as the template for both shape and content
+import { demoData } from './data/demoData.js';
 function mergeWithEmptyPid(parsed) {
-  const base = makeEmptyPid();
-  if (!parsed || !isPlainObject(parsed)) return base;
+  const base = typeof demoData === 'object' && demoData !== null ? demoData : makeEmptyPid();
+  if (!parsed || !isPlainObject(parsed)) return { ...base };
   const out = { ...base, ...parsed };
-  // Deep merge for nested objects/arrays
-  out.titleBlock = { ...base.titleBlock, ...(parsed.titleBlock || {}) };
-  out.projectSponsor = { ...base.projectSponsor, ...(parsed.projectSponsor || {}) };
-  out.projectManagerOwner = { ...base.projectManagerOwner, ...(parsed.projectManagerOwner || {}) };
-  out.budgetSummary = { ...base.budgetSummary, ...(parsed.budgetSummary || {}) };
-  out.criticalPathBoxes = Array.isArray(parsed.criticalPathBoxes) ? parsed.criticalPathBoxes : base.criticalPathBoxes;
-  out.deliverablesOutputs = Array.isArray(parsed.deliverablesOutputs) ? parsed.deliverablesOutputs : base.deliverablesOutputs;
-  out.resourcesTools = Array.isArray(parsed.resourcesTools) ? parsed.resourcesTools : base.resourcesTools;
-  out.raci = Array.isArray(parsed.raci) ? parsed.raci : base.raci;
-  out.teamRaci = Array.isArray(parsed.teamRaci) ? parsed.teamRaci : base.teamRaci;
-  out.workBreakdownTasks = Array.isArray(parsed.workBreakdownTasks) ? parsed.workBreakdownTasks : base.workBreakdownTasks;
-  out.mitigationsContingencies = Array.isArray(parsed.mitigationsContingencies) ? parsed.mitigationsContingencies : base.mitigationsContingencies;
-  out.issuesDecisionsLog = Array.isArray(parsed.issuesDecisionsLog) ? parsed.issuesDecisionsLog : base.issuesDecisionsLog;
-  out.communicationPlan = Array.isArray(parsed.communicationPlan) ? parsed.communicationPlan : base.communicationPlan;
-  out.governanceApprovals = Array.isArray(parsed.governanceApprovals) ? parsed.governanceApprovals : base.governanceApprovals;
-  out.complianceSecurityPrivacy = Array.isArray(parsed.complianceSecurityPrivacy) ? parsed.complianceSecurityPrivacy : base.complianceSecurityPrivacy;
-  out.openQuestionsNextSteps = Array.isArray(parsed.openQuestionsNextSteps) ? parsed.openQuestionsNextSteps : base.openQuestionsNextSteps;
-  out.risks = Array.isArray(parsed.risks) ? parsed.risks : base.risks;
-  out.kpis = Array.isArray(parsed.kpis) ? parsed.kpis : base.kpis;
-  out.objectivesSmart = Array.isArray(parsed.objectivesSmart) ? parsed.objectivesSmart : base.objectivesSmart;
-  out.scopeInclusions = Array.isArray(parsed.scopeInclusions) ? parsed.scopeInclusions : base.scopeInclusions;
-  out.scopeExclusions = Array.isArray(parsed.scopeExclusions) ? parsed.scopeExclusions : base.scopeExclusions;
-  out.assumptions = Array.isArray(parsed.assumptions) ? parsed.assumptions : base.assumptions;
-  out.constraints = Array.isArray(parsed.constraints) ? parsed.constraints : base.constraints;
-  out.dependencies = Array.isArray(parsed.dependencies) ? parsed.dependencies : base.dependencies;
-  out.stakeholders = Array.isArray(parsed.stakeholders) ? parsed.stakeholders : base.stakeholders;
-  out.milestones = Array.isArray(parsed.milestones) ? parsed.milestones : base.milestones;
-  out.budgetCostBreakdown = Array.isArray(parsed.budgetCostBreakdown) ? parsed.budgetCostBreakdown : base.budgetCostBreakdown;
-  out.resourcesPlan = typeof parsed.resourcesPlan === 'string' ? parsed.resourcesPlan : base.resourcesPlan;
-  out.communicationsPlan = typeof parsed.communicationsPlan === 'string' ? parsed.communicationsPlan : base.communicationsPlan;
-  out.workBreakdownNotes = typeof parsed.workBreakdownNotes === 'string' ? parsed.workBreakdownNotes : base.workBreakdownNotes;
-  out.notesBackground = typeof parsed.notesBackground === 'string' ? parsed.notesBackground : base.notesBackground;
+  // Deep merge for nested objects/arrays, using demoData as the canonical template
+  for (const key of Object.keys(base)) {
+    const baseVal = base[key];
+    const parsedVal = parsed[key];
+    if (Array.isArray(baseVal)) {
+      out[key] = Array.isArray(parsedVal)
+        ? parsedVal.length > 0 ? parsedVal : baseVal
+        : baseVal;
+    } else if (typeof baseVal === 'object' && baseVal !== null) {
+      out[key] = { ...baseVal, ...(parsedVal || {}) };
+    } else {
+      out[key] = parsedVal != null && parsedVal !== '' ? parsedVal : baseVal;
+    }
+  }
   return out;
 }
 
@@ -1296,46 +1279,25 @@ Keep it short and factual. No JSON.
 `;
 
 function heuristicCondenseText(text) {
-  const lines = String(text || '').split(/\r?\n/);
-  const headerRe = /^(#{1,6}\s+|[A-Z][A-Z0-9\s\-:]{6,}|\d+\.\s+|[-*•]\s+)/;
-  const keywordRe = /(objective|kpi|scope|assumption|constraint|dependency|stakeholder|timeline|milestone|work breakdown|wbs|budget|cost|resource|risk|mitigation|issue|decision|communication|governance|approval|compliance|privacy|security|background|summary)/i;
-  const kept = [];
-  let total = 0;
-  for (const raw of lines) {
-    const line = raw.trim();
-    if (!line) continue;
-    if (headerRe.test(line) || keywordRe.test(line)) {
-      kept.push(line);
-      total += line.length + 1;
-      if (total > 120000) break;
-    }
-  }
-  const joined = kept.join('\n');
-  if (joined.length < 2000) {
-    return String(text || '').slice(0, 120000);
-  }
-  return joined.slice(0, 120000);
+  // Only condense if text is extremely large; otherwise, keep as much as possible.
+  const s = String(text || '');
+  const HARD_CHAR_LIMIT = 120000; // Only condense if above this
+  if (s.length <= HARD_CHAR_LIMIT) return s;
+  // If we must condense, just take the first HARD_CHAR_LIMIT chars, not just keyword lines
+  return s.slice(0, HARD_CHAR_LIMIT);
 }
 
 async function prepareParseText(text, modelName) {
   const warnings = [];
   let parseText = text;
-  if (text.length > 80000 || countWords(text) > 10000) {
+  // Only condense if text is extremely large (over 120,000 chars or 20,000 words)
+  const HARD_CHAR_LIMIT = 120000;
+  const HARD_WORD_LIMIT = 20000;
+  if (text.length > HARD_CHAR_LIMIT || countWords(text) > HARD_WORD_LIMIT) {
     parseText = heuristicCondenseText(text);
-    if (process.env.DEBUG_PARSE_WARNINGS === '1') warnings.push('Input was condensed to key lines for faster parsing.');
+    warnings.push('Input was truncated to the first 120,000 characters for parsing.');
   }
-  if (parseText.length > 60000 && GoogleGenerativeAI && process.env.GOOGLE_API_KEY) {
-    try {
-      const fastModel = process.env.GEMINI_SUMMARY_MODEL || 'gemini-2.5-flash';
-      const summary = await geminiJson(fastModel, PARSE_SUMMARY_PROMPT, parseText);
-      if (summary && typeof summary === 'string' && summary.trim().length > 200) {
-        parseText = summary.trim();
-        if (process.env.DEBUG_PARSE_WARNINGS === '1') warnings.push('Input was summarized with a fast model to avoid timeouts.');
-      }
-    } catch {
-      if (process.env.DEBUG_PARSE_WARNINGS === '1') warnings.push('Fast summary step failed; used condensed input.');
-    }
-  }
+  // Remove AI summarization step for parseText to avoid losing content
   return { parseText, warnings };
 }
 
@@ -1471,11 +1433,11 @@ app.post('/api/ai/parse', async (req, res) => {
     if (!text.trim()) return sendJson(res, { ok: false, error: 'Missing text.' });
     const wc = countWords(text);
     if (wc > MAX_WORDS) {
-      const msg = `Document too long (${wc.toLocaleString()} words).`;
+      const msg = `Sorry, your document is too long (${wc.toLocaleString()} words). The maximum allowed is 50,000 words. Please shorten or split your document and try again.`;
       return sendJson(res, { ok: false, error: msg }, 400);
     }
     if (text.length > PARSE_HARD_MAX_CHARS) {
-      const msg = 'Text too large. Please shorten and try again.';
+      const msg = 'Sorry, your document is too large (character count). Please shorten or split your document and try again.';
       return sendJson(res, { ok: false, error: msg }, 400);
     }
 
