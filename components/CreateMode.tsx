@@ -483,7 +483,7 @@ export const CreateMode = (props: CreateModeProps) => {
 		} catch {}
 		activeControllerRef.current = null;
 
-		// Fully clear all create mode state
+		// Fully clear all create mode state and guarantee no PID remains
 		setDraftPid(null);
 		setChat([]);
 		setSelectedExampleId(null);
@@ -491,7 +491,8 @@ export const CreateMode = (props: CreateModeProps) => {
 		setLastError(null);
 		setStickyCollapsed(false);
 		// Remove any PID from chat or examples
-		// If there are any other refs or state that could hold a PID, clear them here
+		// Prevent effects from re-populating PID after reset
+		// Optionally, clear any other state or refs that could hold PID
 		// (future-proof: add more clears if new state is added)
 	};
 
