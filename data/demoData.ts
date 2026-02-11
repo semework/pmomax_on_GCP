@@ -345,7 +345,13 @@ export const demoData: PMOMaxPID = {
   ],
 
   // 19) Budget & Cost Breakdown — TABLE
-  budgetCostBreakdown: [],
+  budgetCostBreakdown: [
+    { item: 'Staffing (core + pilot markets)', cost: 120000 },
+    { item: 'Software licenses', cost: 18000 },
+    { item: 'Cloud infrastructure', cost: 24000 },
+    { item: 'Training & onboarding', cost: 8000 },
+    { item: 'Contingency', cost: 10000 },
+  ],
 
   // 20) Resources & Tools — TABLE
   resourcesTools: [

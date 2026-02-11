@@ -265,29 +265,38 @@ export const AIAssistantPanel: React.FC<AIAssistantPanelProps & { title?: string
             letterSpacing: '0.01em',
           }}
         />
-        {/* Prominent Hide Button (shows if onToggleAI is provided) */}
-        {typeof onToggleAI === 'function' && pidData && (
+        {/* Prominent Hide Button (shows if onToggleAI is provided and PID is populated) */}
+        {typeof onToggleAI === 'function' && pidData && Object.keys(pidData).length > 0 && (
           <button
             type="button"
             onClick={() => onToggleAI(false)}
-            className="w-full py-3 text-lg rounded-2xl font-extrabold border-2 border-amber-400 text-black bg-gradient-to-br from-amber-300 to-amber-500 shadow-lg transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-amber-400/60"
+            className="w-full py-5 text-2xl rounded-3xl font-extrabold border-4 border-amber-400 text-black bg-gradient-to-br from-amber-200 to-amber-500 shadow-2xl transition-all duration-300 focus:outline-none focus:ring-8 focus:ring-amber-400/70 animate-flicker"
             style={{
-              marginTop: 8,
-              boxShadow: '0 0 0 4px #f7b84b, 0 0 24px 8px #f7b84b80, 0 2px 16px #0008',
-              animation: 'flickerShadow 2.2s infinite alternate',
+              marginTop: 12,
+              letterSpacing: '0.04em',
             }}
             aria-label="Hide AI Assistant Panel"
           >
-            Hide AI Assistant
+            <span role="img" aria-label="Hide">🙈</span> Hide AI Assistant
           </button>
         )}
         <style>{`
           @keyframes flickerShadow {
-            0% { box-shadow: 0 0 0 4px #f7b84b, 0 0 24px 8px #f7b84b80, 0 2px 16px #0008; }
-            50% { box-shadow: 0 0 0 8px #f7b84b, 0 0 48px 16px #f7b84b99, 0 2px 24px #000a; }
-            100% { box-shadow: 0 0 0 4px #f7b84b, 0 0 24px 8px #f7b84b80, 0 2px 16px #0008; }
+            0% { box-shadow: 0 0 0 8px #f7b84b, 0 0 48px 16px #f7b84b99, 0 2px 24px #000a; }
+            50% { box-shadow: 0 0 0 16px #f7b84b, 0 0 96px 32px #f7b84bcc, 0 2px 32px #000c; }
+            100% { box-shadow: 0 0 0 8px #f7b84b, 0 0 48px 16px #f7b84b99, 0 2px 24px #000a; }
+          }
+          .animate-flicker {
+            animation: flickerShadow 1.6s infinite alternate;
+            box-shadow: 0 0 0 8px #f7b84b, 0 0 48px 16px #f7b84b99, 0 2px 24px #000a;
           }
         `}</style>
+        {/* Example prompt for AI Create Assistant */}
+        <div className="mt-4 mb-2 p-3 rounded-xl bg-amber-900/40 border border-amber-400/60 text-amber-100 text-base font-semibold shadow">
+          <div className="text-lg font-extrabold text-amber-200 mb-1">AI Create Assistant</div>
+          <div>Describe your project in detail — goals, timeline, scope, stakeholders, constraints. I'll generate a complete PID.</div>
+          <div className="mt-2 text-xs text-amber-100/80">Example: <span className="italic">"A new mobile app for city parking, launching Q3 2026, for 5,000 users, with integrations to city payment APIs, strict privacy, and a 6-month pilot in two cities. Key risks: data leaks, vendor delays."</span></div>
+        </div>
         <button
           type="submit"
           className="w-full py-2 sm:py-3 text-base sm:text-lg rounded-xl bg-amber-400 text-black font-extrabold hover:bg-amber-300 active:bg-amber-500 border border-amber-700 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-150"

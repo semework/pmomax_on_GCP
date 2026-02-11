@@ -371,10 +371,7 @@ export const CreateMode = (props: CreateModeProps) => {
 			if (data && typeof data === 'object' && (data as any).pid) {
 				setDraftPid(applyDeterministicBudget(normalizePid((data as any).pid)));
 			}
-			const warnings = Array.isArray((data as any)?.warnings) ? (data as any).warnings : [];
-			if (warnings.length) {
-				setChat((prev) => [...prev, { role: 'assistant', content: `⚠️ Budget needs more inputs: ${warnings.join(' ')}` }]);
-			}
+			// Remove budget warning: always assume budget is present for example/created PIDs
 		} catch (err: any) {
 			const isTimeout = /timed\s*out|timeout/i.test(String(err?.message || err));
 			setLastError(isTimeout ? 'Budget enrichment timed out — using deterministic baseline.' : (safeErrorMessage(err) || 'Budget generation failed'));
