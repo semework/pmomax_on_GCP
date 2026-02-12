@@ -71,14 +71,17 @@ const shouldShowPid = (pid: PMOMaxPID | null) => {
 };
 
 export const CreateMode = (props: CreateModeProps) => {
-	const {
-		initialData,
-		onHelp,
-		onCreateModeEvent,
-		aiModel,
-		onDraftChange = (_pid: PMOMaxPID) => {},
-		onApplyExample,
-	} = props;
+	 const {
+	 	initialData,
+	 	onHelp,
+	 	onCreateModeEvent,
+	 	aiModel,
+	 	onDraftChange = (_pid: PMOMaxPID) => {},
+	 	onApplyExample,
+	 } = props;
+
+	 // Track if reset has been triggered
+	 const [hasReset, setHasReset] = useState(false);
 
 	// UI / interaction state
 	const [selectedExampleId, setSelectedExampleId] = useState<string | null>(null);
@@ -108,11 +111,12 @@ export const CreateMode = (props: CreateModeProps) => {
 	// Do NOT pre-populate a draft PID on mount — keep it null until the user
 	// selects an example, drops a file, or the assistant generates content.
 
-	useEffect(() => {
-		if (!initialData) return;
-		const next = applyDeterministicBudget(normalizePid(initialData));
-		setDraftPid(next);
-	}, [initialData]);
+	 useEffect(() => {
+	 	if (hasReset) return; // Prevent re-population after reset
+	 	if (!initialData) return;
+	 	const next = applyDeterministicBudget(normalizePid(initialData));
+	 	setDraftPid(next);
+	 }, [initialData, hasReset]);
 
 	useEffect(() => {
 		if (onDraftChange && draftPid) onDraftChange(draftPid);
@@ -477,24 +481,21 @@ export const CreateMode = (props: CreateModeProps) => {
 		}
 	};
 
-	const handleReset = () => {
-		try {
-			activeControllerRef.current?.abort();
-		} catch {}
-		activeControllerRef.current = null;
+	 const handleReset = () => {
+	 	try {
+	 		activeControllerRef.current?.abort();
+	 	} catch {}
+	 	activeControllerRef.current = null;
 
-		// Fully clear all create mode state and guarantee no PID remains
-		setDraftPid(null);
-		setChat([]);
-		setSelectedExampleId(null);
-		setChatInput('');
-		setLastError(null);
-		setStickyCollapsed(false);
-		// Remove any PID from chat or examples
-		// Prevent effects from re-populating PID after reset
-		// Optionally, clear any other state or refs that could hold PID
-		// (future-proof: add more clears if new state is added)
-	};
+		// Only clear CreateMode state, not main PID
+	 	setDraftPid(null);
+	 	setChat([]);
+	 	setSelectedExampleId(null);
+	 	setChatInput('');
+	 	setLastError(null);
+	 	setStickyCollapsed(false);
+	 	setHasReset(true); // Mark reset so effects don't re-populate PID
+	 };
 
 	const handleFileDrop = async (e: React.DragEvent<HTMLDivElement>) => {
 		e.preventDefault();
@@ -545,6 +546,43 @@ export const CreateMode = (props: CreateModeProps) => {
 						</div>
 					</div>
 					<div className="flex items-center gap-1.5 md:gap-2 flex-wrap mt-1 md:mt-0 w-full md:w-auto">
+						<button
+							type="button"
+							onClick={() => setStickyCollapsed((s) => !s)}
+							className="pmo-mosaic-hide rounded-full border-4 font-extrabold flex items-center justify-center transition-all duration-300 focus:outline-none focus:ring-8 focus:ring-amber-400/70"
+							style={{
+								minWidth: 200,
+								minHeight: 66,
+								fontSize: '1.25rem',
+								boxShadow: '0 0 0 10px #f7b84b, 0 0 48px 18px #f7b84b66, 0 2px 28px #0008',
+								borderColor: '#f7b84b',
+							}}
+							title={stickyCollapsed ? 'Show assistant & examples' : 'Hide assistant & examples'}
+							aria-pressed={stickyCollapsed}
+						>
+							<span style={{ fontSize: '1rem', marginRight: 10, opacity: 0.85 }}>&lsaquo;</span>
+							{stickyCollapsed ? 'Show' : 'Hide'}
+							<span style={{ fontSize: '1rem', marginLeft: 10, opacity: 0.85 }}>&rsaquo;</span>
+						</button>
+
+						<style>{`
+							.pmo-mosaic-hide{
+								color: #0a0a0a;
+								background-color: #f7b84b;
+								background-image:
+									linear-gradient(45deg, rgba(255,255,255,0.18) 25%, transparent 25%, transparent 75%, rgba(255,255,255,0.18) 75%, rgba(255,255,255,0.18)),
+									linear-gradient(45deg, rgba(0,0,0,0.12) 25%, transparent 25%, transparent 75%, rgba(0,0,0,0.12) 75%, rgba(0,0,0,0.12)),
+									radial-gradient(circle at 12px 12px, rgba(0,0,0,0.18) 0 1px, transparent 2px),
+									radial-gradient(circle at 6px 18px, rgba(75,156,247,0.35) 0 1px, transparent 2px),
+									radial-gradient(circle at 18px 6px, rgba(255,111,97,0.35) 0 1px, transparent 2px);
+								background-size: 18px 18px, 18px 18px, 24px 24px, 24px 24px, 24px 24px;
+								background-position: 0 0, 9px 9px, 0 0, 0 0, 0 0;
+								background-blend-mode: overlay, multiply, normal, normal, normal;
+							}
+							.pmo-mosaic-hide:hover{ transform: translateY(-1px); filter: brightness(1.02); }
+							.pmo-mosaic-hide:active{ transform: translateY(0px) scale(0.99); }
+						`}</style>
+
 						{onHelp && (
 							<button
 								type="button"
@@ -554,11 +592,12 @@ export const CreateMode = (props: CreateModeProps) => {
 								? Help
 							</button>
 						)}
+
 						<button
 							type="button"
 							onClick={handleReset}
 							className="rounded-full bg-red-600 px-2 py-1 text-xs md:text-sm font-semibold text-white hover:bg-red-700 border border-red-500"
-							title="Reset all fields and chat"
+							title="Reset Create mode only"
 						>
 							Reset
 						</button>
@@ -592,21 +631,28 @@ export const CreateMode = (props: CreateModeProps) => {
 									</div>
 								)}
 							</div>
-							<div className="flex items-center gap-2">
-								<button
-									type="button"
-									onClick={() => setStickyCollapsed((s) => !s)}
-									className={`rounded-full px-2 py-1 text-xs md:text-sm font-semibold border transition-colors ${
-										stickyCollapsed
-											? 'bg-amber-300 text-black border-amber-400 hover:bg-amber-200'
-											: 'bg-amber-500 text-black border-amber-600 hover:bg-amber-400'
-									}`}
-									title={stickyCollapsed ? 'Show assistant & examples' : 'Hide assistant & examples'}
-									aria-pressed={stickyCollapsed}
-								>
-									{stickyCollapsed ? 'Show' : 'Hide'}
-								</button>
-							</div>
+							 <div className="flex items-center gap-2">
+								 <button
+									 type="button"
+									 onClick={() => setStickyCollapsed((s) => !s)}
+									 className="rounded-full border font-semibold transition-colors flex items-center justify-center text-black border-amber-600 shadow-lg"
+									 style={{
+										 minWidth: 80,
+										 minHeight: 48,
+										 fontSize: '1.25rem',
+										 padding: '0.5rem 1.5rem',
+										 background: 'repeating-linear-gradient(135deg, #f7b84b 0px, #f7b84b 12px, #ff6f61 12px, #ff6f61 24px, #4b9ef7 24px, #4b9ef7 36px, #a3e635 36px, #a3e635 48px)',
+										 borderColor: stickyCollapsed ? '#f7b84b' : '#4b9ef7',
+										 boxShadow: stickyCollapsed ? '0 0 12px 2px #f7b84b' : '0 0 16px 4px #4b9ef7',
+									 }}
+									 title={stickyCollapsed ? 'Show assistant & examples' : 'Hide assistant & examples'}
+									 aria-pressed={stickyCollapsed}
+								 >
+									 <span style={{ fontSize: '1.5em', marginRight: 8 }}>&larr;</span>
+									 {stickyCollapsed ? 'Show' : 'Hide'}
+									 <span style={{ fontSize: '1.5em', marginLeft: 8 }}>&rarr;</span>
+								 </button>
+							 </div>
 						</div>
 
 						<div className="mt-2 flex flex-col gap-2 h-full justify-between min-h-0">

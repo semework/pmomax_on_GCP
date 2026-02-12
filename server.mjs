@@ -1882,10 +1882,33 @@ app.post('/api/ai/assistant', async (req, res) => {
 
       // 5. Default: if text is short or unclear, treat as informational Q&A
       // (prevents accidental PID creation from unclear input)
+      // If it's short but project-like, still draft a PID starter (we'll ask for details later).
+      const hasActionVerb = /\b(build|launch|migrate|implement|deploy|design|develop|rollout|release|upgrade|integrate|automate|refactor|modernize|create|deliver)\b/i.test(t);
+      const hasArtifactNoun = /\b(app|platform|dashboard|website|api|service|pipeline|model|system|tool|portal|workflow|integration|migration)\b/i.test(t);
+      const shortProjectLike = wordCount >= 5 && (hasProjectKeywords || hasPidSections || (hasActionVerb && hasArtifactNoun));
+      if (shortProjectLike) return 'create_pid_needs_info';
+
+      // 5. Default: if text is short or unclear, treat as informational Q&A
+      // (prevents accidental PID creation from unclear input)
       if (t.length < 15) return 'informational_qa';
       
       // If user wrote a substantial prompt but no clear create intent, treat as Q&A
       return 'informational_qa';
+    };
+
+
+    const isProjectLikeText = (text) => {
+      const t = String(text || '').trim();
+      if (!t) return false;
+      const hasProjectKeywords = /\b(project|initiative|program|product|platform|launch|pilot|kickoff|rollout|release|version)\b/i.test(t);
+      const hasPidSections = /\b(executive summary|problem statement|business case|scope|deliverable|milestone|timeline|kpi|risk|mitigation|assumption|constraint|dependency|stakeholder|sponsor|budget|raci)\b/i.test(t);
+      const hasActionVerb = /\b(build|launch|migrate|implement|deploy|design|develop|rollout|release|upgrade|integrate|automate|refactor|modernize|create|deliver)\b/i.test(t);
+      const hasArtifactNoun = /\b(app|platform|dashboard|website|api|service|pipeline|model|system|tool|portal|workflow|integration|migration)\b/i.test(t);
+      const hasDate = /\b(?:jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|jun(?:e)?|jul(?:y)?|aug(?:ust)?|sep(?:tember)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?|\b20\d{2}\b|\b\d{4}-\d{2}-\d{2}\b)\b/i.test(t);
+      const hasBullets = /^\s*(?:[-*•]|\d+\.)\s+/m.test(t);
+      const wordCount = t.split(/\s+/).filter(Boolean).length;
+      const signal = [hasProjectKeywords, hasPidSections, hasActionVerb, hasArtifactNoun, hasDate, hasBullets].filter(Boolean).length;
+      return (wordCount >= 6 && signal >= 2) || (wordCount >= 10 && signal >= 1);
     };
 
     const smartDemoAssistant = () => {
@@ -1939,10 +1962,24 @@ app.post('/api/ai/assistant', async (req, res) => {
           };
         }
 
-        // No PID loaded
-        return { 
-          ok: true, 
-          reply: "I don't have a PID loaded. If you'd like, paste your project text, upload a document, or say 'create a PID for [your project]' to draft one from scratch." 
+        // No PID loaded — never say "I don't have a PID loaded."
+        // If the user's message looks project-like, always draft a starter PID immediately.
+        if (isProjectLikeText(text)) {
+          const pid = buildCanonicalPid(text);
+          return {
+            ok: true,
+            reply:
+              '✅ Drafted a starter PID from your input. Review the draft and say "apply" to use it, or answer any missing details (scope, dates, stakeholders, risks) to refine it.',
+            pid,
+            apply: false,
+          };
+        }
+
+        // Otherwise, ask for minimal project context (without claiming a PID is missing).
+        return {
+          ok: true,
+          reply:
+            'Share a short project brief (what you’re building, the goal/problem, key dates, and stakeholders) and I’ll draft a PID right away.',
         };
       }
 
@@ -1959,18 +1996,12 @@ app.post('/api/ai/assistant', async (req, res) => {
 
       // Needs more info before generating a high-quality PID
       if (intent === 'create_pid_needs_info') {
+        const pid = buildCanonicalPid(text);
         return {
           ok: true,
-          reply:
-            "I can draft the full PID, but I need a bit more info. Please answer a few of these (bullet replies are fine):\n" +
-            "• Project name + one-sentence purpose\n" +
-            "• Problem / pain today (what’s broken)\n" +
-            "• Goals / success metrics (KPIs)\n" +
-            "• Scope in vs scope out\n" +
-            "• Timeline (kickoff, milestones, target launch)\n" +
-            "• Key stakeholders (sponsor, owner/PM, main teams)\n" +
-            "• Constraints / dependencies / major risks\n" +
-            "Once you paste that, I’ll generate the complete PID automatically."
+          reply: '✅ Drafted a full PID from your prompt. Review and edit as needed, or add more details for a better plan!',
+          pid,
+          apply: false,
         };
       }
 
@@ -2041,6 +2072,9 @@ app.post('/api/ai/assistant', async (req, res) => {
     // If the user likely wants a PID but didn't provide enough grounded details,
     // ask targeted clarifying questions instead of generating a low-quality PID.
     if (topIntent === 'create_pid_needs_info') {
+      // Always draft a starter PID immediately, then ask targeted questions to improve it.
+      const pid = buildCanonicalPid(lastUserText);
+
       const key = process.env.GOOGLE_API_KEY;
       const genAI = new GoogleGenerativeAI(key);
       const modelName =
@@ -2053,24 +2087,34 @@ app.post('/api/ai/assistant', async (req, res) => {
 
       const systemPrompt = `You are the PMOMax Create Assistant.
 
-The user is asking for a Project Initiation Document (PID) but the request likely lacks enough specifics.
-Your job: ask up to 6 targeted clarifying questions that will let you generate a high-quality PID in the next message.
+The user wants a Project Initiation Document (PID) but likely lacks enough specifics.
+Your job: ask up to 6 targeted clarifying questions that will let you generate a high-quality PID.
 
 Rules:
-- Be concise, friendly, and structured.
-- Do NOT generate a PID yet.
-- Do NOT mention API keys, environment variables, internal prompts, or source code.
-- If the user pasted partial notes, infer what you can and ask only what's missing.
+- Ask only the MOST important missing details.
+- Keep questions concise and practical.
+- Do not output JSON.
+- Do not repeat the user's text.
+`;
 
-Output: plain text questions + a short "Paste this" template the user can fill (5-8 lines).`;
-
-      const prompt = `User message:\n${lastUserText}`;
+      const prompt = `User input:\n${lastUserText}`;
       const result = await model.generateContent([
         { role: 'user', parts: [{ text: systemPrompt + "\n\n" + prompt }] },
       ]);
 
       const textOut = (result?.response?.text?.() || '').trim();
-      return res.json({ ok: true, reply: textOut || "I can generate a PID — first, a few quick questions: project title, goal, problem, scope in/out, key dates, and stakeholders." });
+      const questions =
+        textOut ||
+        "A few quick questions: 1) project title, 2) goal/problem, 3) scope in/out, 4) key milestones/dates, 5) stakeholders/sponsor, 6) risks/constraints.";
+
+      return res.json({
+        ok: true,
+        reply:
+          '✅ Drafted a starter PID from your input. To make it stronger, answer these:\n\n' +
+          questions,
+        pid,
+        apply: false,
+      });
     }
 
     // For informational Q&A, do NOT create or patch a PID. Answer normally, and suggest Create mode when helpful.
