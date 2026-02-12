@@ -488,13 +488,15 @@ export const CreateMode = (props: CreateModeProps) => {
 	 	activeControllerRef.current = null;
 
 		// Only clear CreateMode state, not main PID
-	 	setDraftPid(null);
-	 	setChat([]);
-	 	setSelectedExampleId(null);
-	 	setChatInput('');
-	 	setLastError(null);
-	 	setStickyCollapsed(false);
-	 	setHasReset(true); // Mark reset so effects don't re-populate PID
+		setDraftPid(null);
+		setChat([]);
+		setSelectedExampleId(null);
+		setChatInput('');
+		setLastError(null);
+		setStickyCollapsed(true);
+		setHasReset(true); // Mark reset so effects don't re-populate PID
+		// Simulate pressing Create in left panel
+		if (typeof props.onCreateMode === 'function') props.onCreateMode();
 	 };
 
 	const handleFileDrop = async (e: React.DragEvent<HTMLDivElement>) => {
@@ -547,60 +549,53 @@ export const CreateMode = (props: CreateModeProps) => {
 					</div>
 					<div className="flex items-center gap-1.5 md:gap-2 flex-wrap mt-1 md:mt-0 w-full md:w-auto">
 						<button
-							type="button"
-							onClick={() => setStickyCollapsed((s) => !s)}
-							className="pmo-mosaic-hide rounded-full border-4 font-extrabold flex items-center justify-center transition-all duration-300 focus:outline-none focus:ring-8 focus:ring-amber-400/70"
-							style={{
-								minWidth: 200,
-								minHeight: 66,
-								fontSize: '1.25rem',
-								boxShadow: '0 0 0 10px #f7b84b, 0 0 48px 18px #f7b84b66, 0 2px 28px #0008',
-								borderColor: '#f7b84b',
-							}}
-							title={stickyCollapsed ? 'Show assistant & examples' : 'Hide assistant & examples'}
-							aria-pressed={stickyCollapsed}
-						>
-							<span style={{ fontSize: '1rem', marginRight: 10, opacity: 0.85 }}>&lsaquo;</span>
-							{stickyCollapsed ? 'Show' : 'Hide'}
-							<span style={{ fontSize: '1rem', marginLeft: 10, opacity: 0.85 }}>&rsaquo;</span>
-						</button>
-
-						<style>{`
-							.pmo-mosaic-hide{
-								color: #0a0a0a;
-								background-color: #f7b84b;
-								background-image:
-									linear-gradient(45deg, rgba(255,255,255,0.18) 25%, transparent 25%, transparent 75%, rgba(255,255,255,0.18) 75%, rgba(255,255,255,0.18)),
-									linear-gradient(45deg, rgba(0,0,0,0.12) 25%, transparent 25%, transparent 75%, rgba(0,0,0,0.12) 75%, rgba(0,0,0,0.12)),
-									radial-gradient(circle at 12px 12px, rgba(0,0,0,0.18) 0 1px, transparent 2px),
-									radial-gradient(circle at 6px 18px, rgba(75,156,247,0.35) 0 1px, transparent 2px),
-									radial-gradient(circle at 18px 6px, rgba(255,111,97,0.35) 0 1px, transparent 2px);
-								background-size: 18px 18px, 18px 18px, 24px 24px, 24px 24px, 24px 24px;
-								background-position: 0 0, 9px 9px, 0 0, 0 0, 0 0;
-								background-blend-mode: overlay, multiply, normal, normal, normal;
-							}
-							.pmo-mosaic-hide:hover{ transform: translateY(-1px); filter: brightness(1.02); }
-							.pmo-mosaic-hide:active{ transform: translateY(0px) scale(0.99); }
-						`}</style>
-
-						{onHelp && (
-							<button
-								type="button"
-								onClick={() => onHelp('create-mode')}
-								className="rounded-full bg-amber-500 px-2 py-1 text-xs md:text-sm font-semibold text-black hover:bg-amber-400"
-							>
-								? Help
-							</button>
-						)}
-
+		type="button"
+		onClick={() => setStickyCollapsed((v) => !v)}
+		className="rounded-full border-4 font-extrabold flex items-center justify-center transition-all duration-300 focus:outline-none focus:ring-8 focus:ring-amber-400/70"
+		style={{
+			minWidth: 180,
+			minHeight: 40,
+			padding: '0.25rem 0.9rem',
+			fontSize: '1.35rem',
+			color: '#111',
+			letterSpacing: '0.01em',
+			borderColor: stickyCollapsed ? '#f7b84b' : '#4b9ef7',
+			backgroundImage:
+				'repeating-linear-gradient(135deg, #f7b84b 0 12px, #e6c200 12px 24px, #ffd700 24px 36px, #bfa43a 36px 48px),' +
+				'repeating-linear-gradient(45deg, rgba(255,255,255,0.10) 0 8px, rgba(255,255,255,0.04) 8px 16px),' +
+				'radial-gradient(circle at 8px 8px, rgba(255,255,255,0.10) 0 1px, transparent 1px 100%)',
+			backgroundSize: '48px 48px, 18px 18px, 8px 8px',
+			backgroundBlendMode: 'overlay, overlay, normal',
+			boxShadow: stickyCollapsed
+				? '0 0 0 6px rgba(247,184,75,0.18), 0 0 12px rgba(247,184,75,0.25), 0 2px 18px rgba(0,0,0,0.5)'
+				: '0 0 0 6px rgba(75,158,247,0.10), 0 0 16px rgba(75,158,247,0.25), 0 2px 18px rgba(0,0,0,0.5)',
+		}}
+		title={stickyCollapsed ? 'Expand AI Assistant + Examples' : 'Collapse AI Assistant + Examples'}
+		aria-pressed={stickyCollapsed}
+	>
+		<span aria-hidden style={{ fontSize: '1.35rem', lineHeight: 1, marginRight: 8 }}>‹</span>
+		<span className="whitespace-nowrap">
+			{stickyCollapsed ? 'AI Assistant + Examples' : 'Hide Panels'}
+		</span>
+		<span aria-hidden style={{ fontSize: '1.35rem', lineHeight: 1, marginLeft: 8 }}>›</span>
+	</button>
+{onHelp && (
+	<button
+		type="button"
+		onClick={() => onHelp('create-mode')}
+		className="rounded-full bg-amber-500 px-2 py-1 text-xs md:text-sm font-semibold text-black hover:bg-amber-400"
+	>
+		? Help
+	</button>
+)}
 						<button
-							type="button"
-							onClick={handleReset}
-							className="rounded-full bg-red-600 px-2 py-1 text-xs md:text-sm font-semibold text-white hover:bg-red-700 border border-red-500"
-							title="Reset Create mode only"
-						>
-							Reset
-						</button>
+				type="button"
+				onClick={() => { if (typeof window !== 'undefined') window.location.reload(); }}
+				className="rounded-full bg-red-600 px-2 py-1 text-xs md:text-sm font-semibold text-white hover:bg-red-700 border border-red-500"
+				title="Reset Create page fully"
+				>
+					Reset
+				</button>
 					</div>
 				</div>
 			</div>
@@ -616,6 +611,27 @@ export const CreateMode = (props: CreateModeProps) => {
 				className="mt-2 mb-3 rounded-lg border border-brand-border bg-black/10 p-2 md:p-2.5 relative z-30 md:sticky md:top-0 flex flex-col md:flex-row md:flex-nowrap gap-2 items-stretch"
 				style={{ overflow: 'visible', WebkitFontSmoothing: 'antialiased' }}
 			>
+{stickyCollapsed ? (
+	<div className="w-full flex items-center justify-between gap-2">
+		<button
+			type="button"
+			onClick={() => setStickyCollapsed(false)}
+			className="flex-1 rounded-lg border border-amber-400/60 bg-black/40 px-3 py-3 text-sm md:text-base font-extrabold text-amber-200 hover:bg-amber-500/10 hover:border-amber-300 transition"
+			title="Open AI Assistant"
+		>
+			AI Assistant
+		</button>
+		<button
+			type="button"
+			onClick={() => setStickyCollapsed(false)}
+			className="flex-1 rounded-lg border border-slate-600 bg-black/30 px-3 py-3 text-sm md:text-base font-extrabold text-white hover:border-amber-400/60 hover:bg-amber-500/10 transition"
+			title="Open Examples"
+		>
+			Examples
+		</button>
+	</div>
+) : (
+	<>
 				{/* Left: Assistant/chat */}
 				<div style={{ flex: '1 1 auto', minWidth: 0 }} className="flex flex-col w-full h-full">
 					<div
@@ -631,28 +647,7 @@ export const CreateMode = (props: CreateModeProps) => {
 									</div>
 								)}
 							</div>
-							 <div className="flex items-center gap-2">
-								 <button
-									 type="button"
-									 onClick={() => setStickyCollapsed((s) => !s)}
-									 className="rounded-full border font-semibold transition-colors flex items-center justify-center text-black border-amber-600 shadow-lg"
-									 style={{
-										 minWidth: 80,
-										 minHeight: 48,
-										 fontSize: '1.25rem',
-										 padding: '0.5rem 1.5rem',
-										 background: 'repeating-linear-gradient(135deg, #f7b84b 0px, #f7b84b 12px, #ff6f61 12px, #ff6f61 24px, #4b9ef7 24px, #4b9ef7 36px, #a3e635 36px, #a3e635 48px)',
-										 borderColor: stickyCollapsed ? '#f7b84b' : '#4b9ef7',
-										 boxShadow: stickyCollapsed ? '0 0 12px 2px #f7b84b' : '0 0 16px 4px #4b9ef7',
-									 }}
-									 title={stickyCollapsed ? 'Show assistant & examples' : 'Hide assistant & examples'}
-									 aria-pressed={stickyCollapsed}
-								 >
-									 <span style={{ fontSize: '1.5em', marginRight: 8 }}>&larr;</span>
-									 {stickyCollapsed ? 'Show' : 'Hide'}
-									 <span style={{ fontSize: '1.5em', marginLeft: 8 }}>&rarr;</span>
-								 </button>
-							 </div>
+							 
 						</div>
 
 						<div className="mt-2 flex flex-col gap-2 h-full justify-between min-h-0">
@@ -744,7 +739,7 @@ export const CreateMode = (props: CreateModeProps) => {
 						style={{ overflow: 'hidden' }}
 					>
 						<div
-							className="text-xs md:text-sm font-extrabold text-white tracking-wide"
+							className="flex items-center text-xs md:text-sm font-extrabold text-white tracking-wide"
 							style={{
 								position: 'sticky',
 								top: 0,
@@ -754,8 +749,39 @@ export const CreateMode = (props: CreateModeProps) => {
 								marginBottom: 4,
 								borderBottom: '1px solid #f7b84b',
 							}}
-						>
-							Examples — Click to load
+							>
+							{shouldShowPid(pidToRender) && pidToRender && pidToRender.titleBlock && (
+								<button
+									type="button"
+									onClick={() => setStickyCollapsed((v) => !v)}
+									className="rounded-full border-2 font-extrabold flex items-center justify-center transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-amber-400/70"
+									style={{
+										minWidth: 90,
+										minHeight: 28,
+										padding: '0.15rem 0.5rem',
+										fontSize: '1.05rem',
+										color: '#111',
+										letterSpacing: '0.01em',
+										borderColor: stickyCollapsed ? '#f7b84b' : '#4b9ef7',
+										backgroundImage:
+											'repeating-linear-gradient(135deg, #f7b84b 0 12px, #e6c200 12px 24px, #ffd700 24px 36px, #bfa43a 36px 48px),' +
+											'repeating-linear-gradient(45deg, rgba(255,255,255,0.10) 0 8px, rgba(255,255,255,0.04) 8px 16px),' +
+											'radial-gradient(circle at 8px 8px, rgba(255,255,255,0.10) 0 1px, transparent 1px 100%)',
+										backgroundSize: '48px 48px, 18px 18px, 8px 8px',
+										backgroundBlendMode: 'overlay, overlay, normal',
+										boxShadow: stickyCollapsed
+											? '0 0 0 3px rgba(247,184,75,0.18), 0 0 6px rgba(247,184,75,0.25), 0 2px 8px rgba(0,0,0,0.5)'
+											: '0 0 0 3px rgba(75,158,247,0.10), 0 0 8px rgba(75,158,247,0.25), 0 2px 8px rgba(0,0,0,0.5)',
+									}}
+									title={stickyCollapsed ? 'Expand AI Assistant + Examples' : 'Collapse AI Assistant + Examples'}
+									aria-pressed={stickyCollapsed}
+								>
+									<span className="whitespace-nowrap">
+										{stickyCollapsed ? 'Show Panels' : 'Hide Panels'}
+									</span>
+								</button>
+							}
+							<span style={{marginLeft: 8}}>Examples — Click to load</span>
 						</div>
 
 						{!stickyCollapsed && (
@@ -794,6 +820,9 @@ export const CreateMode = (props: CreateModeProps) => {
 						)}
 					</div>
 				</div>
+	</>
+)}
+
 			</div>
 
 			{/* BELOW: Full PID + Nav — only render when a draft PID with a title exists. Otherwise keep this area empty. */}

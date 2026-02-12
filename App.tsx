@@ -429,23 +429,23 @@ const App: React.FC = () => {
   const runRiskAgent = pidLogic.runRiskAgent as (() => Promise<void>) | undefined;
   const runComplianceAgent = pidLogic.runComplianceAgent as (() => Promise<void>) | undefined;
 
-  const handleClearAll = async () => {
+  const handleClearAll = async (stayInCreateMode = false) => {
 	// Always reset local UI state even if a hook-level clearAll fails.
-	try {
-    if (typeof clearAll === 'function') await clearAll();
-  } catch (e) {
+    try {
+      if (typeof clearAll === 'function') await clearAll();
+    } catch (e) {
 		console.warn('ClearAll failed:', e);
-	}
-  setPidData?.(null);
-	setGeneralNotes?.('');
-	setDraftPid(null);
-	setIsCreateMode(false);
-	setNavOpen(false);
-	setHelpOpen(false);
-	setUserGuideOpen(false);
-	setHelpContext(null);
-	setResetNonce((n) => n + 1);
-};
+    }
+    setPidData?.(null);
+    setGeneralNotes?.('');
+    setDraftPid(null);
+    setIsCreateMode(stayInCreateMode);
+    setNavOpen(false);
+    setHelpOpen(false);
+    setUserGuideOpen(false);
+    setHelpContext(null);
+    setResetNonce((n) => n + 1);
+  };
 
 
   const askAssistant = pidLogic.askAssistant as ((q: string, model?: string) => Promise<void>) | undefined;
@@ -498,7 +498,7 @@ const App: React.FC = () => {
   const onCreateMode = async () => {
     // Create should also start from a clean slate
     if (typeof handleClearAll === 'function') {
-      await handleClearAll();
+      await handleClearAll(true); // Stay in Create mode after reset
     }
     console.log('[App] onCreateMode: entering Create mode');
     setIsCreateMode(true);

@@ -31,8 +31,8 @@ export const AIAssistantPanel: React.FC<AIAssistantPanelProps & { title?: string
   error = null,
   onHelp,
   onToggleAI,
-  title = 'PMOMax AI Project Assistant',
-  subtitle = 'Ask questions, refine content, and fill missing PID sections (2026 compliant).',
+  title = 'PMOMax AI Assistant',
+  subtitle = 'Ask anything: project status, create mode, risks, compliance, summaries, or request help. The assistant knows about create mode and current PID status.',
   resetNonce,
 }) => {
   const [input, setInput] = useState('');
@@ -61,7 +61,7 @@ export const AIAssistantPanel: React.FC<AIAssistantPanelProps & { title?: string
     setIsBusy(true);
     askControllerRef.current = new AbortController();
     try {
-      await onAskAssistant(trimmed, { signal: askControllerRef.current.signal });
+      await onAskAssistant(trimmed);
       setInput('');
     } catch (err: any) {
       if (askControllerRef.current?.signal.aborted) return;
@@ -157,6 +157,7 @@ export const AIAssistantPanel: React.FC<AIAssistantPanelProps & { title?: string
     try { askControllerRef.current?.abort(); } catch {}
     askControllerRef.current = null;
     setIsBusy(false);
+    setInput('');
   }, [resetNonce]);
 
   useEffect(() => () => {
@@ -200,7 +201,7 @@ export const AIAssistantPanel: React.FC<AIAssistantPanelProps & { title?: string
       >
         {ordered.length === 0 ? (
           <div className="text-xs text-slate-300 leading-tight py-1">
-            No messages yet — try “Summarize risks”, “Draft objectives”, or “Check this PID for gaps”.
+            No messages yet — try “Summarize project status”, “Draft objectives”, “Check compliance”, “Ask about create mode”, or “Request help”.
           </div>
         ) : (
           <div className="flex flex-col gap-2">
@@ -250,7 +251,7 @@ export const AIAssistantPanel: React.FC<AIAssistantPanelProps & { title?: string
         <input
           type="text"
           className="flex-1 px-3 py-2 rounded-xl border-2 border-amber-300 focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-400/70 font-semibold placeholder:text-amber-200/60 text-amber-200 text-sm sm:text-base bg-black/90"
-          placeholder={isAssistantDisabled ? 'AI is disabled' : 'Ask the AI assistant…'}
+          placeholder={isAssistantDisabled ? 'AI is disabled' : 'Ask anything: project status, create mode, risks, compliance, summaries, or request help…'}
           value={input}
           onChange={(e) => setInput(e.target.value)}
           disabled={isLoading || isAssistantDisabled || isBusy}
@@ -270,8 +271,17 @@ export const AIAssistantPanel: React.FC<AIAssistantPanelProps & { title?: string
           <button
             type="button"
             onClick={() => onToggleAI(false)}
-            className="w-full py-5 text-2xl rounded-3xl font-extrabold border-4 border-amber-400 text-black bg-gradient-to-br from-amber-200 to-amber-500 shadow-2xl transition-all duration-300 focus:outline-none focus:ring-8 focus:ring-amber-400/70 animate-flicker"
+            className="pmo-mosaic-hide rounded-full border-4 font-extrabold flex items-center justify-center transition-all duration-300 focus:outline-none focus:ring-8 focus:ring-amber-400/70"
             style={{
+              minWidth: 120,
+              minHeight: 40,
+              fontSize: '1rem',
+              boxShadow: '0 0 0 6px #f7b84b, 0 0 24px 8px #f7b84b66, 0 2px 14px #0008',
+              borderColor: '#f7b84b',
+              backgroundColor: '#f7b84b',
+              color: '#0a0a0a',
+              backgroundImage:
+                'linear-gradient(45deg, rgba(255,255,255,0.18) 25%, transparent 25%, transparent 75%, rgba(255,255,255,0.18) 75%, rgba(255,255,255,0.18))',
               marginTop: 12,
               letterSpacing: '0.04em',
             }}
@@ -291,11 +301,11 @@ export const AIAssistantPanel: React.FC<AIAssistantPanelProps & { title?: string
             box-shadow: 0 0 0 8px #f7b84b, 0 0 48px 16px #f7b84b99, 0 2px 24px #000a;
           }
         `}</style>
-        {/* Example prompt for AI Create Assistant */}
+        {/* Example prompt for general AI Assistant */}
         <div className="mt-4 mb-2 p-3 rounded-xl bg-amber-900/40 border border-amber-400/60 text-amber-100 text-base font-semibold shadow">
-          <div className="text-lg font-extrabold text-amber-200 mb-1">AI Create Assistant</div>
-          <div>Describe your project in detail — goals, timeline, scope, stakeholders, constraints. I'll generate a complete PID.</div>
-          <div className="mt-2 text-xs text-amber-100/80">Example: <span className="italic">"A new mobile app for city parking, launching Q3 2026, for 5,000 users, with integrations to city payment APIs, strict privacy, and a 6-month pilot in two cities. Key risks: data leaks, vendor delays."</span></div>
+          <div className="text-lg font-extrabold text-amber-200 mb-1">PMOMax AI Assistant</div>
+          <div>Ask about project status, create mode, risks, compliance, summaries, or request help. The assistant can answer general questions and knows about create mode and current PID status.</div>
+          <div className="mt-2 text-xs text-amber-100/80">Example: <span className="italic">"What is the current project status?" "Summarize risks for this PID." "How do I use create mode?" "Check compliance gaps." "Draft objectives for the next phase."</span></div>
         </div>
         <button
           type="submit"
