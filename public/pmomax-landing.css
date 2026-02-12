@@ -45,16 +45,10 @@ body {
 }
 
 /* Per-browser sizing tweaks for intro + layout consistency */
-body[data-browser="chrome"] {
-  font-size: 16px;
-}
-
-body[data-browser="brave"] {
-  font-size: 15px;
-}
-
+body[data-browser="chrome"],
+body[data-browser="brave"],
 body[data-browser="safari"] {
-  font-size: 15px;
+  font-size: 16px !important;
 }
 
 /* Mobile optimization: ensure proper viewport and prevent horizontal scroll */

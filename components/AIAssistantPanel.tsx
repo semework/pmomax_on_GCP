@@ -60,8 +60,28 @@ export const AIAssistantPanel: React.FC<AIAssistantPanelProps & { title?: string
     if (!trimmed || isAssistantDisabled || isBusy) return;
     setIsBusy(true);
     askControllerRef.current = new AbortController();
+    // Compose rich app context for the assistant
+    // Safely access PID fields and merge context into prompt
+    // Detect informational queries about PMOMax
+    const infoQuery = /\b(what do you do|what can you do|how do(?:es)? (?:this|pmomax) work|what is pmomax|what are you|who are you|help me|explain pmomax|describe pmomax|tell me about pmomax)\b/i.test(trimmed);
+    let mergedPrompt = trimmed;
+    if (infoQuery) {
+      mergedPrompt = 'You are PMOMax AI Assistant. PMOMax is an advanced project management tool that helps users create, parse, and refine Project Initiation Documents (PID), manage risks, compliance, and generate planning artifacts. You can answer any question about PMOMax, its features, project status, create mode, and current PID. Features: Parse/upload documents, create new PID, edit/refine sections, run risk and compliance agents, export to Word/PDF/JSON, use AI assistant for any project-related question.\n\n' + trimmed;
+    } else {
+      // Safely access PID fields and merge context for project-related queries
+      const pidTitle = (pidData as any)?.titleBlock?.projectTitle;
+      const executiveSummary = pidData && typeof pidData === 'object' && 'executiveSummary' in pidData ? pidData.executiveSummary : undefined;
+      const risksCount = pidData && typeof pidData === 'object' && 'risks' in pidData && Array.isArray(pidData.risks) ? pidData.risks.length : 0;
+      const complianceCount = pidData && typeof pidData === 'object' && 'complianceSecurityPrivacy' in pidData && Array.isArray(pidData.complianceSecurityPrivacy) ? pidData.complianceSecurityPrivacy.length : 0;
+      const appContext = [
+        'You are PMOMax AI Assistant. PMOMax is an advanced project management tool that helps users create, parse, and refine Project Initiation Documents (PID), manage risks, compliance, and generate planning artifacts. You can answer any question about PMOMax, its features, project status, create mode, and current PID.',
+        pidTitle ? `Current PID title: ${pidTitle}; Executive summary: ${executiveSummary || 'None'}; Risks: ${risksCount}; Compliance: ${complianceCount}.` : 'No PID loaded. Create mode is ' + (pidData ? 'active' : 'inactive') + '.',
+        'Features: Parse/upload documents, create new PID, edit/refine sections, run risk and compliance agents, export to Word/PDF/JSON, use AI assistant for any project-related question.'
+      ].join(' ');
+      mergedPrompt = appContext + '\n\n' + trimmed;
+    }
     try {
-      await onAskAssistant(trimmed);
+      await onAskAssistant(mergedPrompt);
       setInput('');
     } catch (err: any) {
       if (askControllerRef.current?.signal.aborted) return;

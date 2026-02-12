@@ -61,6 +61,7 @@ export interface CreateModeProps {
 	onExportWord?: (pid: PMOMaxPID) => void;
 	onExportJson?: (pid: PMOMaxPID) => void;
 	onExportZip?: (pid: PMOMaxPID) => void;
+	onCreateMode?: () => void;
 }
 
 // PID utilities moved to lib/pid/pidDefaults.ts
@@ -425,12 +426,32 @@ export const CreateMode = (props: CreateModeProps) => {
 			let attempt = 0;
 			let res: Response | null = null;
 			while (true) {
+				// Compose rich app context for the assistant
+				// Safely access PID fields and merge context into prompt
+				// Detect informational queries about PMOMax
+				const infoQuery = /\b(what do you do|what can you do|how do(?:es)? (?:this|pmomax) work|what is pmomax|what are you|who are you|help me|explain pmomax|describe pmomax|tell me about pmomax)\b/i.test(q);
+				let mergedPrompt = q;
+				if (infoQuery) {
+					mergedPrompt = 'You are PMOMax AI Assistant. PMOMax is an advanced project management tool that helps users create, parse, and refine Project Initiation Documents (PID), manage risks, compliance, and generate planning artifacts. You can answer any question about PMOMax, its features, project status, create mode, and current PID. Features: Parse/upload documents, create new PID, edit/refine sections, run risk and compliance agents, export to Word/PDF/JSON, use AI assistant for any project-related question.\n\n' + q;
+				} else {
+					// Safely access PID fields and merge context for project-related queries
+					const pidTitle = (draftPid as any)?.titleBlock?.projectTitle;
+					const executiveSummary = draftPid && typeof draftPid === 'object' && 'executiveSummary' in draftPid ? draftPid.executiveSummary : undefined;
+					const risksCount = draftPid && typeof draftPid === 'object' && 'risks' in draftPid && Array.isArray(draftPid.risks) ? draftPid.risks.length : 0;
+					const complianceCount = draftPid && typeof draftPid === 'object' && 'complianceSecurityPrivacy' in draftPid && Array.isArray(draftPid.complianceSecurityPrivacy) ? draftPid.complianceSecurityPrivacy.length : 0;
+					const appContext = [
+						'You are PMOMax AI Assistant. PMOMax is an advanced project management tool that helps users create, parse, and refine Project Initiation Documents (PID), manage risks, compliance, and generate planning artifacts. You can answer any question about PMOMax, its features, project status, create mode, and current PID.',
+						pidTitle ? `Current PID title: ${pidTitle}; Executive summary: ${executiveSummary || 'None'}; Risks: ${risksCount}; Compliance: ${complianceCount}.` : 'No PID loaded. Create mode is ' + (draftPid ? 'active' : 'inactive') + '.',
+						'Features: Parse/upload documents, create new PID, edit/refine sections, run risk and compliance agents, export to Word/PDF/JSON, use AI assistant for any project-related question.'
+					].join(' ');
+					mergedPrompt = appContext + '\n\n' + q;
+				}
 				res = await fetch('/api/ai/assistant', {
 					method: 'POST',
 					headers: { 'Content-Type': 'application/json' },
 					signal: controller.signal,
 					body: JSON.stringify({
-						messages: nextChat.map((m) => ({ role: m.role, content: m.content })),
+						messages: nextChat.map((m) => ({ role: m.role, content: mergedPrompt })),
 						pidData: draftPid || makeBlankPid(),
 						model: aiModel || undefined,
 					}),
@@ -493,8 +514,8 @@ export const CreateMode = (props: CreateModeProps) => {
 		setSelectedExampleId(null);
 		setChatInput('');
 		setLastError(null);
-		setStickyCollapsed(true);
-		setHasReset(true); // Mark reset so effects don't re-populate PID
+		setStickyCollapsed(false); // Always show create area after reset
+		setHasReset(false); // Allow new PID creation after reset
 		// Simulate pressing Create in left panel
 		if (typeof props.onCreateMode === 'function') props.onCreateMode();
 	 };
@@ -548,54 +569,32 @@ export const CreateMode = (props: CreateModeProps) => {
 						</div>
 					</div>
 					<div className="flex items-center gap-1.5 md:gap-2 flex-wrap mt-1 md:mt-0 w-full md:w-auto">
+						{onHelp && (
+							<button
+								type="button"
+								onClick={() => onHelp('create-mode')}
+								className="rounded-full bg-amber-500 px-2 py-1 text-xs md:text-sm font-semibold text-black hover:bg-amber-400"
+							>
+								? Help
+							</button>
+						)}
 						<button
-		type="button"
-		onClick={() => setStickyCollapsed((v) => !v)}
-		className="rounded-full border-4 font-extrabold flex items-center justify-center transition-all duration-300 focus:outline-none focus:ring-8 focus:ring-amber-400/70"
-		style={{
-			minWidth: 180,
-			minHeight: 40,
-			padding: '0.25rem 0.9rem',
-			fontSize: '1.35rem',
-			color: '#111',
-			letterSpacing: '0.01em',
-			borderColor: stickyCollapsed ? '#f7b84b' : '#4b9ef7',
-			backgroundImage:
-				'repeating-linear-gradient(135deg, #f7b84b 0 12px, #e6c200 12px 24px, #ffd700 24px 36px, #bfa43a 36px 48px),' +
-				'repeating-linear-gradient(45deg, rgba(255,255,255,0.10) 0 8px, rgba(255,255,255,0.04) 8px 16px),' +
-				'radial-gradient(circle at 8px 8px, rgba(255,255,255,0.10) 0 1px, transparent 1px 100%)',
-			backgroundSize: '48px 48px, 18px 18px, 8px 8px',
-			backgroundBlendMode: 'overlay, overlay, normal',
-			boxShadow: stickyCollapsed
-				? '0 0 0 6px rgba(247,184,75,0.18), 0 0 12px rgba(247,184,75,0.25), 0 2px 18px rgba(0,0,0,0.5)'
-				: '0 0 0 6px rgba(75,158,247,0.10), 0 0 16px rgba(75,158,247,0.25), 0 2px 18px rgba(0,0,0,0.5)',
-		}}
-		title={stickyCollapsed ? 'Expand AI Assistant + Examples' : 'Collapse AI Assistant + Examples'}
-		aria-pressed={stickyCollapsed}
-	>
-		<span aria-hidden style={{ fontSize: '1.35rem', lineHeight: 1, marginRight: 8 }}>‹</span>
-		<span className="whitespace-nowrap">
-			{stickyCollapsed ? 'AI Assistant + Examples' : 'Hide Panels'}
-		</span>
-		<span aria-hidden style={{ fontSize: '1.35rem', lineHeight: 1, marginLeft: 8 }}>›</span>
-	</button>
-{onHelp && (
-	<button
-		type="button"
-		onClick={() => onHelp('create-mode')}
-		className="rounded-full bg-amber-500 px-2 py-1 text-xs md:text-sm font-semibold text-black hover:bg-amber-400"
-	>
-		? Help
-	</button>
-)}
-						<button
-				type="button"
-				onClick={() => { if (typeof window !== 'undefined') window.location.reload(); }}
-				className="rounded-full bg-red-600 px-2 py-1 text-xs md:text-sm font-semibold text-white hover:bg-red-700 border border-red-500"
-				title="Reset Create page fully"
-				>
-					Reset
-				</button>
+							type="button"
+							onClick={() => {
+								setDraftPid(null); // Clear PID and return to create area, do not reload or go to intro
+								setSelectedExampleId(null);
+								setChat([]);
+								setChatInput('');
+								setStickyCollapsed(false);
+								setLastError(null);
+								setHasReset(true);
+								if (typeof onDraftChange === 'function') onDraftChange(null as any);
+							}}
+							className="rounded-full bg-red-600 px-2 py-1 text-xs md:text-sm font-semibold text-white hover:bg-red-700 border border-red-500"
+							title="Reset Create page fully"
+						>
+							Reset
+						</button>
 					</div>
 				</div>
 			</div>
@@ -609,220 +608,187 @@ export const CreateMode = (props: CreateModeProps) => {
 			{/* TOP: Assistant + Examples (always visible, sticky) */}
 			<div
 				className="mt-2 mb-3 rounded-lg border border-brand-border bg-black/10 p-2 md:p-2.5 relative z-30 md:sticky md:top-0 flex flex-col md:flex-row md:flex-nowrap gap-2 items-stretch"
-				style={{ overflow: 'visible', WebkitFontSmoothing: 'antialiased' }}
-			>
-{stickyCollapsed ? (
-	<div className="w-full flex items-center justify-between gap-2">
-		<button
-			type="button"
-			onClick={() => setStickyCollapsed(false)}
-			className="flex-1 rounded-lg border border-amber-400/60 bg-black/40 px-3 py-3 text-sm md:text-base font-extrabold text-amber-200 hover:bg-amber-500/10 hover:border-amber-300 transition"
-			title="Open AI Assistant"
-		>
-			AI Assistant
-		</button>
-		<button
-			type="button"
-			onClick={() => setStickyCollapsed(false)}
-			className="flex-1 rounded-lg border border-slate-600 bg-black/30 px-3 py-3 text-sm md:text-base font-extrabold text-white hover:border-amber-400/60 hover:bg-amber-500/10 transition"
-			title="Open Examples"
-		>
-			Examples
-		</button>
-	</div>
-) : (
-	<>
-				{/* Left: Assistant/chat */}
-				<div style={{ flex: '1 1 auto', minWidth: 0 }} className="flex flex-col w-full h-full">
-					<div
-						className="rounded-lg border border-brand-border bg-black/20 p-2 md:p-2.5 flex flex-col h-full min-h-0"
-						style={{ overflow: 'hidden' }}
-					>
-						<div className="flex items-center justify-between gap-1 md:gap-2">
-							<div className="flex-1">
-								<div className="text-lg md:text-xl font-extrabold text-white leading-tight">AI Create Assistant</div>
-								{!stickyCollapsed && (
-									<div className="text-xs md:text-sm font-semibold text-white/80 leading-snug mt-0.5">
-										Describe your project in detail — goals, timeline, scope, stakeholders, constraints. I'll generate a complete PID.
-									</div>
-								)}
-							</div>
-							 
-						</div>
-
-						<div className="mt-2 flex flex-col gap-2 h-full justify-between min-h-0">
-							{/* Chat messages */}
-							{!stickyCollapsed && (
-								<div
-									ref={scrollerRef}
-									className="flex flex-col gap-1 flex-1 min-h-8 pr-1 overflow-y-auto scroll-smooth max-h-[240px] md:max-h-[500px]"
-									style={{ overscrollBehavior: 'contain', WebkitOverflowScrolling: 'touch' }}
-								>
-									{chat.map((m, idx) => {
-										const isUser = m.role === 'user';
-										return (
-											<div
-												key={`${m.role}-${idx}`}
-												className={`rounded-lg border p-2 text-sm md:text-sm font-semibold leading-snug whitespace-pre-wrap ${
-													isUser
-														? 'border-slate-700/70 bg-black/30 text-slate-100'
-														: 'border-amber-400/40 bg-black/60 text-amber-100'
-												}`}
-											>
-												{m.content}
-											</div>
-										);
-									})}
-
-									{chat.length === 0 && (
-										<div className="rounded border border-brand-border bg-black/20 px-3 py-1.5 text-xs md:text-sm font-semibold text-white leading-snug">
-											Try: "Create a PID for a customer service platform pilot that unifies chat, SMS, and voice for North America support. We have 4 months, need CSAT uplift, pilot in 5 markets, and privacy/compliance readiness before launch."
-										</div>
-									)}
-								</div>
-							)}
-
-							{/* Input box */}
-							{!stickyCollapsed && (
-								<div className="rounded-lg border border-amber-400/40 bg-black/60 p-2">
-									<div className="text-[11px] md:text-xs font-extrabold text-white mb-1">
-										Describe your project (Enter = send, Shift+Enter = newline)
-									</div>
-									<div className="flex items-end gap-1.5">
-										<textarea
-											value={chatInput}
-											onChange={(e) => setChatInput(e.target.value)}
-											onKeyDown={(e) => {
-												if (e.key === 'Enter' && !e.shiftKey) {
-													e.preventDefault();
-													callAssistant();
-												}
-											}}
-											rows={2}
-											placeholder="Describe what you want to create…"
-											className="flex-1 rounded border border-amber-300 bg-black px-2.5 py-1.5 text-sm md:text-base font-semibold text-amber-200 resize-none"
-											style={{
-												background: '#181200',
-												color: '#f7b84b',
-												fontSize: '1rem',
-												fontWeight: 600,
-												letterSpacing: '0.01em',
-												borderColor: '#f7b84b',
-											}}
-										/>
-										<button
-											type="button"
-											onClick={callAssistant}
-											disabled={isSending || !chatInput.trim()}
-											className={`rounded border px-3 py-1.5 text-xs md:text-sm font-extrabold transition ${
-												isSending || !chatInput.trim()
-													? 'border-brand-border bg-black/30 text-brand-text-secondary cursor-not-allowed'
-													: 'border-amber-400/60 bg-amber-500 text-black hover:bg-amber-400'
-											}`}
-										>
-											{isSending ? 'Sending…' : 'Send'}
-										</button>
-									</div>
-								</div>
-							)}
-						</div>
-					</div>
-				</div>
-
-				{/* Right: Examples (~30% width on desktop) */}
-				<div
-					className="flex flex-col gap-2 items-stretch w-full md:flex-none md:w-[36%] h-full"
-					style={{ minWidth: 220, maxWidth: 620 }}
-				>
-					<div
-						className="rounded-lg border border-brand-border bg-black/10 p-2 md:p-2.5 flex flex-col justify-between flex-1 h-full min-h-0"
-						style={{ overflow: 'hidden' }}
-					>
-						<div
-							className="flex items-center text-xs md:text-sm font-extrabold text-white tracking-wide"
-							style={{
-								position: 'sticky',
-								top: 0,
-								background: 'rgba(0,0,0,0.12)',
-								zIndex: 2,
-								paddingBottom: 4,
-								marginBottom: 4,
-								borderBottom: '1px solid #f7b84b',
-							}}
-							>
-							{shouldShowPid(pidToRender) && pidToRender && pidToRender.titleBlock && (
-								<button
-									type="button"
-									onClick={() => setStickyCollapsed((v) => !v)}
-									className="rounded-full border-2 font-extrabold flex items-center justify-center transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-amber-400/70"
-									style={{
-										minWidth: 90,
-										minHeight: 28,
-										padding: '0.15rem 0.5rem',
-										fontSize: '1.05rem',
-										color: '#111',
-										letterSpacing: '0.01em',
-										borderColor: stickyCollapsed ? '#f7b84b' : '#4b9ef7',
-										backgroundImage:
-											'repeating-linear-gradient(135deg, #f7b84b 0 12px, #e6c200 12px 24px, #ffd700 24px 36px, #bfa43a 36px 48px),' +
-											'repeating-linear-gradient(45deg, rgba(255,255,255,0.10) 0 8px, rgba(255,255,255,0.04) 8px 16px),' +
-											'radial-gradient(circle at 8px 8px, rgba(255,255,255,0.10) 0 1px, transparent 1px 100%)',
-										backgroundSize: '48px 48px, 18px 18px, 8px 8px',
-										backgroundBlendMode: 'overlay, overlay, normal',
-										boxShadow: stickyCollapsed
-											? '0 0 0 3px rgba(247,184,75,0.18), 0 0 6px rgba(247,184,75,0.25), 0 2px 8px rgba(0,0,0,0.5)'
-											: '0 0 0 3px rgba(75,158,247,0.10), 0 0 8px rgba(75,158,247,0.25), 0 2px 8px rgba(0,0,0,0.5)',
-									}}
-									title={stickyCollapsed ? 'Expand AI Assistant + Examples' : 'Collapse AI Assistant + Examples'}
-									aria-pressed={stickyCollapsed}
-								>
-									<span className="whitespace-nowrap">
-										{stickyCollapsed ? 'Show Panels' : 'Hide Panels'}
-									</span>
-								</button>
-							}
-							<span style={{marginLeft: 8}}>Examples — Click to load</span>
-						</div>
-
-						{!stickyCollapsed && (
-							<div
-								className="mt-2 flex gap-2 pb-1 flex-1 overflow-x-auto md:overflow-y-auto md:flex-col flex-row"
-								style={{ minHeight: 120 }}
-							>
-								{visibleExamples.map((ex, idx) => {
-									if (!ex) return null;
-									const selected = !!ex.id && ex.id === selectedExampleId;
-									return (
-										<button
-											key={ex.id ?? `example-${idx}`}
-											type="button"
-											onClick={() => applyExampleToDraft(ex)}
-											className={`min-w-[240px] md:min-w-0 w-full text-left rounded-xl border-2 p-3 md:p-4 shadow-lg transition-all duration-100 ring-2 ring-transparent focus:outline-none focus:ring-amber-400/80 ${
-												selected
-													? 'border-amber-400 bg-amber-400 text-black ring-amber-400/80 scale-105'
-													: 'border-slate-700 bg-black/80 hover:bg-amber-500/10 hover:border-amber-400 ring-slate-700/40 hover:ring-amber-400/30 text-white'
-											} ${idx === visibleExamples.length - 1 ? 'mb-0' : ''}`}
-											style={{ marginBottom: idx === visibleExamples.length - 1 ? 0 : 8, paddingBottom: 8, minHeight: 80 }}
-											tabIndex={0}
-											aria-label={`Load example: ${ex.label}`}
-										>
-											<div className={`font-extrabold text-base md:text-lg mb-1 ${selected ? 'text-black' : 'text-amber-400'}`}>
-												{ex.label}
-											</div>
-											<div className={`text-xs md:text-sm leading-snug ${selected ? 'text-black/80' : 'text-amber-200/90'}`}>
-												{ex.summary}
-											</div>
-										</button>
-									);
-								})}
-								<div style={{ minHeight: 24, flexShrink: 0 }} />
-							</div>
-						)}
-					</div>
-				</div>
-	</>
-)}
-
+				   style={{ overflow: 'visible', WebkitFontSmoothing: 'antialiased' }}
+			   >
+				   {/* Left: Assistant/chat */}
+				   <div style={{ flex: '1 1 auto', minWidth: 0 }} className="flex flex-col w-full h-full">
+					   <div
+						   className="rounded-lg border border-brand-border bg-black/20 p-2 md:p-2.5 flex flex-col h-full min-h-0"
+						   style={{ overflow: 'hidden' }}
+					   >
+						   <div className="flex items-center gap-2 mb-2">
+							   {shouldShowPid(pidToRender) && (
+								   <button
+									   type="button"
+									   onClick={() => setStickyCollapsed((v) => !v)}
+									   className="rounded-full border-2 font-extrabold flex items-center justify-center transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-amber-400/70"
+									   style={{
+										   minWidth: 90,
+										   minHeight: 28,
+										   padding: '0.15rem 0.5rem',
+										   fontSize: '1.05rem',
+										   color: '#111',
+										   letterSpacing: '0.01em',
+										   borderColor: stickyCollapsed ? '#f7b84b' : '#4b9ef7',
+										   backgroundImage:
+											   'repeating-linear-gradient(135deg, #f7b84b 0 12px, #e6c200 12px 24px, #ffd700 24px 36px, #bfa43a 36px 48px),' +
+											   'repeating-linear-gradient(45deg, rgba(255,255,255,0.10) 0 8px, rgba(255,255,255,0.04) 8px 16px),' +
+											   'radial-gradient(circle at 8px 8px, rgba(255,255,255,0.10) 0 1px, transparent 1px 100%)',
+										   backgroundSize: '48px 48px, 18px 18px, 8px 8px',
+										   backgroundBlendMode: 'overlay, overlay, normal',
+										   boxShadow: stickyCollapsed
+											   ? '0 0 0 3px rgba(247,184,75,0.18), 0 0 6px rgba(247,184,75,0.25), 0 2px 8px rgba(0,0,0,0.5)'
+											   : '0 0 0 3px rgba(75,158,247,0.10), 0 0 8px rgba(75,158,247,0.25), 0 2px 8px rgba(0,0,0,0.5)',
+									   }}
+									   title={stickyCollapsed ? 'Expand AI Assistant + Examples' : 'Collapse AI Assistant + Examples'}
+									   aria-pressed={stickyCollapsed}
+								   >
+									   <span className="whitespace-nowrap">
+										   {stickyCollapsed ? 'Show Panels' : 'Hide Panels'}
+									   </span>
+								   </button>
+							   )}
+							   <div className="text-lg md:text-xl font-extrabold text-white leading-tight">AI Chat Agent</div>
+						   </div>
+						   {!stickyCollapsed && (
+							   <div className="text-xs md:text-sm font-semibold text-white/80 leading-snug mb-2">
+								   Ask anything about your project, goals, timeline, scope, or constraints. The AI will help you draft or refine your PID.
+							   </div>
+						   )}
+						   <div className="mt-2 flex flex-col gap-2 h-full justify-between min-h-0">
+							   {/* Chat messages */}
+							   {!stickyCollapsed && (
+								   <div
+									   ref={scrollerRef}
+									   className="flex flex-col gap-1 flex-1 min-h-8 pr-1 overflow-y-auto scroll-smooth max-h-[240px] md:max-h-[500px]"
+									   style={{ overscrollBehavior: 'contain', WebkitOverflowScrolling: 'touch' }}
+								   >
+									   {chat.map((m, idx) => {
+										   const isUser = m.role === 'user';
+										   return (
+											   <div
+												   key={`${m.role}-${idx}`}
+												   className={`rounded-lg border p-2 text-sm md:text-sm font-semibold leading-snug whitespace-pre-wrap ${
+													   isUser
+														   ? 'border-slate-700/70 bg-black/30 text-slate-100'
+														   : 'border-amber-400/40 bg-black/60 text-amber-100'
+												   }`}
+											   >
+												   {m.content}
+											   </div>
+										   );
+									   })}
+									   {chat.length === 0 && (
+										   <div className="rounded border border-brand-border bg-black/20 px-3 py-1.5 text-xs md:text-sm font-semibold text-white leading-snug">
+											   Start by describing your project or asking a question. Example: "Create a PID for a customer service platform pilot that unifies chat, SMS, and voice for North America support."
+										   </div>
+									   )}
+								   </div>
+							   )}
+							   {/* Input box */}
+							   {!stickyCollapsed && (
+								   <div className="rounded-lg border border-amber-400/40 bg-black/60 p-2 mt-2">
+									   <div className="text-[11px] md:text-xs font-extrabold text-white mb-1">
+										   Type your message and press Enter (Shift+Enter for newline)
+									   </div>
+									   <div className="flex items-end gap-1.5">
+										   {/* ...input box code... */}
+									   </div>
+								   </div>
+							   )}
+						   </div>
+					   </div>
+				   </div>
+				   {/* Right: Examples (~30% width on desktop) */}
+				   <div
+					   className="flex flex-col gap-2 items-stretch w-full md:flex-none md:w-[36%] h-full"
+					   style={{ minWidth: 220, maxWidth: 620 }}
+				   >
+					   <div
+						   className="rounded-lg border border-brand-border bg-black/10 p-2 md:p-2.5 flex flex-col justify-between flex-1 h-full min-h-0"
+						   style={{ overflow: 'hidden' }}
+					   >
+						   <div
+							   className="flex items-center text-xs md:text-sm font-extrabold text-white tracking-wide mb-2"
+							   style={{
+								   position: 'sticky',
+								   top: 0,
+								   background: 'rgba(0,0,0,0.12)',
+								   zIndex: 2,
+								   paddingBottom: 4,
+								   marginBottom: 4,
+								   borderBottom: '1px solid #f7b84b',
+							   }}
+						   >
+							   {shouldShowPid(pidToRender) && (
+								   <button
+									   type="button"
+									   onClick={() => setStickyCollapsed((v) => !v)}
+									   className="rounded-full border-2 font-extrabold flex items-center justify-center transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-amber-400/70 mr-2"
+									   style={{
+										   minWidth: 90,
+										   minHeight: 28,
+										   padding: '0.15rem 0.5rem',
+										   fontSize: '1.05rem',
+										   color: '#111',
+										   letterSpacing: '0.01em',
+										   borderColor: stickyCollapsed ? '#f7b84b' : '#4b9ef7',
+										   backgroundImage:
+											   'repeating-linear-gradient(135deg, #f7b84b 0 12px, #e6c200 12px 24px, #ffd700 24px 36px, #bfa43a 36px 48px),' +
+											   'repeating-linear-gradient(45deg, rgba(255,255,255,0.10) 0 8px, rgba(255,255,255,0.04) 8px 16px),' +
+											   'radial-gradient(circle at 8px 8px, rgba(255,255,255,0.10) 0 1px, transparent 1px 100%)',
+										   backgroundSize: '48px 48px, 18px 18px, 8px 8px',
+										   backgroundBlendMode: 'overlay, overlay, normal',
+										   boxShadow: stickyCollapsed
+											   ? '0 0 0 3px rgba(247,184,75,0.18), 0 0 6px rgba(247,184,75,0.25), 0 2px 8px rgba(0,0,0,0.5)'
+											   : '0 0 0 3px rgba(75,158,247,0.10), 0 0 8px rgba(75,158,247,0.25), 0 2px 8px rgba(0,0,0,0.5)',
+									   }}
+									   title={stickyCollapsed ? 'Expand AI Assistant + Examples' : 'Collapse AI Assistant + Examples'}
+									   aria-pressed={stickyCollapsed}
+								   >
+									   <span className="whitespace-nowrap">
+										   {stickyCollapsed ? 'Show Panels' : 'Hide Panels'}
+									   </span>
+								   </button>
+							   )}
+							   <span>Examples — Click to load</span>
+						   </div>
+						   {!stickyCollapsed && (
+							   <div
+								   className="mt-2 flex gap-2 pb-1 flex-1 overflow-x-auto md:overflow-y-auto md:flex-col flex-row"
+								   style={{ minHeight: 120 }}
+							   >
+								   {visibleExamples.map((ex, idx) => {
+									   if (!ex) return null;
+									   const selected = !!ex.id && ex.id === selectedExampleId;
+									   return (
+										   <button
+											   key={ex.id ?? `example-${idx}`}
+											   type="button"
+											   onClick={() => applyExampleToDraft(ex)}
+											   className={`min-w-[240px] md:min-w-0 w-full text-left rounded-xl border-2 p-3 md:p-4 shadow-lg transition-all duration-100 ring-2 ring-transparent focus:outline-none focus:ring-amber-400/80 ${
+												   selected
+													   ? 'border-amber-400 bg-amber-400 text-black ring-amber-400/80 scale-105'
+													   : 'border-slate-700 bg-black/80 hover:bg-amber-500/10 hover:border-amber-400 ring-slate-700/40 hover:ring-amber-400/30 text-white'
+											   } ${idx === visibleExamples.length - 1 ? 'mb-0' : ''}`}
+											   style={{ marginBottom: idx === visibleExamples.length - 1 ? 0 : 8, paddingBottom: 8, minHeight: 80 }}
+											   tabIndex={0}
+											   aria-label={`Load example: ${ex.label}`}
+										   >
+											   <div className={`font-extrabold text-base md:text-lg mb-1 ${selected ? 'text-black' : 'text-amber-400'}`}>
+												   {ex.label}
+											   </div>
+											   <div className={`text-xs md:text-sm leading-snug ${selected ? 'text-black/80' : 'text-amber-200/90'}`}>
+												   {ex.summary}
+											   </div>
+										   </button>
+									   );
+								   })}
+								   <div style={{ minHeight: 24, flexShrink: 0 }} />
+							   </div>
+						   )}
+					   </div>
+				   </div>
 			</div>
 
 			{/* BELOW: Full PID + Nav — only render when a draft PID with a title exists. Otherwise keep this area empty. */}
@@ -835,7 +801,6 @@ export const CreateMode = (props: CreateModeProps) => {
 								<MainContent pidData={pidToRender as any} onHelp={onHelp} showAllSections={true as any} />
 							</div>
 						</div>
-
 						{/* Nav column (to the right of PID) */}
 						<div className="hidden lg:block h-full">
 							<div className="h-full min-h-0">
