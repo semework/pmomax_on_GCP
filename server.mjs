@@ -2003,8 +2003,45 @@ app.post('/api/ai/assistant', async (req, res) => {
     };
 
     const smartDemoAssistant = () => {
+
       const text = String(lastUserText || '').trim();
       const intent = classifyIntent(text);
+
+      // Internal example Q&A pairs for smarter responses
+      const internalExamples = [
+        { q: 'what is the project date', a: pidData?.titleBlock?.generatedOn || 'No project date found.' },
+        { q: 'who is the sponsor', a: pidData?.projectSponsor?.name || 'No sponsor found.' },
+        { q: 'who is the project manager', a: pidData?.projectManagerOwner?.name || 'No project manager found.' },
+        { q: 'what are the risks', a: Array.isArray(pidData?.risks) && pidData.risks.length > 0 ? pidData.risks.map(r => r.risk).join('; ') : 'No risks listed.' },
+        { q: 'what is the executive summary', a: pidData?.executiveSummary || 'No executive summary found.' },
+        { q: 'what are the objectives', a: Array.isArray(pidData?.objectivesSmart) && pidData.objectivesSmart.length > 0 ? pidData.objectivesSmart.map(o => o.objective).join('; ') : 'No objectives listed.' },
+        { q: 'what is the budget', a: Array.isArray(pidData?.budgetCostBreakdown) && pidData.budgetCostBreakdown.length > 0 ? pidData.budgetCostBreakdown.map(b => `${b.item}: ${b.cost}`).join('; ') : 'No budget details.' },
+        { q: 'what are the deliverables', a: Array.isArray(pidData?.deliverablesNotes) && pidData.deliverablesNotes.length > 0 ? pidData.deliverablesNotes.join('; ') : 'No deliverables listed.' },
+        { q: 'what is the timeline', a: pidData?.timelineOverview || 'No timeline found.' },
+        { q: 'what are the milestones', a: Array.isArray(pidData?.milestones) && pidData.milestones.length > 0 ? pidData.milestones.map(m => `${m.milestone} (${m.targetDate})`).join('; ') : 'No milestones listed.' },
+        { q: 'what are the assumptions', a: Array.isArray(pidData?.assumptions) && pidData.assumptions.length > 0 ? pidData.assumptions.map(a => a.assumption).join('; ') : 'No assumptions listed.' },
+        { q: 'what are the constraints', a: Array.isArray(pidData?.constraints) && pidData.constraints.length > 0 ? pidData.constraints.map(c => c.constraint).join('; ') : 'No constraints listed.' },
+        { q: 'what are the dependencies', a: Array.isArray(pidData?.dependencies) && pidData.dependencies.length > 0 ? pidData.dependencies.map(d => d.dependency).join('; ') : 'No dependencies listed.' },
+        { q: 'who are the stakeholders', a: Array.isArray(pidData?.stakeholders) && pidData.stakeholders.length > 0 ? pidData.stakeholders.map(s => `${s.name} (${s.role})`).join('; ') : 'No stakeholders listed.' },
+        { q: 'what is the communication plan', a: Array.isArray(pidData?.communicationPlan) && pidData.communicationPlan.length > 0 ? pidData.communicationPlan.map(c => `${c.audience}: ${c.channel}`).join('; ') : 'No communication plan found.' },
+        { q: 'what are the compliance requirements', a: Array.isArray(pidData?.complianceSecurityPrivacy) && pidData.complianceSecurityPrivacy.length > 0 ? pidData.complianceSecurityPrivacy.map(c => `${c.requirement}: ${c.notes}`).join('; ') : 'No compliance requirements listed.' },
+        { q: 'what are the open questions', a: Array.isArray(pidData?.openQuestionsNextSteps) && pidData.openQuestionsNextSteps.length > 0 ? pidData.openQuestionsNextSteps.map(q => q.question).join('; ') : 'No open questions listed.' },
+        { q: 'what are the next steps', a: Array.isArray(pidData?.openQuestionsNextSteps) && pidData.openQuestionsNextSteps.length > 0 ? pidData.openQuestionsNextSteps.map(q => q.nextStep).join('; ') : 'No next steps listed.' },
+        { q: 'what are the issues', a: Array.isArray(pidData?.issuesDecisionsLog) && pidData.issuesDecisionsLog.length > 0 ? pidData.issuesDecisionsLog.map(i => i.issue).join('; ') : 'No issues listed.' },
+        { q: 'what are the decisions', a: Array.isArray(pidData?.issuesDecisionsLog) && pidData.issuesDecisionsLog.length > 0 ? pidData.issuesDecisionsLog.map(i => i.decision).join('; ') : 'No decisions listed.' },
+        { q: 'what are the resources', a: Array.isArray(pidData?.resourcesTools) && pidData.resourcesTools.length > 0 ? pidData.resourcesTools.map(r => r.resource).join('; ') : 'No resources listed.' },
+        { q: 'what are the tools', a: Array.isArray(pidData?.resourcesTools) && pidData.resourcesTools.length > 0 ? pidData.resourcesTools.map(r => r.purpose).join('; ') : 'No tools listed.' },
+        { q: 'what is the business case', a: pidData?.businessCaseExpectedValue || 'No business case found.' },
+        { q: 'what is the problem statement', a: pidData?.problemStatement || 'No problem statement found.' },
+        { q: 'what are the KPIs', a: Array.isArray(pidData?.kpis) && pidData.kpis.length > 0 ? pidData.kpis.map(k => `${k.kpi}: ${k.target}`).join('; ') : 'No KPIs listed.' },
+      ];
+
+      // Try to match user question to internal examples
+      const lowerText = text.toLowerCase();
+      const matched = internalExamples.find(ex => lowerText.includes(ex.q));
+      if (matched) {
+        return { ok: true, reply: matched.a };
+      }
 
       // Gibberish handling
       if (intent === 'gibberish_or_invalid') {
@@ -2052,14 +2089,14 @@ app.post('/api/ai/assistant', async (req, res) => {
           };
         }
 
-        // No PID loaded — never say "I don't have a PID loaded."
+        // No PID loaded  never say "I don't have a PID loaded."
         // If the user's message looks project-like, always draft a starter PID immediately.
         if (isProjectLikeText(text)) {
           const pid = buildCanonicalPid(text);
           return {
             ok: true,
             reply:
-              '✅ Drafted a starter PID from your input. Review the draft and say "apply" to use it, or answer any missing details (scope, dates, stakeholders, risks) to refine it.',
+              ' Drafted a starter PID from your input. Review the draft and say "apply" to use it, or answer any missing details (scope, dates, stakeholders, risks) to refine it.',
             pid,
             apply: false,
           };
@@ -2069,7 +2106,7 @@ app.post('/api/ai/assistant', async (req, res) => {
         return {
           ok: true,
           reply:
-            'Share a short project brief (what you’re building, the goal/problem, key dates, and stakeholders) and I’ll draft a PID right away.',
+            'Share a short project brief (what youre building, the goal/problem, key dates, and stakeholders) and Ill draft a PID right away.',
         };
       }
 

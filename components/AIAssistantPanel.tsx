@@ -308,35 +308,8 @@ export const AIAssistantPanel: React.FC<AIAssistantPanelProps & { title?: string
         {/* Example prompt for general AI Assistant */}
         <div className="mt-4 mb-2 p-3 rounded-xl bg-amber-900/40 border border-amber-400/60 text-amber-100 text-base font-semibold shadow">
           <div className="text-lg font-extrabold text-amber-200 mb-1">PMOMax AI Assistant</div>
-          <div>Ask about project status, create mode, risks, compliance, summaries, or request help. The assistant can answer general questions and knows about create mode and current PID status.</div>
-          <div className="mt-2 text-xs text-amber-100/80">Examples:</div>
-          <ul className="mt-2 text-xs text-amber-100/80 list-disc pl-4">
-            <li>What are the top risks for this project?</li>
-            <li>How can we mitigate compliance gaps?</li>
-            <li>Summarize the PID for an executive.</li>
-            <li>Draft objectives for the next phase.</li>
-            <li>What is the current project status?</li>
-            <li>How do I use create mode?</li>
-            <li>Check compliance gaps.</li>
-            <li>What are the key milestones?</li>
-            <li>How do I update the risks section?</li>
-            <li>What is the budget breakdown?</li>
-            <li>How do I improve the PID?</li>
-            <li>What are the main deliverables?</li>
-            <li>How do I request help?</li>
-            <li>What is the summary of compliance findings?</li>
-            <li>How do I fill missing PID fields?</li>
-            <li>What is the executive summary?</li>
-            <li>How do I check for security gaps?</li>
-            <li>What are the project dependencies?</li>
-            <li>How do I export the PID?</li>
-            <li>What is the timeline for completion?</li>
-            <li>How do I review audit logs?</li>
-            <li>What are the privacy concerns?</li>
-            <li>How do I update compliance notes?</li>
-            <li>What is the risk mitigation plan?</li>
-            <li>How do I summarize project status?</li>
-          </ul>
+          <div className="text-xs text-amber-100/90 mb-1">Ask about project status, risks, compliance, summaries, or request help. The assistant is aware of create mode and PID fields.</div>
+          <div className="mt-2 text-xs text-amber-100/80">Example: <span className="italic">"Summarize project status"</span></div>
         </div>
         <button
           type="submit"

@@ -76,6 +76,10 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = (props) => {
     console.warn('[LeftSidebar] setPidData is not defined or not a function. Some features will be disabled.');
   }
 
+      // Button enablement: always active if PID is present and not busy
+      const isBusy = props.isLoading;
+      const riskButtonEnabled = hasPid && !isBusy;
+      const complianceButtonEnabled = hasPid && !isBusy;
   const generalRef = useRef<HTMLDivElement | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const resetInitRef = useRef<boolean>(false);
