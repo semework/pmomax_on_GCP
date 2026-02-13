@@ -2009,6 +2009,29 @@ app.post('/api/ai/assistant', async (req, res) => {
 
       // Internal example Q&A pairs for smarter responses
       const internalExamples = [
+                { q: 'what is the length of the project', a: (() => {
+                  // Try to extract project duration from milestones or timeline
+                  if (pidData?.timelineOverview) return pidData.timelineOverview;
+                  if (Array.isArray(pidData?.milestones) && pidData.milestones.length > 1) {
+                    const dates = pidData.milestones.map(m => m.targetDate).filter(Boolean).sort();
+                    if (dates.length > 1) {
+                      return `Project duration: ${dates[0]} to ${dates[dates.length-1]}`;
+                    }
+                  }
+                  return 'Project length not specified.';
+                })() },
+                { q: 'refine an objective', a: (() => {
+                  if (Array.isArray(pidData?.objectivesSmart) && pidData.objectivesSmart.length > 0) {
+                    return 'Refined objective: ' + pidData.objectivesSmart.map(o => o.objective).join('; ');
+                  }
+                  return 'No objectives to refine.';
+                })() },
+                { q: 'adjust dates', a: (() => {
+                  if (Array.isArray(pidData?.milestones) && pidData.milestones.length > 0) {
+                    return 'Milestone dates: ' + pidData.milestones.map(m => `${m.milestone}: ${m.targetDate}`).join('; ');
+                  }
+                  return 'No dates to adjust.';
+                })() },
         { q: 'what is the project date', a: pidData?.titleBlock?.generatedOn || 'No project date found.' },
         { q: 'who is the sponsor', a: pidData?.projectSponsor?.name || 'No sponsor found.' },
         { q: 'who is the project manager', a: pidData?.projectManagerOwner?.name || 'No project manager found.' },

@@ -242,39 +242,40 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = (props) => {
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-2">
             <h2 className="text-sm font-semibold tracking-wide text-amber-300">AI Assistant</h2>
-
-            {/* Full Risk button (label + icon). Background matches risk card tone used in examples/intro. */}
+            {/* Risk Button: Re-added and fully wired */}
             <button
               type="button"
-              onClick={() => (hasPid && typeof props.onRunRiskAgent === 'function' ? props.onRunRiskAgent() : void 0)}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-pink-100 border border-pink-700"
+              onClick={() => {
+                if (hasPid && typeof props.onRunRiskAgent === 'function') {
+                  props.onRunRiskAgent();
+                }
+              }}
+              className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-pink-100 border border-pink-700 ${hasPid && !isLoading ? 'bg-pink-900/30 hover:bg-pink-700/30' : 'opacity-50 cursor-not-allowed'}`}
               title="Run Risk Agent"
               aria-label="Run Risk Agent"
-              style={{ background: 'rgba(139, 0, 46, 0.28)' }}
               disabled={!hasPid || isLoading}
             >
               <span aria-hidden>⚠️</span>
               <span>Risk</span>
-              {isLoading && (
-                <span className="ml-2 animate-spin text-xs">⏳</span>
-              )}
+              {isLoading && <span className="ml-2 animate-spin text-xs">⏳</span>}
             </button>
 
-            {/* Full Compliance button (label + icon). Background matches compliance card tone used in intro. */}
+            {/* Compliance Button: Re-added and fully wired */}
             <button
               type="button"
-              onClick={() => (hasPid && typeof props.onRunComplianceAgent === 'function' ? props.onRunComplianceAgent() : void 0)}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-teal-100 border border-teal-700"
+              onClick={() => {
+                if (hasPid && typeof props.onRunComplianceAgent === 'function') {
+                  props.onRunComplianceAgent();
+                }
+              }}
+              className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-teal-100 border border-teal-700 ${hasPid && !isLoading ? 'bg-teal-900/30 hover:bg-teal-700/30' : 'opacity-50 cursor-not-allowed'}`}
               title="Run Compliance Agent"
               aria-label="Run Compliance Agent"
-              style={{ background: 'rgba(4, 78, 68, 0.28)' }}
               disabled={!hasPid || isLoading}
             >
               <span aria-hidden>🔒</span>
               <span>Compliance</span>
-              {isLoading && (
-                <span className="ml-2 animate-spin text-xs">⏳</span>
-              )}
+              {isLoading && <span className="ml-2 animate-spin text-xs">⏳</span>}
             </button>
           </div>
 
