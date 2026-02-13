@@ -548,6 +548,22 @@ const App: React.FC = () => {
     [setPidData]
   );
 
+  // Provide a compact, live snapshot of app state to the AI layer so responses can be state-aware.
+  const appStateForAI = useMemo(
+    () => ({
+      mode: isCreateMode ? 'create' : 'edit',
+      navOpen,
+      hasPid: Boolean(pidData),
+      hasCenteredPid: Boolean(centerPid),
+      hasDraftPid: Boolean(draftPid),
+      pidTitle: (pidData as any)?.titleBlock?.projectTitle || (centerPid as any)?.titleBlock?.projectTitle || '',
+      pidId: (pidData as any)?.titleBlock?.projectId || (centerPid as any)?.titleBlock?.projectId || '',
+      warningsCount: Array.isArray(warnings) ? warnings.length : 0,
+      lastAssistantCreatedAt: lastAssistantCreatedAt || null,
+    }),
+    [isCreateMode, navOpen, pidData, centerPid, draftPid, warnings, lastAssistantCreatedAt]
+  );
+
   // Safe wrappers: some branches may omit these handlers from the hook,
   // but the UI expects stable functions.
   const safeSetPidData = useCallback((v: any) => setPidData?.(v), [setPidData]);
@@ -555,10 +571,23 @@ const App: React.FC = () => {
   const safeAskAssistant = useCallback(
     async (q: string) => {
       if (typeof askAssistant === 'function') {
-        await askAssistant(q, aiModel);
+        await askAssistant(q, aiModel, appStateForAI);
       }
     },
-    [askAssistant, aiModel]
+    [askAssistant, aiModel, appStateForAI]
+
+  const safeRunRiskAgent = useCallback(async () => {
+    if (typeof runRiskAgent === 'function') {
+      await runRiskAgent(appStateForAI);
+    }
+  }, [runRiskAgent, appStateForAI]);
+
+  const safeRunComplianceAgent = useCallback(async () => {
+    if (typeof runComplianceAgent === 'function') {
+      await runComplianceAgent(appStateForAI);
+    }
+  }, [runComplianceAgent, appStateForAI]);
+
   );
 
   // Export handlers accept an optional PID override (used by CreateMode/examples)
@@ -694,8 +723,9 @@ const App: React.FC = () => {
             onCreateMode={onCreateMode}
             onLoadDemo={onLoadDemo}
             setIsCreateMode={setIsCreateMode}
-            onRunRiskAgent={runRiskAgent ?? (async () => {})}
-            onRunComplianceAgent={runComplianceAgent ?? (async () => {})}
+            onRunRiskAgent={safeRunRiskAgent}
+            onRunComplianceAgent={safeRunComplianceAgent}
+            appState={appStateForAI}
             resetNonce={resetNonce}
           />
         </aside>

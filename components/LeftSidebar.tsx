@@ -54,6 +54,7 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = (props) => {
     onAskAssistant,
     aiAssistantHistory,
     pidData,
+  appState,
     setPidData,
     generalNotes,
     setGeneralNotes,
@@ -283,6 +284,7 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = (props) => {
           history={aiAssistantHistory && aiAssistantHistory.length === 0 ? [] : aiAssistantHistory}
           onAskAssistant={onAskAssistant}
           pidData={pidData}
+          appState={appState}
           isLoading={isLoading}
           error={error ?? null}
           onHelp={onHelp}

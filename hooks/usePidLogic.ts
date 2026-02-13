@@ -775,7 +775,7 @@ export const usePidLogic = () => {
   // Assistant
   // -----------------------------
   const askAssistant = useCallback(
-    async (userText: string, model?: 'gemini-2.5-flash' | 'gemini-pro-2.5') => {
+    async (userText: string, model?: 'gemini-2.5-flash' | 'gemini-pro-2.5', appState?: any) => {
       if (!userText || !userText.trim()) {
         setError('Please type a question or instruction for the assistant.');
         return;
@@ -815,6 +815,8 @@ export const usePidLogic = () => {
       const assistantKeyBase = JSON.stringify({
         q: trimmedQuestion,
         model: model || '',
+        appMode: (appState as any)?.mode || '',
+        navOpen: Boolean((appState as any)?.navOpen),
         pidTitle: (pid as any)?.titleBlock?.projectTitle || '',
         pidId: (pid as any)?.titleBlock?.projectId || '',
       });
@@ -839,8 +841,12 @@ export const usePidLogic = () => {
       }));
 
       const reqBody = hasPid
-        ? (model ? { pidData: pid, messages: msgArr, model } : { pidData: pid, messages: msgArr })
-        : (model ? { messages: msgArr, model } : { messages: msgArr });
+        ? (model
+            ? { pidData: pid, messages: msgArr, model, appState: appState || null }
+            : { pidData: pid, messages: msgArr, appState: appState || null })
+        : (model
+            ? { messages: msgArr, model, appState: appState || null }
+            : { messages: msgArr, appState: appState || null });
 
       // Cancel any previous assistant request
       try { assistantAbortRef.current?.abort('UserCancel'); } catch {}
@@ -918,17 +924,16 @@ export const usePidLogic = () => {
   // -----------------------------
   // Agents
   // -----------------------------
-  const runRiskAgent = useCallback(async () => {
-    let workingPid = pid;
-    if (!workingPid) {
-      workingPid = makeEmptyPid();
-      setPid(workingPid);
+  const runRiskAgent = useCallback(async (appState?: any) => {
+    if (!pid) {
+      setError('No PID is loaded. Load or parse a PID before running the Risk Agent.');
+      return;
     }
     setIsLoading(true);
     setError(null);
 
     try {
-      const res = await postJson<any>('/api/ai/risk', { pidData: workingPid }, 45_000);
+      const res = await postJson<any>('/api/ai/risk', { pidData: pid, appState: appState || null }, 45_000);
       if (res && typeof res.reply === 'string' && res.reply.trim()) {
         setAiAssistantHistory((prev) => [...prev, { role: 'assistant', content: res.reply } as any]);
       }
@@ -947,17 +952,16 @@ export const usePidLogic = () => {
     }
   }, [pid]);
 
-  const runComplianceAgent = useCallback(async () => {
-    let workingPid = pid;
-    if (!workingPid) {
-      workingPid = makeEmptyPid();
-      setPid(workingPid);
+  const runComplianceAgent = useCallback(async (appState?: any) => {
+    if (!pid) {
+      setError('No PID is loaded. Load or parse a PID before running the Compliance Agent.');
+      return;
     }
     setIsLoading(true);
     setError(null);
 
     try {
-      const res = await postJson<any>('/api/ai/compliance', { pidData: workingPid }, 45_000);
+      const res = await postJson<any>('/api/ai/compliance', { pidData: pid, appState: appState || null }, 45_000);
       if (res && typeof res.reply === 'string' && res.reply.trim()) {
         setAiAssistantHistory((prev) => [...prev, { role: 'assistant', content: res.reply } as any]);
       }
