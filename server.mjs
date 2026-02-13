@@ -716,8 +716,6 @@ function summarizeAppStateForAssistant(appState) {
   return bits.length ? `App state: ${bits.join(', ')}.` : '';
 }
 
-}
-
 // Returns a fully canonical, complete PMOMaxPID object with all fields/groups (empty if not present)
 function makeEmptyPid() {
   return {
