@@ -54,7 +54,7 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = (props) => {
     onAskAssistant,
     aiAssistantHistory,
     pidData,
-  appState,
+
     setPidData,
     generalNotes,
     setGeneralNotes,
@@ -67,7 +67,6 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = (props) => {
     onExportZip,
     onCreateMode,
     onLoadDemo,
-    setIsCreateMode,
   } = props;
   // pidData should be PMOMaxPID, not PIDData
   const hasPid = !!pidData && (pidData as any).titleBlock && !!(pidData as any).titleBlock.projectTitle?.trim();
@@ -243,27 +242,35 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = (props) => {
             {/* Full Risk button (label + icon). Background matches risk card tone used in examples/intro. */}
             <button
               type="button"
-              onClick={() => (typeof props.onRunRiskAgent === 'function' ? props.onRunRiskAgent() : void 0)}
+              onClick={() => (hasPid && typeof props.onRunRiskAgent === 'function' ? props.onRunRiskAgent() : void 0)}
               className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-pink-100 border border-pink-700"
               title="Run Risk Agent"
               aria-label="Run Risk Agent"
               style={{ background: 'rgba(139, 0, 46, 0.28)' }}
+              disabled={!hasPid || isLoading}
             >
               <span aria-hidden>⚠️</span>
               <span>Risk</span>
+              {isLoading && (
+                <span className="ml-2 animate-spin text-xs">⏳</span>
+              )}
             </button>
 
             {/* Full Compliance button (label + icon). Background matches compliance card tone used in intro. */}
             <button
               type="button"
-              onClick={() => (typeof props.onRunComplianceAgent === 'function' ? props.onRunComplianceAgent() : void 0)}
+              onClick={() => (hasPid && typeof props.onRunComplianceAgent === 'function' ? props.onRunComplianceAgent() : void 0)}
               className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-teal-100 border border-teal-700"
               title="Run Compliance Agent"
               aria-label="Run Compliance Agent"
               style={{ background: 'rgba(4, 78, 68, 0.28)' }}
+              disabled={!hasPid || isLoading}
             >
               <span aria-hidden>🔒</span>
               <span>Compliance</span>
+              {isLoading && (
+                <span className="ml-2 animate-spin text-xs">⏳</span>
+              )}
             </button>
           </div>
 
@@ -284,7 +291,7 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = (props) => {
           history={aiAssistantHistory && aiAssistantHistory.length === 0 ? [] : aiAssistantHistory}
           onAskAssistant={onAskAssistant}
           pidData={pidData}
-          appState={appState}
+          // appState removed
           isLoading={isLoading}
           error={error ?? null}
           onHelp={onHelp}

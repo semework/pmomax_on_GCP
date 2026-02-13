@@ -2014,8 +2014,8 @@ app.post('/api/ai/assistant', async (req, res) => {
       // Q&A / Informational handling
       if (intent === 'informational_qa') {
         const q = text.toLowerCase();
-        
-        // System questions
+
+        // System questions always take priority
         if (/\b(what do you do|what can you do|help|what is pmomax|what are you)\b/.test(q)) {
           return {
             ok: true,
@@ -2023,7 +2023,6 @@ app.post('/api/ai/assistant', async (req, res) => {
           };
         }
 
-        // PID-specific questions (when PID exists)
         // PID-specific questions (when PID exists)
         if (pidData && isPlainObject(pidData) && pidData.titleBlock && pidData.titleBlock.projectTitle) {
           // Owner question

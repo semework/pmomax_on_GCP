@@ -571,24 +571,23 @@ const App: React.FC = () => {
   const safeAskAssistant = useCallback(
     async (q: string) => {
       if (typeof askAssistant === 'function') {
-        await askAssistant(q, aiModel, appStateForAI);
+        await askAssistant(q);
       }
     },
-    [askAssistant, aiModel, appStateForAI]
+    [askAssistant]
+  );
 
   const safeRunRiskAgent = useCallback(async () => {
     if (typeof runRiskAgent === 'function') {
-      await runRiskAgent(appStateForAI);
+      await runRiskAgent();
     }
-  }, [runRiskAgent, appStateForAI]);
+  }, [runRiskAgent]);
 
   const safeRunComplianceAgent = useCallback(async () => {
     if (typeof runComplianceAgent === 'function') {
-      await runComplianceAgent(appStateForAI);
+      await runComplianceAgent();
     }
-  }, [runComplianceAgent, appStateForAI]);
-
-  );
+  }, [runComplianceAgent]);
 
   // Export handlers accept an optional PID override (used by CreateMode/examples)
   const onExportPdf = async (pidOverride?: any) => {
@@ -675,14 +674,7 @@ const App: React.FC = () => {
 
   return (
     <div className="min-h-screen w-full flex flex-col bg-brand-dark text-brand-text" style={{ minHeight: '100dvh', height: '100dvh', overflow: 'hidden' }}>
-      {/* DEV: visible debug badge for isCreateMode / centerPid state */}
-      {import.meta.env.DEV && (
-        <div style={{ position: 'fixed', right: 12, top: 12, zIndex: 9999 }}>
-          <div className="px-2 py-1 rounded-md text-xs font-semibold text-white" style={{ background: 'rgba(0,0,0,0.6)', boxShadow: '0 2px 8px rgba(0,0,0,0.6)' }}>
-            CreateMode: {String(isCreateMode)} • centerPid: {centerPid ? 'yes' : 'no'}
-          </div>
-        </div>
-      )}
+
       <Header onNavToggle={() => setNavOpen((v) => !v)} onHelp={handleHelpOpen} onUserGuide={handleUserGuideOpen} />
 
       {/* App body: Left sidebar • Main • Right navigation */}
@@ -725,7 +717,7 @@ const App: React.FC = () => {
             setIsCreateMode={setIsCreateMode}
             onRunRiskAgent={safeRunRiskAgent}
             onRunComplianceAgent={safeRunComplianceAgent}
-            appState={appStateForAI}
+            // appState prop removed (not in LeftSidebarProps)
             resetNonce={resetNonce}
           />
         </aside>

@@ -667,7 +667,34 @@ export const CreateMode = (props: CreateModeProps) => {
 									   })}
 									   {chat.length === 0 && (
 										   <div className="rounded border border-brand-border bg-black/20 px-3 py-1.5 text-xs md:text-sm font-semibold text-white leading-snug">
-											   Start by describing your project or asking a question. Example: "Create a PID for a customer service platform pilot that unifies chat, SMS, and voice for North America support."
+											 Start by describing your project or asking a question. Examples:
+											 <ul className="mt-2 text-xs text-white/80 list-disc pl-4">
+												 <li>Create a PID for a customer service platform pilot that unifies chat, SMS, and voice for North America support.</li>
+												 <li>Draft a PID for a new mobile app launch.</li>
+												 <li>Improve the objectives section for a healthcare project.</li>
+												 <li>Fill missing fields in the PID.</li>
+												 <li>Summarize the PID for an executive.</li>
+												 <li>Identify compliance gaps in the PID.</li>
+												 <li>Propose risk mitigation strategies for a software rollout.</li>
+												 <li>Draft a budget breakdown for a marketing campaign.</li>
+												 <li>Update the deliverables section for a cloud migration.</li>
+												 <li>Complete the timeline for a product launch.</li>
+												 <li>Review audit logs for a security project.</li>
+												 <li>Draft objectives for a customer support initiative.</li>
+												 <li>Summarize compliance findings for a finance project.</li>
+												 <li>Fill in missing compliance notes.</li>
+												 <li>Draft a risk mitigation plan for a new feature rollout.</li>
+												 <li>Summarize project status for a board meeting.</li>
+												 <li>Draft a PID for a data privacy initiative.</li>
+												 <li>Improve the PID for a logistics project.</li>
+												 <li>Draft a PID for a remote work transition.</li>
+												 <li>Update the PID for a software upgrade.</li>
+												 <li>Draft a PID for a sustainability project.</li>
+												 <li>Summarize risks for a compliance audit.</li>
+												 <li>Draft a PID for a new product development.</li>
+												 <li>Fill in missing budget details.</li>
+												 <li>Draft a PID for a digital transformation project.</li>
+											 </ul>
 										   </div>
 									   )}
 								   </div>
