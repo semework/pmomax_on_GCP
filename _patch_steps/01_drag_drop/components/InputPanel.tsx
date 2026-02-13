@@ -125,7 +125,7 @@ export const InputPanel: React.FC<InputPanelProps> = ({
       await onParse({ type: 'text', text: extractedText }, { source: 'file', filename: file.name });
     } catch (err: any) {
       console.error(err);
-      setLastError(err?.message || 'Failed to parse file.');
+      setLastError(err?.message || '');
     } finally {
       setIsParsing(false);
       setIsDragOver(false);

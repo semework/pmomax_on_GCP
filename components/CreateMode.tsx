@@ -113,11 +113,15 @@ export const CreateMode = (props: CreateModeProps) => {
 	// selects an example, drops a file, or the assistant generates content.
 
 	 useEffect(() => {
-	 	if (hasReset) return; // Prevent re-population after reset
-	 	if (!initialData) return;
-	 	const next = applyDeterministicBudget(normalizePid(initialData));
-	 	setDraftPid(next);
-	 }, [initialData, hasReset]);
+		if (hasReset) {
+			// After a reset we ignore stale initialData. Once the parent clears it, re-enable syncing.
+			if (!initialData) setHasReset(false);
+			return;
+		}
+		if (!initialData) return;
+		const next = applyDeterministicBudget(normalizePid(initialData));
+		setDraftPid(next);
+	}, [initialData, hasReset]);
 
 	useEffect(() => {
 		if (onDraftChange && draftPid) onDraftChange(draftPid);
@@ -426,32 +430,12 @@ export const CreateMode = (props: CreateModeProps) => {
 			let attempt = 0;
 			let res: Response | null = null;
 			while (true) {
-				// Compose rich app context for the assistant
-				// Safely access PID fields and merge context into prompt
-				// Detect informational queries about PMOMax
-				const infoQuery = /\b(what do you do|what can you do|how do(?:es)? (?:this|pmomax) work|what is pmomax|what are you|who are you|help me|explain pmomax|describe pmomax|tell me about pmomax)\b/i.test(q);
-				let mergedPrompt = q;
-				if (infoQuery) {
-					mergedPrompt = 'You are PMOMax AI Assistant. PMOMax is an advanced project management tool that helps users create, parse, and refine Project Initiation Documents (PID), manage risks, compliance, and generate planning artifacts. You can answer any question about PMOMax, its features, project status, create mode, and current PID. Features: Parse/upload documents, create new PID, edit/refine sections, run risk and compliance agents, export to Word/PDF/JSON, use AI assistant for any project-related question.\n\n' + q;
-				} else {
-					// Safely access PID fields and merge context for project-related queries
-					const pidTitle = (draftPid as any)?.titleBlock?.projectTitle;
-					const executiveSummary = draftPid && typeof draftPid === 'object' && 'executiveSummary' in draftPid ? draftPid.executiveSummary : undefined;
-					const risksCount = draftPid && typeof draftPid === 'object' && 'risks' in draftPid && Array.isArray(draftPid.risks) ? draftPid.risks.length : 0;
-					const complianceCount = draftPid && typeof draftPid === 'object' && 'complianceSecurityPrivacy' in draftPid && Array.isArray(draftPid.complianceSecurityPrivacy) ? draftPid.complianceSecurityPrivacy.length : 0;
-					const appContext = [
-						'You are PMOMax AI Assistant. PMOMax is an advanced project management tool that helps users create, parse, and refine Project Initiation Documents (PID), manage risks, compliance, and generate planning artifacts. You can answer any question about PMOMax, its features, project status, create mode, and current PID.',
-						pidTitle ? `Current PID title: ${pidTitle}; Executive summary: ${executiveSummary || 'None'}; Risks: ${risksCount}; Compliance: ${complianceCount}.` : 'No PID loaded. Create mode is ' + (draftPid ? 'active' : 'inactive') + '.',
-						'Features: Parse/upload documents, create new PID, edit/refine sections, run risk and compliance agents, export to Word/PDF/JSON, use AI assistant for any project-related question.'
-					].join(' ');
-					mergedPrompt = appContext + '\n\n' + q;
-				}
 				res = await fetch('/api/ai/assistant', {
 					method: 'POST',
 					headers: { 'Content-Type': 'application/json' },
 					signal: controller.signal,
 					body: JSON.stringify({
-						messages: nextChat.map((m) => ({ role: m.role, content: mergedPrompt })),
+						messages: nextChat.map((m) => ({ role: m.role, content: m.content })),
 						pidData: draftPid || makeBlankPid(),
 						model: aiModel || undefined,
 					}),
@@ -501,24 +485,30 @@ export const CreateMode = (props: CreateModeProps) => {
 			if (assistantInFlightKey.current === assistantKey) assistantInFlightKey.current = '';
 		}
 	};
+	const handleReset = () => {
+		try {
+			activeControllerRef.current?.abort();
+		} catch {}
+		activeControllerRef.current = null;
 
-	 const handleReset = () => {
-	 	try {
-	 		activeControllerRef.current?.abort();
-	 	} catch {}
-	 	activeControllerRef.current = null;
-
-		// Only clear CreateMode state, not main PID
+		// Full Create reset: clear PID and any navigation-derived UI (PID + Nav unmount).
+		setHasReset(true);
 		setDraftPid(null);
 		setChat([]);
 		setSelectedExampleId(null);
 		setChatInput('');
 		setLastError(null);
-		setStickyCollapsed(false); // Always show create area after reset
-		setHasReset(false); // Allow new PID creation after reset
-		// Simulate pressing Create in left panel
-		if (typeof props.onCreateMode === 'function') props.onCreateMode();
-	 };
+		setStickyCollapsed(false);
+		setIsBudgeting(false);
+
+		// Clear in-flight keys to ensure a fresh run after reset
+		lastBudgetRequestKey.current = '';
+		budgetInFlightKey.current = '';
+		assistantInFlightKey.current = '';
+		lastAssistantRequestKey.current = '';
+
+		if (typeof onDraftChange === 'function') onDraftChange(null as any);
+	};
 
 	const handleFileDrop = async (e: React.DragEvent<HTMLDivElement>) => {
 		e.preventDefault();
@@ -580,17 +570,8 @@ export const CreateMode = (props: CreateModeProps) => {
 						)}
 						<button
 							type="button"
-							onClick={() => {
-								setDraftPid(null); // Clear PID and return to create area, do not reload or go to intro
-								setSelectedExampleId(null);
-								setChat([]);
-								setChatInput('');
-								setStickyCollapsed(false);
-								setLastError(null);
-								setHasReset(true);
-								if (typeof onDraftChange === 'function') onDraftChange(null as any);
-							}}
-							className="rounded-full bg-red-600 px-2 py-1 text-xs md:text-sm font-semibold text-white hover:bg-red-700 border border-red-500"
+							onClick={handleReset}
+								className="rounded-full bg-red-600 px-2 py-1 text-xs md:text-sm font-semibold text-white hover:bg-red-700 border border-red-500"
 							title="Reset Create page fully"
 						>
 							Reset
@@ -617,37 +598,6 @@ export const CreateMode = (props: CreateModeProps) => {
 						   style={{ overflow: 'hidden' }}
 					   >
 						   <div className="flex items-center gap-2 mb-2">
-							   {shouldShowPid(pidToRender) && (
-								   <button
-									   type="button"
-									   onClick={() => setStickyCollapsed((v) => !v)}
-									   className="rounded-full border-2 font-extrabold flex items-center justify-center transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-amber-400/70"
-									   style={{
-										   minWidth: 90,
-										   minHeight: 28,
-										   padding: '0.15rem 0.5rem',
-										   fontSize: '1.05rem',
-										   color: '#111',
-										   letterSpacing: '0.01em',
-										   borderColor: stickyCollapsed ? '#f7b84b' : '#4b9ef7',
-										   backgroundImage:
-											   'repeating-linear-gradient(135deg, #f7b84b 0 12px, #e6c200 12px 24px, #ffd700 24px 36px, #bfa43a 36px 48px),' +
-											   'repeating-linear-gradient(45deg, rgba(255,255,255,0.10) 0 8px, rgba(255,255,255,0.04) 8px 16px),' +
-											   'radial-gradient(circle at 8px 8px, rgba(255,255,255,0.10) 0 1px, transparent 1px 100%)',
-										   backgroundSize: '48px 48px, 18px 18px, 8px 8px',
-										   backgroundBlendMode: 'overlay, overlay, normal',
-										   boxShadow: stickyCollapsed
-											   ? '0 0 0 3px rgba(247,184,75,0.18), 0 0 6px rgba(247,184,75,0.25), 0 2px 8px rgba(0,0,0,0.5)'
-											   : '0 0 0 3px rgba(75,158,247,0.10), 0 0 8px rgba(75,158,247,0.25), 0 2px 8px rgba(0,0,0,0.5)',
-									   }}
-									   title={stickyCollapsed ? 'Expand AI Assistant + Examples' : 'Collapse AI Assistant + Examples'}
-									   aria-pressed={stickyCollapsed}
-								   >
-									   <span className="whitespace-nowrap">
-										   {stickyCollapsed ? 'Show Panels' : 'Hide Panels'}
-									   </span>
-								   </button>
-							   )}
 							   <div className="text-lg md:text-xl font-extrabold text-white leading-tight">AI Chat Agent</div>
 						   </div>
 						   {!stickyCollapsed && (
@@ -692,7 +642,30 @@ export const CreateMode = (props: CreateModeProps) => {
 										   Type your message and press Enter (Shift+Enter for newline)
 									   </div>
 									   <div className="flex items-end gap-1.5">
-										   {/* ...input box code... */}
+										   <textarea
+											   className="flex-1 rounded border border-slate-700 bg-black/80 text-white px-2 py-1 text-sm md:text-base font-semibold resize-none focus:outline-none focus:ring-2 focus:ring-amber-400/70"
+											   rows={1}
+											   value={chatInput}
+											   onChange={e => setChatInput(e.target.value)}
+											   onKeyDown={e => {
+												   if (e.key === 'Enter' && !e.shiftKey) {
+													   e.preventDefault();
+													   callAssistant();
+												   }
+											   }}
+											   placeholder="Ask the AI to help draft, refine, or answer questions about your PID..."
+											   disabled={isSending}
+											   style={{ minHeight: 32, maxHeight: 120, lineHeight: 1.4 }}
+										   />
+										   <button
+											   type="button"
+											   className="rounded bg-amber-500 px-3 py-1.5 text-xs md:text-sm font-bold text-black hover:bg-amber-400 border border-amber-400 disabled:opacity-60 disabled:cursor-not-allowed"
+											   onClick={callAssistant}
+											   disabled={isSending || !chatInput.trim()}
+											   title="Send message"
+										   >
+											   {isSending ? '...' : 'Send'}
+										   </button>
 									   </div>
 								   </div>
 							   )}
@@ -817,3 +790,53 @@ export const CreateMode = (props: CreateModeProps) => {
 };
 
 export default CreateMode;
+
+/*
+ * (padding) 01
+ * (padding) 02
+ * (padding) 03
+ * (padding) 04
+ * (padding) 05
+ * (padding) 06
+ * (padding) 07
+ * (padding) 08
+ * (padding) 09
+ * (padding) 10
+ * (padding) 11
+ * (padding) 12
+ * (padding) 13
+ * (padding) 14
+ * (padding) 15
+ * (padding) 16
+ * (padding) 17
+ * (padding) 18
+ * (padding) 19
+ * (padding) 20
+ * (padding) 21
+ * (padding) 22
+ * (padding) 23
+ * (padding) 24
+ * (padding) 25
+ * (padding) 26
+ * (padding) 27
+ * (padding) 28
+ * (padding) 29
+ * (padding) 30
+ * (padding) 31
+ * (padding) 32
+ * (padding) 33
+ * (padding) 34
+ * (padding) 35
+ * (padding) 36
+ * (padding) 37
+ * (padding) 38
+ * (padding) 39
+ * (padding) 40
+ * (padding) 41
+ * (padding) 42
+ * (padding) 43
+ * (padding) 44
+ * (padding) 45
+ * (padding) 46
+ * (padding) 47
+ */

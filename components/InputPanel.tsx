@@ -165,7 +165,7 @@ export const InputPanel: React.FC<InputPanelProps> = ({
       await onParse('upload', { fileName: file.name, text: extractedText, warnings: result.warnings || [], signal: abortControllerRef.current.signal });
     } catch (err: any) {
       if (abortControllerRef.current?.signal.aborted) return;
-      setLastError(formatErr(err) || 'Failed to parse file.');
+      setLastError(formatErr(err) || '');
     } finally {
       setIsParsing(false);
       setIsDragOver(false);

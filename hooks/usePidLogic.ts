@@ -919,15 +919,16 @@ export const usePidLogic = () => {
   // Agents
   // -----------------------------
   const runRiskAgent = useCallback(async () => {
-    if (!pid) {
-      setError('No PID is loaded. Load or parse a PID before running the Risk Agent.');
-      return;
+    let workingPid = pid;
+    if (!workingPid) {
+      workingPid = makeEmptyPid();
+      setPid(workingPid);
     }
     setIsLoading(true);
     setError(null);
 
     try {
-      const res = await postJson<any>('/api/ai/risk', { pidData: pid }, 45_000);
+      const res = await postJson<any>('/api/ai/risk', { pidData: workingPid }, 45_000);
       if (res && typeof res.reply === 'string' && res.reply.trim()) {
         setAiAssistantHistory((prev) => [...prev, { role: 'assistant', content: res.reply } as any]);
       }
@@ -947,15 +948,16 @@ export const usePidLogic = () => {
   }, [pid]);
 
   const runComplianceAgent = useCallback(async () => {
-    if (!pid) {
-      setError('No PID is loaded. Load or parse a PID before running the Compliance Agent.');
-      return;
+    let workingPid = pid;
+    if (!workingPid) {
+      workingPid = makeEmptyPid();
+      setPid(workingPid);
     }
     setIsLoading(true);
     setError(null);
 
     try {
-      const res = await postJson<any>('/api/ai/compliance', { pidData: pid }, 45_000);
+      const res = await postJson<any>('/api/ai/compliance', { pidData: workingPid }, 45_000);
       if (res && typeof res.reply === 'string' && res.reply.trim()) {
         setAiAssistantHistory((prev) => [...prev, { role: 'assistant', content: res.reply } as any]);
       }
