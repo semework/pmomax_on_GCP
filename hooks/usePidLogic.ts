@@ -622,6 +622,7 @@ export const usePidLogic = () => {
 
       setIsLoading(true);
       setError(null);
+      setAiAssistantHistory((prev) => [...prev, { role: 'user', content: 'Run Compliance Agent' } as any, { role: 'assistant', content: 'Running compliance/security review on the current PID…' } as any]);
       setWarnings([]);
 
       // Cancel any previous parse
@@ -809,16 +810,109 @@ export const usePidLogic = () => {
         return;
       }
 
+      // Lightweight local answers that must reflect live PID data
+      const hasPidLocal =
+        pid &&
+        isPlainObject(pid) &&
+        (pid as any).titleBlock &&
+        typeof (pid as any).titleBlock.projectTitle === 'string' &&
+        (pid as any).titleBlock.projectTitle.trim().length > 0;
+
+      const safeArr = (v: any) => (Array.isArray(v) ? v : []);
+      const asText = (v: any) => (typeof v === 'string' ? v.trim() : '');
+
+      const summarizeRisks = () => {
+        const rows = safeArr((pid as any)?.risks);
+        if (rows.length === 0) return 'Risks: none listed in the current PID.';
+        const top = rows
+          .filter((r: any) => r && (asText(r.risk) || asText(r.mitigation)))
+          .slice(0, 8)
+          .map((r: any, i: number) => {
+            const risk = asText(r.risk) || 'Risk';
+            const mit = asText(r.mitigation);
+            return mit ? `${i + 1}. ${risk} — Mitigation: ${mit}` : `${i + 1}. ${risk}`;
+          });
+        return `Risks (${rows.length}):\n` + (top.length ? top.join('\n') : 'Risks: listed but empty rows.');
+      };
+
+      const summarizeCompliance = () => {
+        const rows = safeArr((pid as any)?.complianceSecurityPrivacy);
+        if (rows.length === 0) return 'Compliance gaps: no compliance/security/privacy items listed in the current PID.';
+        const missingNotes = rows.filter((r: any) => r && asText(r.requirement) && !asText(r.notes)).length;
+        const top = rows
+          .filter((r: any) => r && (asText(r.requirement) || asText(r.notes)))
+          .slice(0, 8)
+          .map((r: any, i: number) => {
+            const req = asText(r.requirement) || 'Requirement';
+            const notes = asText(r.notes);
+            return notes ? `${i + 1}. ${req} — Notes: ${notes}` : `${i + 1}. ${req} — Notes: (missing)`;
+          });
+        const gapLine = missingNotes > 0 ? `\nPotential gaps: ${missingNotes} item(s) missing notes.` : '';
+        return `Compliance / Security / Privacy (${rows.length}):\n` + (top.length ? top.join('\n') : 'Compliance: listed but empty rows.') + gapLine;
+      };
+
+      const summarizeStatus = () => {
+        const title = asText((pid as any)?.titleBlock?.projectTitle) || 'Untitled project';
+        const phase = asText((pid as any)?.titleBlock?.phase);
+        const tasks = safeArr((pid as any)?.workBreakdownTasks);
+        const milestones = safeArr((pid as any)?.milestones);
+        const allDates: number[] = [];
+        const pushDate = (s: any) => {
+          const t = Date.parse(String(s || ''));
+          if (Number.isFinite(t)) allDates.push(t);
+        };
+        tasks.forEach((t: any) => {
+          pushDate(t?.start);
+          pushDate(t?.end);
+        });
+        milestones.forEach((m: any) => pushDate(m?.targetDate));
+        let window = '';
+        if (allDates.length) {
+          const min = new Date(Math.min(...allDates));
+          const max = new Date(Math.max(...allDates));
+          const fmt = (d: Date) => d.toISOString().slice(0, 10);
+          window = `Timeline (from tasks/milestones): ${fmt(min)} to ${fmt(max)}.`;
+        }
+        const phaseLine = phase ? `Phase: ${phase}.` : '';
+        return `Current project status:\nTitle: ${title}. ${phaseLine}${phaseLine && window ? ' ' : ''}${window}`.trim();
+      };
+
+      if (hasPidLocal) {
+        if (/(^|\b)(summarize|summary|list|show|current)(\b|$)/.test(lowerQ) && /\brisk(s)?\b/.test(lowerQ)) {
+          setAiAssistantHistory((prev) => [...prev, { role: 'user', content: trimmedQuestion } as any, { role: 'assistant', content: summarizeRisks() } as any]);
+          return;
+        }
+        if (/(compliance|security|privacy)/.test(lowerQ) && /(gap|gaps|summarize|summary|list|show|check|current)/.test(lowerQ)) {
+          setAiAssistantHistory((prev) => [...prev, { role: 'user', content: trimmedQuestion } as any, { role: 'assistant', content: summarizeCompliance() } as any]);
+          return;
+        }
+        if (/(project status|current status)/.test(lowerQ)) {
+          setAiAssistantHistory((prev) => [...prev, { role: 'user', content: trimmedQuestion } as any, { role: 'assistant', content: summarizeStatus() } as any]);
+          return;
+        }
+      }
+
+      if (/(how do i use create mode|use create mode|create mode help)/.test(lowerQ)) {
+        setAiAssistantHistory((prev) => [...prev, { role: 'user', content: trimmedQuestion } as any, { role: 'assistant', content: 'Create mode lets you draft a PID from scratch. Describe the project (goal, scope, timeline, stakeholders), chat with the assistant to refine fields, and load examples to prefill. When ready, the PID appears below for review and export.' } as any]);
+        return;
+      }
+
+      if (/(request help|help me|need help)/.test(lowerQ)) {
+        setAiAssistantHistory((prev) => [...prev, { role: 'user', content: trimmedQuestion } as any, { role: 'assistant', content: 'Tell me what you want to do (e.g., create a PID, refine objectives, summarize risks, check compliance gaps, or fix a section). If a PID is loaded, I can summarize or update specific sections.' } as any]);
+        return;
+      }
+
       setIsLoading(true);
       setError(null);
 
       const assistantKeyBase = JSON.stringify({
         q: trimmedQuestion,
         model: model || '',
-        appMode: (appState as any)?.mode || '',
-        navOpen: Boolean((appState as any)?.navOpen),
         pidTitle: (pid as any)?.titleBlock?.projectTitle || '',
         pidId: (pid as any)?.titleBlock?.projectId || '',
+        mode: appState?.mode || '',
+        activeSection: appState?.activeSectionId || '',
+        navOpen: !!appState?.navOpen,
       });
       const assistantKey = hashText(assistantKeyBase);
 
@@ -840,13 +934,13 @@ export const usePidLogic = () => {
         content: typeof m?.content === 'string' ? m.content : String(m?.content ?? ''),
       }));
 
-      const reqBody = hasPid
-        ? (model
-            ? { pidData: pid, messages: msgArr, model, appState: appState || null }
-            : { pidData: pid, messages: msgArr, appState: appState || null })
-        : (model
-            ? { messages: msgArr, model, appState: appState || null }
-            : { messages: msgArr, appState: appState || null });
+      const baseBody = hasPid
+        ? (model ? { pidData: pid, messages: msgArr, model } : { pidData: pid, messages: msgArr })
+        : (model ? { messages: msgArr, model } : { messages: msgArr });
+
+      const reqBody = appState && typeof appState === 'object'
+        ? { ...(baseBody as any), appState }
+        : baseBody;
 
       // Cancel any previous assistant request
       try { assistantAbortRef.current?.abort('UserCancel'); } catch {}
@@ -925,15 +1019,23 @@ export const usePidLogic = () => {
   // Agents
   // -----------------------------
   const runRiskAgent = useCallback(async (appState?: any) => {
-    if (!pid) {
-      setError('No PID is loaded. Load or parse a PID before running the Risk Agent.');
-      return;
+    let workingPid = pid;
+    if (!workingPid) {
+      workingPid = makeEmptyPid();
+      setPid(workingPid);
     }
     setIsLoading(true);
     setError(null);
 
+    // Immediate UX feedback
+    setAiAssistantHistory((prev) => [
+      ...prev,
+      { role: 'user', content: 'Run Risk Agent' } as any,
+      { role: 'assistant', content: 'Running risk analysis on the current PID…' } as any,
+    ]);
+
     try {
-      const res = await postJson<any>('/api/ai/risk', { pidData: pid, appState: appState || null }, 45_000);
+      const res = await postJson<any>('/api/ai/risk', appState && typeof appState === 'object' ? { pidData: workingPid, appState } : { pidData: workingPid }, 45_000);
       if (res && typeof res.reply === 'string' && res.reply.trim()) {
         setAiAssistantHistory((prev) => [...prev, { role: 'assistant', content: res.reply } as any]);
       }
@@ -953,15 +1055,23 @@ export const usePidLogic = () => {
   }, [pid]);
 
   const runComplianceAgent = useCallback(async (appState?: any) => {
-    if (!pid) {
-      setError('No PID is loaded. Load or parse a PID before running the Compliance Agent.');
-      return;
+    let workingPid = pid;
+    if (!workingPid) {
+      workingPid = makeEmptyPid();
+      setPid(workingPid);
     }
     setIsLoading(true);
     setError(null);
 
+    // Immediate UX feedback
+    setAiAssistantHistory((prev) => [
+      ...prev,
+      { role: 'user', content: 'Run Compliance Agent' } as any,
+      { role: 'assistant', content: 'Running compliance/security analysis on the current PID…' } as any,
+    ]);
+
     try {
-      const res = await postJson<any>('/api/ai/compliance', { pidData: pid, appState: appState || null }, 45_000);
+      const res = await postJson<any>('/api/ai/compliance', appState && typeof appState === 'object' ? { pidData: workingPid, appState } : { pidData: workingPid }, 45_000);
       if (res && typeof res.reply === 'string' && res.reply.trim()) {
         setAiAssistantHistory((prev) => [...prev, { role: 'assistant', content: res.reply } as any]);
       }

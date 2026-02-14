@@ -203,11 +203,9 @@ export const AIAssistantPanel: React.FC<AIAssistantPanelProps & { title?: string
       >
         {ordered.length === 0 ? (
           <div className="text-xs text-slate-300 leading-tight py-1">
-            <div>
-              Ask about project status, create mode, risks, compliance, summaries, or request help. The assistant knows about create mode and current PID status.
-            </div>
+            <div>Ask about project status, create mode, risks, compliance, or request help.</div>
             <div className="mt-2 text-xs text-slate-300">
-              Example: "What is the current project status?" "Summarize risks." "Draft objectives." "Check compliance gaps." "How do I use create mode?" "Request help." "Summarize compliance issues." "List open risks."
+              Example: "What is the current project status?" "Summarize risks." "Draft objectives." "Check compliance gaps."
             </div>
           </div>
         ) : (
@@ -315,8 +313,8 @@ export const AIAssistantPanel: React.FC<AIAssistantPanelProps & { title?: string
         {/* Example prompt for general AI Assistant */}
         <div className="mt-4 mb-2 p-3 rounded-xl bg-amber-900/40 border border-amber-400/60 text-amber-100 text-base font-semibold shadow">
           <div className="text-lg font-extrabold text-amber-200 mb-1">PMOMax AI Assistant</div>
-          <div>Ask about project status, create mode, risks, compliance, summaries, or request help. The assistant can answer general questions and knows about create mode and current PID status.</div>
-          <div className="mt-2 text-xs text-amber-100/80">Example: <span className="italic">"What is the current project status?" "Summarize risks for this PID." "How do I use create mode?" "Check compliance gaps." "Draft objectives for the next phase." "Summarize compliance issues." "List open risks."</span></div>
+          <div>Ask about project status, create mode, risks, compliance, or request help.</div>
+          <div className="mt-2 text-xs text-amber-100/80">Example: <span className="italic">"What is the current project status?" "Summarize risks." "Draft objectives." "Check compliance gaps."</span></div>
         </div>
         <button
           type="submit"

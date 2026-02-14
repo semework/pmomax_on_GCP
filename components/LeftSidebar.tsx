@@ -54,7 +54,6 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = (props) => {
     onAskAssistant,
     aiAssistantHistory,
     pidData,
-
     setPidData,
     generalNotes,
     setGeneralNotes,
@@ -67,19 +66,27 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = (props) => {
     onExportZip,
     onCreateMode,
     onLoadDemo,
+    setIsCreateMode,
   } = props;
   // pidData should be PMOMaxPID, not PIDData
   const hasPid = !!pidData && (pidData as any).titleBlock && !!(pidData as any).titleBlock.projectTitle?.trim();
+
+  const scrollToSection = (id: string) => {
+    try {
+      const el = document.getElementById(id);
+      if (!el) return false;
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      return true;
+    } catch {
+      return false;
+    }
+  };
 
   // Defensive: warn in dev if setPidData is missing (guarded)
   if (process.env.NODE_ENV !== 'production' && typeof setPidData !== 'function') {
     console.warn('[LeftSidebar] setPidData is not defined or not a function. Some features will be disabled.');
   }
 
-      // Button enablement: always active if PID is present and not busy
-      const isBusy = props.isLoading;
-      const riskButtonEnabled = hasPid && !isBusy;
-      const complianceButtonEnabled = hasPid && !isBusy;
   const generalRef = useRef<HTMLDivElement | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const resetInitRef = useRef<boolean>(false);
@@ -242,40 +249,47 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = (props) => {
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-2">
             <h2 className="text-sm font-semibold tracking-wide text-amber-300">AI Assistant</h2>
-            {/* Risk Button: Re-added and fully wired */}
+
+            {/* Full Risk button (label + icon). Background matches risk card tone used in examples/intro. */}
             <button
               type="button"
               onClick={() => {
-                if (hasPid && typeof props.onRunRiskAgent === 'function') {
-                  props.onRunRiskAgent();
-                }
+                if (isLoading || !hasPid) return;
+                const ok = scrollToSection('risks');
+                if (!ok && typeof props.onRunRiskAgent === 'function') props.onRunRiskAgent();
               }}
-              className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-pink-100 border border-pink-700 ${hasPid && !isLoading ? 'bg-pink-900/30 hover:bg-pink-700/30' : 'opacity-50 cursor-not-allowed'}`}
-              title="Run Risk Agent"
-              aria-label="Run Risk Agent"
-              disabled={!hasPid || isLoading}
+              className={
+                "inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold border disabled:opacity-50 disabled:cursor-not-allowed transition-all " +
+                (hasPid ? 'text-pink-50 border-pink-500 hover:border-pink-300 hover:bg-pink-700/40 shadow-sm' : 'text-slate-300 border-slate-600')
+              }
+              disabled={isLoading || !hasPid}
+              title="Go to Risks section"
+              aria-label="Go to Risks section"
+              style={{ background: hasPid ? 'rgba(139, 0, 46, 0.42)' : 'rgba(139, 0, 46, 0.18)' }}
             >
               <span aria-hidden>⚠️</span>
               <span>Risk</span>
-              {isLoading && <span className="ml-2 animate-spin text-xs">⏳</span>}
             </button>
 
-            {/* Compliance Button: Re-added and fully wired */}
+            {/* Full Compliance button (label + icon). Background matches compliance card tone used in intro. */}
             <button
               type="button"
               onClick={() => {
-                if (hasPid && typeof props.onRunComplianceAgent === 'function') {
-                  props.onRunComplianceAgent();
-                }
+                if (isLoading || !hasPid) return;
+                const ok = scrollToSection('governance');
+                if (!ok && typeof props.onRunComplianceAgent === 'function') props.onRunComplianceAgent();
               }}
-              className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-teal-100 border border-teal-700 ${hasPid && !isLoading ? 'bg-teal-900/30 hover:bg-teal-700/30' : 'opacity-50 cursor-not-allowed'}`}
-              title="Run Compliance Agent"
-              aria-label="Run Compliance Agent"
-              disabled={!hasPid || isLoading}
+              className={
+                "inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold border disabled:opacity-50 disabled:cursor-not-allowed transition-all " +
+                (hasPid ? 'text-teal-50 border-teal-500 hover:border-teal-300 hover:bg-teal-700/30 shadow-sm' : 'text-slate-300 border-slate-600')
+              }
+              disabled={isLoading || !hasPid}
+              title="Go to Compliance section"
+              aria-label="Go to Compliance section"
+              style={{ background: hasPid ? 'rgba(4, 78, 68, 0.40)' : 'rgba(4, 78, 68, 0.18)' }}
             >
               <span aria-hidden>🔒</span>
               <span>Compliance</span>
-              {isLoading && <span className="ml-2 animate-spin text-xs">⏳</span>}
             </button>
           </div>
 
@@ -296,7 +310,6 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = (props) => {
           history={aiAssistantHistory && aiAssistantHistory.length === 0 ? [] : aiAssistantHistory}
           onAskAssistant={onAskAssistant}
           pidData={pidData}
-          // appState removed
           isLoading={isLoading}
           error={error ?? null}
           onHelp={onHelp}

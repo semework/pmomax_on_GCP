@@ -4,7 +4,9 @@ import { safeErrorMessage } from '../lib/safeError';
 
 import type { PMOMaxPID } from '../types';
 import NavPanel from './NavPanel';
-import MainContent from './MainContent';
+import React, { Suspense, lazy, useEffect, useMemo, useRef, useState } from 'react';
+// ...existing code...
+const CreateModeMainContent = React.lazy(() => import('./CreateModeMainContent'));
 import { makeBlankPid, deepMerge, normalizePid, buildFallbackPidFromPrompt } from '../lib/pid/pidDefaults';
 import { computeDeterministicBudget } from '../lib/deterministicBudget';
 
@@ -568,7 +570,8 @@ export const CreateMode = (props: CreateModeProps) => {
 						<button
 							type="button"
 							onClick={() => {
-								setDraftPid(null); // Clear PID and return to create area, do not reload or go to intro
+								// Reset to create view: clear PID, chat, input, errors, and keep user in create area
+								setDraftPid(null);
 								setSelectedExampleId(null);
 								setChat([]);
 								setChatInput('');
@@ -604,42 +607,11 @@ export const CreateMode = (props: CreateModeProps) => {
 						   style={{ overflow: 'hidden' }}
 					   >
 						   <div className="flex items-center gap-2 mb-2">
-							   {shouldShowPid(pidToRender) && (
-								   <button
-									   type="button"
-									   onClick={() => setStickyCollapsed((v) => !v)}
-									   className="rounded-full border-2 font-extrabold flex items-center justify-center transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-amber-400/70"
-									   style={{
-										   minWidth: 90,
-										   minHeight: 28,
-										   padding: '0.15rem 0.5rem',
-										   fontSize: '1.05rem',
-										   color: '#111',
-										   letterSpacing: '0.01em',
-										   borderColor: stickyCollapsed ? '#f7b84b' : '#4b9ef7',
-										   backgroundImage:
-											   'repeating-linear-gradient(135deg, #f7b84b 0 12px, #e6c200 12px 24px, #ffd700 24px 36px, #bfa43a 36px 48px),' +
-											   'repeating-linear-gradient(45deg, rgba(255,255,255,0.10) 0 8px, rgba(255,255,255,0.04) 8px 16px),' +
-											   'radial-gradient(circle at 8px 8px, rgba(255,255,255,0.10) 0 1px, transparent 1px 100%)',
-										   backgroundSize: '48px 48px, 18px 18px, 8px 8px',
-										   backgroundBlendMode: 'overlay, overlay, normal',
-										   boxShadow: stickyCollapsed
-											   ? '0 0 0 3px rgba(247,184,75,0.18), 0 0 6px rgba(247,184,75,0.25), 0 2px 8px rgba(0,0,0,0.5)'
-											   : '0 0 0 3px rgba(75,158,247,0.10), 0 0 8px rgba(75,158,247,0.25), 0 2px 8px rgba(0,0,0,0.5)',
-									   }}
-									   title={stickyCollapsed ? 'Expand AI Assistant + Examples' : 'Collapse AI Assistant + Examples'}
-									   aria-pressed={stickyCollapsed}
-								   >
-									   <span className="whitespace-nowrap">
-										   {stickyCollapsed ? 'Show Panels' : 'Hide Panels'}
-									   </span>
-								   </button>
-							   )}
 							   <div className="text-lg md:text-xl font-extrabold text-white leading-tight">AI Chat Agent</div>
 						   </div>
 						   {!stickyCollapsed && (
 							   <div className="text-xs md:text-sm font-semibold text-white/80 leading-snug mb-2">
-								   Ask anything about your project, goals, timeline, scope, or constraints. The AI will help you draft or refine your PID.
+								   Ask about project status, create mode, risks, compliance, summaries, or request help. The assistant knows about create mode and current PID status.
 							   </div>
 						   )}
 						   <div className="mt-2 flex flex-col gap-2 h-full justify-between min-h-0">
@@ -665,38 +637,16 @@ export const CreateMode = (props: CreateModeProps) => {
 											   </div>
 										   );
 									   })}
-									   {chat.length === 0 && (
-										   <div className="rounded border border-brand-border bg-black/20 px-3 py-1.5 text-xs md:text-sm font-semibold text-white leading-snug">
-											 Start by describing your project or asking a question. Examples:
-											 <ul className="mt-2 text-xs text-white/80 list-disc pl-4">
-												 <li>Create a PID for a customer service platform pilot that unifies chat, SMS, and voice for North America support.</li>
-												 <li>Draft a PID for a new mobile app launch.</li>
-												 <li>Improve the objectives section for a healthcare project.</li>
-												 <li>Fill missing fields in the PID.</li>
-												 <li>Summarize the PID for an executive.</li>
-												 <li>Identify compliance gaps in the PID.</li>
-												 <li>Propose risk mitigation strategies for a software rollout.</li>
-												 <li>Draft a budget breakdown for a marketing campaign.</li>
-												 <li>Update the deliverables section for a cloud migration.</li>
-												 <li>Complete the timeline for a product launch.</li>
-												 <li>Review audit logs for a security project.</li>
-												 <li>Draft objectives for a customer support initiative.</li>
-												 <li>Summarize compliance findings for a finance project.</li>
-												 <li>Fill in missing compliance notes.</li>
-												 <li>Draft a risk mitigation plan for a new feature rollout.</li>
-												 <li>Summarize project status for a board meeting.</li>
-												 <li>Draft a PID for a data privacy initiative.</li>
-												 <li>Improve the PID for a logistics project.</li>
-												 <li>Draft a PID for a remote work transition.</li>
-												 <li>Update the PID for a software upgrade.</li>
-												 <li>Draft a PID for a sustainability project.</li>
-												 <li>Summarize risks for a compliance audit.</li>
-												 <li>Draft a PID for a new product development.</li>
-												 <li>Fill in missing budget details.</li>
-												 <li>Draft a PID for a digital transformation project.</li>
-											 </ul>
-										   </div>
-									   )}
+								   {chat.length === 0 && (
+									   <div className="rounded border border-brand-border bg-black/20 px-3 py-1.5 text-xs md:text-sm font-semibold text-white leading-snug">
+										 <div>
+											 Ask about project status, create mode, risks, compliance, summaries, or request help. The assistant knows about create mode and current PID status.
+										 </div>
+										 <div className="mt-2 text-xs text-white/80">
+											 Example: "What is the current project status?" "Summarize risks." "Draft objectives." "Check compliance gaps." "How do I use create mode?" "Request help."
+										 </div>
+									   </div>
+								   )}
 								   </div>
 							   )}
 							   {/* Input box */}
@@ -713,6 +663,43 @@ export const CreateMode = (props: CreateModeProps) => {
 						   </div>
 					   </div>
 				   </div>
+
+			   	{/* Center: single Hide/Show button (replaces duplicates) */}
+			   	{shouldShowPid(pidToRender) && (
+			   		<div className="flex items-start justify-center w-full md:w-[140px]">
+			   			<button
+			   				type="button"
+			   				onClick={() => setStickyCollapsed((v) => !v)}
+			   				className="rounded-full border-2 font-extrabold flex items-center justify-center transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-amber-400/70"
+			   				style={{
+			   					minWidth: 110,
+			   					minHeight: 28,
+			   					padding: '0.15rem 0.5rem',
+			   					fontSize: '1.05rem',
+			   					color: '#111',
+			   					letterSpacing: '0.01em',
+			   					borderColor: stickyCollapsed ? '#f7b84b' : '#4b9ef7',
+			   					backgroundImage:
+			   						'repeating-linear-gradient(135deg, #f7b84b 0 12px, #e6c200 12px 24px, #ffd700 24px 36px, #bfa43a 36px 48px),' +
+			   						'repeating-linear-gradient(45deg, rgba(255,255,255,0.10) 0 8px, rgba(255,255,255,0.04) 8px 16px),' +
+			   						'radial-gradient(circle at 8px 8px, rgba(255,255,255,0.10) 0 1px, transparent 1px 100%)',
+			   					backgroundSize: '48px 48px, 18px 18px, 8px 8px',
+			   					backgroundBlendMode: 'overlay, overlay, normal',
+			   					boxShadow: stickyCollapsed
+			   						? '0 0 0 3px rgba(247,184,75,0.18), 0 0 6px rgba(247,184,75,0.25), 0 2px 8px rgba(0,0,0,0.5)'
+			   						: '0 0 0 3px rgba(75,158,247,0.10), 0 0 8px rgba(75,158,247,0.25), 0 2px 8px rgba(0,0,0,0.5)',
+			   				}}
+			   				title={stickyCollapsed ? 'Expand AI Assistant + Examples' : 'Collapse AI Assistant + Examples'}
+			   				aria-pressed={stickyCollapsed}
+			   			>
+			   				<span className="whitespace-nowrap">
+			   					{'◀ '}
+			   					{stickyCollapsed ? 'Show Panels' : 'Hide Panels'}
+			   					{' ▶'}
+			   				</span>
+			   			</button>
+			   		</div>
+			   	)}
 				   {/* Right: Examples (~30% width on desktop) */}
 				   <div
 					   className="flex flex-col gap-2 items-stretch w-full md:flex-none md:w-[36%] h-full"
@@ -734,37 +721,7 @@ export const CreateMode = (props: CreateModeProps) => {
 								   borderBottom: '1px solid #f7b84b',
 							   }}
 						   >
-							   {shouldShowPid(pidToRender) && (
-								   <button
-									   type="button"
-									   onClick={() => setStickyCollapsed((v) => !v)}
-									   className="rounded-full border-2 font-extrabold flex items-center justify-center transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-amber-400/70 mr-2"
-									   style={{
-										   minWidth: 90,
-										   minHeight: 28,
-										   padding: '0.15rem 0.5rem',
-										   fontSize: '1.05rem',
-										   color: '#111',
-										   letterSpacing: '0.01em',
-										   borderColor: stickyCollapsed ? '#f7b84b' : '#4b9ef7',
-										   backgroundImage:
-											   'repeating-linear-gradient(135deg, #f7b84b 0 12px, #e6c200 12px 24px, #ffd700 24px 36px, #bfa43a 36px 48px),' +
-											   'repeating-linear-gradient(45deg, rgba(255,255,255,0.10) 0 8px, rgba(255,255,255,0.04) 8px 16px),' +
-											   'radial-gradient(circle at 8px 8px, rgba(255,255,255,0.10) 0 1px, transparent 1px 100%)',
-										   backgroundSize: '48px 48px, 18px 18px, 8px 8px',
-										   backgroundBlendMode: 'overlay, overlay, normal',
-										   boxShadow: stickyCollapsed
-											   ? '0 0 0 3px rgba(247,184,75,0.18), 0 0 6px rgba(247,184,75,0.25), 0 2px 8px rgba(0,0,0,0.5)'
-											   : '0 0 0 3px rgba(75,158,247,0.10), 0 0 8px rgba(75,158,247,0.25), 0 2px 8px rgba(0,0,0,0.5)',
-									   }}
-									   title={stickyCollapsed ? 'Expand AI Assistant + Examples' : 'Collapse AI Assistant + Examples'}
-									   aria-pressed={stickyCollapsed}
-								   >
-									   <span className="whitespace-nowrap">
-										   {stickyCollapsed ? 'Show Panels' : 'Hide Panels'}
-									   </span>
-								   </button>
-							   )}
+
 							   <span>Examples — Click to load</span>
 						   </div>
 						   {!stickyCollapsed && (
@@ -812,7 +769,9 @@ export const CreateMode = (props: CreateModeProps) => {
 						{/* PID column */}
 						<div className="rounded-lg border border-brand-border bg-brand-panel p-2 md:p-3 min-h-0 flex flex-col h-full">
 							<div className="flex-1 min-h-0 overflow-auto">
-								<MainContent pidData={pidToRender as any} onHelp={onHelp} showAllSections={true as any} />
+																<Suspense fallback={<div style={{minHeight:320}} />}> 
+																	<CreateModeMainContent pidData={pidToRender as any} onHelp={onHelp} showAllSections={true as any} />
+																</Suspense>
 							</div>
 						</div>
 						{/* Nav column (to the right of PID) */}

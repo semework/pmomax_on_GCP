@@ -1,15 +1,653 @@
 # Page snapshot
 
 ```yaml
-- generic [ref=e2]:
-  - generic [ref=e3]:
-    - heading "Unable to connect" [level=1] [ref=e5]
-    - paragraph [ref=e6]: Firefox can’t establish a connection to the server at localhost:5173.
-    - paragraph
-    - list [ref=e8]:
-      - listitem [ref=e9]: The site could be temporarily unavailable or too busy. Try again in a few moments.
-      - listitem [ref=e10]: If you are unable to load any pages, check your computer’s network connection.
-      - listitem [ref=e11]: If your computer or network is protected by a firewall or proxy, make sure that Nightly is permitted to access the web.
-      - listitem [ref=e12]: If you are trying to load a local network page, please check that Nightly has been granted Local Network permissions in the macOS Privacy & Security settings.
-  - button "Try Again" [active] [ref=e14]
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - generic [ref=e5]:
+      - img "PMOMax logo" [ref=e6]
+      - heading "PMOMAX" [level=1] [ref=e7]
+      - generic [ref=e8]: PID Architect
+    - generic [ref=e9]:
+      - link "Open PMO Agent website" [ref=e10] [cursor=pointer]:
+        - /url: https://pmoagent.katalyststreet.com/
+        - text: WEBSITE
+      - generic [ref=e11]:
+        - generic [ref=e12]: Built by
+        - img "Katalyst Street logo" [ref=e13]
+        - generic [ref=e14]: Katalyst Street
+      - button "Open help" [ref=e15] [cursor=pointer]: Help
+      - button "Open user guide" [ref=e16] [cursor=pointer]:
+        - img [ref=e17]
+        - text: User Guide
+      - button "Contact Us" [ref=e21] [cursor=pointer]
+  - generic [ref=e22]:
+    - complementary [ref=e23]:
+      - generic [ref=e24]:
+        - generic [ref=e25]:
+          - generic [ref=e26]:
+            - heading "Project Initiation Controls" [level=2] [ref=e27]
+            - button "Help for Project Initiation Controls" [ref=e28] [cursor=pointer]: "?"
+          - strong [ref=e31]: Click Create to start a new blank PID or use an example.
+          - generic [ref=e32]:
+            - generic [ref=e34]: INPUT
+            - generic [ref=e35]: Paste, drop, upload, or create a Project Initiation Document (PID)
+            - generic [ref=e36]:
+              - strong [ref=e37]: "Supported:"
+              - text: DOCX, PDF, TXT, MD, CSV, XLS/XLSX.
+              - strong [ref=e38]: "Options:"
+              - text: Paste, drop, upload, create, or load example.
+              - strong [ref=e39]: "Tip:"
+              - text: Recommended ≤20 pages (hard limit 112).
+            - textbox "Paste, drop, upload, or create a PID document" [ref=e40]:
+              - /placeholder: Paste PID text, drop a file, upload (DOCX, PDF, TXT, MD, CSV, XLS/XLSX), create from scratch, or load an example.
+            - generic [ref=e41]:
+              - button "Parse" [disabled] [ref=e42]
+              - button "Reset" [ref=e43] [cursor=pointer]
+              - button "Create" [ref=e44] [cursor=pointer]
+              - generic [ref=e46] [cursor=pointer]: Upload file
+              - button "Load Demo PID" [ref=e47] [cursor=pointer]: Load Demo
+        - generic [ref=e48]:
+          - generic [ref=e49]:
+            - heading "Export Document" [level=2] [ref=e50]
+            - button "Help for Export Document" [ref=e51] [cursor=pointer]: "?"
+          - paragraph [ref=e52]: Export the current PID as a Word, PDF, or JSON document. If a Gantt chart is plotted, it will be embedded automatically.
+          - generic [ref=e54]:
+            - button "Export PDF" [ref=e55] [cursor=pointer]: PDF
+            - button "Export Word" [ref=e56] [cursor=pointer]: Word
+            - button "Export ZIP" [ref=e57] [cursor=pointer]: Zip (Word+Gantt)
+            - button "Export JSON" [ref=e58] [cursor=pointer]: JSON
+        - generic [ref=e59]:
+          - generic [ref=e60]:
+            - generic [ref=e61]:
+              - heading "AI Assistant" [level=2] [ref=e62]
+              - button "Run Risk Agent" [ref=e63] [cursor=pointer]:
+                - generic [ref=e64]: ⚠️
+                - generic [ref=e65]: Risk
+              - button "Run Compliance Agent" [ref=e66] [cursor=pointer]:
+                - generic [ref=e67]: 🔒
+                - generic [ref=e68]: Compliance
+            - button "Help for AI Assistant" [ref=e69] [cursor=pointer]: "?"
+          - generic [ref=e70]:
+            - generic [ref=e72]:
+              - heading "PMOMax AI Assistant" [level=2] [ref=e74]
+              - paragraph [ref=e75]: "Ask anything: project status, create mode, risks, compliance, summaries, or request help. The assistant knows about create mode and current PID status."
+            - generic [ref=e78]:
+              - generic [ref=e79]: 🤖 AI Assistant
+              - generic [ref=e80]: Demo data loaded. Ask me to add a risk, refine an objective, or adjust dates.
+            - generic [ref=e81]:
+              - textbox "Ask the PMOMax AI assistant" [ref=e82]:
+                - /placeholder: "Ask anything: project status, create mode, risks, compliance, summaries, or request help…"
+              - generic [ref=e83]:
+                - generic [ref=e84]: PMOMax AI Assistant
+                - generic [ref=e85]: Ask about project status, risks, compliance, summaries, or request help. The assistant is aware of create mode and PID fields.
+                - generic [ref=e86]: "Example: \"Summarize project status\""
+              - button "Send message to AI assistant" [disabled] [ref=e87]: Send
+        - generic [ref=e88]:
+          - generic [ref=e89]:
+            - heading "General Notes" [level=2] [ref=e90]
+            - button "Help for General Notes" [ref=e91] [cursor=pointer]: "?"
+          - textbox "Add notes, comments, or instructions here. These will be saved and exported." [ref=e93]: RoadRunner is the internal codename. Use this space to capture high-level notes.
+    - main [ref=e94]:
+      - main [ref=e96]:
+        - generic [ref=e97]:
+          - generic [ref=e98]:
+            - heading "01 — Project Info" [level=3] [ref=e99]
+            - button "Help" [ref=e100] [cursor=pointer]: "?"
+          - generic [ref=e102]:
+            - generic [ref=e103]:
+              - generic [ref=e104]: Project Title
+              - generic [ref=e105]: NextGen Customer Service Platform
+            - generic [ref=e106]:
+              - generic [ref=e107]: Subtitle
+              - generic [ref=e108]: Project Initiation Document
+            - generic [ref=e109]:
+              - generic [ref=e110]: Generated On
+              - generic [ref=e111]: "Generated on: 10/24/2025"
+            - generic [ref=e112]:
+              - generic [ref=e113]: Project Sponsor
+              - generic [ref=e114]: TBD
+            - generic [ref=e115]:
+              - generic [ref=e116]: Sponsor Role
+              - generic [ref=e117]: Sponsor
+            - generic [ref=e118]:
+              - generic [ref=e119]: Project Manager / Owner
+              - generic [ref=e120]: Priya Singh
+        - generic [ref=e121]:
+          - generic [ref=e122]:
+            - heading "02 — Overview & Rationale" [level=3] [ref=e123]
+            - button "Help" [ref=e124] [cursor=pointer]: "?"
+          - generic [ref=e125]:
+            - generic [ref=e126]:
+              - heading "Executive Summary" [level=3] [ref=e127]
+              - paragraph [ref=e128]: "The NextGen Customer Service Platform will unify all customer touchpoints (chat, SMS, voice) into a single workspace for agents, targeting the North America support organization. The initial release focuses on delivering a reliable MVP for pilot markets first, with measurement and governance baked in. Success is defined by faster customer response, calmer agent workflows, fewer repeat contacts, improved CSAT, and increased self-service deflection. The program will run with a lightweight governance model: weekly sponsor digest, Monday checkpoints for the core team, and formal sign-off gates prior to pilot invite freeze, readiness review, and launch. Security and privacy readiness will be validated before pilot launch, including PII handling, retention expectations, and audit logging for key events."
+            - generic [ref=e129]:
+              - heading "Problem Statement" [level=3] [ref=e130]
+              - paragraph [ref=e131]: Current customer service processes are fragmented across multiple tools and vendors, creating handoff gaps between chat, SMS, and voice. Agents lack a unified view and consistent workflows, and customers face long wait times and repeated contacts for the same issue.
+            - generic [ref=e132]:
+              - heading "Business Case & Expected Value" [level=3] [ref=e133]
+              - paragraph [ref=e134]: Consolidating channels into a single agent workspace is expected to reduce response times and rework, improve customer satisfaction, and create measurable operational savings. Value is realized through fewer repeats, better deflection, and smoother agent workflows—validated via consistent instrumentation before dashboards and reporting.
+        - generic [ref=e135]:
+          - generic [ref=e136]:
+            - heading "03 — Objectives & KPIs" [level=3] [ref=e137]
+            - button "Help" [ref=e138] [cursor=pointer]: "?"
+          - generic [ref=e139]:
+            - generic [ref=e140]:
+              - heading "Objectives (SMART)" [level=3] [ref=e141]
+              - list [ref=e142]:
+                - listitem [ref=e143]:
+                  - text: Launch an Agent Workspace MVP to pilot markets
+                  - generic [ref=e144]: (Pilot live for five test markets by 02/17/2026 with core workflows enabled)
+                - listitem [ref=e145]:
+                  - text: Reduce time-to-first-response (TTFR)
+                  - generic [ref=e146]: (Achieve ~35% TTFR reduction by April 2026 vs baseline)
+                - listitem [ref=e147]:
+                  - text: Improve CSAT
+                  - generic [ref=e148]: (Increase CSAT from 3.9 to 4.4 by Q2 2026)
+                - listitem [ref=e149]:
+                  - text: Increase self-service deflection
+                  - generic [ref=e150]: (Raise deflection to 25–30% by May 2026)
+            - generic [ref=e151]:
+              - heading "KPIs / Success Metrics" [level=3] [ref=e152]
+              - list [ref=e153]:
+                - listitem [ref=e154]:
+                  - text: Time to First Response (TTFR)
+                  - generic [ref=e155]: "(Baseline: Baseline TBD, Target: ≈35% reduction by Apr 2026)"
+                - listitem [ref=e156]:
+                  - text: CSAT
+                  - generic [ref=e157]: "(Baseline: 3.9, Target: 4.4 by Q2 2026)"
+                - listitem [ref=e158]:
+                  - text: Self-service deflection
+                  - generic [ref=e159]: "(Baseline: Baseline TBD, Target: 25–30% by May 2026)"
+                - listitem [ref=e160]:
+                  - text: Repeat contacts
+                  - generic [ref=e161]: "(Baseline: Baseline TBD, Target: Downward trend post-pilot)"
+        - generic [ref=e162]:
+          - generic [ref=e163]:
+            - heading "04 — Scope & Deliverables" [level=3] [ref=e164]
+            - button "Help" [ref=e165] [cursor=pointer]: "?"
+          - generic [ref=e166]:
+            - generic [ref=e167]:
+              - heading "Scope Inclusions" [level=3] [ref=e168]
+              - list [ref=e169]:
+                - listitem [ref=e170]: Unified agent workspace (chat, SMS, voice placeholders initially)
+                - listitem [ref=e171]: Core on-demand towing + maintenance pickup + roadside assistance flows
+                - listitem [ref=e172]: Minimal routing triage model for pilot
+                - listitem [ref=e173]: Instrumentation plan and KPI tracking foundations
+                - listitem [ref=e174]: Reliability/SRE guardrails and surge simulations
+                - listitem [ref=e175]: Accessibility + keyboard navigation for agent workflow
+            - generic [ref=e176]:
+              - heading "Scope Exclusions" [level=3] [ref=e177]
+              - list [ref=e178]:
+                - listitem [ref=e179]: Premium support tier
+                - listitem [ref=e180]: Multilingual support
+                - listitem [ref=e181]: Offline functionality
+        - generic [ref=e182]:
+          - generic [ref=e183]:
+            - heading "05 — Assumptions, Constraints, Dependencies" [level=3] [ref=e184]
+            - button "Help" [ref=e185] [cursor=pointer]: "?"
+          - generic [ref=e186]:
+            - generic [ref=e187]:
+              - heading "Assumptions" [level=3] [ref=e188]
+              - list [ref=e189]:
+                - listitem [ref=e190]: Corporate IAM federation completes before pilot authentication needs.
+                - listitem [ref=e191]: Data science triage model API is available for pilot integration.
+                - listitem [ref=e192]: Brand tone/color tokens finalized in time to lock theme.
+                - listitem [ref=e193]: Pilot markets and agents are available for testing and training.
+                - listitem [ref=e194]: Legal + Security review turnaround will meet pilot readiness timing (by 02/10/2026 readiness review).
+            - generic [ref=e195]:
+              - heading "Constraints" [level=3] [ref=e196]
+              - list [ref=e197]:
+                - listitem [ref=e198]: Pilot scope is intentionally narrow; avoid feature creep.
+                - listitem [ref=e199]: Surge load behavior must be validated ahead of winter storm spikes.
+                - listitem [ref=e200]: Legacy SMS vendor delivery lag requires UX mitigation (timeouts/indicators).
+                - listitem [ref=e201]: Thread-list virtualization must remain smooth at 60fps before MVP lock.
+                - listitem [ref=e202]: PII handling must meet internal privacy requirements before pilot exposure (masking + retention + auditability).
+            - generic [ref=e203]:
+              - heading "Dependencies" [level=3] [ref=e204]
+              - list [ref=e205]:
+                - listitem [ref=e206]:
+                  - text: IAM federation setup
+                  - generic [ref=e207]: — Corporate IAM
+                  - generic [ref=e208]: (In Progress)
+                - listitem [ref=e209]:
+                  - text: Minimal routing triage model
+                  - generic [ref=e210]: — Data Science
+                  - generic [ref=e211]: (Pending)
+                - listitem [ref=e212]:
+                  - text: Brand tone + color tokens
+                  - generic [ref=e213]: — Brand Design
+                  - generic [ref=e214]: (Pending)
+                - listitem [ref=e215]:
+                  - text: Legacy SMS vendor behavior
+                  - generic [ref=e216]: — Vendor
+                  - generic [ref=e217]: (Unknown)
+                - listitem [ref=e218]:
+                  - text: Security + privacy review package
+                  - generic [ref=e219]: — Security/Legal
+                  - generic [ref=e220]: (Pending)
+                - listitem [ref=e221]:
+                  - text: Data retention + logging policy sign-off
+                  - generic [ref=e222]: — Legal/Compliance
+                  - generic [ref=e223]: (Pending)
+        - generic [ref=e224]:
+          - generic [ref=e225]:
+            - heading "06 — Schedule & Gantt" [level=3] [ref=e226]
+            - button "Help" [ref=e227] [cursor=pointer]: "?"
+          - generic [ref=e228]:
+            - generic [ref=e229]:
+              - heading "Timeline Overview" [level=3] [ref=e230]
+              - paragraph [ref=e231]: Kickoff 10/29/2025. Foundation work in Nov–Dec, core build Dec–Jan, integration late Jan–early Feb, pilot readiness early Feb, pilot launch 02/17/2026 for five test markets.
+            - generic [ref=e232]:
+              - generic [ref=e233]:
+                - combobox [ref=e234]:
+                  - option "Executive Brief" [selected]
+                  - option "Sprint / Iteration"
+                  - option "Engineering Build & Gates"
+                  - option "Outcome / Milestone-Centric"
+                  - option "Risk & Mitigation"
+                  - option "Critical Chain + Buffers"
+                  - option "Dependency-Dense (Architecture)"
+                  - option "Resource / Capacity Load"
+                  - option "Baseline vs Forecast"
+                  - option "Industrial / Ops Schedule"
+                - combobox [ref=e235]:
+                  - option "Prism" [selected]
+                  - option "Pastel"
+                  - option "Metro"
+                - button "Labels" [ref=e236] [cursor=pointer]
+                - button "Grid" [ref=e237] [cursor=pointer]
+                - button "Today" [ref=e238] [cursor=pointer]
+                - button "Arrows" [ref=e239] [cursor=pointer]
+                - button "Weekends" [ref=e240] [cursor=pointer]
+                - button "Critical Path" [ref=e241] [cursor=pointer]
+                - generic [ref=e242]:
+                  - generic [ref=e243]: Export Gantt
+                  - generic [ref=e244]:
+                    - button "PNG" [ref=e245] [cursor=pointer]
+                    - button "JPEG" [ref=e246] [cursor=pointer]
+                    - button "SVG" [ref=e247] [cursor=pointer]
+                - slider [ref=e248]: "20"
+                - combobox [ref=e249]:
+                  - option "Dark" [selected]
+                  - option "Light"
+                  - option "Custom…"
+              - generic [ref=e250]:
+                - generic [ref=e251]: "Preview: Executive Brief"
+                - img "PMOMax Gantt Chart" [ref=e253]:
+                  - text: Priya SinghJulia NguyenRosa AlvarezOmar HaddadLina ParkOmar HaddadCorporate IAMMarco DiazJulia NguyenPriya SinghMarco Diaz / Lina…Avery ChenPriya SinghProgram SponsorProgram Sponsor
+                  - generic [ref=e255]:
+                    - text: Start
+                    - text: End
+                  - generic [ref=e294]: Oct '25
+                  - generic [ref=e296]: Nov '25
+                  - generic [ref=e298]: Dec '25
+                  - generic [ref=e300]: Jan '26
+                  - generic [ref=e302]: Feb '26
+                  - generic [ref=e304]: Today
+                  - generic [ref=e321]:
+                    - generic [ref=e322]: Governance & Measurement
+                    - generic [ref=e323]: Build & Integration
+                    - generic [ref=e324]: Readiness & Launch
+                  - generic [ref=e379]: Kickoff (v1.0)
+                  - generic [ref=e381]: Instrumentation planfinalized
+                  - generic [ref=e383]: "Ops: Map top 10 callflows"
+                  - generic [ref=e385]: Infra and security specs
+                  - generic [ref=e387]: Prototype agentworkspace shell
+                  - generic [ref=e389]: Dev VPC provisioned
+                  - generic [ref=e391]: IAM federation setup
+                  - generic [ref=e393]: Backend plumbing (API,events, observability)
+                  - generic [ref=e395]: Performance harness andfirst synthetic-load
+                  - generic [ref=e397]: Assemble full AgentWorkspace MVP
+                  - generic [ref=e399]: Integration sprint(widgets, routing,
+                  - generic [ref=e401]: Open questions andsecurity/retention/PII/a
+                  - generic [ref=e403]: Pilot invite freeze (5test markets)
+                  - generic [ref=e405]: Readiness review
+                  - generic [ref=e407]: Pilot launch (5 markets)
+                  - generic [ref=e411]:
+                    - generic [ref=e412]: Critical path
+                    - generic [ref=e416]: Critical connector
+                    - generic [ref=e418]: Project Start
+                    - generic [ref=e420]: Project End
+                - generic [ref=e422]:
+                  - button "Priya Singh" [ref=e423] [cursor=pointer]
+                  - button "Julia Nguyen" [ref=e424] [cursor=pointer]
+                  - button "Rosa Alvarez" [ref=e425] [cursor=pointer]
+                  - button "Omar Haddad" [ref=e426] [cursor=pointer]
+                  - button "Lina Park" [ref=e427] [cursor=pointer]
+                  - button "Corporate IAM" [ref=e428] [cursor=pointer]
+                  - button "Marco Diaz" [ref=e429] [cursor=pointer]
+                  - button "Marco Diaz / Lina Park" [ref=e430] [cursor=pointer]
+                  - button "Avery Chen" [ref=e431] [cursor=pointer]
+                  - button "Program Sponsor" [ref=e432] [cursor=pointer]
+            - generic [ref=e433]:
+              - heading "Milestones" [level=3] [ref=e434]
+              - list [ref=e435]:
+                - listitem [ref=e436]: Formal Kickoff (v1.0)
+                - listitem [ref=e437]: Instrumentation Plan Finalized
+                - listitem [ref=e438]: Brand Tokens Delivered
+                - listitem [ref=e439]: MVP Completion Target
+                - listitem [ref=e440]: Security/Privacy Review Package Draft
+                - listitem [ref=e441]: Pilot Invite Freeze
+                - listitem [ref=e442]: Readiness Review
+                - listitem [ref=e443]: Pilot Launch (5 Markets)
+            - generic [ref=e444]:
+              - heading "Work Breakdown" [level=3] [ref=e445]
+              - list [ref=e446]:
+                - listitem [ref=e447]: Kickoff (v1.0) — Priya Singh (2025-10-29–2025-10-29)
+                - listitem [ref=e448]: Instrumentation plan finalized — Julia Nguyen (2025-10-29–2025-11-10)
+                - listitem [ref=e449]: "Ops: Map top 10 call flows — Rosa Alvarez (2025-11-03–2025-11-14)"
+                - listitem [ref=e450]: Infra and security specs — Omar Haddad (2025-11-03–2025-11-21)
+                - listitem [ref=e451]: Prototype agent workspace shell — Lina Park (2025-11-17–2025-11-28)
+                - listitem [ref=e452]: Dev VPC provisioned — Omar Haddad (2025-11-24–2025-11-24)
+                - listitem [ref=e453]: IAM federation setup — Corporate IAM (2025-11-10–2025-12-12)
+                - listitem [ref=e454]: Backend plumbing (API, events, observability) — Marco Diaz (2025-12-01–2025-12-19)
+                - listitem [ref=e455]: Performance harness and first synthetic-load results — Julia Nguyen (2025-12-08–2026-01-05)
+                - listitem [ref=e456]: Assemble full Agent Workspace MVP — Priya Singh (2026-01-05–2026-01-23)
+                - listitem [ref=e457]: Integration sprint (widgets, routing, callbacks, driver ack) — Marco Diaz / Lina Park (2026-01-26–2026-02-06)
+                - listitem [ref=e458]: Open questions and security/retention/PII/analytics resolved — Avery Chen (2026-01-05–2026-01-31)
+                - listitem [ref=e459]: Pilot invite freeze (5 test markets) — Priya Singh (2026-02-07–2026-02-07)
+                - listitem [ref=e460]: Readiness review — Program Sponsor (2026-02-10–2026-02-10)
+                - listitem [ref=e461]: Pilot launch (5 markets) — Program Sponsor (2026-02-17–2026-02-17)
+        - generic [ref=e462]:
+          - generic [ref=e463]:
+            - heading "07 — People, Resources & Budget" [level=3] [ref=e464]
+            - button "Help" [ref=e465] [cursor=pointer]: "?"
+          - generic [ref=e466]:
+            - generic [ref=e467]:
+              - heading "Stakeholders" [level=3] [ref=e468]
+              - list [ref=e469]:
+                - listitem [ref=e470]: Priya Singh — Program Owner / PM
+                - listitem [ref=e471]: Marco Diaz — Engineering Lead
+                - listitem [ref=e472]: Lina Park — Frontend / Accessibility
+                - listitem [ref=e473]: Omar Haddad — SRE / Reliability
+                - listitem [ref=e474]: Julia Nguyen — QA / Performance
+                - listitem [ref=e475]: Rosa Alvarez — Customer Operations
+                - listitem [ref=e476]: Ethan Brooks — Data Science (Triage)
+                - listitem [ref=e477]: Leila Patel — Brand Design
+                - listitem [ref=e478]: Avery Chen — Security & Privacy Reviewer
+                - listitem [ref=e479]: Morgan Reed — Legal/Compliance Partner
+            - generic [ref=e480]:
+              - heading "Team & Roles (RACI)" [level=3] [ref=e481]
+              - table [ref=e483]:
+                - rowgroup [ref=e484]:
+                  - row "Member Role R A C I" [ref=e485]:
+                    - columnheader "Member" [ref=e486]
+                    - columnheader "Role" [ref=e487]
+                    - columnheader "R" [ref=e488]
+                    - columnheader "A" [ref=e489]
+                    - columnheader "C" [ref=e490]
+                    - columnheader "I" [ref=e491]
+                - rowgroup [ref=e492]:
+                  - row "Priya Singh Program Owner" [ref=e493]:
+                    - cell "Priya Singh" [ref=e494]
+                    - cell "Program Owner" [ref=e495]
+                    - cell [ref=e496]
+                    - cell [ref=e497]
+                    - cell [ref=e498]
+                    - cell [ref=e499]
+                  - row "Marco Diaz Engineering Lead" [ref=e500]:
+                    - cell "Marco Diaz" [ref=e501]
+                    - cell "Engineering Lead" [ref=e502]
+                    - cell [ref=e503]
+                    - cell [ref=e504]
+                    - cell [ref=e505]
+                    - cell [ref=e506]
+                  - row "Lina Park Frontend / Accessibility" [ref=e507]:
+                    - cell "Lina Park" [ref=e508]
+                    - cell "Frontend / Accessibility" [ref=e509]
+                    - cell [ref=e510]
+                    - cell [ref=e511]
+                    - cell [ref=e512]
+                    - cell [ref=e513]
+                  - row "Omar Haddad SRE / Reliability" [ref=e514]:
+                    - cell "Omar Haddad" [ref=e515]
+                    - cell "SRE / Reliability" [ref=e516]
+                    - cell [ref=e517]
+                    - cell [ref=e518]
+                    - cell [ref=e519]
+                    - cell [ref=e520]
+                  - row "Julia Nguyen QA / Performance" [ref=e521]:
+                    - cell "Julia Nguyen" [ref=e522]
+                    - cell "QA / Performance" [ref=e523]
+                    - cell [ref=e524]
+                    - cell [ref=e525]
+                    - cell [ref=e526]
+                    - cell [ref=e527]
+                  - row "Rosa Alvarez Customer Operations" [ref=e528]:
+                    - cell "Rosa Alvarez" [ref=e529]
+                    - cell "Customer Operations" [ref=e530]
+                    - cell [ref=e531]
+                    - cell [ref=e532]
+                    - cell [ref=e533]
+                    - cell [ref=e534]
+                  - row "Ethan Brooks Data Science (Triage)" [ref=e535]:
+                    - cell "Ethan Brooks" [ref=e536]
+                    - cell "Data Science (Triage)" [ref=e537]
+                    - cell [ref=e538]
+                    - cell [ref=e539]
+                    - cell [ref=e540]
+                    - cell [ref=e541]
+                  - row "Leila Patel Brand Design" [ref=e542]:
+                    - cell "Leila Patel" [ref=e543]
+                    - cell "Brand Design" [ref=e544]
+                    - cell [ref=e545]
+                    - cell [ref=e546]
+                    - cell [ref=e547]
+                    - cell [ref=e548]
+                  - row "Avery Chen Security & Privacy" [ref=e549]:
+                    - cell "Avery Chen" [ref=e550]
+                    - cell "Security & Privacy" [ref=e551]
+                    - cell [ref=e552]
+                    - cell [ref=e553]
+                    - cell [ref=e554]
+                    - cell [ref=e555]
+                  - row "Morgan Reed Legal/Compliance" [ref=e556]:
+                    - cell "Morgan Reed" [ref=e557]
+                    - cell "Legal/Compliance" [ref=e558]
+                    - cell [ref=e559]
+                    - cell [ref=e560]
+                    - cell [ref=e561]
+                    - cell [ref=e562]
+            - generic [ref=e563]:
+              - heading "Budget & Cost Breakdown" [level=3] [ref=e564]
+              - generic [ref=e565]: Estimated budget (deterministic baseline). Update with actuals when available.
+              - generic [ref=e566]: "Currency: USD"
+              - table [ref=e568]:
+                - rowgroup [ref=e569]:
+                  - row "Task Persona Hours B M Total Justification" [ref=e570]:
+                    - columnheader "Task" [ref=e571]
+                    - columnheader "Persona" [ref=e572]
+                    - columnheader "Hours" [ref=e573]
+                    - columnheader "B" [ref=e574]
+                    - columnheader "M" [ref=e575]
+                    - columnheader "Total" [ref=e576]
+                    - columnheader "Justification" [ref=e577]
+                - rowgroup [ref=e578]:
+                  - row "Priya Singh delivery Priya Singh 92 $60.00 ×1.30 $7,176.00 Derived from 3 work items (Kickoff (v1.0), Assemble full Agent Workspace MVP, Pilot invite freeze (5 test markets)). Compliance/security keywords detected. Base rate 60/hr (general)." [ref=e579]:
+                    - cell "Priya Singh delivery" [ref=e580]
+                    - cell "Priya Singh" [ref=e581]
+                    - cell "92" [ref=e582]
+                    - cell "$60.00" [ref=e583]
+                    - cell "×1.30" [ref=e584]
+                    - cell "$7,176.00" [ref=e585]
+                    - cell "Derived from 3 work items (Kickoff (v1.0), Assemble full Agent Workspace MVP, Pilot invite freeze (5 test markets)). Compliance/security keywords detected. Base rate 60/hr (general)." [ref=e586]
+                  - row "Julia Nguyen delivery Julia Nguyen 152 $60.00 ×1.30 $11,856.00 Derived from 2 work items (Instrumentation plan finalized, Performance harness and first synthetic-load results). Compliance/security keywords detected. Base rate 60/hr (general)." [ref=e587]:
+                    - cell "Julia Nguyen delivery" [ref=e588]
+                    - cell "Julia Nguyen" [ref=e589]
+                    - cell "152" [ref=e590]
+                    - cell "$60.00" [ref=e591]
+                    - cell "×1.30" [ref=e592]
+                    - cell "$11,856.00" [ref=e593]
+                    - cell "Derived from 2 work items (Instrumentation plan finalized, Performance harness and first synthetic-load results). Compliance/security keywords detected. Base rate 60/hr (general)." [ref=e594]
+                  - 'row "Rosa Alvarez delivery Rosa Alvarez 66 $60.00 ×1.30 $5,148.00 Derived from 1 work items (Ops: Map top 10 call flows). Compliance/security keywords detected. Base rate 60/hr (general)." [ref=e595]':
+                    - cell "Rosa Alvarez delivery" [ref=e596]
+                    - cell "Rosa Alvarez" [ref=e597]
+                    - cell "66" [ref=e598]
+                    - cell "$60.00" [ref=e599]
+                    - cell "×1.30" [ref=e600]
+                    - cell "$5,148.00" [ref=e601]
+                    - 'cell "Derived from 1 work items (Ops: Map top 10 call flows). Compliance/security keywords detected. Base rate 60/hr (general)." [ref=e602]'
+                  - row "Omar Haddad delivery Omar Haddad 86 $60.00 ×1.30 $6,708.00 Derived from 2 work items (Infra and security specs, Dev VPC provisioned). Compliance/security keywords detected. Base rate 60/hr (general)." [ref=e603]:
+                    - cell "Omar Haddad delivery" [ref=e604]
+                    - cell "Omar Haddad" [ref=e605]
+                    - cell "86" [ref=e606]
+                    - cell "$60.00" [ref=e607]
+                    - cell "×1.30" [ref=e608]
+                    - cell "$6,708.00" [ref=e609]
+                    - cell "Derived from 2 work items (Infra and security specs, Dev VPC provisioned). Compliance/security keywords detected. Base rate 60/hr (general)." [ref=e610]
+                  - row "Lina Park delivery Lina Park 66 $60.00 ×1.30 $5,148.00 Derived from 1 work items (Prototype agent workspace shell). Compliance/security keywords detected. Base rate 60/hr (general)." [ref=e611]:
+                    - cell "Lina Park delivery" [ref=e612]
+                    - cell "Lina Park" [ref=e613]
+                    - cell "66" [ref=e614]
+                    - cell "$60.00" [ref=e615]
+                    - cell "×1.30" [ref=e616]
+                    - cell "$5,148.00" [ref=e617]
+                    - cell "Derived from 1 work items (Prototype agent workspace shell). Compliance/security keywords detected. Base rate 60/hr (general)." [ref=e618]
+                  - row "Corporate IAM delivery Corporate IAM 80 $60.00 ×1.30 $6,240.00 Derived from 1 work items (IAM federation setup). Compliance/security keywords detected. Base rate 60/hr (general)." [ref=e619]:
+                    - cell "Corporate IAM delivery" [ref=e620]
+                    - cell "Corporate IAM" [ref=e621]
+                    - cell "80" [ref=e622]
+                    - cell "$60.00" [ref=e623]
+                    - cell "×1.30" [ref=e624]
+                    - cell "$6,240.00" [ref=e625]
+                    - cell "Derived from 1 work items (IAM federation setup). Compliance/security keywords detected. Base rate 60/hr (general)." [ref=e626]
+                  - row "Marco Diaz delivery Marco Diaz 80 $60.00 ×1.30 $6,240.00 Derived from 1 work items (Backend plumbing (API, events, observability)). Compliance/security keywords detected. Base rate 60/hr (general)." [ref=e627]:
+                    - cell "Marco Diaz delivery" [ref=e628]
+                    - cell "Marco Diaz" [ref=e629]
+                    - cell "80" [ref=e630]
+                    - cell "$60.00" [ref=e631]
+                    - cell "×1.30" [ref=e632]
+                    - cell "$6,240.00" [ref=e633]
+                    - cell "Derived from 1 work items (Backend plumbing (API, events, observability)). Compliance/security keywords detected. Base rate 60/hr (general)." [ref=e634]
+                  - row "Marco Diaz / Lina Park delivery Marco Diaz / Lina Park 66 $60.00 ×1.30 $5,148.00 Derived from 1 work items (Integration sprint (widgets, routing, callbacks, driver ack)). Compliance/security keywords detected. Base rate 60/hr (general)." [ref=e635]:
+                    - cell "Marco Diaz / Lina Park delivery" [ref=e636]
+                    - cell "Marco Diaz / Lina Park" [ref=e637]
+                    - cell "66" [ref=e638]
+                    - cell "$60.00" [ref=e639]
+                    - cell "×1.30" [ref=e640]
+                    - cell "$5,148.00" [ref=e641]
+                    - cell "Derived from 1 work items (Integration sprint (widgets, routing, callbacks, driver ack)). Compliance/security keywords detected. Base rate 60/hr (general)." [ref=e642]
+                  - row "Avery Chen delivery Avery Chen 80 $60.00 ×1.30 $6,240.00 Derived from 1 work items (Open questions and security/retention/PII/analytics resolved). Compliance/security keywords detected. Base rate 60/hr (general)." [ref=e643]:
+                    - cell "Avery Chen delivery" [ref=e644]
+                    - cell "Avery Chen" [ref=e645]
+                    - cell "80" [ref=e646]
+                    - cell "$60.00" [ref=e647]
+                    - cell "×1.30" [ref=e648]
+                    - cell "$6,240.00" [ref=e649]
+                    - cell "Derived from 1 work items (Open questions and security/retention/PII/analytics resolved). Compliance/security keywords detected. Base rate 60/hr (general)." [ref=e650]
+                  - row "Program Sponsor delivery Program Sponsor 12 $60.00 ×1.30 $936.00 Derived from 2 work items (Readiness review, Pilot launch (5 markets)). Compliance/security keywords detected. Base rate 60/hr (general)." [ref=e651]:
+                    - cell "Program Sponsor delivery" [ref=e652]
+                    - cell "Program Sponsor" [ref=e653]
+                    - cell "12" [ref=e654]
+                    - cell "$60.00" [ref=e655]
+                    - cell "×1.30" [ref=e656]
+                    - cell "$936.00" [ref=e657]
+                    - cell "Derived from 2 work items (Readiness review, Pilot launch (5 markets)). Compliance/security keywords detected. Base rate 60/hr (general)." [ref=e658]
+                  - row "Tools & licenses Tools 0 $60.00 ×1.30 $0.00 Baseline tooling and subscriptions. Compliance/security keywords detected. Base rate 60/hr (general)." [ref=e659]:
+                    - cell "Tools & licenses" [ref=e660]
+                    - cell "Tools" [ref=e661]
+                    - cell "0" [ref=e662]
+                    - cell "$60.00" [ref=e663]
+                    - cell "×1.30" [ref=e664]
+                    - cell "$0.00" [ref=e665]
+                    - cell "Baseline tooling and subscriptions. Compliance/security keywords detected. Base rate 60/hr (general)." [ref=e666]
+              - generic [ref=e667]: "Total: $60,840.00 from pid.budgetSummary.totalCostUsd"
+            - generic [ref=e668]:
+              - heading "Resources & Tools" [level=3] [ref=e669]
+              - list [ref=e670]:
+                - listitem [ref=e671]: Figma — UI/UX design and token management
+                - listitem [ref=e672]: Analytics/BI — KPI dashboards and instrumentation validation
+                - listitem [ref=e673]: Load testing harness — Synthetic traffic + surge simulations
+                - listitem [ref=e674]: Audit logging + SIEM connector — Security review evidence and incident response readiness
+        - generic [ref=e675]:
+          - generic [ref=e676]:
+            - heading "08 — Risks, Issues & Communications" [level=3] [ref=e677]
+            - button "Help" [ref=e678] [cursor=pointer]: "?"
+          - generic [ref=e679]:
+            - generic [ref=e680]:
+              - heading "Key Risks" [level=3] [ref=e681]
+              - list [ref=e682]:
+                - listitem [ref=e683]: Call spikes during winter storms overload systems — P:Medium / I:High
+                - listitem [ref=e684]: Legacy SMS vendor delivery lag impacts customer experience — P:High / I:Medium
+                - listitem [ref=e685]: Thread list performance drops under high volume — P:Medium / I:High
+                - listitem [ref=e686]: PII exposure in message logs or exports — P:Medium / I:High
+                - listitem [ref=e687]: Data retention policy mismatch delays readiness sign-off — P:Medium / I:High
+            - generic [ref=e688]:
+              - heading "Mitigations / Contingencies" [level=3] [ref=e689]
+              - list [ref=e690]:
+                - listitem [ref=e691]: Simulate surge loads before 12/18 and implement guardrails.
+                - listitem [ref=e692]: Add UI timeouts + alternate delivery indicators; degrade gracefully.
+                - listitem [ref=e693]: Enforce virtualization and performance review before MVP lock.
+                - listitem [ref=e694]: Implement PII masking rules and export redaction policies before pilot.
+                - listitem [ref=e695]: Draft retention policy and audit log evidence package early (by 01/20).
+            - generic [ref=e696]:
+              - heading "Issues & Decisions Log" [level=3] [ref=e697]
+              - list [ref=e698]:
+                - listitem [ref=e699]: Scope creep pressure for premium tier — Out of scope for v1.0 pilot — Priya Singh — 2025-10-29
+                - listitem [ref=e700]: Legacy SMS lag risk — Add timeouts + indicators by 01/09 — Marco Diaz — 2026-01-09
+                - listitem [ref=e701]: PII handling requirements unclear for pilot exports — Create security review package and define redaction rules by 01/20 — Avery Chen — 2026-01-20
+            - generic [ref=e702]:
+              - heading "Communication Plan" [level=3] [ref=e703]
+              - list [ref=e704]:
+                - listitem [ref=e705]: Subteams — Daily 9am local — Standup
+                - listitem [ref=e706]: Core program team — Weekly Monday 10am PST — Checkpoint
+                - listitem [ref=e707]: Cross-time-zone sync — Weekly Wednesday 1pm PST — Sync
+                - listitem [ref=e708]: Sponsor — Weekly — Concise written digest
+                - listitem [ref=e709]: Finance + Legal — Biweekly — Written update + review notes (privacy/spend impacts)
+                - listitem [ref=e710]: Security/Privacy — Weekly during Jan — Review checkpoint + evidence tracker
+        - generic [ref=e711]:
+          - generic [ref=e712]:
+            - heading "09 — Governance, Compliance, Open Questions" [level=3] [ref=e713]
+            - button "Help" [ref=e714] [cursor=pointer]: "?"
+          - generic [ref=e715]:
+            - generic [ref=e716]:
+              - heading "Governance & Approvals" [level=3] [ref=e717]
+              - list [ref=e718]:
+                - listitem [ref=e719]: Pilot invite freeze — PM + Eng Lead + Ops Head
+                - listitem [ref=e720]: Readiness review — Sponsor + Eng Lead + Ops Head + Security/Legal ACK
+                - listitem [ref=e721]: Pilot launch — Sponsor approval + readiness criteria met
+                - listitem [ref=e722]: Post-pilot scale decision — Sponsor + PMO review based on KPI outcomes
+            - generic [ref=e723]:
+              - heading "Compliance, Security & Privacy" [level=3] [ref=e724]
+              - list [ref=e725]:
+                - listitem [ref=e726]: Security + privacy review for pilot data handling — Complete PII classification for chat/SMS/voice transcripts; define masking rules for agent UI and exports; confirm access controls and least-privilege. Provide audit-log evidence for key actions (message view, export, admin access).
+                - listitem [ref=e727]: Data retention policy for pilot logs — Define retention window for message transcripts and event logs; align with Legal/Compliance expectations. For pilot, retain only what is needed for diagnostics and KPI measurement; document deletion schedule.
+                - listitem [ref=e728]: Vendor risk review (SMS/Telephony) — Confirm vendor handling of delivery metadata; document limitations (delivery lag) and ensure no prohibited data is transmitted. Capture vendor status and escalation path.
+                - listitem [ref=e729]: Ops consultation for shift-handoff workflow changes — Operations must be consulted before changes that touch shift handoffs. Provide training plan and job-aid updates before pilot invite freeze.
+                - listitem [ref=e730]: Access control and authentication readiness — IAM federation must be validated for pilot agents; ensure role-based controls for supervisors, agents, and admins; confirm incident response contacts and escalation runbook.
+            - generic [ref=e731]:
+              - heading "Open Questions & Next Steps" [level=3] [ref=e732]
+              - list [ref=e733]:
+                - listitem [ref=e734]: Finalize tracking definitions for TTFR/CSAT/deflection — Julia to finalize instrumentation plan by 11/10
+                - listitem [ref=e735]: Confirm acceptable timeout/indicator behavior for SMS delays — Marco to implement by 01/09
+                - listitem [ref=e736]: Confirm virtualization keeps thread list at 60fps — Lina + Julia deep-dive on 01/12
+                - listitem [ref=e737]: What exact PII fields must be masked in the agent UI and in exports? — Avery + Legal to define masking + redaction rules; finalize in security review package by 01/20
+                - listitem [ref=e738]: What retention period is acceptable for pilot transcript logs and audit events? — Morgan to confirm retention policy; document and sign off before readiness review (02/10)
+                - listitem [ref=e739]: Who owns the triage model after pilot (SLA, monitoring, retraining cadence)? — Ethan + Marco to propose ownership model and monitoring plan; review in January checkpoint
+                - listitem [ref=e740]: What constitutes “readiness complete” beyond functional MVP (security, ops training, support)? — Priya to publish readiness checklist; require sign-offs at readiness review gate
+            - generic [ref=e741]:
+              - heading "Notes & Background" [level=3] [ref=e742]
+              - paragraph [ref=e743]: "By the end of the session, everyone had started calling the initiative “RoadRunner,” and the codename stuck for internal use. Priya Singh owns the program end-to-end and will run governance, checkpoints, approvals, and delivery tracking. Formal kickoff is October 29, 2025 for v1.0, with the goal of a pilot launch in five test markets on February 17, 2026. The project builds a unified customer service platform for a national car-service brand covering on-demand towing, scheduled maintenance pickup, and roadside assistance. The core problem is handoff gaps between chat, SMS, and voice; the goal is a single workspace that keeps conversations seamless and reduces repeat contacts. The guiding phrase is “calmer agents, faster customers, fewer repeats.” Governance rhythm: subteams run daily standups at 9am local; core program checkpoint is weekly Monday 10am PST; cross-time-zone sync is weekly Wednesday 1pm PST. The sponsor prefers concise written digests rather than noisy chat threads. Finance and Legal require early notice before any change that could affect spending, vendor commitments, or customer data handling. Operations must always be consulted before changes that affect shift handoffs or frontline workflows. Approvals are intentionally minimal but explicit: Priya collects required signatures from the sponsor, the engineering lead, and the operations head once pilot readiness is confirmed. Governance gates and sign-off intent: Pilot invite freeze on Feb 7 requires PM + Eng Lead + Ops Head alignment; readiness review on Feb 10 requires sponsor sign-off and confirmation that reliability and security criteria are met; pilot launch on Feb 17 requires sponsor approval. Readiness criteria include performance validation, surge behavior verification, training completion for pilot agents, and a security/privacy review package with documented PII handling. Compliance, security, and privacy expectations for pilot: customer transcripts and conversation logs must follow a documented retention window, with deletion schedule and auditability. PII masking/redaction rules must be defined for agent UI and exports. Audit logging is required for key actions such as viewing conversation history, accessing admin settings, exporting artifacts, and modifying routing behavior. Vendor constraints (legacy SMS delivery lag) must be documented, and user experience mitigation must be implemented with timeouts and alternate indicators. Open questions for January closure: the exact PII masking rules, retention period for transcripts and logs, approval of any third-party analytics tooling for pilot, and long-term ownership of the routing triage model (monitoring, SLA, retraining cadence). These must be resolved before the Feb 10 readiness review so that the Feb 17 pilot launch is not blocked by compliance or security concerns. External naming should avoid “RoadRunner” and use “Support” for simplicity."
+    - complementary [ref=e744]:
+      - generic [ref=e745]:
+        - heading "NAVIGATION" [level=3] [ref=e747]
+        - list [ref=e748]:
+          - listitem [ref=e749]:
+            - button "01 — Project Info" [ref=e750] [cursor=pointer]
+          - listitem [ref=e751]:
+            - button "02 — Overview & Rationale" [ref=e752] [cursor=pointer]
+          - listitem [ref=e753]:
+            - button "03 — Objectives & KPIs" [ref=e754] [cursor=pointer]
+          - listitem [ref=e755]:
+            - button "04 — Scope & Deliverables" [ref=e756] [cursor=pointer]
+          - listitem [ref=e757]:
+            - button "05 — Assumptions & Dependencies" [ref=e758] [cursor=pointer]
+          - listitem [ref=e759]:
+            - button "06 — Schedule & Gantt" [ref=e760] [cursor=pointer]
+          - listitem [ref=e761]:
+            - button "07 — People & Budget" [ref=e762] [cursor=pointer]
+          - listitem [ref=e763]:
+            - button "08 — Risks & Comms" [ref=e764] [cursor=pointer]
+          - listitem [ref=e765]:
+            - button "09 — Governance & Open Questions" [ref=e766] [cursor=pointer]
 ```

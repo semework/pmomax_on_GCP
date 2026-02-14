@@ -548,46 +548,31 @@ const App: React.FC = () => {
     [setPidData]
   );
 
-  // Provide a compact, live snapshot of app state to the AI layer so responses can be state-aware.
-  const appStateForAI = useMemo(
-    () => ({
-      mode: isCreateMode ? 'create' : 'edit',
-      navOpen,
-      hasPid: Boolean(pidData),
-      hasCenteredPid: Boolean(centerPid),
-      hasDraftPid: Boolean(draftPid),
-      pidTitle: (pidData as any)?.titleBlock?.projectTitle || (centerPid as any)?.titleBlock?.projectTitle || '',
-      pidId: (pidData as any)?.titleBlock?.projectId || (centerPid as any)?.titleBlock?.projectId || '',
-      warningsCount: Array.isArray(warnings) ? warnings.length : 0,
-      lastAssistantCreatedAt: lastAssistantCreatedAt || null,
-    }),
-    [isCreateMode, navOpen, pidData, centerPid, draftPid, warnings, lastAssistantCreatedAt]
-  );
-
   // Safe wrappers: some branches may omit these handlers from the hook,
   // but the UI expects stable functions.
   const safeSetPidData = useCallback((v: any) => setPidData?.(v), [setPidData]);
+
+  const buildAppState = useCallback(() => {
+    const currentPid = (isCreateMode ? (draftPid || pidData) : pidData) as any;
+    const pidTitle = currentPid?.titleBlock?.projectTitle || '';
+    const pidId = currentPid?.titleBlock?.projectId || '';
+    return {
+      mode: isCreateMode ? 'create' : 'edit',
+      navOpen: !!navOpen,
+      pidTitle,
+      pidId,
+      hasPid: !!pidTitle,
+    };
+  }, [isCreateMode, draftPid, pidData, navOpen]);
   const safeSetGeneralNotes = useCallback((v: string) => setGeneralNotes?.(v), [setGeneralNotes]);
   const safeAskAssistant = useCallback(
     async (q: string) => {
       if (typeof askAssistant === 'function') {
-        await askAssistant(q);
+        await askAssistant(q, aiModel, buildAppState());
       }
     },
-    [askAssistant]
+    [askAssistant, aiModel, buildAppState]
   );
-
-  const safeRunRiskAgent = useCallback(async () => {
-    if (typeof runRiskAgent === 'function') {
-      await runRiskAgent();
-    }
-  }, [runRiskAgent]);
-
-  const safeRunComplianceAgent = useCallback(async () => {
-    if (typeof runComplianceAgent === 'function') {
-      await runComplianceAgent();
-    }
-  }, [runComplianceAgent]);
 
   // Export handlers accept an optional PID override (used by CreateMode/examples)
   const onExportPdf = async (pidOverride?: any) => {
@@ -674,7 +659,14 @@ const App: React.FC = () => {
 
   return (
     <div className="min-h-screen w-full flex flex-col bg-brand-dark text-brand-text" style={{ minHeight: '100dvh', height: '100dvh', overflow: 'hidden' }}>
-
+      {/* DEV: visible debug badge for isCreateMode / centerPid state */}
+      {import.meta.env.DEV && (
+        <div style={{ position: 'fixed', right: 12, top: 12, zIndex: 9999 }}>
+          <div className="px-2 py-1 rounded-md text-xs font-semibold text-white" style={{ background: 'rgba(0,0,0,0.6)', boxShadow: '0 2px 8px rgba(0,0,0,0.6)' }}>
+            CreateMode: {String(isCreateMode)} • centerPid: {centerPid ? 'yes' : 'no'}
+          </div>
+        </div>
+      )}
       <Header onNavToggle={() => setNavOpen((v) => !v)} onHelp={handleHelpOpen} onUserGuide={handleUserGuideOpen} />
 
       {/* App body: Left sidebar • Main • Right navigation */}
@@ -715,9 +707,8 @@ const App: React.FC = () => {
             onCreateMode={onCreateMode}
             onLoadDemo={onLoadDemo}
             setIsCreateMode={setIsCreateMode}
-            onRunRiskAgent={safeRunRiskAgent}
-            onRunComplianceAgent={safeRunComplianceAgent}
-            // appState prop removed (not in LeftSidebarProps)
+            onRunRiskAgent={async () => runRiskAgent && (await runRiskAgent(buildAppState()))}
+            onRunComplianceAgent={async () => runComplianceAgent && (await runComplianceAgent(buildAppState()))}
             resetNonce={resetNonce}
           />
         </aside>
