@@ -6,7 +6,6 @@ interface AIAssistantPanelProps {
   history: ChatMessage[];
   onAskAssistant: (input: string) => Promise<any> | void;
   pidData?: PIDData | null;
-  appState?: any;
   setPidData?: (data: any) => void;
   isLoading?: boolean;
   error?: string | null;
@@ -28,13 +27,12 @@ export const AIAssistantPanel: React.FC<AIAssistantPanelProps & { title?: string
   history,
   onAskAssistant,
   pidData,
-  appState,
   isLoading = false,
   error = null,
   onHelp,
   onToggleAI,
   title = 'PMOMax AI Assistant',
-  subtitle = 'Ask anything: project status, create mode, risks, compliance, summaries, or request help. The assistant knows about create mode and current PID status.',
+  subtitle = 'Ask about project status, create mode, risks, compliance, summaries, or request help. The assistant knows about create mode and current PID status.',
   resetNonce,
 }) => {
   const [input, setInput] = useState('');
@@ -62,8 +60,8 @@ export const AIAssistantPanel: React.FC<AIAssistantPanelProps & { title?: string
     if (!trimmed || isAssistantDisabled || isBusy) return;
     setIsBusy(true);
     askControllerRef.current = new AbortController();
-    // Send the user's message as-is; the server receives live PID/app state separately
-    // and is responsible for producing a precise, state-aware response.
+    // Send the user's message as-is. The backend already receives live PID/app state
+    // and handles intent detection + context. Avoid stuffing prompts here.
     try {
       await onAskAssistant(trimmed);
       setInput('');
@@ -205,7 +203,12 @@ export const AIAssistantPanel: React.FC<AIAssistantPanelProps & { title?: string
       >
         {ordered.length === 0 ? (
           <div className="text-xs text-slate-300 leading-tight py-1">
-            No messages yet — try “Summarize project status”, “Draft objectives”, “Check compliance”, “Ask about create mode”, or “Request help”.
+            <div>
+              Ask about project status, create mode, risks, compliance, summaries, or request help. The assistant knows about create mode and current PID status.
+            </div>
+            <div className="mt-2 text-xs text-slate-300">
+              Example: "What is the current project status?" "Summarize risks." "Draft objectives." "Check compliance gaps." "How do I use create mode?" "Request help." "Summarize compliance issues." "List open risks."
+            </div>
           </div>
         ) : (
           <div className="flex flex-col gap-2">
@@ -255,7 +258,11 @@ export const AIAssistantPanel: React.FC<AIAssistantPanelProps & { title?: string
         <input
           type="text"
           className="flex-1 px-3 py-2 rounded-xl border-2 border-amber-300 focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-400/70 font-semibold placeholder:text-amber-200/60 text-amber-200 text-sm sm:text-base bg-black/90"
-          placeholder={isAssistantDisabled ? 'AI is disabled' : 'Ask anything: project status, create mode, risks, compliance, summaries, or request help…'}
+          placeholder={
+            isAssistantDisabled
+              ? 'AI is disabled'
+              : 'Ask about project status, create mode, risks, compliance, summaries, or request help.'
+          }
           value={input}
           onChange={(e) => setInput(e.target.value)}
           disabled={isLoading || isAssistantDisabled || isBusy}
@@ -308,8 +315,8 @@ export const AIAssistantPanel: React.FC<AIAssistantPanelProps & { title?: string
         {/* Example prompt for general AI Assistant */}
         <div className="mt-4 mb-2 p-3 rounded-xl bg-amber-900/40 border border-amber-400/60 text-amber-100 text-base font-semibold shadow">
           <div className="text-lg font-extrabold text-amber-200 mb-1">PMOMax AI Assistant</div>
-          <div className="text-xs text-amber-100/90 mb-1">Ask about project status, risks, compliance, summaries, or request help. The assistant is aware of create mode and PID fields.</div>
-          <div className="mt-2 text-xs text-amber-100/80">Example: <span className="italic">"Summarize project status"</span></div>
+          <div>Ask about project status, create mode, risks, compliance, summaries, or request help. The assistant can answer general questions and knows about create mode and current PID status.</div>
+          <div className="mt-2 text-xs text-amber-100/80">Example: <span className="italic">"What is the current project status?" "Summarize risks for this PID." "How do I use create mode?" "Check compliance gaps." "Draft objectives for the next phase." "Summarize compliance issues." "List open risks."</span></div>
         </div>
         <button
           type="submit"
