@@ -568,7 +568,7 @@ const App: React.FC = () => {
   const safeAskAssistant = useCallback(
     async (q: string) => {
       if (typeof askAssistant === 'function') {
-        await askAssistant(q, aiModel, buildAppState());
+        await askAssistant(q);
       }
     },
     [askAssistant, aiModel, buildAppState]
@@ -693,7 +693,8 @@ const App: React.FC = () => {
             onClearAll={handleClearAll}
             onAskAssistant={safeAskAssistant}
             aiAssistantHistory={aiAssistantHistory}
-            pidData={pidData}
+				// In Create mode, reflect the current draft in the sidebar (exports, summaries, etc.)
+				pidData={isCreateMode ? (draftPid as any) : pidData}
             setPidData={safeSetPidData}
             generalNotes={generalNotes}
             setGeneralNotes={safeSetGeneralNotes}
@@ -707,8 +708,8 @@ const App: React.FC = () => {
             onCreateMode={onCreateMode}
             onLoadDemo={onLoadDemo}
             setIsCreateMode={setIsCreateMode}
-            onRunRiskAgent={async () => runRiskAgent && (await runRiskAgent(buildAppState()))}
-            onRunComplianceAgent={async () => runComplianceAgent && (await runComplianceAgent(buildAppState()))}
+            onRunRiskAgent={async () => runRiskAgent && (await runRiskAgent())}
+            onRunComplianceAgent={async () => runComplianceAgent && (await runComplianceAgent())}
             resetNonce={resetNonce}
           />
         </aside>

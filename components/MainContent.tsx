@@ -130,6 +130,8 @@ const MainContent: React.FC<MainContentProps> = ({ pidData, onReset, onHelp, onL
   const [agentRisks, setAgentRisks] = useState<any[] | null>(null);
   const [agentCompliance, setAgentCompliance] = useState<any[] | null>(null);
   const [agentLoading, setAgentLoading] = useState<{ risk?: boolean; compliance?: boolean }>({});
+	// Prevent repeated auto-agent runs on every small PID edit (major perf win in Chrome)
+	const lastAutoAgentKeyRef = useRef<string>('');
 // --- Landing view connector lines (map left sidebar panels -> intro rows) ---
 // These lines are computed from real DOM geometry so they stay aligned across browsers/sizes.
 const mainContentRef = useRef<HTMLElement | null>(null);
@@ -364,12 +366,20 @@ useEffect(() => {
   // Whenever a PID is generated/loaded, proactively run Risk & Compliance agents.
   // Guarded by pidSig so we don't spam agents when pidData object identity changes.
   useEffect(() => {
-    if (!pidData || !pidSig) return;
+		if (!pidData || !pidSig) return;
+		const autoKey = `${pidData.titleBlock?.projectId || ''}|${pidData.titleBlock?.projectTitle || ''}|${pidData.titleBlock?.generatedOn || ''}`;
 
-    // If agents already populated these sections, don't re-run.
-    const hasRisk = Array.isArray(pidData.risks) && pidData.risks.length > 0;
-    const hasCompliance = Array.isArray(pidData.complianceSecurityPrivacy) && pidData.complianceSecurityPrivacy.length > 0;
-    if (hasRisk && hasCompliance) return;
+		// If agents already populated these sections, don't re-run (and mark as satisfied).
+		const hasRisk = Array.isArray(pidData.risks) && pidData.risks.length > 0;
+		const hasCompliance = Array.isArray(pidData.complianceSecurityPrivacy) && pidData.complianceSecurityPrivacy.length > 0;
+		if (hasRisk && hasCompliance) {
+			lastAutoAgentKeyRef.current = autoKey;
+			return;
+		}
+
+		// Only auto-run once per loaded PID (prevents spam on every small edit)
+		if (lastAutoAgentKeyRef.current === autoKey) return;
+		lastAutoAgentKeyRef.current = autoKey;
 
     const abort = new AbortController();
 
@@ -420,9 +430,11 @@ useEffect(() => {
       }
     };
 
-    runAgents();
+		// Slight deferral helps avoid main-thread jank right after PID load
+		const t = window.setTimeout(() => runAgents(), 80);
 
     return () => {
+			window.clearTimeout(t);
       abort.abort();
     };
   }, [pidSig]);
@@ -779,9 +791,12 @@ useEffect(() => {
                     What PMOMax extracts for you
                   </div>
 
-                  <div className="flex gap-4 flex-1 min-h-0">
-                    <div className="flex-1 min-w-0 overflow-hidden rounded-xl border border-[var(--color-border)]/60 bg-slate-950/30 flex items-center justify-center">
-                      <table className="w-full text-base">
+				  <div className="flex gap-4 flex-1 min-h-0">
+				    {/* Keep the intro table fully visible across browsers (no zoom/overflow)
+				        by allowing horizontal scroll instead of forcing scale/clip. */}
+				    <div className="flex-1 min-w-0 rounded-xl border border-[var(--color-border)]/60 bg-slate-950/30">
+				      <div className="w-full overflow-x-auto" style={{ WebkitOverflowScrolling: 'touch' }}>
+				        <table className="w-full min-w-[520px] text-base table-fixed">
                         <thead>
                           <tr className="bg-slate-950/40">
                               <th className="text-left px-4 py-1 font-extrabold text-amber-200">Section</th>
@@ -826,8 +841,9 @@ useEffect(() => {
                               <td className="px-4 py-2 text-slate-200/80 text-left">Background, open questions.</td>
                             </tr>
                           </tbody>
-                        </table>
-                      </div>
+				        </table>
+				      </div>
+				    </div>
                     </div>
                   </div>
                 </div>

@@ -1,11 +1,9 @@
 // components/CreateMode.tsx
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState, Suspense, lazy } from 'react';
+import { useRenderStats } from './useRenderStats';
 import { safeErrorMessage } from '../lib/safeError';
-
 import type { PMOMaxPID } from '../types';
 import NavPanel from './NavPanel';
-import React, { Suspense, lazy, useEffect, useMemo, useRef, useState } from 'react';
-// ...existing code...
 const CreateModeMainContent = React.lazy(() => import('./CreateModeMainContent'));
 import { makeBlankPid, deepMerge, normalizePid, buildFallbackPidFromPrompt } from '../lib/pid/pidDefaults';
 import { computeDeterministicBudget } from '../lib/deterministicBudget';
@@ -74,6 +72,7 @@ const shouldShowPid = (pid: PMOMaxPID | null) => {
 };
 
 export const CreateMode = (props: CreateModeProps) => {
+	useRenderStats('CreateMode', 8); // Warn if more than 8 renders/sec
 	 const {
 	 	initialData,
 	 	onHelp,
@@ -403,6 +402,17 @@ export const CreateMode = (props: CreateModeProps) => {
 	const callAssistant = async () => {
 		const q = chatInput.trim();
 		if (!q || isSending) return;
+
+		// Simple gibberish / accidental key-mash detection (e.g., "gggg")
+		const compact = q.toLowerCase().replace(/[^a-z0-9]/g, '');
+		const repeated = compact.length > 0 && /^([a-z0-9])\1+$/.test(compact);
+		const commonShort = new Set(['hi', 'hey', 'yo', 'ok', 'yes', 'no']);
+		if ((repeated && compact.length <= 8) || (compact.length <= 2 && !commonShort.has(compact))) {
+			const nextChat: ChatMessage[] = [...chat, { role: 'user', content: q }, { role: 'assistant', content: "I didn't understand that. Try a full sentence like: \"Create a PID for a 3-month data platform migration.\"" }];
+			setChat(nextChat);
+			setChatInput('');
+			return;
+		}
 		const assistantKey = hashText(
 			JSON.stringify({
 				q,
@@ -420,65 +430,80 @@ export const CreateMode = (props: CreateModeProps) => {
 		setChat(nextChat);
 		setChatInput('');
 
+			// Smart, create-focused assistant logic
+			// Only route true non-create tasks (parse/import/export) to the left panel.
+			// Refinement requests (objectives/timeline/risk) should be handled here.
+			const referToLeftPanel = /parse|parsing|export|load|import|sidebar|left panel|other tool/i;
+		const createIntent = /create|draft|start|initiate|new pid|project idea|project plan|project initiation|help me create|generate/i;
+		let customReply = null;
+		if (referToLeftPanel.test(q) && !createIntent.test(q)) {
+				customReply = "I'm your Create Assistant. I draft and refine new Project Initiation Documents (PIDs) here. For importing/parsing files or exporting PDF/Word/JSON, use the tools in the left panel.";
+		} else if (/what do you do|who are you|your purpose|help/i.test(q)) {
+			customReply = "I'm your AI assistant for project creation. I help you draft, structure, and refine new Project Initiation Documents (PIDs) from scratch or from your ideas. Ask me to create a PID, suggest objectives, generate timelines, or summarize your draft. For parsing or editing existing PIDs, use the left panel tools.";
+		}
+
 		try {
-			const controller = new AbortController();
-			activeControllerRef.current = controller;
+			if (customReply) {
+				setChat((prev) => [...prev, { role: 'assistant', content: customReply! }]);
+			} else {
+				const controller = new AbortController();
+				activeControllerRef.current = controller;
 
-			const retryDelays = [400, 1200];
-			let attempt = 0;
-			let res: Response | null = null;
-			while (true) {
-				// Send chat messages verbatim; server is responsible for state-aware prompting.
-				res = await fetch('/api/ai/assistant', {
-					method: 'POST',
-					headers: { 'Content-Type': 'application/json' },
-					signal: controller.signal,
-					body: JSON.stringify({
-						messages: nextChat.map((m) => ({ role: m.role, content: m.content })),
-						pidData: draftPid || makeBlankPid(),
-						model: aiModel || undefined,
-						appState: {
-							mode: 'create',
-							stickyCollapsed,
-							hasDraftPid: Boolean(draftPid),
-							selectedExampleId,
-						},
-					}),
-				});
-				if (res.status === 429 && attempt < retryDelays.length) {
-					await sleep(retryDelays[attempt]);
-					attempt += 1;
-					continue;
+				const retryDelays = [400, 1200];
+				let attempt = 0;
+				let res: Response | null = null;
+				while (true) {
+					res = await fetch('/api/ai/assistant', {
+						method: 'POST',
+						headers: { 'Content-Type': 'application/json' },
+						signal: controller.signal,
+						body: JSON.stringify({
+							messages: nextChat.map((m) => ({ role: m.role, content: m.content })),
+							pidData: draftPid || makeBlankPid(),
+							model: aiModel || undefined,
+							appState: {
+								mode: 'create',
+								stickyCollapsed,
+								hasDraftPid: Boolean(draftPid),
+								selectedExampleId,
+							},
+						}),
+					});
+					if (res.status === 429 && attempt < retryDelays.length) {
+						await sleep(retryDelays[attempt]);
+						attempt += 1;
+						continue;
+					}
+					if (!res.ok) {
+						const t = await res.text().catch(() => '');
+						throw new Error(`HTTP ${res.status}: ${t.slice(0, 300)}`);
+					}
+					break;
 				}
-				if (!res.ok) {
-					const t = await res.text().catch(() => '');
-					throw new Error(`HTTP ${res.status}: ${t.slice(0, 300)}`);
+
+				const data = await res.json().catch(() => ({}));
+				const nextPid = (data && typeof data === 'object' && ((data as any).pid || (data as any).pidData)) || null;
+				const patch = (data && typeof data === 'object' && (data as any).patch) || null;
+
+				if (nextPid && typeof nextPid === 'object') {
+					setDraftPid(applyDeterministicBudget(normalizePid(nextPid)));
+				} else if (patch && typeof patch === 'object') {
+					setDraftPid((prev) => applyDeterministicBudget(normalizePid(deepMerge(prev || makeBlankPid(), patch))));
 				}
-				break;
-			}
 
-			const data = await res.json().catch(() => ({}));
-			const nextPid = (data && typeof data === 'object' && ((data as any).pid || (data as any).pidData)) || null;
-			const patch = (data && typeof data === 'object' && (data as any).patch) || null;
+				const reply =
+					typeof (data as any)?.reply === 'string' && String((data as any).reply).trim().length > 0
+						? String((data as any).reply)
+						: 'Done.';
 
-			if (nextPid && typeof nextPid === 'object') {
-				setDraftPid(applyDeterministicBudget(normalizePid(nextPid)));
-			} else if (patch && typeof patch === 'object') {
-				setDraftPid((prev) => applyDeterministicBudget(normalizePid(deepMerge(prev || makeBlankPid(), patch))));
-			}
+				setChat((prev) => [...prev, { role: 'assistant', content: reply }]);
+				lastAssistantRequestKey.current = assistantKey;
 
-			const reply =
-				typeof (data as any)?.reply === 'string' && String((data as any).reply).trim().length > 0
-					? String((data as any).reply)
-					: 'Done.';
-
-			setChat((prev) => [...prev, { role: 'assistant', content: reply }]);
-			lastAssistantRequestKey.current = assistantKey;
-
-			if (scrollerRef.current) {
-				try {
-					scrollerRef.current.scrollTop = scrollerRef.current.scrollHeight;
-				} catch {}
+				if (scrollerRef.current) {
+					try {
+						scrollerRef.current.scrollTop = scrollerRef.current.scrollHeight;
+					} catch {}
+				}
 			}
 		} catch (err: any) {
 			if (err?.name === 'AbortError') setLastError('Request aborted');
@@ -606,14 +631,10 @@ export const CreateMode = (props: CreateModeProps) => {
 						   className="rounded-lg border border-brand-border bg-black/20 p-2 md:p-2.5 flex flex-col h-full min-h-0"
 						   style={{ overflow: 'hidden' }}
 					   >
-						   <div className="flex items-center gap-2 mb-2">
+						   <div className="flex items-center gap-4 mb-2">
 							   <div className="text-lg md:text-xl font-extrabold text-white leading-tight">AI Chat Agent</div>
 						   </div>
-						   {!stickyCollapsed && (
-							   <div className="text-xs md:text-sm font-semibold text-white/80 leading-snug mb-2">
-								   Ask about project status, create mode, risks, compliance, summaries, or request help. The assistant knows about create mode and current PID status.
-							   </div>
-						   )}
+						   {/* Removed repeated AI assistant intro and bullet list */}
 						   <div className="mt-2 flex flex-col gap-2 h-full justify-between min-h-0">
 							   {/* Chat messages */}
 							   {!stickyCollapsed && (
@@ -638,25 +659,51 @@ export const CreateMode = (props: CreateModeProps) => {
 										   );
 									   })}
 								   {chat.length === 0 && (
-									   <div className="rounded border border-brand-border bg-black/20 px-3 py-1.5 text-xs md:text-sm font-semibold text-white leading-snug">
-										 <div>
-											 Ask about project status, create mode, risks, compliance, summaries, or request help. The assistant knows about create mode and current PID status.
+									   <div className="rounded border border-brand-border bg-black/20 px-3 py-2 text-sm md:text-base font-medium text-white leading-snug">
+										 <div className="mb-1">
+											 Use the AI assistant to draft, summarize, or refine your project. Try these prompts:
 										 </div>
-										 <div className="mt-2 text-xs text-white/80">
-											 Example: "What is the current project status?" "Summarize risks." "Draft objectives." "Check compliance gaps." "How do I use create mode?" "Request help."
-										 </div>
+										 <ul className="list-disc ml-5 mt-1 text-sm md:text-base text-amber-200">
+											 <li>"Create a PID for a 90-day data platform migration with a security review gate."</li>
+											 <li>"Add 3 SMART objectives and KPIs for this project."</li>
+											 <li>"Shift the timeline by 2 weeks and update milestones."</li>
+											 <li>"Rewrite objective #2 to be measurable and shorter."</li>
+										 </ul>
 									   </div>
 								   )}
 								   </div>
 							   )}
 							   {/* Input box */}
 							   {!stickyCollapsed && (
-								   <div className="rounded-lg border border-amber-400/40 bg-black/60 p-2 mt-2">
-									   <div className="text-[11px] md:text-xs font-extrabold text-white mb-1">
+								   <div className="rounded-lg border border-amber-400/40 bg-black/60 p-3 mt-2">
+									   <div className="text-base md:text-lg font-extrabold text-white mb-2">
 										   Type your message and press Enter (Shift+Enter for newline)
 									   </div>
-									   <div className="flex items-end gap-1.5">
-										   {/* ...input box code... */}
+									   <div className="flex items-end gap-2">
+										   <input
+											   type="text"
+											   className="flex-1 px-4 py-2 rounded-xl border-2 border-amber-300 focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-400/70 font-semibold placeholder:text-amber-200/60 text-amber-200 text-lg md:text-xl bg-black/90"
+											   placeholder="Ask the AI assistant..."
+											   value={chatInput}
+											   onChange={e => setChatInput(e.target.value)}
+											   onKeyDown={e => {
+												   if (e.key === 'Enter' && !e.shiftKey) {
+													   e.preventDefault();
+													   callAssistant();
+												   }
+											   }}
+											   disabled={isSending}
+											   aria-label="Ask the AI assistant"
+										   />
+										   <button
+											   type="button"
+											   className="px-4 py-2 rounded-xl bg-amber-400 text-black font-extrabold hover:bg-amber-300 active:bg-amber-500 border border-amber-700 shadow-lg text-lg md:text-xl disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-150"
+											   style={{ letterSpacing: '0.04em' }}
+											   disabled={isSending || !chatInput.trim()}
+											   onClick={callAssistant}
+										   >
+											   Send
+										   </button>
 									   </div>
 								   </div>
 							   )}
@@ -755,11 +802,19 @@ export const CreateMode = (props: CreateModeProps) => {
 										   </button>
 									   );
 								   })}
-								   <div style={{ minHeight: 24, flexShrink: 0 }} />
-							   </div>
-						   )}
-					   </div>
-				   </div>
+								<div style={{ minHeight: 24, flexShrink: 0 }} />
+							</div>
+						)}
+						{/* New: After PID creation actionable prompts */}
+						<div className="mt-4 text-xs text-gray-400">
+							<div className="font-semibold text-gray-300 mb-1">After you create your PID you can do this:</div>
+							<ul className="list-disc pl-5">
+								<li>Add 3 risks and mitigations to this PID.</li>
+								<li>Refine the objectives and timeline for this project.</li>
+							</ul>
+						</div>
+					</div>
+				</div>
 			</div>
 
 			{/* BELOW: Full PID + Nav — only render when a draft PID with a title exists. Otherwise keep this area empty. */}

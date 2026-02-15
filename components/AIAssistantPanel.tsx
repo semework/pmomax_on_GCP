@@ -60,11 +60,43 @@ export const AIAssistantPanel: React.FC<AIAssistantPanelProps & { title?: string
     if (!trimmed || isAssistantDisabled || isBusy) return;
     setIsBusy(true);
     askControllerRef.current = new AbortController();
-    // Send the user's message as-is. The backend already receives live PID/app state
-    // and handles intent detection + context. Avoid stuffing prompts here.
+    // Improve summary answers for "what is in this data" or "summarize" type questions
+    let customSummary = null;
+    if (
+      pidData &&
+      /what is in this data|summarize|summary|in short|brief/i.test(trimmed)
+    ) {
+      const tb = (pidData as any)?.titleBlock || {};
+      const summary = [
+        tb.projectTitle ? `Project: ${tb.projectTitle}` : null,
+        tb.executiveSummary ? `Summary: ${tb.executiveSummary}` : null,
+        pidData.timelineOverview ? `Timeline: ${pidData.timelineOverview}` : null,
+        Array.isArray((pidData as any)?.objectivesSmart) && (pidData as any).objectivesSmart.length > 0
+          ? `Objectives: ${(pidData as any).objectivesSmart.length}`
+          : null,
+        Array.isArray(pidData.risks) && pidData.risks.length > 0
+          ? `Risks: ${pidData.risks.length}`
+          : null,
+        Array.isArray(pidData.milestones) && pidData.milestones.length > 0
+          ? `Milestones: ${pidData.milestones.length}`
+          : null,
+        Array.isArray((pidData as any)?.workBreakdownTasks) && (pidData as any).workBreakdownTasks.length > 0
+          ? `Tasks: ${(pidData as any).workBreakdownTasks.length}`
+          : null,
+        Array.isArray((pidData as any)?.complianceSecurityPrivacy) && (pidData as any).complianceSecurityPrivacy.length > 0
+          ? `Compliance items: ${(pidData as any).complianceSecurityPrivacy.length}`
+          : null,
+      ].filter(Boolean);
+      customSummary = summary.length > 0 ? summary.join('\n') : null;
+    }
     try {
-      await onAskAssistant(trimmed);
-      setInput('');
+      if (customSummary) {
+        await onAskAssistant(customSummary);
+        setInput('');
+      } else {
+        await onAskAssistant(trimmed);
+        setInput('');
+      }
     } catch (err: any) {
       if (askControllerRef.current?.signal.aborted) return;
       if (err?.message && err.message.includes('429')) {
@@ -203,9 +235,14 @@ export const AIAssistantPanel: React.FC<AIAssistantPanelProps & { title?: string
       >
         {ordered.length === 0 ? (
           <div className="text-xs text-slate-300 leading-tight py-1">
-            <div>Ask about project status, create mode, risks, compliance, or request help.</div>
+            <div>Ask about your project, get a summary, or check for risks and compliance gaps.</div>
             <div className="mt-2 text-xs text-slate-300">
-              Example: "What is the current project status?" "Summarize risks." "Draft objectives." "Check compliance gaps."
+              <span className="font-semibold text-amber-200">Try:</span>
+              <ul className="list-disc ml-4 mt-1">
+                <li>"Summarize this project in 5 bullets."</li>
+                <li>"List the top 3 risks."</li>
+                <li>"What compliance issues should I check?"</li>
+              </ul>
             </div>
           </div>
         ) : (
@@ -311,11 +348,7 @@ export const AIAssistantPanel: React.FC<AIAssistantPanelProps & { title?: string
           }
         `}</style>
         {/* Example prompt for general AI Assistant */}
-        <div className="mt-4 mb-2 p-3 rounded-xl bg-amber-900/40 border border-amber-400/60 text-amber-100 text-base font-semibold shadow">
-          <div className="text-lg font-extrabold text-amber-200 mb-1">PMOMax AI Assistant</div>
-          <div>Ask about project status, create mode, risks, compliance, or request help.</div>
-          <div className="mt-2 text-xs text-amber-100/80">Example: <span className="italic">"What is the current project status?" "Summarize risks." "Draft objectives." "Check compliance gaps."</span></div>
-        </div>
+        {/* Example prompt box removed for brevity and to avoid redundancy */}
         <button
           type="submit"
           className="w-full py-2 sm:py-3 text-base sm:text-lg rounded-xl bg-amber-400 text-black font-extrabold hover:bg-amber-300 active:bg-amber-500 border border-amber-700 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-150"

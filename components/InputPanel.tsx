@@ -133,7 +133,12 @@ export const InputPanel: React.FC<InputPanelProps> = ({
         if (parseErr?.message && parseErr.message.includes('429')) {
           setLastError('Too many requests. Please wait a moment and try again.');
         } else {
-          setLastError(formatErr(parseErr) || 'Failed to parse document.');
+          const errMsg = formatErr(parseErr);
+          if (errMsg && errMsg !== 'Unknown error' && errMsg !== 'Error') {
+            setLastError(errMsg);
+          } else {
+            setLastError(null);
+          }
         }
       } finally {
         setIsParsing(false);
@@ -231,7 +236,12 @@ export const InputPanel: React.FC<InputPanelProps> = ({
       if (err?.message && err.message.includes('429')) {
         setLastError('Too many requests. Please wait a moment and try again.');
       } else {
-        setLastError(formatErr(err) || 'Failed to parse document.');
+        const errMsg = formatErr(err);
+        if (errMsg && errMsg !== 'Unknown error' && errMsg !== 'Error') {
+          setLastError(errMsg);
+        } else {
+          setLastError(null);
+        }
       }
     } finally {
       setIsParsing(false);

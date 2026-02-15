@@ -68,6 +68,28 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = (props) => {
     onLoadDemo,
     setIsCreateMode,
   } = props;
+
+  // Listen for triggerLeftAIAssistant events from CreateMode
+  React.useEffect(() => {
+    const handler = (e: any) => {
+      if (e && e.detail && e.detail.message) {
+        if (typeof onAskAssistant === 'function') {
+          onAskAssistant(e.detail.message);
+        }
+        // Optionally scroll to the section in the sidebar if needed
+		if (e.detail.section === 'risks') {
+			const el = document.getElementById('risks');
+			if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+		} else if (e.detail.section === 'compliance') {
+			// Compliance content is rendered under the Governance section.
+			const el = document.getElementById('governance');
+			if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+		}
+      }
+    };
+    window.addEventListener('triggerLeftAIAssistant', handler);
+    return () => window.removeEventListener('triggerLeftAIAssistant', handler);
+  }, [onAskAssistant]);
   // pidData should be PMOMaxPID, not PIDData
   const hasPid = !!pidData && (pidData as any).titleBlock && !!(pidData as any).titleBlock.projectTitle?.trim();
 
@@ -244,68 +266,53 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = (props) => {
         {error && <p className="mt-1 text-xs text-rose-400" aria-live="polite">{error}</p>}
       </section>
 
-      {/* AI ASSISTANT */}
+      {/* AI ASSISTANT (Minimal, clean) */}
       <section id="assistant-panel" className="mb-1 md:mb-2 p-2 rounded-lg border bg-brand-panel flex flex-col gap-1 md:gap-1.5 relative" style={{ borderColor: 'rgba(236,72,153,0.85)' }}>
-        <div className="flex items-center justify-between mb-2">
-          <div className="flex items-center gap-2">
-            <h2 className="text-sm font-semibold tracking-wide text-amber-300">AI Assistant</h2>
-
-            {/* Full Risk button (label + icon). Background matches risk card tone used in examples/intro. */}
-            <button
-              type="button"
-              onClick={() => {
-                if (isLoading || !hasPid) return;
-                const ok = scrollToSection('risks');
-                if (!ok && typeof props.onRunRiskAgent === 'function') props.onRunRiskAgent();
-              }}
-              className={
-                "inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold border disabled:opacity-50 disabled:cursor-not-allowed transition-all " +
-                (hasPid ? 'text-pink-50 border-pink-500 hover:border-pink-300 hover:bg-pink-700/40 shadow-sm' : 'text-slate-300 border-slate-600')
-              }
-              disabled={isLoading || !hasPid}
-              title="Go to Risks section"
-              aria-label="Go to Risks section"
-              style={{ background: hasPid ? 'rgba(139, 0, 46, 0.42)' : 'rgba(139, 0, 46, 0.18)' }}
-            >
-              <span aria-hidden>⚠️</span>
-              <span>Risk</span>
-            </button>
-
-            {/* Full Compliance button (label + icon). Background matches compliance card tone used in intro. */}
-            <button
-              type="button"
-              onClick={() => {
-                if (isLoading || !hasPid) return;
-                const ok = scrollToSection('governance');
-                if (!ok && typeof props.onRunComplianceAgent === 'function') props.onRunComplianceAgent();
-              }}
-              className={
-                "inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold border disabled:opacity-50 disabled:cursor-not-allowed transition-all " +
-                (hasPid ? 'text-teal-50 border-teal-500 hover:border-teal-300 hover:bg-teal-700/30 shadow-sm' : 'text-slate-300 border-slate-600')
-              }
-              disabled={isLoading || !hasPid}
-              title="Go to Compliance section"
-              aria-label="Go to Compliance section"
-              style={{ background: hasPid ? 'rgba(4, 78, 68, 0.40)' : 'rgba(4, 78, 68, 0.18)' }}
-            >
-              <span aria-hidden>🔒</span>
-              <span>Compliance</span>
-            </button>
-          </div>
-
-          {onHelp && (
-            <button
-              type="button"
-              onClick={() => onHelp('assistant')}
-              className="pmomax-gold-button text-[13px] px-2 py-1 rounded-full"
-              title="AI Assistant Help"
-              aria-label="Help for AI Assistant"
-            >
-              ?
-            </button>
-          )}
+        <div className="flex items-center gap-3 mb-2">
+          <h2 className="text-sm font-semibold tracking-wide text-amber-300">AI Assistant</h2>
+	      <button
+	        type="button"
+	        className={`inline-flex items-center gap-2 px-3 py-1 rounded-xl text-xs font-semibold border shadow-sm transition-all ${
+	          hasPid
+	            ? 'border-pink-500 text-pink-50 hover:border-pink-300 hover:bg-pink-700/40'
+	            : 'border-pink-500/40 text-pink-50/50 opacity-60 cursor-not-allowed'
+	        }`}
+	        style={{ background: 'rgba(139, 0, 46, 0.42)', touchAction: 'manipulation' as any }}
+	        onClick={() => {
+	          if (!hasPid) return;
+	          scrollToSection('risks');
+	          // Print accurate summary via the main assistant (deterministic, no network)
+	          if (typeof onAskAssistant === 'function') onAskAssistant('Summarize risks.');
+	        }}
+	        title={hasPid ? 'Go to Risks and summarize' : 'Load a PID to enable'}
+	        disabled={!hasPid}
+	        aria-disabled={!hasPid}
+	      >
+	        <span aria-hidden>⚠️</span>
+	        <span>Risk</span>
+	      </button>
+	      <button
+	        type="button"
+	        className={`inline-flex items-center gap-2 px-3 py-1 rounded-xl text-xs font-semibold border shadow-sm transition-all ${
+	          hasPid
+	            ? 'border-teal-500 text-teal-50 hover:border-teal-300 hover:bg-teal-700/30'
+	            : 'border-teal-500/40 text-teal-50/50 opacity-60 cursor-not-allowed'
+	        }`}
+	        style={{ background: 'rgba(4, 78, 68, 0.40)', touchAction: 'manipulation' as any }}
+	        onClick={() => {
+	          if (!hasPid) return;
+	          // Compliance content is under Governance in MainContent
+	          scrollToSection('governance');
+	          if (typeof onAskAssistant === 'function') onAskAssistant('Summarize compliance gaps.');
+	        }}
+	        title={hasPid ? 'Go to Governance and summarize compliance' : 'Load a PID to enable'}
+	        disabled={!hasPid}
+	        aria-disabled={!hasPid}
+	      >
+	        <span aria-hidden>🔒</span>
+	        <span>Compliance</span>
+	      </button>
         </div>
-
         <AIAssistantPanel
           history={aiAssistantHistory && aiAssistantHistory.length === 0 ? [] : aiAssistantHistory}
           onAskAssistant={onAskAssistant}
