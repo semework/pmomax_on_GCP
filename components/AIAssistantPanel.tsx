@@ -13,6 +13,7 @@ interface AIAssistantPanelProps {
   onHelp?: (section?: string) => void;
   onToggleAI?: (enabled: boolean) => void;
   onAppendMessage?: (message: ChatMessage) => void;
+  isIntro?: boolean;
   resetNonce?: number;
 }
 
@@ -34,6 +35,7 @@ export const AIAssistantPanel: React.FC<AIAssistantPanelProps & { title?: string
   onHelp,
   onToggleAI,
   onAppendMessage,
+  isIntro = false,
   title = 'PMOMax AI Assistant',
   subtitle = 'Ask about project status, create mode, risks, compliance, summaries, or request help. The assistant knows about create mode and current PID status.',
   resetNonce,
@@ -242,9 +244,10 @@ export const AIAssistantPanel: React.FC<AIAssistantPanelProps & { title?: string
         className="flex-1 min-h-0 max-h-96 overflow-y-auto rounded-md border border-slate-800 bg-black/40 p-2 scroll-smooth"
         style={{ 
           minHeight: 56, 
-          maxHeight: '400px', 
-          overscrollBehavior: 'contain',
-          WebkitOverflowScrolling: 'touch'
+          maxHeight: isIntro ? 'none' : '400px',
+          overscrollBehavior: isIntro ? 'auto' : 'contain',
+          WebkitOverflowScrolling: isIntro ? 'auto' : 'touch',
+          overflowY: isIntro ? 'visible' : 'auto'
         }}
       >
         {ordered.length === 0 ? (

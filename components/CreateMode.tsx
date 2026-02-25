@@ -319,23 +319,24 @@ export const CreateMode = (props: CreateModeProps) => {
 
 	const visibleExamples = EXAMPLES.slice(0, 2);
 
-	const applyExampleToDraft = (ex?: ExampleConfig | null) => {
-		try {
-			activeControllerRef.current?.abort();
-		} catch {}
-		activeControllerRef.current = null;
+		const applyExampleToDraft = (ex?: ExampleConfig | null) => {
+			try {
+				activeControllerRef.current?.abort();
+			} catch {}
+			activeControllerRef.current = null;
 
 		if (!ex || !ex.id) {
 			setLastError('Invalid example selected');
 			return;
 		}
 
-		setLastError(null);
-		const nextPid = normalizePid(ex.pid);
-		setDraftPid(nextPid);
-		setSelectedExampleId(ex.id);
-		setChat([]);
-		setIsBudgeting(false);
+			setLastError(null);
+			const nextPid = normalizePid(ex.pid);
+			setDraftPid(nextPid);
+			setSelectedExampleId(ex.id);
+			setChat([]);
+			setIsBudgeting(false);
+			setStickyCollapsed(false);
 
 		if (typeof onCreateModeEvent === 'function') onCreateModeEvent();
 		if (typeof onDraftChange === 'function') onDraftChange(nextPid);
@@ -459,10 +460,10 @@ export const CreateMode = (props: CreateModeProps) => {
 					activeControllerRef.current = controller;
 					const timeoutId = setTimeout(() => controller.abort(), 45_000);
 
-				const retryDelays = [400, 1200];
-				let attempt = 0;
-				let res: Response | null = null;
-				while (true) {
+					const retryDelays = [400, 1200, 2500];
+					let attempt = 0;
+					let res: Response | null = null;
+					while (true) {
 						res = await fetch('/api/ai/assistant', {
 							method: 'POST',
 							headers: { 'Content-Type': 'application/json' },
@@ -479,11 +480,11 @@ export const CreateMode = (props: CreateModeProps) => {
 							},
 							}),
 						});
-					if (res.status === 429 && attempt < retryDelays.length) {
-						await sleep(retryDelays[attempt]);
-						attempt += 1;
-						continue;
-					}
+						if ((res.status === 429 || res.status === 503) && attempt < retryDelays.length) {
+							await sleep(retryDelays[attempt]);
+							attempt += 1;
+							continue;
+						}
 					if (!res.ok) {
 						const t = await res.text().catch(() => '');
 						throw new Error(`HTTP ${res.status}: ${t.slice(0, 300)}`);
@@ -545,9 +546,9 @@ export const CreateMode = (props: CreateModeProps) => {
 		if (typeof props.onCreateMode === 'function') props.onCreateMode();
 	 };
 
-	const handleFileDrop = async (e: React.DragEvent<HTMLDivElement>) => {
-		e.preventDefault();
-		setLastError(null);
+		const handleFileDrop = async (e: React.DragEvent<HTMLDivElement>) => {
+			e.preventDefault();
+			setLastError(null);
 
 		try {
 			const items = e.dataTransfer?.files;
@@ -559,22 +560,24 @@ export const CreateMode = (props: CreateModeProps) => {
 			// Try JSON parse first
 			try {
 				const parsed = JSON.parse(text);
-				if (parsed && typeof parsed === 'object') {
-					const norm = normalizePid(parsed);
-					setDraftPid(norm);
-					if (typeof onDraftChange === 'function') onDraftChange(norm);
-					return;
-				}
-			} catch {}
+					if (parsed && typeof parsed === 'object') {
+						const norm = normalizePid(parsed);
+						setDraftPid(norm);
+						setSelectedExampleId(null);
+						if (typeof onDraftChange === 'function') onDraftChange(norm);
+						return;
+					}
+				} catch {}
 
 			// Fallback: treat file text as prompt
-			const seeded = buildFallbackPidFromPrompt(text.slice(0, 1000));
-			setDraftPid(seeded);
-			if (typeof onDraftChange === 'function') onDraftChange(seeded);
-		} catch (err: any) {
-			setLastError(safeErrorMessage(err) || 'Failed to import file');
-		}
-	};
+				const seeded = buildFallbackPidFromPrompt(text.slice(0, 1000));
+				setDraftPid(seeded);
+				setSelectedExampleId(null);
+				if (typeof onDraftChange === 'function') onDraftChange(seeded);
+			} catch (err: any) {
+				setLastError(safeErrorMessage(err) || 'Failed to import file');
+			}
+		};
 
 	// Only render a PID when we actually have a draft; otherwise pass null
 	const pidToRender = draftPid;

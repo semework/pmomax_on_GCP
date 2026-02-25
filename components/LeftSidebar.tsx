@@ -332,6 +332,7 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = (props) => {
           isLoading={isLoading}
           error={error ?? null}
           onHelp={onHelp}
+          isIntro={!!props.isIntro}
           resetNonce={props.resetNonce}
         />
       </section>
