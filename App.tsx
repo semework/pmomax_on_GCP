@@ -421,7 +421,7 @@ const App: React.FC = () => {
     if (isCreateMode || draftPid) {
       await handleClearAll(false);
     }
-    const result = await parseDocument(text, aiModel, warnings);
+    const result = await parseDocument(text, aiModel, warnings, { fileName: options?.fileName, source });
     if (!result?.ok) {
       const msg = result?.error === 'USER_CANCELLED' ? 'Parsing was cancelled.' : (result?.error || '');
       if (result?.error !== 'USER_CANCELLED') throw new Error(msg);

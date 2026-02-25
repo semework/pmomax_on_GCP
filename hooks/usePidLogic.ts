@@ -604,7 +604,12 @@ export const usePidLogic = () => {
   // Parse pipeline
   // -----------------------------
   const parseDocument = useCallback(
-    async (text: string, model?: 'gemini-2.5-flash' | 'gemini-pro-2.5', _initialWarnings: string[] = []) => {
+    async (
+      text: string,
+      model?: 'gemini-2.5-flash' | 'gemini-pro-2.5',
+      _initialWarnings: string[] = [],
+      meta?: { fileName?: string; source?: string }
+    ) => {
       const start = performance.now();
       notesChunkTokenRef.current += 1;
       const notesToken = notesChunkTokenRef.current;
@@ -652,7 +657,12 @@ export const usePidLogic = () => {
         try {
           env = await postJson<ParseEnvelope>(
             '/api/ai/parse',
-            model ? { text: safeText, model } : { text: safeText },
+            {
+              text: safeText,
+              ...(model ? { model } : {}),
+              ...(meta?.fileName ? { fileName: meta.fileName } : {}),
+              ...(meta?.source ? { source: meta.source } : {}),
+            },
             60_000,
             controller,
           );

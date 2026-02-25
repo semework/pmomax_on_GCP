@@ -778,7 +778,143 @@ function makeEmptyPid() {
 }
 
 
-function buildFallbackPidFromText(text) {
+function parseCsvLine(line) {
+  const out = [];
+  let cur = '';
+  let inQuotes = false;
+  for (let i = 0; i < line.length; i++) {
+    const ch = line[i];
+    const next = line[i + 1];
+    if (ch === '"' && inQuotes && next === '"') {
+      cur += '"';
+      i += 1;
+      continue;
+    }
+    if (ch === '"') {
+      inQuotes = !inQuotes;
+      continue;
+    }
+    if (ch === ',' && !inQuotes) {
+      out.push(cur);
+      cur = '';
+      continue;
+    }
+    cur += ch;
+  }
+  out.push(cur);
+  return out.map((s) => String(s ?? '').trim());
+}
+
+function buildActivityLogPidFromText(text, fileName = '') {
+  const raw = String(text || '');
+  const lines = raw.split(/\r?\n/).filter((l) => l.trim().length > 0);
+  if (lines.length < 3) return null;
+  const header = parseCsvLine(lines[0]).map((h) => h.toLowerCase());
+  const dateIdx = header.findIndex((h) => /date/.test(h));
+  const logIdx = header.findIndex((h) => /activity|log|note|summary/.test(h));
+  if (dateIdx === -1 || logIdx === -1) return null;
+
+  const entries = [];
+  for (let i = 1; i < lines.length; i++) {
+    const row = parseCsvLine(lines[i]);
+    const dateStr = row[dateIdx];
+    const log = row[logIdx];
+    if (!dateStr || !log) continue;
+    const t = Date.parse(dateStr);
+    entries.push({
+      date: Number.isFinite(t) ? new Date(t) : null,
+      log: String(log).trim(),
+    });
+  }
+  if (entries.length === 0) return null;
+
+  const nameMatches = raw.match(/\b[A-Z][a-z]+ [A-Z][a-z]+\b/g) || [];
+  const nameCounts = new Map();
+  for (const n of nameMatches) nameCounts.set(n, (nameCounts.get(n) || 0) + 1);
+  const stakeholders = Array.from(nameCounts.entries())
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 12)
+    .map(([name]) => ({ name, role: 'Contributor' }));
+
+  const categoryMap = [
+    { key: 'data science', label: 'Data Science', match: /data science|model|training|ml|ai/i },
+    { key: 'infrastructure', label: 'Infrastructure', match: /infrastructure|server|scal|failover|sre/i },
+    { key: 'backend', label: 'Backend', match: /backend|api|gateway|service/i },
+    { key: 'frontend', label: 'Frontend', match: /frontend|ui|ux|keyboard|render/i },
+    { key: 'workflow', label: 'Workflow', match: /workflow|process|script|routing|triage/i },
+    { key: 'design', label: 'Design', match: /design|tone|copy|tokens/i },
+    { key: 'qa', label: 'QA', match: /qa|test|regression|validation/i },
+  ];
+
+  const counts = new Map();
+  for (const e of entries) {
+    for (const c of categoryMap) {
+      if (c.match.test(e.log)) counts.set(c.label, (counts.get(c.label) || 0) + 1);
+    }
+  }
+  const topCats = Array.from(counts.entries()).sort((a, b) => b[1] - a[1]).slice(0, 5);
+  const overallStart = entries.map((e) => e.date).filter(Boolean).sort((a, b) => a - b)[0];
+  const overallEnd = entries.map((e) => e.date).filter(Boolean).sort((a, b) => b - a)[0];
+  const fmt = (d) => (d ? d.toISOString().slice(0, 10) : '');
+
+  const projectTitleFromFile = String(fileName || '').replace(/\.[^.]+$/, '').replace(/[_\-]+/g, ' ').trim();
+  const projectTitle = projectTitleFromFile || 'Activity Log Program';
+
+  const objectivesSmart = topCats.map(([label]) => ({
+    objective: `Improve ${label.toLowerCase()} stability and throughput`,
+    successMeasure: `Reduce incidents in ${label.toLowerCase()} area by 30%`,
+  }));
+
+  const kpis = [
+    { kpi: 'Incident count', baseline: 'Baseline TBD', target: '30% reduction' },
+    { kpi: 'Mean time to recovery', baseline: 'Baseline TBD', target: '20% reduction' },
+    { kpi: 'Release stability', baseline: 'Baseline TBD', target: '2x fewer hotfixes' },
+  ];
+
+  const workBreakdownTasks = topCats.map(([label]) => ({
+    name: `${label} stabilization sprint`,
+    owner: stakeholders[0]?.name || label,
+    start: fmt(overallStart),
+    end: fmt(overallEnd),
+    status: 'Planned',
+  }));
+
+  const pid = {
+    titleBlock: { projectTitle },
+    executiveSummary:
+      `Based on the activity log, the team is driving stability improvements across ${topCats.map(([l]) => l).join(', ') || 'core systems'}. The program focuses on consistent quality, risk reduction, and operational maturity.`,
+    problemStatement:
+      'Frequent stability work across multiple systems suggests recurring production risk and inconsistent operational readiness.',
+    businessCaseExpectedValue:
+      'Reducing incidents and operational friction will decrease support costs, improve uptime, and accelerate delivery cadence.',
+    objectivesSmart,
+    kpis,
+    scopeInclusions: topCats.map(([l]) => `${l} stabilization improvements`),
+    scopeExclusions: ['Major re-platforming', 'Large-scale org changes'],
+    assumptions: ['Activity log is representative of current work patterns'],
+    constraints: ['Limited bandwidth for major rewrites'],
+    dependencies: ['Access to operational metrics', 'Stakeholder availability'],
+    stakeholders,
+    timelineOverview: overallStart && overallEnd ? `Coverage: ${fmt(overallStart)} to ${fmt(overallEnd)}` : '',
+    milestones: [
+      { milestone: 'Stability baseline defined', targetDate: fmt(overallStart) },
+      { milestone: 'Midpoint check-in', targetDate: fmt(overallEnd) },
+    ],
+    workBreakdownTasks,
+    risks: [{ risk: 'Competing priorities slow stabilization', probability: 'Medium', impact: 'High' }],
+    mitigationsContingencies: [{ mitigation: 'Dedicated stability sprint and clear ownership', contingency: 'Escalate roadmap tradeoffs' }],
+    issuesDecisionsLog: [],
+    communicationPlan: [{ audience: 'Stakeholders', cadence: 'Weekly', channel: 'Status update' }],
+    governanceApprovals: [{ gate: 'Stability review', signoffRequirement: 'Ops + Engineering' }],
+    complianceSecurityPrivacy: [{ requirement: 'Operational auditability', notes: 'Maintain change logs and incident history' }],
+    openQuestionsNextSteps: [{ question: 'Which stability themes are most urgent?', nextStep: 'Confirm priorities with leadership' }],
+    notesBackground: `Derived from ${entries.length} activity log entries.`,
+  };
+
+  return pid;
+}
+
+function buildFallbackPidFromText(text, fileName = '') {
   const src = normalizeText(String(text || ""));
   const lines = src.split(/\r?\n/);
   const firstNonEmpty = lines.find(l => l.trim().length > 0) || "";
@@ -1558,6 +1694,7 @@ app.post('/api/ai/parse', async (req, res) => {
   try {
     const startMs = Date.now();
     const text = String(req.body?.text || '');
+    const fileName = String(req.body?.fileName || '');
     if (!text.trim()) return sendJson(res, { ok: false, error: 'Missing text.' });
     const wc = countWords(text);
     if (wc > MAX_WORDS) {
@@ -1599,7 +1736,8 @@ app.post('/api/ai/parse', async (req, res) => {
     }
 
     // Deterministic parse (server-side heuristic; no external localParser dependency)
-    const detPid = buildFallbackPidFromText(parseText);
+    const activityPid = buildActivityLogPidFromText(parseText, fileName);
+    const detPid = activityPid || buildFallbackPidFromText(parseText, fileName);
     let detFields = pidToLegacyFields(detPid);
 
     // Collect AI legacy fields from either aiObj.fields or top-level fld-* keys
@@ -1631,7 +1769,7 @@ app.post('/api/ai/parse', async (req, res) => {
     try {
       validatePidShape(pid);
     } catch (err) {
-      const fallback = mergeWithEmptyPid(buildFallbackPidFromText(parseText));
+    const fallback = mergeWithEmptyPid(buildFallbackPidFromText(parseText, fileName));
       const warnings = (process.env.DEBUG_PARSE_WARNINGS === '1')
         ? [...prepWarnings, ...aiWarnings, 'Parsed PID failed validation; returned a lightweight PID from extracted text.']
         : [...aiWarnings];
