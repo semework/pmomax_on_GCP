@@ -6,7 +6,6 @@ import { Field, hasContent } from './Field';
 import GanttChart from './GanttChart';
 // import { WelcomeIconsRow } from './WelcomeIconsRow';
 import { STYLE_PRESETS } from '../lib/ganttPresets';
-import { demoData } from '../data/demoData';
 import { safeErrorMessage } from '../lib/safeError';
 import { VirtualizedList } from './VirtualizedList';
 
@@ -1644,51 +1643,111 @@ useEffect(() => {
         <Section id="risks" title="08 — Risks, Issues & Communications" onHelp={onHelp} helpContext="risks">
           {Array.isArray(displayedRisks) && displayedRisks.length > 0 && (
             <Field title="Key Risks">
-              <ul className="list-disc list-inside text-sm text-white space-y-1">
-                {displayedRisks.map((r: any, idx: number) => (
-                  <li key={idx}>
-                    {typeof r === 'string'
-                      ? r
-                      : `${r?.risk || 'Risk'}${r?.probability ? ` — P:${r.probability}` : ''}${r?.impact ? ` / I:${r.impact}` : ''}`}
-                  </li>
-                ))}
-              </ul>
+              {displayedRisks.length > 80 ? (
+                <VirtualizedList
+                  items={displayedRisks}
+                  height={280}
+                  rowHeight={28}
+                  className="bg-slate-950/40 rounded border border-brand-border/60"
+                  renderRow={(r: any, idx: number) => (
+                    <div className="px-3 py-1 text-sm text-white border-b border-brand-border/30">
+                      {typeof r === 'string'
+                        ? r
+                        : `${r?.risk || 'Risk'}${r?.probability ? ` — P:${r.probability}` : ''}${r?.impact ? ` / I:${r.impact}` : ''}`}
+                    </div>
+                  )}
+                />
+              ) : (
+                <ul className="list-disc list-inside text-sm text-white space-y-1">
+                  {displayedRisks.map((r: any, idx: number) => (
+                    <li key={idx}>
+                      {typeof r === 'string'
+                        ? r
+                        : `${r?.risk || 'Risk'}${r?.probability ? ` — P:${r.probability}` : ''}${r?.impact ? ` / I:${r.impact}` : ''}`}
+                    </li>
+                  ))}
+                </ul>
+              )}
             </Field>
           )}
 
           {Array.isArray(mitigationsContingencies) && mitigationsContingencies.length > 0 && (
             <Field title="Mitigations / Contingencies">
-              <ul className="list-disc list-inside text-sm text-white space-y-1">
-                {mitigationsContingencies.map((m: any, idx: number) => (
-                  <li key={idx}>{typeof m === 'string' ? m : m?.mitigation || m?.contingency || String(m || '')}</li>
-                ))}
-              </ul>
+              {mitigationsContingencies.length > 80 ? (
+                <VirtualizedList
+                  items={mitigationsContingencies}
+                  height={260}
+                  rowHeight={26}
+                  className="bg-slate-950/40 rounded border border-brand-border/60"
+                  renderRow={(m: any, idx: number) => (
+                    <div className="px-3 py-1 text-sm text-white border-b border-brand-border/30">
+                      {typeof m === 'string' ? m : m?.mitigation || m?.contingency || String(m || '')}
+                    </div>
+                  )}
+                />
+              ) : (
+                <ul className="list-disc list-inside text-sm text-white space-y-1">
+                  {mitigationsContingencies.map((m: any, idx: number) => (
+                    <li key={idx}>{typeof m === 'string' ? m : m?.mitigation || m?.contingency || String(m || '')}</li>
+                  ))}
+                </ul>
+              )}
             </Field>
           )}
 
           {Array.isArray(issuesDecisionsLog) && issuesDecisionsLog.length > 0 && (
             <Field title="Issues & Decisions Log">
-              <ul className="list-disc list-inside text-sm text-white space-y-1">
-                {issuesDecisionsLog.map((it: any, idx: number) => (
-                  <li key={idx}>
-                    {typeof it === 'string'
-                      ? it
-                      : `${it?.issue || 'Issue'} — ${it?.decision || 'Decision'}${it?.owner ? ` — ${it.owner}` : ''}${it?.date ? ` — ${it.date}` : ''}`}
-                  </li>
-                ))}
-              </ul>
+              {issuesDecisionsLog.length > 80 ? (
+                <VirtualizedList
+                  items={issuesDecisionsLog}
+                  height={260}
+                  rowHeight={28}
+                  className="bg-slate-950/40 rounded border border-brand-border/60"
+                  renderRow={(it: any, idx: number) => (
+                    <div className="px-3 py-1 text-sm text-white border-b border-brand-border/30">
+                      {typeof it === 'string'
+                        ? it
+                        : `${it?.issue || 'Issue'} — ${it?.decision || 'Decision'}${it?.owner ? ` — ${it.owner}` : ''}${it?.date ? ` — ${it.date}` : ''}`}
+                    </div>
+                  )}
+                />
+              ) : (
+                <ul className="list-disc list-inside text-sm text-white space-y-1">
+                  {issuesDecisionsLog.map((it: any, idx: number) => (
+                    <li key={idx}>
+                      {typeof it === 'string'
+                        ? it
+                        : `${it?.issue || 'Issue'} — ${it?.decision || 'Decision'}${it?.owner ? ` — ${it.owner}` : ''}${it?.date ? ` — ${it.date}` : ''}`}
+                    </li>
+                  ))}
+                </ul>
+              )}
             </Field>
           )}
 
           {Array.isArray(communicationPlan) && communicationPlan.length > 0 && (
             <Field title="Communication Plan">
-              <ul className="list-disc list-inside text-sm text-white space-y-1">
-                {communicationPlan.map((c: any, idx: number) => (
-                  <li key={idx}>
-                    {typeof c === 'string' ? c : `${c?.audience || 'Audience'} — ${c?.cadence || 'Cadence'} — ${c?.channel || 'Channel'}`}
-                  </li>
-                ))}
-              </ul>
+              {communicationPlan.length > 80 ? (
+                <VirtualizedList
+                  items={communicationPlan}
+                  height={260}
+                  rowHeight={26}
+                  className="bg-slate-950/40 rounded border border-brand-border/60"
+                  renderRow={(c: any, idx: number) => (
+                    <div className="px-3 py-1 text-sm text-white border-b border-brand-border/30">
+                      {typeof c === 'string' ? c : `${c?.audience || 'Audience'} — ${c?.cadence || 'Cadence'} — ${c?.channel || 'Channel'}`}
+                    </div>
+                  )}
+                />
+              ) : (
+                <ul className="list-disc list-inside text-sm text-white space-y-1">
+                  {communicationPlan.map((c: any, idx: number) => (
+                    <li key={idx}>
+                      {typeof c === 'string' ? c : `${c?.audience || 'Audience'} — ${c?.cadence || 'Cadence'} — ${c?.channel || 'Channel'}`}
+                    </li>
+                  ))}
+                </ul>
+              )}
             </Field>
           )}
         </Section>
@@ -1698,35 +1757,77 @@ useEffect(() => {
         <Section id="governance" title="09 — Governance, Compliance, Open Questions" onHelp={onHelp} helpContext="governance">
           {Array.isArray(governanceApprovals) && governanceApprovals.length > 0 && (
             <Field title="Governance & Approvals">
-              <ul className="list-disc list-inside text-sm text-white space-y-1">
-                {governanceApprovals.map((g: any, idx: number) => (
-                  <li key={idx}>
-                    {typeof g === 'string' ? g : `${g?.gate || g?.approval || 'Gate'} — ${g?.signoffRequirement || '—'}`}
-                  </li>
-                ))}
-              </ul>
+              {governanceApprovals.length > 80 ? (
+                <VirtualizedList
+                  items={governanceApprovals}
+                  height={260}
+                  rowHeight={26}
+                  className="bg-slate-950/40 rounded border border-brand-border/60"
+                  renderRow={(g: any, idx: number) => (
+                    <div className="px-3 py-1 text-sm text-white border-b border-brand-border/30">
+                      {typeof g === 'string' ? g : `${g?.gate || g?.approval || 'Gate'} — ${g?.signoffRequirement || '—'}`}
+                    </div>
+                  )}
+                />
+              ) : (
+                <ul className="list-disc list-inside text-sm text-white space-y-1">
+                  {governanceApprovals.map((g: any, idx: number) => (
+                    <li key={idx}>
+                      {typeof g === 'string' ? g : `${g?.gate || g?.approval || 'Gate'} — ${g?.signoffRequirement || '—'}`}
+                    </li>
+                  ))}
+                </ul>
+              )}
             </Field>
           )}
 
           {Array.isArray(displayedCompliance) && displayedCompliance.length > 0 && (
             <Field title="Compliance, Security & Privacy">
-              <ul className="list-disc list-inside text-sm text-white space-y-1">
-                {displayedCompliance.map((c: any, idx: number) => (
-                  <li key={idx}>{typeof c === 'string' ? c : `${c?.requirement || 'Requirement'} — ${c?.notes || '—'}`}</li>
-                ))}
-              </ul>
+              {displayedCompliance.length > 80 ? (
+                <VirtualizedList
+                  items={displayedCompliance}
+                  height={260}
+                  rowHeight={26}
+                  className="bg-slate-950/40 rounded border border-brand-border/60"
+                  renderRow={(c: any, idx: number) => (
+                    <div className="px-3 py-1 text-sm text-white border-b border-brand-border/30">
+                      {typeof c === 'string' ? c : `${c?.requirement || 'Requirement'} — ${c?.notes || '—'}`}
+                    </div>
+                  )}
+                />
+              ) : (
+                <ul className="list-disc list-inside text-sm text-white space-y-1">
+                  {displayedCompliance.map((c: any, idx: number) => (
+                    <li key={idx}>{typeof c === 'string' ? c : `${c?.requirement || 'Requirement'} — ${c?.notes || '—'}`}</li>
+                  ))}
+                </ul>
+              )}
             </Field>
           )}
 
           {Array.isArray(openQuestionsNextSteps) && openQuestionsNextSteps.length > 0 && (
             <Field title="Open Questions & Next Steps">
-              <ul className="list-disc list-inside text-sm text-white space-y-1">
-                {openQuestionsNextSteps.map((q: any, idx: number) => (
-                  <li key={idx}>
-                    {typeof q === 'string' ? q : `${q?.question || 'Question'} — ${q?.nextStep || 'Next step'}`}
-                  </li>
-                ))}
-              </ul>
+              {openQuestionsNextSteps.length > 80 ? (
+                <VirtualizedList
+                  items={openQuestionsNextSteps}
+                  height={260}
+                  rowHeight={26}
+                  className="bg-slate-950/40 rounded border border-brand-border/60"
+                  renderRow={(q: any, idx: number) => (
+                    <div className="px-3 py-1 text-sm text-white border-b border-brand-border/30">
+                      {typeof q === 'string' ? q : `${q?.question || 'Question'} — ${q?.nextStep || 'Next step'}`}
+                    </div>
+                  )}
+                />
+              ) : (
+                <ul className="list-disc list-inside text-sm text-white space-y-1">
+                  {openQuestionsNextSteps.map((q: any, idx: number) => (
+                    <li key={idx}>
+                      {typeof q === 'string' ? q : `${q?.question || 'Question'} — ${q?.nextStep || 'Next step'}`}
+                    </li>
+                  ))}
+                </ul>
+              )}
             </Field>
           )}
 
