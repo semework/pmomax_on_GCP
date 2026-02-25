@@ -492,7 +492,6 @@ export const CreateMode = (props: CreateModeProps) => {
 					}
 
 					const data = await res.json().catch(() => ({}));
-					clearTimeout(timeoutId);
 				const nextPid = (data && typeof data === 'object' && ((data as any).pid || (data as any).pidData)) || null;
 				const patch = (data && typeof data === 'object' && (data as any).patch) || null;
 
@@ -521,6 +520,7 @@ export const CreateMode = (props: CreateModeProps) => {
 					else setLastError(safeErrorMessage(err) || 'Assistant failed');
 					setChat((prev) => [...prev, { role: 'assistant', content: '[Error: Assistant failed]' }]);
 				} finally {
+					try { clearTimeout(timeoutId); } catch {}
 					activeControllerRef.current = null;
 					setIsSending(false);
 					if (assistantInFlightKey.current === assistantKey) assistantInFlightKey.current = '';
