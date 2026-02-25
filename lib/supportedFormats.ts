@@ -13,6 +13,7 @@ export const SUPPORTED_EXTENSIONS = [
   '.txt',
   '.md',
   '.csv',
+  '.tsv',
   '.xls',
   '.xlsx',
 ];
@@ -23,15 +24,17 @@ export const SUPPORTED_MIMES = [
   'text/plain',
   'text/markdown',
   'text/csv',
+  'text/tab-separated-values',
+  'text/tsv',
   'application/vnd.ms-excel',
   'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
 ];
 
 // File input accept string (extensions + common mimes).
 export const INPUT_ACCEPT =
-  '.docx,.pdf,.txt,.md,.csv,.xls,.xlsx,' + SUPPORTED_MIMES.join(',');
+  '.docx,.pdf,.txt,.md,.csv,.tsv,.xls,.xlsx,' + SUPPORTED_MIMES.join(',');
 
-export const SUPPORTED_LABEL = 'DOCX, PDF, TXT, MD, CSV, XLS/XLSX';
+export const SUPPORTED_LABEL = 'DOCX, PDF, TXT, MD, CSV/TSV, XLS/XLSX';
 
 export function isSupportedFile(file: File): boolean {
   const name = (file?.name || '').toLowerCase();

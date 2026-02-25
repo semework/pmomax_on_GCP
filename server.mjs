@@ -265,7 +265,7 @@ const isPdfFile = (file) => {
 const isTextFile = (file) => {
   const ext = getFileExt(file);
   const mt = String(file?.mimetype || '').toLowerCase();
-  return ['txt', 'md', 'csv'].includes(ext) || mt.includes('text') || mt.includes('csv');
+  return ['txt', 'md', 'csv', 'tsv'].includes(ext) || mt.includes('text') || mt.includes('csv') || mt.includes('tsv');
 };
 const isSpreadsheetFile = (file) => {
   const ext = getFileExt(file);
@@ -289,6 +289,18 @@ const normalizeText = (text) => {
     .replace(/\r\n/g, '\n')
     .replace(/\n{3,}/g, '\n\n')
     .replace(/\s+/g, ' ')
+    .trim();
+};
+// Normalize but preserve line breaks (useful for CSV/TSV)
+const normalizeTextPreserveLines = (text) => {
+  const raw = String(text || '');
+  if (!raw) return '';
+  return raw
+    .replace(/\u0000/g, '')
+    .replace(/\r\n/g, '\n')
+    .replace(/\r/g, '\n')
+    .replace(/[ \t]+\n/g, '\n')
+    .replace(/\n{3,}/g, '\n\n')
     .trim();
 };
 const normalizeExtractedText = (text) => {
@@ -621,7 +633,7 @@ async function parseUploadedFile(file, startMs = Date.now()) {
           }
           out += '\n';
         }
-        const normalized = normalizeText(out);
+        const normalized = normalizeTextPreserveLines(out);
         const capped = clampText(normalized);
         return { ok: true, text: capped.text, length: capped.text.length, truncated: capped.truncated, warnings: [] };
       } catch (err) {
@@ -631,8 +643,12 @@ async function parseUploadedFile(file, startMs = Date.now()) {
 
     if (isTextFile(file)) {
       const text = decodeTextBuffer(file.buffer);
+      const ext = getFileExt(file);
       const exceeded = enforceWordLimit(text);
-      const capped = clampText(normalizeText(text));
+      const normalized = ext === 'csv' || ext === 'tsv'
+        ? normalizeTextPreserveLines(text)
+        : normalizeText(text);
+      const capped = clampText(normalized);
       const warnings = capped.truncated ? ['Document truncated to server limit.'] : [];
       if (exceeded) warnings.push('Document exceeds the 50-page limit; truncated to the first 50 pages.');
       if (!capped.text || !String(capped.text).trim()) {
@@ -778,7 +794,16 @@ function makeEmptyPid() {
 }
 
 
-function parseCsvLine(line) {
+function detectDelimiter(line) {
+  const comma = (line.match(/,/g) || []).length;
+  const tab = (line.match(/	/g) || []).length;
+  const semi = (line.match(/;/g) || []).length;
+  if (tab >= comma && tab >= semi && tab > 0) return '	';
+  if (semi > comma && semi > 0) return ';';
+  return ',';
+}
+
+function parseDelimitedLine(line, delimiter = ',') {
   const out = [];
   let cur = '';
   let inQuotes = false;
@@ -794,7 +819,7 @@ function parseCsvLine(line) {
       inQuotes = !inQuotes;
       continue;
     }
-    if (ch === ',' && !inQuotes) {
+    if (ch === delimiter && !inQuotes) {
       out.push(cur);
       cur = '';
       continue;
@@ -805,18 +830,20 @@ function parseCsvLine(line) {
   return out.map((s) => String(s ?? '').trim());
 }
 
+
 function buildActivityLogPidFromText(text, fileName = '') {
   const raw = String(text || '');
   const lines = raw.split(/\r?\n/).filter((l) => l.trim().length > 0);
   if (lines.length < 3) return null;
-  const header = parseCsvLine(lines[0]).map((h) => h.toLowerCase());
+  const delimiter = detectDelimiter(lines[0]);
+  const header = parseDelimitedLine(lines[0], delimiter).map((h) => h.toLowerCase());
   const dateIdx = header.findIndex((h) => /date/.test(h));
   const logIdx = header.findIndex((h) => /activity|log|note|summary/.test(h));
   if (dateIdx === -1 || logIdx === -1) return null;
 
   const entries = [];
   for (let i = 1; i < lines.length; i++) {
-    const row = parseCsvLine(lines[i]);
+    const row = parseDelimitedLine(lines[i], delimiter);
     const dateStr = row[dateIdx];
     const log = row[logIdx];
     if (!dateStr || !log) continue;
@@ -1064,10 +1091,10 @@ function buildFallbackPidFromText(text, fileName = '') {
   const kpis = bullets(kpisTxt).map(k => ({ name: k }));
 
   const pid = {
-    titleBlock: { projectTitle: titleGuess },
+    titleBlock: { projectTitle: titleGuess, subtitle: 'Project Initiation Document', generatedOn: '' },
     executiveSummary: execSummary,
     problemStatement: problem,
-    businessCase,
+    businessCaseExpectedValue: businessCase,
     objectivesSmart: objectives,
     kpis,
     scopeInclusions: bullets(scopeInTxt),
@@ -1076,18 +1103,21 @@ function buildFallbackPidFromText(text, fileName = '') {
     constraints: bullets(constraintsTxt),
     dependencies: bullets(depsTxt),
     stakeholders: bullets(stakeholdersTxt).map(n => ({ name: n })),
+    projectSponsor: { name: 'TBD', role: 'Sponsor' },
+    projectManagerOwner: { name: 'TBD' },
+    teamRaci: [],
     timelineOverview: timelineTxt,
-    milestones: bullets(milestonesTxt).map(n => ({ name: n })),
+    milestones: bullets(milestonesTxt).map(n => ({ milestone: n })),
     deliverablesOutputs: bullets(deliverablesTxt).map(n => ({ name: n })),
-    budgetSummary: budgetTxt ? { notes: budgetTxt } : {},
-    resourcesPlan: resourcesTxt,
+    budgetSummary: budgetTxt ? { notes: [budgetTxt] } : {},
+    resourcesTools: bullets(resourcesTxt).map(n => ({ resource: n, purpose: '' })),
     risks: bullets(risksTxt).map(n => ({ risk: n })),
     mitigationsContingencies: bullets(mitigationsTxt).map(n => ({ mitigation: n })),
-    issuesDecisionsLog: bullets(issuesTxt).map(n => ({ item: n })),
-    communicationsPlan: commsTxt,
-    governanceApprovals: governanceTxt,
-    complianceSecurityPrivacy: complianceTxt,
-    openQuestionsNextSteps: openQTxt,
+    issuesDecisionsLog: bullets(issuesTxt).map(n => ({ issue: n, decision: '' })),
+    communicationPlan: bullets(commsTxt).map(n => ({ audience: n, cadence: '', channel: '' })),
+    governanceApprovals: bullets(governanceTxt).map(n => ({ gate: n, signoffRequirement: '' })),
+    complianceSecurityPrivacy: bullets(complianceTxt).map(n => ({ requirement: n, notes: '' })),
+    openQuestionsNextSteps: bullets(openQTxt).map(n => ({ question: n, nextStep: '' })),
     notesBackground: notesTxt,
   };
 

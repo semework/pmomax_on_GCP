@@ -2,6 +2,11 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+if [ -z "${BASH_VERSION:-}" ]; then
+  echo "This script must be run with bash. Re-launching with bash..."
+  exec /usr/bin/env bash "$0" "$@"
+fi
+
 # ============================================================
 # PMOMax FAST deploy — Skip local build, let Cloud Build do it
 # ============================================================
