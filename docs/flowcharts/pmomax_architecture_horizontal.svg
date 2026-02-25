@@ -1,0 +1,54 @@
+<svg width="1100" height="340" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bgGoogle" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#4285F4" />
+      <stop offset="25%" stop-color="#34A853" />
+      <stop offset="50%" stop-color="#FBBC05" />
+      <stop offset="75%" stop-color="#EA4335" />
+      <stop offset="100%" stop-color="#4285F4" />
+    </linearGradient>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="10" refY="5" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L10,5 L0,10" fill="#222" />
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="1100" height="340" fill="url(#bgGoogle)"/>
+
+  <rect x="40" y="120" width="180" height="80" fill="#e3f2fd" stroke="#4285F4" stroke-width="2"/>
+  <text x="130" y="165" font-size="18" text-anchor="middle" fill="#4285F4">React SPA Frontend</text>
+
+  <rect x="260" y="120" width="180" height="80" fill="#fffde7" stroke="#FBBC05" stroke-width="2"/>
+  <text x="350" y="165" font-size="18" text-anchor="middle" fill="#FBBC05">Node.js/Express Backend</text>
+
+  <rect x="480" y="120" width="180" height="80" fill="#e8f5e9" stroke="#34A853" stroke-width="2"/>
+  <text x="570" y="165" font-size="18" text-anchor="middle" fill="#34A853">Google Cloud Run</text>
+
+  <rect x="700" y="120" width="180" height="80" fill="#f3e5f5" stroke="#EA4335" stroke-width="2"/>
+  <text x="790" y="165" font-size="18" text-anchor="middle" fill="#EA4335">PDF/DOCX Worker</text>
+
+  <rect x="920" y="40" width="160" height="60" fill="#fff" stroke="#616161" stroke-width="2"/>
+  <text x="1000" y="75" font-size="16" text-anchor="middle" fill="#616161">Google Secret Manager</text>
+
+  <rect x="920" y="220" width="160" height="60" fill="#e1f5fe" stroke="#4285F4" stroke-width="2"/>
+  <text x="1000" y="255" font-size="16" text-anchor="middle" fill="#4285F4">Cloud Usage Metrics</text>
+
+  <ellipse cx="570" cy="300" rx="90" ry="30" fill="#fff" stroke="#bdbdbd" stroke-width="2"/>
+  <text x="570" y="305" font-size="16" text-anchor="middle" fill="#bdbdbd">No DB (Stateless)</text>
+
+  <line x1="220" y1="160" x2="260" y2="160" stroke="#4285F4" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="240" y="150" font-size="12" text-anchor="middle" fill="#4285F4">API Calls</text>
+
+  <line x1="440" y1="160" x2="480" y2="160" stroke="#FBBC05" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="460" y="150" font-size="12" text-anchor="middle" fill="#FBBC05">Runs on</text>
+
+  <line x1="660" y1="160" x2="700" y2="160" stroke="#34A853" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="680" y="150" font-size="12" text-anchor="middle" fill="#34A853">PDF/DOCX Export</text>
+
+  <line x1="880" y1="160" x2="920" y2="70" stroke="#EA4335" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="900" y="110" font-size="12" fill="#EA4335">Secrets</text>
+
+  <line x1="880" y1="160" x2="920" y2="250" stroke="#4285F4" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="900" y="210" font-size="12" fill="#4285F4">Usage Metrics</text>
+
+  <line x1="790" y1="200" x2="570" y2="270" stroke="#bdbdbd" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="700" y="250" font-size="12" fill="#bdbdbd">In-memory</text>
+</svg>
