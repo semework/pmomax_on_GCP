@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: app
-          image: us-east1-docker.pkg.dev/katalyststreet-public/pmomax/pmo-architect:latest
+          image: us-docker.pkg.dev/katalyststreet-public/pmomax/deployer:v1.0.0
           imagePullPolicy: Always
           ports:
             - name: http

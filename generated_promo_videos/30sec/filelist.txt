@@ -1,0 +1,5 @@
+file './generated_promo_videos/30sec/scene_01/output_reencoded.mp4'
+file './generated_promo_videos/30sec/scene_02/output_reencoded.mp4'
+file './generated_promo_videos/30sec/scene_03/output_reencoded.mp4'
+file './generated_promo_videos/30sec/scene_04/output_reencoded.mp4'
+file './generated_promo_videos/30sec/scene_05/output_reencoded.mp4'

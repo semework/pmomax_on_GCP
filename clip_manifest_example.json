@@ -1,0 +1,15 @@
+{
+  "videos": {
+    "30sec": {
+      "scenes": [
+        {
+          "img": "gs://pmomax-video-assets-bucket/pmomax-video-assets/30sec/screenshots/intro_landing_full.png",
+          "motion": "slow_dolly_in",
+          "vo": "PMOMax fixes initiation.",
+          "audio": "gs://pmomax-video-assets-bucket/pmomax-video-assets/audio/30sec/scene_01.mp3",
+          "duration_seconds": 8
+        }
+      ]
+    }
+  }
+}

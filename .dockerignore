@@ -92,6 +92,22 @@ temp
 *.xlsx
 *.jsonl
 
+# Extra: Strictly ignore all generated and video folders
+generated_promo_videos
+generated_videos
+pmomax-video-assets
+pmomax_video_assets
+archive
+archives
+*.mp4
+*.mov
+*.avi
+*.mkv
+*.webm
+*.flv
+*.wmv
+*.gif
+
 # ==============================
 # Quarantine / duplicates (DO NOT BUILD)
 # ==============================
