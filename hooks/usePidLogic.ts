@@ -905,6 +905,8 @@ export const usePidLogic = () => {
         mode: appState?.mode || '',
         activeSection: appState?.activeSectionId || '',
         navOpen: !!appState?.navOpen,
+        createMode: !!appState?.isCreateMode,
+        hasDraft: !!appState?.hasDraftPid,
       });
       const assistantKey = hashText(assistantKeyBase);
 

@@ -137,6 +137,9 @@ const INTERNAL_MAX_PAGES = 112;
 const INTERNAL_MAX_WORDS = 50_000;
 const MAX_WORDS = INTERNAL_MAX_WORDS;
 const PARSE_HARD_MAX_CHARS = 3_500_000;
+const MAX_PID_JSON_BYTES = 800_000;
+const MAX_LIST_ITEMS = 2000;
+const MAX_TEXT_FIELD_CHARS = 20_000;
 
 function countWords(text) {
   if (!text) return 0;
@@ -161,7 +164,8 @@ function safeErrorMessage(err, fallback = 'Unexpected server error') {
 function sendJson(res, payload, status = 200) {
   let safePayload = payload;
   try {
-    safePayload = JSON.parse(JSON.stringify(payload));
+    safePayload = sanitizePidPayload(safePayload);
+    safePayload = JSON.parse(JSON.stringify(safePayload));
   } catch (err) {
     console.error('[server.mjs] Response serialization error:', err);
     safePayload = { ok: false, error: 'Failed to serialize response.' };
@@ -169,6 +173,60 @@ function sendJson(res, payload, status = 200) {
   res.status(status);
   res.set('Content-Type', 'application/json; charset=utf-8');
   return res.send(JSON.stringify(safePayload));
+}
+
+function sanitizePidPayload(payload) {
+  try {
+    if (!payload || typeof payload !== 'object') return payload;
+    const pid = payload.pid || payload.pidData || null;
+    if (!pid || typeof pid !== 'object') return payload;
+
+    const clampString = (v) => {
+      const s = typeof v === 'string' ? v : String(v ?? '');
+      if (s.length <= MAX_TEXT_FIELD_CHARS) return s;
+      return s.slice(0, MAX_TEXT_FIELD_CHARS) + '…';
+    };
+    const clampArray = (arr) => {
+      if (!Array.isArray(arr)) return arr;
+      if (arr.length <= MAX_LIST_ITEMS) return arr;
+      return arr.slice(0, MAX_LIST_ITEMS);
+    };
+
+    const out = { ...pid };
+    for (const [k, v] of Object.entries(out)) {
+      if (typeof v === 'string') out[k] = clampString(v);
+      else if (Array.isArray(v)) out[k] = clampArray(v);
+    }
+    if (out.titleBlock && typeof out.titleBlock === 'object') {
+      out.titleBlock = {
+        ...out.titleBlock,
+        projectTitle: clampString(out.titleBlock.projectTitle || ''),
+        subtitle: clampString(out.titleBlock.subtitle || ''),
+        generatedOn: clampString(out.titleBlock.generatedOn || ''),
+        projectId: clampString(out.titleBlock.projectId || ''),
+      };
+    }
+
+    const next = { ...payload };
+    if (payload.pid) next.pid = out;
+    if (payload.pidData) next.pidData = out;
+
+    const size = Buffer.byteLength(JSON.stringify(next), 'utf8');
+    if (size > MAX_PID_JSON_BYTES) {
+      // Final fallback: if still too large, strip long text fields.
+      if (next.pid) {
+        next.pid.notesBackground = '';
+        next.pid.executiveSummary = clampString(next.pid.executiveSummary || '');
+      }
+      if (next.pidData) {
+        next.pidData.notesBackground = '';
+        next.pidData.executiveSummary = clampString(next.pidData.executiveSummary || '');
+      }
+    }
+    return next;
+  } catch {
+    return payload;
+  }
 }
 
 // If you deploy as a single service (frontend+backend), your Vite build must be in ./dist

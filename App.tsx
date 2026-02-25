@@ -567,13 +567,15 @@ const App: React.FC = () => {
       pidTitle,
       pidId,
       hasPid: !!pidTitle,
+      hasDraftPid: Boolean(draftPid),
+      isCreateMode: Boolean(isCreateMode),
     };
   }, [isCreateMode, draftPid, pidData, navOpen]);
   const safeSetGeneralNotes = useCallback((v: string) => setGeneralNotes?.(v), [setGeneralNotes]);
   const safeAskAssistant = useCallback(
     async (q: string) => {
       if (typeof askAssistant === 'function') {
-        await askAssistant(q);
+        await askAssistant(q, aiModel, buildAppState());
       }
     },
     [askAssistant, aiModel, buildAppState]

@@ -23,6 +23,49 @@ const hashText = (input: string) => {
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
+async function fetchWithTimeoutAndBackoff(
+  url: string,
+  init: RequestInit = {},
+  ms = 45_000,
+  maxRetries = 3,
+): Promise<Response> {
+  let attempt = 0;
+  let lastErr: any = null;
+
+  while (attempt <= maxRetries) {
+    const controller = new AbortController();
+    const t = setTimeout(() => controller.abort(), ms);
+    try {
+      const res = await fetch(url, { ...init, signal: controller.signal });
+      clearTimeout(t);
+      if (res.status === 429 || res.status === 503) {
+        const retryHeader = res.headers.get('Retry-After');
+        let retryAfter = 0;
+        if (retryHeader) {
+          const parsed = parseInt(retryHeader, 10);
+          if (!Number.isNaN(parsed)) retryAfter = parsed * 1000;
+        }
+        const jitter = Math.floor(Math.random() * 250);
+        const backoff = Math.min(8_000, 500 * Math.pow(2, attempt));
+        await sleep(retryAfter || backoff + jitter);
+        attempt += 1;
+        lastErr = new Error(`HTTP ${res.status}`);
+        continue;
+      }
+      return res;
+    } catch (e: any) {
+      clearTimeout(t);
+      lastErr = e;
+      if (e?.name === 'AbortError') throw e;
+      const jitter = Math.floor(Math.random() * 250);
+      const backoff = Math.min(8_000, 500 * Math.pow(2, attempt));
+      await sleep(backoff + jitter);
+      attempt += 1;
+    }
+  }
+  throw lastErr ?? new Error('Network error');
+}
+
 type Role = 'user' | 'assistant';
 type ChatMessage = { role: Role; content: string };
 
@@ -460,36 +503,29 @@ export const CreateMode = (props: CreateModeProps) => {
 					activeControllerRef.current = controller;
 					const timeoutId = setTimeout(() => controller.abort(), 45_000);
 
-					const retryDelays = [400, 1200, 2500];
-					let attempt = 0;
-					let res: Response | null = null;
-					while (true) {
-						res = await fetch('/api/ai/assistant', {
+					const res = await fetchWithTimeoutAndBackoff(
+						'/api/ai/assistant',
+						{
 							method: 'POST',
 							headers: { 'Content-Type': 'application/json' },
-							signal: controller.signal,
 							body: JSON.stringify({
 								messages: nextChat.map((m) => ({ role: m.role, content: m.content })),
 								pidData: draftPid || makeBlankPid(),
-							model: aiModel || undefined,
-							appState: {
-								mode: 'create',
-								stickyCollapsed,
-								hasDraftPid: Boolean(draftPid),
-								selectedExampleId,
-							},
+								model: aiModel || undefined,
+								appState: {
+									mode: 'create',
+									stickyCollapsed,
+									hasDraftPid: Boolean(draftPid),
+									selectedExampleId,
+								},
 							}),
-						});
-						if ((res.status === 429 || res.status === 503) && attempt < retryDelays.length) {
-							await sleep(retryDelays[attempt]);
-							attempt += 1;
-							continue;
-						}
+						},
+						45_000,
+						3,
+					);
 					if (!res.ok) {
 						const t = await res.text().catch(() => '');
 						throw new Error(`HTTP ${res.status}: ${t.slice(0, 300)}`);
-					}
-						break;
 					}
 
 					const data = await res.json().catch(() => ({}));
