@@ -402,6 +402,7 @@ const App: React.FC = () => {
   const setGeneralNotes = pidLogic.setGeneralNotes as ((v: any) => void) | undefined;
 
   const aiAssistantHistory = pidLogic.aiAssistantHistory ?? [];
+  const appendAssistantMessage = pidLogic.appendAssistantMessage as ((msg: any) => void) | undefined;
   const isLoading = Boolean(pidLogic.isLoading);
   const error = pidLogic.error ?? null;
   const warnings = Array.isArray(pidLogic.warnings) ? pidLogic.warnings : [];
@@ -696,6 +697,7 @@ const App: React.FC = () => {
             onParse={onParse}
             onClearAll={handleClearAll}
             onAskAssistant={safeAskAssistant}
+            onAppendAssistantMessage={appendAssistantMessage}
             aiAssistantHistory={aiAssistantHistory}
 				// In Create mode, reflect the current draft in the sidebar (exports, summaries, etc.)
 				pidData={isCreateMode ? (draftPid as any) : pidData}

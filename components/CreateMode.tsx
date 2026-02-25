@@ -6,7 +6,6 @@ import type { PMOMaxPID } from '../types';
 import NavPanel from './NavPanel';
 const CreateModeMainContent = React.lazy(() => import('./CreateModeMainContent'));
 import { makeBlankPid, deepMerge, normalizePid, buildFallbackPidFromPrompt } from '../lib/pid/pidDefaults';
-import { computeDeterministicBudget } from '../lib/deterministicBudget';
 
 // Identity function for example creation
 function makeExample<T>(obj: T): T {
@@ -23,17 +22,6 @@ const hashText = (input: string) => {
 };
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-
-const applyDeterministicBudget = (pid: PMOMaxPID): PMOMaxPID => {
-	const { items, summary } = computeDeterministicBudget(pid as any);
-	const rows = Array.isArray((pid as any)?.budgetCostBreakdown) ? (pid as any).budgetCostBreakdown : [];
-	const hasSummary = pid?.budgetSummary && typeof pid.budgetSummary === 'object';
-	return {
-		...pid,
-		budgetCostBreakdown: rows.length > 0 ? rows : items,
-		budgetSummary: hasSummary ? pid.budgetSummary : summary,
-	};
-};
 
 type Role = 'user' | 'assistant';
 type ChatMessage = { role: Role; content: string };
@@ -116,7 +104,7 @@ export const CreateMode = (props: CreateModeProps) => {
 	 useEffect(() => {
 	 	if (hasReset) return; // Prevent re-population after reset
 	 	if (!initialData) return;
-	 	const next = applyDeterministicBudget(normalizePid(initialData));
+	 	const next = normalizePid(initialData);
 	 	setDraftPid(next);
 	 }, [initialData, hasReset]);
 
@@ -135,7 +123,7 @@ export const CreateMode = (props: CreateModeProps) => {
 				label: 'SaaS AI Agent — Customer Success Automation',
 				summary:
 					'An AI-driven agent to automate onboarding, ticket triage, and proactive outreach for a SaaS product, improving time-to-resolution and NPS.',
-				pid: applyDeterministicBudget(normalizePid({
+				pid: normalizePid({
 					titleBlock: { projectTitle: 'SaaS AI Customer Success Agent', projectId: `PMO-${today}-SAAS`, generatedOn: today },
 					executiveSummary:
 						'Build an integrated AI agent to streamline onboarding, auto-triage support tickets, and perform proactive outreach to reduce manual effort and improve customer satisfaction.',
@@ -195,14 +183,14 @@ export const CreateMode = (props: CreateModeProps) => {
 					governanceApprovals: [],
 					complianceSecurityPrivacy: [{ requirement: 'Data minimization', notes: 'Redact PII and follow retention rules' }],
 					notesBackground: 'Pilot to validate approach and metrics before broader rollout.',
-				})),
+				}),
 			},
 			{
 				id: 'cold-chain',
 				label: 'Cold-Chain Logistics Upgrade — Ops',
 				summary:
 					'A multi-warehouse cold-chain modernization: sensors, alerting, and SOP rollout to reduce spoilage and improve audit readiness.',
-				pid: applyDeterministicBudget(normalizePid({
+				pid: normalizePid({
 					titleBlock: { projectTitle: 'Cold-Chain Modernization Program', projectId: `PMO-${today}-OPS`, generatedOn: today },
 					executiveSummary:
 						'Modernize cold-chain operations across 3 warehouses with monitoring, alerting, and SOP updates to reduce spoilage and improve compliance.',
@@ -296,7 +284,7 @@ export const CreateMode = (props: CreateModeProps) => {
 					complianceSecurityPrivacy: [{ requirement: 'Log retention', notes: 'Retain temperature logs per policy and audit needs' }],
 					openQuestionsNextSteps: [{ question: 'Alert thresholds to minimize false positives?', nextStep: 'Tune thresholds during stabilization' }],
 					notesBackground: 'Focus on audit readiness and reduction of spoilage through automation + SOP adoption.',
-				})),
+				}),
 			},
 		];
 	}, []);
@@ -315,7 +303,7 @@ export const CreateMode = (props: CreateModeProps) => {
 		}
 
 		setLastError(null);
-		const nextPid = applyDeterministicBudget(normalizePid(ex.pid));
+		const nextPid = normalizePid(ex.pid);
 		setDraftPid(nextPid);
 		setSelectedExampleId(ex.id);
 		setChat([]);
@@ -328,7 +316,7 @@ export const CreateMode = (props: CreateModeProps) => {
 
 	const requestBudgetForPid = async (pid: PMOMaxPID, contextText = '') => {
 		if (!pid || isBudgeting) return;
-		const baselinePid = applyDeterministicBudget(normalizePid(pid));
+		const baselinePid = normalizePid(pid);
 		setDraftPid(baselinePid);
 		const key = `${pid?.titleBlock?.projectTitle || ''}|${pid?.timelineOverview || ''}|${pid?.notesBackground || ''}`;
 		const budgetKey = `${hashText(key)}:${hashText(contextText || '')}`;
@@ -375,7 +363,7 @@ export const CreateMode = (props: CreateModeProps) => {
 			}
 			const data = await res.json().catch(() => ({}));
 			if (data && typeof data === 'object' && (data as any).pid) {
-				setDraftPid(applyDeterministicBudget(normalizePid((data as any).pid)));
+				setDraftPid(normalizePid((data as any).pid));
 			}
 			// Remove budget warning: always assume budget is present for example/created PIDs
 		} catch (err: any) {
@@ -390,14 +378,7 @@ export const CreateMode = (props: CreateModeProps) => {
 		}
 	};
 
-	useEffect(() => {
-		if (!draftPid) return;
-		const rows = Array.isArray((draftPid as any).budgetCostBreakdown) ? (draftPid as any).budgetCostBreakdown : [];
-		const isDeterministicOnly = rows.length > 0 && rows.every((r: any) => r?.source === 'deterministic');
-		if (rows.length > 0 && !isDeterministicOnly) return;
-		requestBudgetForPid(draftPid, draftPid.notesBackground || '');
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [draftPid]);
+	// Budget generation is opt-in in Create mode.
 
 	const callAssistant = async () => {
 		const q = chatInput.trim();
@@ -486,9 +467,9 @@ export const CreateMode = (props: CreateModeProps) => {
 				const patch = (data && typeof data === 'object' && (data as any).patch) || null;
 
 				if (nextPid && typeof nextPid === 'object') {
-					setDraftPid(applyDeterministicBudget(normalizePid(nextPid)));
+					setDraftPid(normalizePid(nextPid));
 				} else if (patch && typeof patch === 'object') {
-					setDraftPid((prev) => applyDeterministicBudget(normalizePid(deepMerge(prev || makeBlankPid(), patch))));
+					setDraftPid((prev) => normalizePid(deepMerge(prev || makeBlankPid(), patch)));
 				}
 
 				const reply =
@@ -549,7 +530,7 @@ export const CreateMode = (props: CreateModeProps) => {
 			try {
 				const parsed = JSON.parse(text);
 				if (parsed && typeof parsed === 'object') {
-					const norm = applyDeterministicBudget(normalizePid(parsed));
+					const norm = normalizePid(parsed);
 					setDraftPid(norm);
 					if (typeof onDraftChange === 'function') onDraftChange(norm);
 					return;
@@ -595,7 +576,7 @@ export const CreateMode = (props: CreateModeProps) => {
 						<button
 							type="button"
 							onClick={() => {
-								// Reset to create view: clear PID, chat, input, errors, and keep user in create area
+								// Reset to create view: clear PID, chat, input, errors, nav, and keep user in create area
 								setDraftPid(null);
 								setSelectedExampleId(null);
 								setChat([]);
@@ -604,6 +585,7 @@ export const CreateMode = (props: CreateModeProps) => {
 								setLastError(null);
 								setHasReset(true);
 								if (typeof onDraftChange === 'function') onDraftChange(null as any);
+								if (typeof props.onCancel === 'function') props.onCancel(); // Clear navigation in App
 							}}
 							className="rounded-full bg-red-600 px-2 py-1 text-xs md:text-sm font-semibold text-white hover:bg-red-700 border border-red-500"
 							title="Reset Create page fully"

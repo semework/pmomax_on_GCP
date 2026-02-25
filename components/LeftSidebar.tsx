@@ -12,6 +12,7 @@ interface LeftSidebarProps {
 
   // kept for compatibility (even if not used directly here)
   onAskAssistant: (question: string) => Promise<void>;
+  onAppendAssistantMessage?: (message: ChatMessage) => void;
   aiAssistantHistory: ChatMessage[];
 
   pidData?: PIDData | null;
@@ -53,6 +54,7 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = (props) => {
     onParse,
     onClearAll,
     onAskAssistant,
+    onAppendAssistantMessage,
     aiAssistantHistory,
     pidData,
     setPidData,
@@ -325,6 +327,7 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = (props) => {
         <AIAssistantPanel
           history={aiAssistantHistory && aiAssistantHistory.length === 0 ? [] : aiAssistantHistory}
           onAskAssistant={onAskAssistant}
+          onAppendMessage={onAppendAssistantMessage}
           pidData={pidData}
           isLoading={isLoading}
           error={error ?? null}

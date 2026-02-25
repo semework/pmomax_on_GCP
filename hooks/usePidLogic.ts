@@ -1103,6 +1103,11 @@ export const usePidLogic = () => {
 
   const pidData = useMemo(() => pid, [pid]);
 
+  const appendAssistantMessage = useCallback((message: ChatMessage) => {
+    if (!message || !message.content) return;
+    setAiAssistantHistory((prev) => [...prev, message]);
+  }, []);
+
   return {
     pidData,
     setPidData: setPid, // convenience for editors
@@ -1110,6 +1115,7 @@ export const usePidLogic = () => {
     setGeneralNotes,
     aiAssistantHistory,
     setAiAssistantHistory,
+    appendAssistantMessage,
     assistantDraft,
     setAssistantDraft,
     isLoading,

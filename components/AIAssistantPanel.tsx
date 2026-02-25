@@ -1,5 +1,6 @@
 // components/AIAssistantPanel.tsx
 import React, { FormEvent, useEffect, useMemo, useRef, useState } from 'react';
+import ReactMarkdown from 'react-markdown';
 import type { ChatMessage, PIDData } from '../types';
 
 interface AIAssistantPanelProps {
@@ -11,6 +12,7 @@ interface AIAssistantPanelProps {
   error?: string | null;
   onHelp?: (section?: string) => void;
   onToggleAI?: (enabled: boolean) => void;
+  onAppendMessage?: (message: ChatMessage) => void;
   resetNonce?: number;
 }
 
@@ -31,6 +33,7 @@ export const AIAssistantPanel: React.FC<AIAssistantPanelProps & { title?: string
   error = null,
   onHelp,
   onToggleAI,
+  onAppendMessage,
   title = 'PMOMax AI Assistant',
   subtitle = 'Ask about project status, create mode, risks, compliance, summaries, or request help. The assistant knows about create mode and current PID status.',
   resetNonce,
@@ -45,6 +48,7 @@ export const AIAssistantPanel: React.FC<AIAssistantPanelProps & { title?: string
     if (el) el.scrollTop = el.scrollHeight;
   }, [ordered.length]);
   const [isBusy, setIsBusy] = useState(false);
+  const [localError, setLocalError] = useState<string | null>(null);
   // Controller for quick agent fetches (risk/compliance endpoints) so they can be aborted on reset
   const quickAgentControllerRef = useRef<AbortController | null>(null);
   // Controller for main ask/submit
@@ -61,7 +65,7 @@ export const AIAssistantPanel: React.FC<AIAssistantPanelProps & { title?: string
     setIsBusy(true);
     askControllerRef.current = new AbortController();
     // Improve summary answers for "what is in this data" or "summarize" type questions
-    let customSummary = null;
+    let customSummary: string | null = null;
     if (
       pidData &&
       /what is in this data|summarize|summary|in short|brief/i.test(trimmed)
@@ -91,6 +95,12 @@ export const AIAssistantPanel: React.FC<AIAssistantPanelProps & { title?: string
     }
     try {
       if (customSummary) {
+        if (onAppendMessage) {
+          onAppendMessage({ role: 'user', content: trimmed } as any);
+          onAppendMessage({ role: 'assistant', content: customSummary } as any);
+          setInput('');
+          return;
+        }
         await onAskAssistant(customSummary);
         setInput('');
       } else {
@@ -100,9 +110,9 @@ export const AIAssistantPanel: React.FC<AIAssistantPanelProps & { title?: string
     } catch (err: any) {
       if (askControllerRef.current?.signal.aborted) return;
       if (err?.message && err.message.includes('429')) {
-        await onAskAssistant('Too many requests. Please wait a moment and try again.');
+        setLocalError('Too many requests. Please wait a moment and try again.');
       } else {
-        await onAskAssistant('Error: ' + (err?.message || 'Failed to contact AI assistant.'));
+        setLocalError(err?.message || 'Failed to contact AI assistant.');
       }
     } finally {
       setIsBusy(false);
@@ -125,33 +135,36 @@ export const AIAssistantPanel: React.FC<AIAssistantPanelProps & { title?: string
       if (endpoint && pidData) {
         const controller = new AbortController();
         quickAgentControllerRef.current = controller;
-        let data;
+        let data: any = null;
         try {
+          const controllerTimeout = setTimeout(() => controller.abort(), 25_000);
           const res = await fetch(endpoint, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ pidData }),
             signal: controller.signal,
           });
+          clearTimeout(controllerTimeout);
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
           data = await res.json();
         } catch (err: any) {
           if (controller.signal.aborted) return;
           if (err?.message && err.message.includes('429')) {
-            await onAskAssistant('Too many requests. Please wait a moment and try again.');
+            setLocalError('Too many requests. Please wait a moment and try again.');
             return;
           } else {
-            await onAskAssistant('Error: Failed to contact agent endpoint.');
+            setLocalError('Failed to contact agent endpoint.');
             return;
           }
         }
-        if (data.ok && data.reply) {
-          await onAskAssistant(data.reply);
-        } else if (data.reply) {
-          await onAskAssistant(data.reply);
-        } else if (data.error) {
-          await onAskAssistant(`Error: ${data.error}`);
+        const reply =
+          (data && data.reply) ||
+          (data && data.error ? `Error: ${data.error}` : '') ||
+          'No response from agent.';
+        if (onAppendMessage) {
+          onAppendMessage({ role: 'assistant', content: reply } as any);
         } else {
-          await onAskAssistant('No response from agent.');
+          setLocalError(reply);
         }
         setInput('');
         return;
@@ -173,9 +186,9 @@ export const AIAssistantPanel: React.FC<AIAssistantPanelProps & { title?: string
     } catch (err: any) {
       if (quickAgentControllerRef.current?.signal.aborted) return;
       if (err?.message && err.message.includes('429')) {
-        await onAskAssistant('Too many requests. Please wait a moment and try again.');
+        setLocalError('Too many requests. Please wait a moment and try again.');
       } else {
-        await onAskAssistant('Error: Failed to contact agent endpoint.');
+        setLocalError('Failed to contact agent endpoint.');
       }
     } finally {
       quickAgentControllerRef.current = null;
@@ -192,6 +205,7 @@ export const AIAssistantPanel: React.FC<AIAssistantPanelProps & { title?: string
     askControllerRef.current = null;
     setIsBusy(false);
     setInput('');
+    setLocalError(null);
   }, [resetNonce]);
 
   useEffect(() => () => {
@@ -262,17 +276,18 @@ export const AIAssistantPanel: React.FC<AIAssistantPanelProps & { title?: string
                   <div className="text-[10px] uppercase tracking-wide text-slate-400 mb-1 font-bold">
                     {role === 'assistant' ? '🤖 AI Assistant' : '👤 You'}
                   </div>
-                  <div 
+                  <ReactMarkdown
                     className="whitespace-pre-wrap text-[12px] sm:text-[13px] text-slate-100 leading-relaxed"
-                    style={{fontFamily: 'inherit'}}
-                    dangerouslySetInnerHTML={{
-                      __html: content
-                        .replace(/\*\*(.*?)\*\*/g, '<strong class="font-extrabold text-amber-200">$1</strong>')
-                        .replace(/\*(.*?)\*/g, '<em>$1</em>')
-                        .replace(/•/g, '&bull;')
-                        .replace(/\n/g, '<br/>')
+                    components={{
+                      strong: ({ children }) => <strong className="font-extrabold text-amber-200">{children}</strong>,
+                      em: ({ children }) => <em className="text-amber-100">{children}</em>,
+                      ul: ({ children }) => <ul className="list-disc ml-5 space-y-1">{children}</ul>,
+                      li: ({ children }) => <li>{children}</li>,
+                      p: ({ children }) => <p className="mb-2 last:mb-0">{children}</p>,
                     }}
-                  />
+                  >
+                    {content.replace(/\n/g, '  \n')}
+                  </ReactMarkdown>
                 </div>
               );
             })}
@@ -280,9 +295,9 @@ export const AIAssistantPanel: React.FC<AIAssistantPanelProps & { title?: string
         )}
       </div>
 
-      {error ? (
+      {(localError || error) ? (
         <div className="mt-2 text-xs text-red-300">
-          {error}
+          {localError || error}
         </div>
       ) : null}
 
