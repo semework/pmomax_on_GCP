@@ -191,7 +191,7 @@ export const UserGuideModal: React.FC<UserGuideModalProps> = ({
       ul: (props: any) => <ul className="list-disc pl-6 mb-4 space-y-1">{props.children}</ul>,
       ol: (props: any) => <ol className="list-decimal pl-6 mb-4 space-y-1">{props.children}</ol>,
       p: (props: any) => <p className="mb-3 leading-relaxed text-brand-text-secondary">{props.children}</p>,
-      a: (props: any) => <a {...props} className="text-amber-300 underline hover:text-amber-200" />,
+      a: ({ href, children, title }: any) => <a href={href} title={title} className="text-amber-300 underline hover:text-amber-200">{children}</a>,
       strong: (props: any) => <strong className="text-amber-200 font-bold">{props.children}</strong>,
       code: (props: any) => <code className="bg-black/40 px-1 py-0.5 rounded text-amber-200 text-sm">{props.children}</code>,
     };
