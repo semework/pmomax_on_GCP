@@ -4,7 +4,7 @@
 export const MAX_PAGES = 112; // UI only, for 50,000 words at 450/page
 export const WORDS_PER_PAGE = 450;
 export const INTERNAL_MAX_PAGES = 112;
-export const INTERNAL_MAX_WORDS = 50_000;
+export const INTERNAL_MAX_WORDS = 75_000;
 export const MAX_WORDS = INTERNAL_MAX_WORDS;
 
 export const SUPPORTED_EXTENSIONS = [

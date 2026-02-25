@@ -134,7 +134,7 @@ import { demoData } from './data/demoData.js';
 const MAX_PAGES = 112; // UI only, for 50,000 words at 450/page
 const WORDS_PER_PAGE = 450;
 const INTERNAL_MAX_PAGES = 112;
-const INTERNAL_MAX_WORDS = 50_000;
+const INTERNAL_MAX_WORDS = 75_000;
 const MAX_WORDS = INTERNAL_MAX_WORDS;
 const PARSE_HARD_MAX_CHARS = 3_500_000;
 const MAX_PID_JSON_BYTES = 800_000;
@@ -645,7 +645,7 @@ async function parseUploadedFile(file, startMs = Date.now()) {
       const text = decodeTextBuffer(file.buffer);
       const ext = getFileExt(file);
       const exceeded = enforceWordLimit(text);
-      const normalized = ext === 'csv' || ext === 'tsv'
+      const normalized = ['csv', 'tsv', 'md', 'txt'].includes(ext)
         ? normalizeTextPreserveLines(text)
         : normalizeText(text);
       const capped = clampText(normalized);
@@ -1009,7 +1009,7 @@ function buildActivityLogPidFromText(text, fileName = '') {
 }
 
 function buildFallbackPidFromText(text, fileName = '') {
-  const src = normalizeText(String(text || ""));
+  const src = normalizeTextPreserveLines(String(text || ""));
   const lines = src.split(/\r?\n/);
   const firstNonEmpty = lines.find(l => l.trim().length > 0) || "";
   const titleGuess = firstNonEmpty.slice(0, 120);
@@ -1795,7 +1795,7 @@ app.post('/api/ai/parse', async (req, res) => {
     if (!text.trim()) return sendJson(res, { ok: false, error: 'Missing text.' });
     const wc = countWords(text);
     if (wc > MAX_WORDS) {
-      const msg = `Sorry, your document is too long (${wc.toLocaleString()} words). The maximum allowed is 50,000 words. Please shorten or split your document and try again.`;
+      const msg = `Sorry, your document is too long (${wc.toLocaleString()} words). The maximum allowed is 75,000 words. Please shorten or split your document and try again.`;
       return sendJson(res, { ok: false, error: msg }, 400);
     }
     if (text.length > PARSE_HARD_MAX_CHARS) {
