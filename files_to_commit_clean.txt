@@ -7,7 +7,7 @@
 ./cloudbuild.yaml
 ./server/docxParse.js
 ./types.ts
-./components/BrutalistGantt.tsx
+./components/_archived_unused/BrutalistGantt.tsx
 ./components/WelcomeIconsRow.tsx
 ./components/ConversationalAssistant.tsx
 ./components/MinimalistGantt.tsx
@@ -52,7 +52,7 @@
 ./components/CreateMode.tsx
 ./components/ErrorBoundary.tsx
 ./components/TableOfContents.tsx
-./components/MonochromeMatrixGantt.tsx
+./components/_archived_unused/MonochromeMatrixGantt.tsx
 ./public/pmomax-landing.css
 ./public/pmomax-bootstrap.js
 ./public/lib/pdf.worker.min.js

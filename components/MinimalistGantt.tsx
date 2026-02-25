@@ -46,7 +46,7 @@ export function MinimalistGantt({ taskRows, preset, height, isDark }) {
       title: 'Minimalist Gantt Chart',
       showlegend: true,
       barmode: 'stack',
-      height,
+      height: height ? height * 0.7 : undefined,
       xaxis: {
         type: 'date',
         tickformat: '%d %b',

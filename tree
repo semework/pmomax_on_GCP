@@ -18,7 +18,7 @@
 │   ├── Archive.zip
 │   ├── ArtDecoGantt.tsx
 │   ├── BlueprintCADGantt.tsx
-│   ├── BrutalistGantt.tsx
+│   ├── _archived_unused/BrutalistGantt.tsx
 │   ├── CandyStripeGantt.tsx
 │   ├── ColorPicker.tsx
 │   ├── CompactTable.tsx
@@ -42,7 +42,7 @@
 │   ├── LoadingOverlay.tsx
 │   ├── MainContent.tsx
 │   ├── MinimalistGantt.tsx
-│   ├── MonochromeMatrixGantt.tsx
+│   ├── _archived_unused/MonochromeMatrixGantt.tsx
 │   ├── NavPanel.tsx
 │   ├── NeonCyberGridGantt.tsx
 │   ├── OrganicFlowGantt.tsx

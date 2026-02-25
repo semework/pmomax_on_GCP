@@ -26,8 +26,8 @@ export function MonochromeMatrixGantt({
   const uid = useId();
   const safeTasks = useMemo(() => (Array.isArray(tasks) ? tasks : []), [tasks]);
 
-  const barHeight = 32;
-  const barGap = 18;
+  const barHeight = 32 * 0.7;
+  const barGap = 18 * 0.7;
   const leftPad = 120;
   const topPad = 40;
   const rightPad = 40;
@@ -64,7 +64,7 @@ export function MonochromeMatrixGantt({
     return { min: new Date(Math.min(...starts)), max: new Date(Math.max(...ends)) };
   }, [safeTasks]);
 
-  const dateToX = useMemo(
+  // components/_archived_unused/MonochromeMatrixGantt.tsx
     () => dateToXFactory(bounds.min, bounds.max, Math.max(1, width - leftPad - rightPad)),
     [bounds.min, bounds.max, width],
   );
@@ -91,7 +91,7 @@ export function MonochromeMatrixGantt({
   }, [safeTasks]);
 
   const svgHeight = Math.max(
-    height,
+    height * 0.7,
     topPad + sortedTasks.length * (barHeight + barGap) + bottomPad,
   );
 

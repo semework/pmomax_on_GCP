@@ -454,9 +454,9 @@ export default function GanttChart(props: Props) {
   const dims = {
     width: 1200,
     height: Math.max(
-      (typeof window !== 'undefined' ? window.innerHeight * 0.35 : 480),
-      340,
-      160 + headerOffset + norm.length * (rowH + rowGap),
+      (typeof window !== 'undefined' ? window.innerHeight * 0.24 : 336), // reduced from 0.35 to 0.24 (~30% reduction)
+      240, // reduced minimum height from 340 to 240
+      112 + headerOffset + norm.length * ((rowH + rowGap) * 0.7), // reduce per-row vertical scale by 30%
     ),
   };
   // Extra top padding creates a dedicated header band for legend,

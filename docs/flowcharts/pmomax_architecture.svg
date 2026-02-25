@@ -1,0 +1,46 @@
+<svg width="600" height="400" xmlns="http://www.w3.org/2000/svg">
+  <rect x="20" y="20" width="160" height="60" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+  <text x="100" y="55" font-size="16" text-anchor="middle" fill="#1976d2">React SPA Frontend</text>
+
+  <rect x="220" y="20" width="160" height="60" fill="#fffde7" stroke="#fbc02d" stroke-width="2"/>
+  <text x="300" y="55" font-size="16" text-anchor="middle" fill="#fbc02d">Node.js/Express Backend</text>
+
+  <rect x="420" y="20" width="160" height="60" fill="#e8f5e9" stroke="#388e3c" stroke-width="2"/>
+  <text x="500" y="55" font-size="16" text-anchor="middle" fill="#388e3c">Google Cloud Run</text>
+
+  <rect x="220" y="120" width="160" height="60" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="2"/>
+  <text x="300" y="155" font-size="16" text-anchor="middle" fill="#7b1fa2">PDF/DOCX Worker</text>
+
+  <rect x="420" y="120" width="160" height="60" fill="#fff" stroke="#616161" stroke-width="2"/>
+  <text x="500" y="155" font-size="16" text-anchor="middle" fill="#616161">Google Secret Manager</text>
+
+  <rect x="420" y="220" width="160" height="60" fill="#e1f5fe" stroke="#0288d1" stroke-width="2"/>
+  <text x="500" y="255" font-size="16" text-anchor="middle" fill="#0288d1">Cloud Usage Metrics</text>
+
+  <ellipse cx="300" cy="320" rx="80" ry="30" fill="#fff" stroke="#bdbdbd" stroke-width="2"/>
+  <text x="300" y="325" font-size="16" text-anchor="middle" fill="#bdbdbd">No DB (Stateless)</text>
+
+  <line x1="180" y1="50" x2="220" y2="50" stroke="#1976d2" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="200" y="40" font-size="12" text-anchor="middle" fill="#1976d2">API Calls</text>
+
+  <line x1="380" y1="50" x2="420" y2="50" stroke="#fbc02d" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="400" y="40" font-size="12" text-anchor="middle" fill="#fbc02d">Runs on</text>
+
+  <line x1="300" y1="80" x2="300" y2="120" stroke="#7b1fa2" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="310" y="110" font-size="12" fill="#7b1fa2">PDF/DOCX Export</text>
+
+  <line x1="380" y1="80" x2="420" y2="120" stroke="#616161" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="410" y="110" font-size="12" fill="#616161">Secrets</text>
+
+  <line x1="380" y1="80" x2="420" y2="220" stroke="#0288d1" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="410" y="210" font-size="12" fill="#0288d1">Usage Metrics</text>
+
+  <line x1="300" y1="180" x2="300" y2="290" stroke="#bdbdbd" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="310" y="250" font-size="12" fill="#bdbdbd">In-memory</text>
+
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="10" refY="5" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L10,5 L0,10" fill="#000" />
+    </marker>
+  </defs>
+</svg>

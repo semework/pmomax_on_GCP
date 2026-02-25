@@ -44,7 +44,7 @@
 │   ├── AIAssistantPanel.tsx
 │   ├── ArtDecoGantt.tsx
 │   ├── BlueprintCADGantt.tsx
-│   ├── BrutalistGantt.tsx
+│   ├── _archived_unused/BrutalistGantt.tsx
 │   ├── CandyStripeGantt.tsx
 │   ├── ColorPicker.tsx
 │   ├── CompactTable.tsx
@@ -70,8 +70,8 @@
 │   ├── LeftSidebar.tsx
 │   ├── LoadingOverlay.tsx
 │   ├── MainContent.tsx
-│   ├── MinimalistGantt.tsx
-│   ├── MonochromeMatrixGantt.tsx
+│   ├── _archived_unused/MinimalistGantt.tsx
+│   ├── _archived_unused/MonochromeMatrixGantt.tsx
 │   ├── NavPanel.tsx
 │   ├── NeonCyberGridGantt.tsx
 │   ├── OrganicFlowGantt.tsx
@@ -26209,7 +26209,7 @@
 │   │   ├── BlueprintCADGantt.js
 │   │   ├── BlueprintCADGantt.tsx
 │   │   ├── BrutalistGantt.js
-│   │   ├── BrutalistGantt.tsx
+│   │   ├── _archived_unused/BrutalistGantt.tsx
 │   │   ├── CandyStripeGantt.js
 │   │   ├── CandyStripeGantt.tsx
 │   │   ├── ColorPicker.js
@@ -26259,7 +26259,7 @@
 │   │   ├── MinimalistGantt.js
 │   │   ├── MinimalistGantt.tsx
 │   │   ├── MonochromeMatrixGantt.js
-│   │   ├── MonochromeMatrixGantt.tsx
+│   │   ├── _archived_unused/MonochromeMatrixGantt.tsx
 │   │   ├── NavPanel.js
 │   │   ├── NavPanel.tsx
 │   │   ├── NeonCyberGridGantt.js

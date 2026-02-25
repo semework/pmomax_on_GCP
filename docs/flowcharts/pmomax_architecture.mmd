@@ -1,0 +1,11 @@
+graph TD
+    A[React SPA Frontend] -->|API Calls| B(Node.js/Express Backend)
+    B -->|Runs on| C(Google Cloud Run)
+    B -->|PDF/DOCX Export| D(PDF/DOCX Worker)
+    B -->|Secrets| E(Google Secret Manager)
+    B -->|Usage Metrics| F(Cloud Usage Metrics)
+    C -->|Stateless| B
+    D -->|In-memory| B
+    E -->|API Keys| B
+    F -->|Metadata Only| B
+    B -.->|No Persistent Storage| G((No DB))

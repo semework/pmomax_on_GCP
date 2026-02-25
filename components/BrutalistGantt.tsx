@@ -55,8 +55,8 @@ export function BrutalistGantt({ taskRows, milestones, preset, height, isDark })
 
   const layout = useMemo(() => {
     const taskCount = Array.isArray(taskRows) ? taskRows.length : 0;
-    const baseHeight = height || 260;
-    const dynamicHeight = Math.max(baseHeight, 140 + taskCount * 28);
+    const baseHeight = (height || 260) * 0.7;
+    const dynamicHeight = Math.max(baseHeight, 140 + taskCount * 28 * 0.7);
 
     return {
       title: {
