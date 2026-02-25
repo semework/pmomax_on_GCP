@@ -124,14 +124,9 @@ PMOMAXX2
 PMOMax_corrected
 
 # ==============================
-# Enforce: no accidental src folder
+# Source code (required for build)
 # ==============================
-src
-src/**
-
-# Allow build shims used by Vite
-!src/shims/
-!src/shims/**
+# Note: do not ignore src; Docker build needs it.
 
 # ==============================
 # Env files (do not ship secrets)
@@ -147,5 +142,4 @@ src/**
 
 # Keep production env if you explicitly need it
 !.env.production
-
 
