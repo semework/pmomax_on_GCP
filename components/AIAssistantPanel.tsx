@@ -279,18 +279,19 @@ export const AIAssistantPanel: React.FC<AIAssistantPanelProps & { title?: string
                   <div className="text-[10px] uppercase tracking-wide text-slate-400 mb-1 font-bold">
                     {role === 'assistant' ? '🤖 AI Assistant' : '👤 You'}
                   </div>
-                  <ReactMarkdown
-                    className="whitespace-pre-wrap text-[12px] sm:text-[13px] text-slate-100 leading-relaxed"
-                    components={{
-                      strong: ({ children }) => <strong className="font-extrabold text-amber-200">{children}</strong>,
-                      em: ({ children }) => <em className="text-amber-100">{children}</em>,
-                      ul: ({ children }) => <ul className="list-disc ml-5 space-y-1">{children}</ul>,
-                      li: ({ children }) => <li>{children}</li>,
-                      p: ({ children }) => <p className="mb-2 last:mb-0">{children}</p>,
-                    }}
-                  >
-                    {content.replace(/\n/g, '  \n')}
-                  </ReactMarkdown>
+                  <div className="whitespace-pre-wrap text-[12px] sm:text-[13px] text-slate-100 leading-relaxed">
+                    <ReactMarkdown
+                      components={{
+                        strong: ({ children }) => <strong className="font-extrabold text-amber-200">{children}</strong>,
+                        em: ({ children }) => <em className="text-amber-100">{children}</em>,
+                        ul: ({ children }) => <ul className="list-disc ml-5 space-y-1">{children}</ul>,
+                        li: ({ children }) => <li>{children}</li>,
+                        p: ({ children }) => <p className="mb-2 last:mb-0">{children}</p>,
+                      }}
+                    >
+                      {content.replace(/\n/g, '  \n')}
+                    </ReactMarkdown>
+                  </div>
                 </div>
               );
             })}
