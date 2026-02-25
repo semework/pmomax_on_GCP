@@ -283,7 +283,7 @@ export const InputPanel: React.FC<InputPanelProps> = ({
         Paste, drop, upload, or create a Project Initiation Document (PID)
       </label>
       <div className="text-xs text-amber-200 mb-1">
-        <strong>Supported:</strong> DOCX, PDF, TXT, MD, CSV, XLS/XLSX. <strong>Options:</strong> Paste, drop, upload, create, or load example. <strong>Tip:</strong> Recommended ≤60 pages (hard limit {MAX_PAGES}).
+        Supported: DOCX, PDF, TXT, MD, CSV, XLS/XLSX — Options: paste, drop, upload, create, or load example. Tip: Recommended ≤50 pages (hard limit {MAX_PAGES}).
       </div>
       <textarea
         id="input-panel-textarea"
