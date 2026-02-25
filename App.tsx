@@ -657,8 +657,12 @@ const App: React.FC = () => {
     prevCreateRef.current = isCreateMode;
   }, [centerPid, isCreateMode]);
 
+  const shellStyle = isIntro
+    ? { minHeight: '100dvh', height: 'auto', overflow: 'visible' as const }
+    : { minHeight: '100dvh', height: '100dvh', overflow: 'hidden' as const };
+
   return (
-    <div className="min-h-screen w-full flex flex-col bg-brand-dark text-brand-text" style={{ minHeight: '100dvh', height: '100dvh', overflow: 'hidden' }}>
+    <div className="min-h-screen w-full flex flex-col bg-brand-dark text-brand-text" style={shellStyle}>
       {/* DEV: visible debug badge for isCreateMode / centerPid state */}
       {import.meta.env.DEV && (
         <div style={{ position: 'fixed', right: 12, top: 12, zIndex: 9999 }}>
@@ -680,13 +684,13 @@ const App: React.FC = () => {
         {(() => {})()}
         <aside
           className={(() => {
-            const base = 'w-full max-w-xs flex-shrink-0 h-full overflow-y-auto border-r border-brand-border transition-all duration-200';
-            // When a center PID exists, use slightly smaller breakpoints so main gains horizontal space
+            const base = 'w-full flex-shrink-0 border-r border-brand-border transition-all duration-200';
             if (centerPid) {
-              return base + ' md:max-w-xs xl:max-w-sm';
+              return base + ' md:w-[320px] xl:w-[360px]';
             }
-            return base + ' md:max-w-sm xl:max-w-md';
+            return base + ' md:w-[400px] xl:w-[480px]';
           })()}
+          style={{ height: isIntro ? 'auto' : '100%' }}
         >
           <LeftSidebar
             onParse={onParse}
@@ -711,6 +715,7 @@ const App: React.FC = () => {
             onRunRiskAgent={async () => runRiskAgent && (await runRiskAgent())}
             onRunComplianceAgent={async () => runComplianceAgent && (await runComplianceAgent())}
             resetNonce={resetNonce}
+            isIntro={isIntro}
           />
         </aside>
 

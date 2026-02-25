@@ -36,6 +36,7 @@ interface LeftSidebarProps {
   resetNonce?: number;
   onRunRiskAgent?: () => Promise<void> | void;
   onRunComplianceAgent?: () => Promise<void> | void;
+  isIntro?: boolean;
 }
 
 type ParseSource = "text" | "file" | "demo" | "create" | string;
@@ -67,6 +68,7 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = (props) => {
     onCreateMode,
     onLoadDemo,
     setIsCreateMode,
+    isIntro,
   } = props;
 
   // Listen for triggerLeftAIAssistant events from CreateMode
@@ -145,8 +147,15 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = (props) => {
     } catch {}
   }, []);
 
+  const containerOverflow = isIntro ? 'visible' : 'auto';
+  const containerHeight = isIntro ? 'auto' : '100%';
+
   return (
-    <div ref={containerRef} className="flex flex-col gap-2 md:gap-3 h-full p-2 md:p-3 overflow-y-auto" style={{ width: '100%' }}>
+    <div
+      ref={containerRef}
+      className="flex flex-col gap-2 md:gap-3 p-2 md:p-3"
+      style={{ width: '100%', overflowY: containerOverflow, height: containerHeight }}
+    >
       {/* PROJECT CONTROLS */}
       <section id="input-panel" className="mb-1 md:mb-2 p-2 rounded-lg border bg-brand-panel shadow-md flex flex-col gap-1 md:gap-1.5 relative" style={{ borderColor: 'rgba(56,189,248,0.8)' }}>
         <div className="flex items-center justify-between mb-2">
