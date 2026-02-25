@@ -71,6 +71,8 @@ rsync -a --delete \
   --filter="include /server.mjs" \
   --filter="include /server/***" \
   --filter="include /lib/***" \
+  --filter="include /components/***" \
+  --filter="include /hooks/***" \
   --filter="include /data/***" \
   --filter="include /src/***" \
   --filter="include /public/***" \
