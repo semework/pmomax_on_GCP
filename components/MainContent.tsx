@@ -638,20 +638,23 @@ useEffect(() => {
     return (
       <main
         ref={mainContentRef}
-        className="flex-1 overflow-y-auto py-6 px-8 md:px-12 lg:px-16 text-brand-text bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950"
+        className="flex-1 overflow-y-auto text-brand-text bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950"
         style={{
-          fontSize: '1rem',
+          fontSize: 'clamp(0.95rem, 0.35vw + 0.75rem, 1rem)',
           scrollBehavior: 'smooth',
           maxWidth: '100vw',
           overflowX: 'hidden',
+          paddingInline: 'clamp(16px, 2.4vw, 32px)',
+          paddingBlock: 'clamp(16px, 2.2vh, 28px)',
         }}
       >
         <div
-          className="max-w-[1300px] mx-auto"
+          className="mx-auto"
           style={{
-            minHeight: 'calc(100vh - 48px)',
+            minHeight: 'calc(100dvh - 56px)',
             overflow: 'visible',
-            zoom: '1',
+            width: '100%',
+            maxWidth: 'min(1500px, 100vw - 32px)',
           }}
         >
           {/* No parse warning overlays shown */}
@@ -660,11 +663,12 @@ useEffect(() => {
             {/* subtle glow */}
             {/* Intro highlight CSS (subtle and non-overwhelming) */}
             <style>{`
-              /* Prevent browser zoom issues and ensure intro is always fully visible */
+              /* Keep intro layout consistent across browsers without zoom hacks */
               html, body, #root, main {
                 max-width: 100vw !important;
                 overflow-x: hidden !important;
-                zoom: 1 !important;
+                -webkit-text-size-adjust: 100%;
+                text-size-adjust: 100%;
               }
               /* Smooth transition for left-panel sections when highlighted */
               #input-panel, #export-panel, #assistant-panel {
@@ -729,20 +733,29 @@ useEffect(() => {
 {/* Cards row */}
 
               {/* Hero */}
-              <div className="text-center mb-6">
-                <div className="text-2xl md:text-3xl font-extrabold tracking-wide text-amber-400 drop-shadow-sm">
+              <div className="text-center" style={{ marginBottom: 'clamp(16px, 2vh, 24px)' }}>
+                <div
+                  className="font-extrabold tracking-wide text-amber-400 drop-shadow-sm"
+                  style={{ fontSize: 'clamp(22px, 2.5vw, 34px)', lineHeight: 1.12 }}
+                >
                   PMOMax — Bring your project notes to life
                 </div>
-                <div className="mt-2 text-lg md:text-xl font-extrabold text-amber-200">
+                <div
+                  className="font-extrabold text-amber-200"
+                  style={{ marginTop: 8, fontSize: 'clamp(16px, 1.6vw, 22px)' }}
+                >
                   The AI Copilot for PMO Leaders &amp; Project Managers
                 </div>
-                <div className="mt-3 text-base text-slate-200/90 leading-relaxed max-w-4xl mx-auto">
+                <div
+                  className="text-slate-200/90 leading-relaxed mx-auto"
+                  style={{ marginTop: 10, fontSize: 'clamp(14px, 1.05vw, 16px)', maxWidth: 1100 }}
+                >
                   Bring your meeting notes, project briefs, and scattered docs into one place. PMOMax turns them into structured, evidence-based PIDs and planning artifacts, helping teams align faster, spot bottlenecks earlier, and spend less time on status updates.
                 </div>
               </div>
 
               {/* Two cards side by side */}
-              <div className="flex flex-col md:flex-row gap-4 items-stretch">
+              <div className="flex flex-col md:flex-row items-stretch" style={{ gap: 'clamp(12px, 1.6vw, 16px)' }}>
                 {/* Left: Getting Started */}
                 <div
                   className="flex-1 rounded-2xl border border-[var(--color-border)]/60 bg-slate-950/40 shadow-xl p-3 flex flex-col"
