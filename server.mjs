@@ -19,21 +19,33 @@ function validatePidShape(pid) {
   }
 
   const tb = pid.titleBlock;
-  const now = new Date();
-  const y = now.getFullYear();
-  const m = String(now.getMonth() + 1).padStart(2, '0');
-  const d = String(now.getDate()).padStart(2, '0');
-
   if (!tb.projectTitle || typeof tb.projectTitle !== 'string') {
-    // Fallback title so parsing still succeeds even if the source lacks a clear title.
-    tb.projectTitle = 'Untitled Project';
+    tb.projectTitle = '';
   }
   if (!tb.subtitle || typeof tb.subtitle !== 'string') {
-    tb.subtitle = 'Project Initiation Document';
+    tb.subtitle = '';
   }
   if (!tb.generatedOn || typeof tb.generatedOn !== 'string') {
-    tb.generatedOn = `${y}-${m}-${d}`;
+    tb.generatedOn = '';
   }
+}
+
+function isDemoPid(pid) {
+  if (!pid || typeof pid !== 'object') return false;
+  const title = String(pid?.titleBlock?.projectTitle || '').trim();
+  const exec = String(pid?.executiveSummary || '').trim();
+  const demoTitle = String(demoData?.titleBlock?.projectTitle || '').trim();
+  const demoExec = String(demoData?.executiveSummary || '').trim();
+  if (!demoTitle) return false;
+  if (title !== demoTitle) return false;
+  if (!demoExec) return true;
+  return exec.startsWith(demoExec.slice(0, 120));
+}
+
+function guardDemoPid(pid, routePath, fallbackPid) {
+  if (routePath === '/api/load-demo') return { pid, blocked: false };
+  if (!isDemoPid(pid)) return { pid, blocked: false };
+  return { pid: fallbackPid || makeEmptyPid(), blocked: true };
 }
 // server.mjs
 // PMOMax backend API (Parse + Assistant) + SPA static hosting for Vite build
@@ -114,6 +126,9 @@ try {
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+// Demo data is only allowed via /api/load-demo
+import { demoData } from './data/demoData.js';
 
 // Hard limits (must match client gates)
 const MAX_PAGES = 112; // UI only, for 50,000 words at 450/page
@@ -685,7 +700,7 @@ function makeEmptyPid() {
     workBreakdownTasks: [],
     criticalPathBoxes: [],
     budgetCostBreakdown: [],
-    budgetSummary: { currency: 'USD', totalCostUsd: 0, subtotalByRoleUsd: {}, notes: [] },
+    budgetSummary: { currency: '', totalCostUsd: 0, subtotalByRoleUsd: {}, notes: [] },
     resourcesTools: [],
     risks: [],
     mitigationsContingencies: [],
@@ -879,13 +894,13 @@ function pidToLegacyFields(pid) {
   return f;
 }
 
-// Ensures the returned PID object always has all canonical fields/groups, never missing any, using demoData as the template for both shape and content
-import { demoData } from './data/demoData.js';
+// Ensures the returned PID object always has all canonical fields/groups, never missing any,
+// using an empty PID shape (no demo content).
 function mergeWithEmptyPid(parsed) {
-  const base = typeof demoData === 'object' && demoData !== null ? demoData : makeEmptyPid();
+  const base = makeEmptyPid();
   if (!parsed || !isPlainObject(parsed)) return { ...base };
   const out = { ...base, ...parsed };
-  // Deep merge for nested objects/arrays, using demoData as the canonical template
+  // Deep merge for nested objects/arrays, using empty PID as the canonical template
   for (const key of Object.keys(base)) {
     const baseVal = base[key];
     const parsedVal = parsed[key];
@@ -1336,6 +1351,9 @@ Rules:
 // --------------------
 // Health endpoints
 // --------------------
+app.get('/api/load-demo', (_req, res) => {
+  return sendJson(res, { ok: true, pid: demoData, source: 'demo' });
+});
 app.get('/health', (_req, res) => res.json({ ok: true }));
 app.get('/api/health', (_req, res) => res.json({ ok: true }));
 
@@ -1551,21 +1569,30 @@ app.post('/api/ai/parse', async (req, res) => {
 
     // Merge canonical PID content: deterministic base, AI overrides if it provided those keys
     const pidInput = { ...detPid, ...aiObj, fields: mergedFields, tables: mergedTables };
-    const pid = applyDeterministicBudget(mergeWithEmptyPid(pidInput));
+    let pid = mergeWithEmptyPid(pidInput);
     try {
       validatePidShape(pid);
     } catch (err) {
-      const fallback = applyDeterministicBudget(mergeWithEmptyPid(buildFallbackPidFromText(parseText)));
+      const fallback = mergeWithEmptyPid(buildFallbackPidFromText(parseText));
       const warnings = (process.env.DEBUG_PARSE_WARNINGS === '1')
         ? [...prepWarnings, ...aiWarnings, 'Parsed PID failed validation; returned a lightweight PID from extracted text.']
         : [...aiWarnings];
       const durationMs = Math.max(1, Date.now() - startMs);
-      return sendJson(res, { ok: true, pid: fallback, warnings, durationMs, length: parseText.length });
+      const guardedFallback = guardDemoPid(fallback, req.path, mergeWithEmptyPid(detPid));
+      const guardedWarnings = guardedFallback.blocked
+        ? [...warnings, 'Demo data suppressed; returning extracted text only.']
+        : warnings;
+      return sendJson(res, { ok: true, pid: guardedFallback.pid, warnings: guardedWarnings, durationMs, length: parseText.length });
     }
 
-    const durationMs = Math.max(1, Date.now() - startMs);
     const userWarnings = (process.env.DEBUG_PARSE_WARNINGS === '1') ? [...prepWarnings, ...aiWarnings] : [...aiWarnings];
-    return sendJson(res, { ok: true, pid, warnings: userWarnings, durationMs, length: parseText.length });
+    const guarded = guardDemoPid(pid, req.path, mergeWithEmptyPid(detPid));
+    const finalWarnings = guarded.blocked
+      ? [...userWarnings, 'Demo data suppressed; returning extracted text only.']
+      : userWarnings;
+
+    const durationMs = Math.max(1, Date.now() - startMs);
+    return sendJson(res, { ok: true, pid: guarded.pid, warnings: finalWarnings, durationMs, length: parseText.length });
   } catch (e) {
     const msg = safeErrorMessage(e, 'Parse failed.');
     console.error('Unexpected /api/ai/parse error:', e);
@@ -1588,6 +1615,10 @@ app.post('/api/ai/budget', async (req, res) => {
       budgetCostBreakdown: baseItems,
       budgetSummary: baseSummary,
     };
+
+    if (isDemoPid(baseResponsePid) && req.path !== '/api/load-demo') {
+      return sendJson(res, { ok: false, error: 'Demo data is only available via /api/load-demo.' }, 400);
+    }
 
     if (!GoogleGenerativeAI || !process.env.GOOGLE_API_KEY) {
       return sendJson(res, { ok: true, pid: baseResponsePid, warnings: ['AI budget not configured; deterministic baseline applied.'] });

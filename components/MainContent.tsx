@@ -9,7 +9,6 @@ import { STYLE_PRESETS } from '../lib/ganttPresets';
 import { demoData } from '../data/demoData';
 import { safeErrorMessage } from '../lib/safeError';
 import { VirtualizedList } from './VirtualizedList';
-import { computeDeterministicBudget } from '../lib/budgetDeterministic';
 
 interface MainContentProps {
   pidData: PMOMaxPID | null;
@@ -637,14 +636,36 @@ useEffect(() => {
     ];
 
     return (
-      <main ref={mainContentRef} className="flex-1 overflow-y-auto py-6 px-8 md:px-12 lg:px-16 text-brand-text bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950" style={{ fontSize: '1rem', scrollBehavior: 'smooth' }}>
-        <div className="max-w-[1300px] mx-auto">
+      <main
+        ref={mainContentRef}
+        className="flex-1 overflow-y-auto py-6 px-8 md:px-12 lg:px-16 text-brand-text bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950"
+        style={{
+          fontSize: '1rem',
+          scrollBehavior: 'smooth',
+          maxWidth: '100vw',
+          overflowX: 'hidden',
+        }}
+      >
+        <div
+          className="max-w-[1300px] mx-auto"
+          style={{
+            minHeight: 'calc(100vh - 48px)',
+            overflow: 'visible',
+            zoom: '1',
+          }}
+        >
           {/* No parse warning overlays shown */}
           {/* Intro / Landing (no PID loaded) */}
           <div className="relative">
             {/* subtle glow */}
             {/* Intro highlight CSS (subtle and non-overwhelming) */}
             <style>{`
+              /* Prevent browser zoom issues and ensure intro is always fully visible */
+              html, body, #root, main {
+                max-width: 100vw !important;
+                overflow-x: hidden !important;
+                zoom: 1 !important;
+              }
               /* Smooth transition for left-panel sections when highlighted */
               #input-panel, #export-panel, #assistant-panel {
                 transition: box-shadow 180ms ease, transform 180ms ease, border-color 180ms ease;
@@ -668,7 +689,7 @@ useEffect(() => {
 {introPanelLines && (
   <svg
     className="hidden lg:block fixed inset-0 w-screen h-screen pointer-events-none"
-    style={{ zIndex: 30 }}
+    style={{ zIndex: 30, maxWidth: '100vw', maxHeight: '100vh' }}
     width={introPanelLines.w}
     height={introPanelLines.h}
     viewBox={`0 0 ${introPanelLines.w} ${introPanelLines.h}`}
@@ -962,15 +983,8 @@ useEffect(() => {
   } = pidData || {};
 
   const budgetRows = Array.isArray(budgetCostBreakdown) ? budgetCostBreakdown : [];
-  const derivedBudgetRows = (() => {
-    if (budgetRows.length > 0) return budgetRows;
-    try {
-      return computeDeterministicBudget(pidData || {}).items || [];
-    } catch {
-      return [];
-    }
-  })();
-  const budgetIsEstimated = budgetRows.length === 0 && derivedBudgetRows.length > 0;
+  const hasBudget = hasContent(budgetRows) || hasContent(budgetSummary);
+  const derivedBudgetRows = budgetRows;
   const workBreakdownRows = Array.isArray(workBreakdownTasks) ? workBreakdownTasks : [];
   const useVirtualBudget = derivedBudgetRows.length > 60;
   const useVirtualWorkBreakdown = workBreakdownRows.length > 80;
@@ -1028,7 +1042,8 @@ useEffect(() => {
 
   const showGanttSection = hasContent(timelineOverview) || hasContent(workBreakdownTasks) || hasContent(milestones);
 
-  const showPeopleSection = true;
+  const showPeopleSection =
+    hasContent(stakeholders) || hasContent(teamRaci) || hasContent(resourcesTools) || hasBudget;
 
   const showRisksSection =
     hasContent(risks) ||
@@ -1520,86 +1535,83 @@ useEffect(() => {
             </Field>
           )}
 
-          <Field title="Budget & Cost Breakdown">
-            {/* No parse warning overlays shown */}
-            {budgetIsEstimated && (
-              <div className="mb-2 text-xs text-amber-200/90">
-                Estimated budget (deterministic baseline). Update with actuals when available.
+          {hasBudget && (
+            <Field title="Budget & Cost Breakdown">
+              {/* No parse warning overlays shown */}
+              <div className="mb-2 text-xs text-brand-muted">
+                Currency: {String(budgetCurrency).toUpperCase()}
               </div>
-            )}
-            <div className="mb-2 text-xs text-brand-muted">
-              Currency: {String(budgetCurrency).toUpperCase()}
-            </div>
-            {useVirtualBudget ? (
-              <div className="rounded border border-brand-border/60 overflow-hidden">
-                <div className="grid grid-cols-[2fr_1fr_1fr_1fr_1fr_1fr_2fr] text-left text-brand-muted bg-[var(--color-bg-panel)] text-sm">
-                  <div className="py-2 px-3 font-semibold">Task</div>
-                  <div className="py-2 px-3 font-semibold">Persona</div>
-                  <div className="py-2 px-3 font-semibold">Hours</div>
-                  <div className="py-2 px-3 font-semibold">B</div>
-                  <div className="py-2 px-3 font-semibold">M</div>
-                  <div className="py-2 px-3 font-semibold text-right">Total</div>
-                  <div className="py-2 px-3 font-semibold">Justification</div>
-                </div>
-                <VirtualizedList
-                  items={derivedBudgetRows}
-                  height={320}
-                  rowHeight={40}
-                  className="bg-slate-950/40"
-                  renderRow={(row: any, idx: number) => (
-                    <div
-                      className={`grid grid-cols-[2fr_1fr_1fr_1fr_1fr_1fr_2fr] text-sm text-white border-t border-brand-border/60 ${
-                        idx % 2 === 0 ? 'bg-white/5' : 'bg-transparent'
-                      }`}
-                    >
-                      <div className="py-2 px-3 truncate">{row?.task || 'Task'}</div>
-                      <div className="py-2 px-3 truncate">{row?.role || 'Persona'}</div>
-                      <div className="py-2 px-3 truncate">{formatHours(row?.estimatedHours)}</div>
-                      <div className="py-2 px-3 truncate">{formatRate(row)}</div>
-                      <div className="py-2 px-3 truncate">{formatMultiplier(row?.complexityMultiplier)}</div>
-                      <div className="py-2 px-3 text-right whitespace-nowrap">{formatCurrency(row?.totalCostUsd)}</div>
-                      <div className="py-2 px-3 truncate" title={formatJustification(row)}>{formatJustification(row)}</div>
-                    </div>
-                  )}
-                />
-              </div>
-            ) : (
-              <div className="overflow-x-auto">
-                <table className="min-w-full text-sm text-white border border-brand-border/60 rounded-lg overflow-hidden">
-                  <thead>
-                    <tr className="text-left text-brand-muted bg-[var(--color-bg-panel)]">
-                      <th className="py-2 px-3 font-semibold">Task</th>
-                      <th className="py-2 px-3 font-semibold">Persona</th>
-                      <th className="py-2 px-3 font-semibold">Hours</th>
-                      <th className="py-2 px-3 font-semibold">B</th>
-                      <th className="py-2 px-3 font-semibold">M</th>
-                      <th className="py-2 px-3 font-semibold text-right">Total</th>
-                      <th className="py-2 px-3 font-semibold">Justification</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {derivedBudgetRows.map((row: any, idx: number) => (
-                      <tr
-                        key={idx}
-                        className={`border-t border-brand-border/60 ${idx % 2 === 0 ? 'bg-slate-800/40' : 'bg-slate-900/10'}`}
+              {useVirtualBudget ? (
+                <div className="rounded border border-brand-border/60 overflow-hidden">
+                  <div className="grid grid-cols-[2fr_1fr_1fr_1fr_1fr_1fr_2fr] text-left text-brand-muted bg-[var(--color-bg-panel)] text-sm">
+                    <div className="py-2 px-3 font-semibold">Task</div>
+                    <div className="py-2 px-3 font-semibold">Persona</div>
+                    <div className="py-2 px-3 font-semibold">Hours</div>
+                    <div className="py-2 px-3 font-semibold">B</div>
+                    <div className="py-2 px-3 font-semibold">M</div>
+                    <div className="py-2 px-3 font-semibold text-right">Total</div>
+                    <div className="py-2 px-3 font-semibold">Justification</div>
+                  </div>
+                  <VirtualizedList
+                    items={derivedBudgetRows}
+                    height={320}
+                    rowHeight={40}
+                    className="bg-slate-950/40"
+                    renderRow={(row: any, idx: number) => (
+                      <div
+                        className={`grid grid-cols-[2fr_1fr_1fr_1fr_1fr_1fr_2fr] text-sm text-white border-t border-brand-border/60 ${
+                          idx % 2 === 0 ? 'bg-white/5' : 'bg-transparent'
+                        }`}
                       >
-                        <td className="py-2 px-3 align-top">{row?.task || 'Task'}</td>
-                        <td className="py-2 px-3 align-top">{row?.role || 'Persona'}</td>
-                        <td className="py-2 px-3 align-top">{formatHours(row?.estimatedHours)}</td>
-                        <td className="py-2 px-3 align-top">{formatRate(row)}</td>
-                        <td className="py-2 px-3 align-top">{formatMultiplier(row?.complexityMultiplier)}</td>
-                        <td className="py-2 px-3 align-top text-right whitespace-nowrap">{formatCurrency(row?.totalCostUsd)}</td>
-                        <td className="py-2 px-3 align-top" title={formatJustification(row)}>{formatJustification(row)}</td>
+                        <div className="py-2 px-3 truncate">{row?.task || 'Task'}</div>
+                        <div className="py-2 px-3 truncate">{row?.role || 'Persona'}</div>
+                        <div className="py-2 px-3 truncate">{formatHours(row?.estimatedHours)}</div>
+                        <div className="py-2 px-3 truncate">{formatRate(row)}</div>
+                        <div className="py-2 px-3 truncate">{formatMultiplier(row?.complexityMultiplier)}</div>
+                        <div className="py-2 px-3 text-right whitespace-nowrap">{formatCurrency(row?.totalCostUsd)}</div>
+                        <div className="py-2 px-3 truncate" title={formatJustification(row)}>{formatJustification(row)}</div>
+                      </div>
+                    )}
+                  />
+                </div>
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="min-w-full text-sm text-white border border-brand-border/60 rounded-lg overflow-hidden">
+                    <thead>
+                      <tr className="text-left text-brand-muted bg-[var(--color-bg-panel)]">
+                        <th className="py-2 px-3 font-semibold">Task</th>
+                        <th className="py-2 px-3 font-semibold">Persona</th>
+                        <th className="py-2 px-3 font-semibold">Hours</th>
+                        <th className="py-2 px-3 font-semibold">B</th>
+                        <th className="py-2 px-3 font-semibold">M</th>
+                        <th className="py-2 px-3 font-semibold text-right">Total</th>
+                        <th className="py-2 px-3 font-semibold">Justification</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody>
+                      {derivedBudgetRows.map((row: any, idx: number) => (
+                        <tr
+                          key={idx}
+                          className={`border-t border-brand-border/60 ${idx % 2 === 0 ? 'bg-slate-800/40' : 'bg-slate-900/10'}`}
+                        >
+                          <td className="py-2 px-3 align-top">{row?.task || 'Task'}</td>
+                          <td className="py-2 px-3 align-top">{row?.role || 'Persona'}</td>
+                          <td className="py-2 px-3 align-top">{formatHours(row?.estimatedHours)}</td>
+                          <td className="py-2 px-3 align-top">{formatRate(row)}</td>
+                          <td className="py-2 px-3 align-top">{formatMultiplier(row?.complexityMultiplier)}</td>
+                          <td className="py-2 px-3 align-top text-right whitespace-nowrap">{formatCurrency(row?.totalCostUsd)}</td>
+                          <td className="py-2 px-3 align-top" title={formatJustification(row)}>{formatJustification(row)}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+              <div className="mt-2 text-xs text-brand-muted">
+                {Number.isFinite(budgetTotal) && budgetTotal > 0 ? `Total: ${formatCurrency(budgetTotal)} from pid.budgetSummary.totalCostUsd` : 'Total: —'}
               </div>
-            )}
-            <div className="mt-2 text-xs text-brand-muted">
-              {Number.isFinite(budgetTotal) && budgetTotal > 0 ? `Total: ${formatCurrency(budgetTotal)} from pid.budgetSummary.totalCostUsd` : 'Total: —'}
-            </div>
-          </Field>
+            </Field>
+          )}
 
           {Array.isArray(resourcesTools) && resourcesTools.length > 0 && (
             <Field title="Resources & Tools">

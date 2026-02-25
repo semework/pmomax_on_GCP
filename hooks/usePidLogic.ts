@@ -312,7 +312,7 @@ function mergeWithEmptyPid(parsed: Partial<PMOMaxPID> | null | undefined): PMOMa
 
   out.titleBlock = { ...blank.titleBlock, ...(x.titleBlock || {}) };
   out.titleBlock.projectTitle = String(out.titleBlock.projectTitle || '');
-  out.titleBlock.subtitle = String(out.titleBlock.subtitle || 'Project Initiation Document');
+  out.titleBlock.subtitle = String(out.titleBlock.subtitle || '');
   out.titleBlock.generatedOn = String(out.titleBlock.generatedOn || '');
   out.titleBlock.projectId = String(out.titleBlock.projectId || '');
 
@@ -366,7 +366,7 @@ function applyDeterministicBudget(pid: PMOMaxPID, contextText = ''): PMOMaxPID {
 }
 
 const normalizePid = (parsed: Partial<PMOMaxPID> | null | undefined): PMOMaxPID =>
-  applyDeterministicBudget(mergeWithEmptyPid(parsed));
+  mergeWithEmptyPid(parsed);
 
 // -----------------------------
 // Assistant reply JSON extraction
@@ -430,7 +430,6 @@ export const usePidLogic = () => {
 
   // Tokens / keys to dedupe requests
   const notesChunkTokenRef = useRef<number>(0);
-  const lastAutoBudgetKey = useRef<string>('');
   const lastParseRequestKey = useRef<string>('');
   const parseInFlightKey = useRef<string>('');
   const lastAssistantRequestKey = useRef<string>('');
@@ -536,20 +535,7 @@ export const usePidLogic = () => {
     [isBudgeting],
   );
 
-  // Auto-budget on large parsed docs
-  useEffect(() => {
-    if (!pid || !lastParsedTextLength || lastParsedTextLength <= 10_000) return;
-    const key = `${(pid as any)?.titleBlock?.projectTitle || ''}|${lastParsedTextLength}`;
-    if (lastAutoBudgetKey.current === key) return;
-    lastAutoBudgetKey.current = key;
-    requestBudgetForPid(pid, lastParsedText);
-  }, [pid, lastParsedTextLength, lastParsedText, requestBudgetForPid]);
-
-  // Also ensure baseline budget exists for any pid (silent)
-  useEffect(() => {
-    if (!pid) return;
-    requestBudgetForPid(pid, (pid as any).notesBackground || (pid as any).executiveSummary || '');
-  }, [pid, requestBudgetForPid]);
+  // NOTE: Budget generation is now opt-in only (no automatic budget injection).
 
   const loadDemoData = useCallback(async () => {
     try { demoAbortRef.current?.abort('UserCancel'); } catch {}
@@ -575,7 +561,6 @@ export const usePidLogic = () => {
         ]);
       });
 
-      requestBudgetForPid(demoPid, (demoPid as any).notesBackground || '');
       requestAnimationFrame(scrollColumnsTop);
     } catch (e: any) {
       if (controller.signal.aborted) return;
@@ -620,10 +605,14 @@ export const usePidLogic = () => {
       notesChunkTokenRef.current += 1;
       const notesToken = notesChunkTokenRef.current;
 
-      setIsLoading(true);
+      // Clear PID and related state before parsing new content
+      setPid(null);
+      setGeneralNotes('');
+      setAiAssistantHistory([]);
+      setAssistantDraft(null);
       setError(null);
-      setAiAssistantHistory((prev) => [...prev, { role: 'user', content: 'Run Compliance Agent' } as any, { role: 'assistant', content: 'Running compliance/security review on the current PID…' } as any]);
       setWarnings([]);
+      setIsLoading(true);
 
       // Cancel any previous parse
       try { parseAbortRef.current?.abort('UserCancel'); } catch {}
@@ -724,7 +713,6 @@ export const usePidLogic = () => {
         setLastParsedText(String(text || ''));
         setLastParsedTextLength(String(text || '').length);
 
-        requestBudgetForPid(merged, (merged as any).notesBackground || safeText || '');
         requestAnimationFrame(scrollColumnsTop);
 
         perfMonitor.logEvent('parse_document', performance.now() - start, { textLength: text.length });
