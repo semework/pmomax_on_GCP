@@ -58,6 +58,11 @@ rsync -a --delete \
   --filter="include /Dockerfile" \
   --filter="include /package.json" \
   --filter="include /package-lock.json" \
+  --filter="include /index.html" \
+  --filter="include /vite.config.*" \
+  --filter="include /tsconfig*.json" \
+  --filter="include /main.tsx" \
+  --filter="include /main.js" \
   --filter="include /server.mjs" \
   --filter="include /server/***" \
   --filter="include /lib/***" \
