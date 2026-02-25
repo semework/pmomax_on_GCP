@@ -107,6 +107,9 @@ rsync -a --delete \
   --filter="exclude /generated_promo_videos/***" \
   --filter="exclude /pmomax-video-assets/***" \
   --filter="exclude /pmomax_vid_out/***" \
+  --filter="exclude /pmomax_video_builder*/***" \
+  --filter="exclude /archive/***" \
+  --filter="exclude /archives/***" \
   --filter="exclude /prompts/***" \
   --filter="exclude /google-cloud-sdk*/***" \
   --filter="exclude /ibm/***" \

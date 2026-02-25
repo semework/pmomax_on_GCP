@@ -97,6 +97,8 @@ generated_promo_videos
 generated_videos
 pmomax-video-assets
 pmomax_video_assets
+pmomax_vid_out
+pmomax_video_builder*
 archive
 archives
 *.mp4
@@ -115,6 +117,9 @@ __quarantine_duplicates__
 duplicates_review_*
 _patch_steps
 archived_js_duplicates
+
+# Local backups / SDK caches
+google-cloud-sdk.local-backup
 
 # ==============================
 # Backup copies
@@ -142,4 +147,3 @@ PMOMax_corrected
 
 # Keep production env if you explicitly need it
 !.env.production
-

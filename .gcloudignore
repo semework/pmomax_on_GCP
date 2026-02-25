@@ -40,6 +40,7 @@ Thumbs.db
 google-cloud-sdk*
 google-cloud-sdk*.tar.gz
 google-cloud-sdk*/**
+google-cloud-sdk.local-backup
 
 # Python / local envs
 venv
@@ -106,6 +107,43 @@ PMOMAXX2/**
 PMOMax_corrected
 PMOMax_corrected/**
 
+# Archives / exports
+archive
+archive/**
+archives
+archives/**
+exports
+exports/**
+output
+output/**
+out
+out/**
+tmp
+tmp/**
+temp
+temp/**
+
+# Videos / media
+generated_videos
+generated_videos/**
+generated_promo_videos
+generated_promo_videos/**
+pmomax_vid_out
+pmomax_vid_out/**
+pmomax_video_builder*
+*.mp4
+*.mov
+*.avi
+*.mkv
+*.webm
+*.flv
+*.wmv
+*.gif
+
+# Local env files
+.env
+.env.*
+
 # Test artifacts
 test-results
 test-results/**
@@ -142,4 +180,3 @@ playwright-report/**
 # - public/workers
 # - server.mjs
 # - server/
-

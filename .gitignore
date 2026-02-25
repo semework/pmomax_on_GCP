@@ -49,9 +49,16 @@ yarn-error.log*
 *.mp4
 *.mov
 *.m4a
+*.avi
+*.mkv
+*.webm
+*.flv
+*.wmv
+*.gif
 
 # Local env / python venvs
 .env
+.env.*
 venv
 venv_*
 .venv
@@ -63,4 +70,10 @@ fixed*
 Archive*
 pmomax_runtime_fix_full
 Archive_2_FIXED_lean
-
+archive/
+archives/
+generated_videos/
+generated_promo_videos/
+pmomax_vid_out/
+pmomax-video-assets/
+pmomax_video_builder*
