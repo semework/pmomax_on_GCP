@@ -38,6 +38,7 @@ const today = new Date().toISOString().slice(0, 10);
 
 export interface CreateModeProps {
 	initialData?: PMOMaxPID | null;
+	resetNonce?: number;
 	onCancel?: () => void;
 	onHelp?: (context?: string) => void;
 	onShowNav?: () => void;
@@ -61,14 +62,15 @@ const shouldShowPid = (pid: PMOMaxPID | null) => {
 
 export const CreateMode = (props: CreateModeProps) => {
 	useRenderStats('CreateMode', 8); // Warn if more than 8 renders/sec
-	 const {
-	 	initialData,
-	 	onHelp,
-	 	onCreateModeEvent,
-	 	aiModel,
-	 	onDraftChange = (_pid: PMOMaxPID) => {},
-	 	onApplyExample,
-	 } = props;
+ const {
+ 	initialData,
+	resetNonce,
+ 	onHelp,
+ 	onCreateModeEvent,
+ 	aiModel,
+ 	onDraftChange = (_pid: PMOMaxPID) => {},
+ 	onApplyExample,
+ } = props;
 
 	 // Track if reset has been triggered
 	 const [hasReset, setHasReset] = useState(false);
@@ -89,6 +91,7 @@ export const CreateMode = (props: CreateModeProps) => {
 
 	const scrollerRef = useRef<HTMLDivElement | null>(null);
 	const activeControllerRef = useRef<AbortController | null>(null);
+	const lastResetNonceRef = useRef<number | null>(null);
 
 	useEffect(() => {
 		console.log('[CreateMode] mounted (UI visible)');
@@ -97,6 +100,26 @@ export const CreateMode = (props: CreateModeProps) => {
 		}
 		return () => console.log('[CreateMode] unmounted');
 	}, []);
+
+	// When the app resets (e.g., Parse/Load Demo), clear Create Mode state automatically.
+	useEffect(() => {
+		if (typeof resetNonce !== 'number') return;
+		if (lastResetNonceRef.current === null) {
+			lastResetNonceRef.current = resetNonce;
+			return;
+		}
+		if (lastResetNonceRef.current === resetNonce) return;
+		lastResetNonceRef.current = resetNonce;
+		try { activeControllerRef.current?.abort(); } catch {}
+		activeControllerRef.current = null;
+		setDraftPid(null);
+		setChat([]);
+		setSelectedExampleId(null);
+		setChatInput('');
+		setLastError(null);
+		setStickyCollapsed(false);
+		setHasReset(false);
+	}, [resetNonce]);
 
 	// Do NOT pre-populate a draft PID on mount — keep it null until the user
 	// selects an example, drops a file, or the assistant generates content.
@@ -111,6 +134,11 @@ export const CreateMode = (props: CreateModeProps) => {
 	useEffect(() => {
 		if (onDraftChange && draftPid) onDraftChange(draftPid);
 	}, [draftPid, onDraftChange]);
+
+	// If the draft is cleared, also clear the example selection.
+	useEffect(() => {
+		if (!draftPid && selectedExampleId) setSelectedExampleId(null);
+	}, [draftPid, selectedExampleId]);
 
 	// Examples (stable via useMemo)
 	const EXAMPLES: ExampleConfig[] = useMemo(() => {
@@ -427,20 +455,21 @@ export const CreateMode = (props: CreateModeProps) => {
 			if (customReply) {
 				setChat((prev) => [...prev, { role: 'assistant', content: customReply! }]);
 			} else {
-				const controller = new AbortController();
-				activeControllerRef.current = controller;
+					const controller = new AbortController();
+					activeControllerRef.current = controller;
+					const timeoutId = setTimeout(() => controller.abort(), 45_000);
 
 				const retryDelays = [400, 1200];
 				let attempt = 0;
 				let res: Response | null = null;
 				while (true) {
-					res = await fetch('/api/ai/assistant', {
-						method: 'POST',
-						headers: { 'Content-Type': 'application/json' },
-						signal: controller.signal,
-						body: JSON.stringify({
-							messages: nextChat.map((m) => ({ role: m.role, content: m.content })),
-							pidData: draftPid || makeBlankPid(),
+						res = await fetch('/api/ai/assistant', {
+							method: 'POST',
+							headers: { 'Content-Type': 'application/json' },
+							signal: controller.signal,
+							body: JSON.stringify({
+								messages: nextChat.map((m) => ({ role: m.role, content: m.content })),
+								pidData: draftPid || makeBlankPid(),
 							model: aiModel || undefined,
 							appState: {
 								mode: 'create',
@@ -448,8 +477,8 @@ export const CreateMode = (props: CreateModeProps) => {
 								hasDraftPid: Boolean(draftPid),
 								selectedExampleId,
 							},
-						}),
-					});
+							}),
+						});
 					if (res.status === 429 && attempt < retryDelays.length) {
 						await sleep(retryDelays[attempt]);
 						attempt += 1;
@@ -459,10 +488,11 @@ export const CreateMode = (props: CreateModeProps) => {
 						const t = await res.text().catch(() => '');
 						throw new Error(`HTTP ${res.status}: ${t.slice(0, 300)}`);
 					}
-					break;
-				}
+						break;
+					}
 
-				const data = await res.json().catch(() => ({}));
+					const data = await res.json().catch(() => ({}));
+					clearTimeout(timeoutId);
 				const nextPid = (data && typeof data === 'object' && ((data as any).pid || (data as any).pidData)) || null;
 				const patch = (data && typeof data === 'object' && (data as any).patch) || null;
 
@@ -486,15 +516,15 @@ export const CreateMode = (props: CreateModeProps) => {
 					} catch {}
 				}
 			}
-		} catch (err: any) {
-			if (err?.name === 'AbortError') setLastError('Request aborted');
-			else setLastError(safeErrorMessage(err) || 'Assistant failed');
-			setChat((prev) => [...prev, { role: 'assistant', content: '[Error: Assistant failed]' }]);
-		} finally {
-			activeControllerRef.current = null;
-			setIsSending(false);
-			if (assistantInFlightKey.current === assistantKey) assistantInFlightKey.current = '';
-		}
+				} catch (err: any) {
+					if (err?.name === 'AbortError') setLastError('Request aborted');
+					else setLastError(safeErrorMessage(err) || 'Assistant failed');
+					setChat((prev) => [...prev, { role: 'assistant', content: '[Error: Assistant failed]' }]);
+				} finally {
+					activeControllerRef.current = null;
+					setIsSending(false);
+					if (assistantInFlightKey.current === assistantKey) assistantInFlightKey.current = '';
+				}
 	};
 
 	 const handleReset = () => {

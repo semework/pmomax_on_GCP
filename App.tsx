@@ -417,6 +417,10 @@ const App: React.FC = () => {
     const text = String(options?.text ?? '');
     const warnings = Array.isArray(options?.warnings) ? options.warnings : [];
     if (!parseDocument) throw new Error('Parse function not available');
+    // If we're in Create mode (or have a draft), clear it before parsing new content.
+    if (isCreateMode || draftPid) {
+      await handleClearAll(false);
+    }
     const result = await parseDocument(text, aiModel, warnings);
     if (!result?.ok) {
       const msg = result?.error === 'USER_CANCELLED' ? 'Parsing was cancelled.' : (result?.error || '');
@@ -730,6 +734,7 @@ const App: React.FC = () => {
             <Suspense fallback={<div className="p-8 text-center">Loading create panel…</div>}>
               <CreateMode
                 initialData={null}
+                resetNonce={resetNonce}
                 onDraftChange={handleDraftChange}
                 onCancel={handleCreateCancel}
                 onApplyExample={handleApplyExample}
