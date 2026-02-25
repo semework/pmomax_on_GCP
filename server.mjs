@@ -856,9 +856,12 @@ function buildActivityLogPidFromText(text, fileName = '') {
   const overallStart = entries.map((e) => e.date).filter(Boolean).sort((a, b) => a - b)[0];
   const overallEnd = entries.map((e) => e.date).filter(Boolean).sort((a, b) => b - a)[0];
   const fmt = (d) => (d ? d.toISOString().slice(0, 10) : '');
+  const today = new Date();
+  const generatedOn = fmt(today);
 
   const projectTitleFromFile = String(fileName || '').replace(/\.[^.]+$/, '').replace(/[_\-]+/g, ' ').trim();
   const projectTitle = projectTitleFromFile || 'Activity Log Program';
+  const projectId = `ACTLOG-${generatedOn.replace(/-/g, '')}`;
 
   const objectivesSmart = topCats.map(([label]) => ({
     objective: `Improve ${label.toLowerCase()} stability and throughput`,
@@ -871,16 +874,51 @@ function buildActivityLogPidFromText(text, fileName = '') {
     { kpi: 'Release stability', baseline: 'Baseline TBD', target: '2x fewer hotfixes' },
   ];
 
-  const workBreakdownTasks = topCats.map(([label]) => ({
-    name: `${label} stabilization sprint`,
-    owner: stakeholders[0]?.name || label,
-    start: fmt(overallStart),
-    end: fmt(overallEnd),
-    status: 'Planned',
-  }));
+  const tasks = [];
+  const startTs = overallStart ? overallStart.getTime() : today.getTime();
+  const endTs = overallEnd ? overallEnd.getTime() : today.getTime() + 30 * 86400000;
+  const totalSpan = Math.max(1, endTs - startTs);
+  topCats.forEach(([label], i) => {
+    const segStart = new Date(startTs + Math.floor((totalSpan * i) / Math.max(1, topCats.length)));
+    const segEnd = new Date(startTs + Math.floor((totalSpan * (i + 1)) / Math.max(1, topCats.length)));
+    tasks.push({
+      name: `${label} stabilization sprint`,
+      owner: stakeholders[0]?.name || label,
+      start: fmt(segStart),
+      end: fmt(segEnd),
+      status: 'Planned',
+      priority: 'High',
+    });
+  });
+  const workBreakdownTasks = tasks.length ? tasks : [
+    {
+      name: 'Stability baseline sprint',
+      owner: stakeholders[0]?.name || 'Program Lead',
+      start: fmt(overallStart) || generatedOn,
+      end: fmt(overallEnd) || generatedOn,
+      status: 'Planned',
+      priority: 'High',
+    },
+  ];
+
+  const sponsor = stakeholders[0]?.name || 'Program Sponsor';
+  const pmOwner = stakeholders[1]?.name || stakeholders[0]?.name || 'Program Manager';
+  const teamRaci = [
+    { teamMember: pmOwner, role: 'Program Manager', responsible: 'X', accountable: 'X', consulted: '', informed: '' },
+    { teamMember: stakeholders[0]?.name || 'Engineering Lead', role: 'Engineering Lead', responsible: 'X', accountable: '', consulted: 'X', informed: '' },
+    { teamMember: stakeholders[2]?.name || 'Data Lead', role: 'Data Lead', responsible: 'X', accountable: '', consulted: 'X', informed: '' },
+    { teamMember: stakeholders[3]?.name || 'Ops Lead', role: 'Ops Lead', responsible: 'X', accountable: '', consulted: 'X', informed: '' },
+  ];
+
+  const milestones = [
+    { milestone: 'Stability baseline defined', targetDate: fmt(overallStart) || generatedOn },
+    { milestone: 'First stabilization sprint complete', targetDate: fmt(overallStart ? new Date(startTs + totalSpan * 0.33) : today) },
+    { milestone: 'Midpoint review', targetDate: fmt(overallStart ? new Date(startTs + totalSpan * 0.66) : today) },
+    { milestone: 'Stability program wrap', targetDate: fmt(overallEnd) || generatedOn },
+  ];
 
   const pid = {
-    titleBlock: { projectTitle },
+    titleBlock: { projectTitle, subtitle: 'Project Initiation Document', generatedOn, projectId },
     executiveSummary:
       `Based on the activity log, the team is driving stability improvements across ${topCats.map(([l]) => l).join(', ') || 'core systems'}. The program focuses on consistent quality, risk reduction, and operational maturity.`,
     problemStatement:
@@ -895,21 +933,50 @@ function buildActivityLogPidFromText(text, fileName = '') {
     constraints: ['Limited bandwidth for major rewrites'],
     dependencies: ['Access to operational metrics', 'Stakeholder availability'],
     stakeholders,
-    timelineOverview: overallStart && overallEnd ? `Coverage: ${fmt(overallStart)} to ${fmt(overallEnd)}` : '',
-    milestones: [
-      { milestone: 'Stability baseline defined', targetDate: fmt(overallStart) },
-      { milestone: 'Midpoint check-in', targetDate: fmt(overallEnd) },
-    ],
+    projectSponsor: { name: sponsor, role: 'Sponsor' },
+    projectManagerOwner: { name: pmOwner },
+    teamRaci,
+    timelineOverview: overallStart && overallEnd ? `Coverage: ${fmt(overallStart)} to ${fmt(overallEnd)} across ${topCats.length || 1} workstreams.` : 'Coverage: current period.',
+    milestones,
     workBreakdownTasks,
+    budgetCostBreakdown: [],
+    budgetSummary: {},
+    resourcesTools: [
+      { resource: 'Monitoring dashboards', purpose: 'Stability tracking' },
+      { resource: 'Incident tracker', purpose: 'Operational logging' },
+      { resource: 'Runbooks', purpose: 'Response consistency' },
+    ],
     risks: [{ risk: 'Competing priorities slow stabilization', probability: 'Medium', impact: 'High' }],
     mitigationsContingencies: [{ mitigation: 'Dedicated stability sprint and clear ownership', contingency: 'Escalate roadmap tradeoffs' }],
-    issuesDecisionsLog: [],
-    communicationPlan: [{ audience: 'Stakeholders', cadence: 'Weekly', channel: 'Status update' }],
-    governanceApprovals: [{ gate: 'Stability review', signoffRequirement: 'Ops + Engineering' }],
-    complianceSecurityPrivacy: [{ requirement: 'Operational auditability', notes: 'Maintain change logs and incident history' }],
-    openQuestionsNextSteps: [{ question: 'Which stability themes are most urgent?', nextStep: 'Confirm priorities with leadership' }],
+    issuesDecisionsLog: [{ date: fmt(overallStart) || generatedOn, issue: 'Repeated stability regressions', decision: 'Prioritize stabilization sprints', owner: sponsor }],
+    communicationPlan: [
+      { audience: 'Stakeholders', cadence: 'Weekly', channel: 'Status update' },
+      { audience: 'Engineering', cadence: 'Twice weekly', channel: 'Slack/standup' },
+    ],
+    governanceApprovals: [
+      { gate: 'Stability review', signoffRequirement: 'Ops + Engineering' },
+      { gate: 'Operational readiness', signoffRequirement: 'Sponsor approval' },
+    ],
+    complianceSecurityPrivacy: [
+      { requirement: 'Operational auditability', notes: 'Maintain change logs and incident history' },
+      { requirement: 'Data retention', notes: 'Log retention meets internal policy' },
+    ],
+    openQuestionsNextSteps: [
+      { question: 'Which stability themes are most urgent?', nextStep: 'Confirm priorities with leadership' },
+      { question: 'What KPIs define success?', nextStep: 'Align with stakeholders on metrics' },
+    ],
     notesBackground: `Derived from ${entries.length} activity log entries.`,
+    deliverablesOutputs: [
+      { name: 'Stability baseline report' },
+      { name: 'Runbook updates' },
+      { name: 'Stability sprint retrospectives' },
+    ],
   };
+
+  // Add deterministic budget after core fields are set
+  const budgeted = computeDeterministicBudget(pid, pid.notesBackground || '');
+  pid.budgetCostBreakdown = budgeted.items || [];
+  pid.budgetSummary = budgeted.summary || {};
 
   return pid;
 }
