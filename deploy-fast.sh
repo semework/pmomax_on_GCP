@@ -63,6 +63,11 @@ rsync -a --delete \
   --filter="include /tsconfig*.json" \
   --filter="include /main.tsx" \
   --filter="include /main.js" \
+  --filter="include /App.tsx" \
+  --filter="include /ErrorBoundary.tsx" \
+  --filter="include /globals.d.ts" \
+  --filter="include /types.ts" \
+  --filter="include /types/***" \
   --filter="include /server.mjs" \
   --filter="include /server/***" \
   --filter="include /lib/***" \
