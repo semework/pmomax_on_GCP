@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState, startTransition } from 'react';
 
 import type { PMOMaxPID, ChatMessage, BudgetLineItem, BudgetSummary } from '../types';
-import { demoData } from '../data/demoData';
 import { safeErrorMessage } from '../lib/safeError';
 import { normalizeError } from '../lib/errorTools';
 import { computeDeterministicBudget } from '../lib/deterministicBudget';
@@ -551,11 +550,16 @@ export const usePidLogic = () => {
       await sleep(80);
       if (controller.signal.aborted) return;
 
-      const demoPid = normalizePid(demoData as any);
+      const res = await fetchWithTimeout('/api/load-demo', { method: 'GET' }, 30_000);
+      if (!res.ok) {
+        throw new Error(`HTTP ${res.status}`);
+      }
+      const data: any = await res.json().catch(() => ({}));
+      const demoPid = normalizePid(data?.pid || data?.pidData || data);
 
       startTransition(() => {
         setPid(demoPid);
-        setGeneralNotes('RoadRunner is the internal codename. Use this space to capture high-level notes.');
+        setGeneralNotes('');
         setAiAssistantHistory([
           { role: 'assistant', content: 'Demo data loaded. Ask me to add a risk, refine an objective, or adjust dates.' } as any,
         ]);
@@ -564,12 +568,12 @@ export const usePidLogic = () => {
       requestAnimationFrame(scrollColumnsTop);
     } catch (e: any) {
       if (controller.signal.aborted) return;
-      setError('Failed to load demo data. Please try again.');
+      setError('Failed to load demo data from server. Please try again.');
     } finally {
       setIsLoading(false);
       demoAbortRef.current = null;
     }
-  }, [requestBudgetForPid]);
+  }, []);
 
   const createNew = useCallback(async () => {
     try { createAbortRef.current?.abort('UserCancel'); } catch {}
