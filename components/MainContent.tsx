@@ -128,6 +128,7 @@ const MainContent: React.FC<MainContentProps> = ({ pidData, onReset, onHelp, onL
   const [agentRisks, setAgentRisks] = useState<any[] | null>(null);
   const [agentCompliance, setAgentCompliance] = useState<any[] | null>(null);
   const [agentLoading, setAgentLoading] = useState<{ risk?: boolean; compliance?: boolean }>({});
+  const [agentError, setAgentError] = useState<{ risk?: string | null; compliance?: string | null }>({});
 	// Prevent repeated auto-agent runs on every small PID edit (major perf win in Chrome)
 	const lastAutoAgentKeyRef = useRef<string>('');
 // --- Landing view connector lines (map left sidebar panels -> intro rows) ---
@@ -398,7 +399,8 @@ useEffect(() => {
           });
           const json = await res.json();
           if (!res.ok) throw new Error(json?.error || `Risk agent error (${res.status})`);
-          setAgentResults((prev) => ({ ...prev, risk: json }));
+          const next = Array.isArray(json?.risks) ? json.risks : (json?.items || json?.riskItems || []);
+          setAgentRisks(Array.isArray(next) ? next : []);
         } catch (err: any) {
           if (!abort.signal.aborted) {
             setAgentError((prev) => ({ ...prev, risk: err?.message || 'Risk agent failed' }));
@@ -415,7 +417,8 @@ useEffect(() => {
           });
           const json = await res.json();
           if (!res.ok) throw new Error(json?.error || `Compliance agent error (${res.status})`);
-          setAgentResults((prev) => ({ ...prev, compliance: json }));
+          const next = Array.isArray(json?.checklist) ? json.checklist : (json?.items || json?.complianceItems || []);
+          setAgentCompliance(Array.isArray(next) ? next : []);
         } catch (err: any) {
           if (!abort.signal.aborted) {
             setAgentError((prev) => ({ ...prev, compliance: err?.message || 'Compliance agent failed' }));

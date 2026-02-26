@@ -31,6 +31,17 @@ test.describe('Upload all TEST_DATA files', () => {
 
       const projectInfoHeading = page.getByRole('heading', { name: /01 — Project Info/i });
       const errorBanner = page.locator('p.mt-1.text-xs.text-rose-400');
+      const requiredHeadings = [
+        /01 — Project Info/i,
+        /02 — Overview & Rationale/i,
+        /03 — Objectives & KPIs/i,
+        /04 — Scope & Deliverables/i,
+        /05 — Assumptions, Constraints, Dependencies/i,
+        /06 — Schedule & Gantt/i,
+        /07 — People, Resources & Budget/i,
+        /08 — Risks, Issues & Communications/i,
+        /09 — Governance, Compliance, Open Questions/i,
+      ];
 
       const outcome = await Promise.race([
         projectInfoHeading.waitFor({ timeout: 180_000 }).then(() => 'ok' as const),
@@ -44,6 +55,9 @@ test.describe('Upload all TEST_DATA files', () => {
 
       await expect(projectInfoHeading).toBeVisible();
       await expect(errorBanner).toHaveCount(0);
+      for (const heading of requiredHeadings) {
+        await expect(page.getByRole('heading', { name: heading })).toBeVisible();
+      }
       const durationSec = ((Date.now() - startedAt) / 1000).toFixed(1);
       console.log(`[upload.spec] Parsed ${file} in ${durationSec}s`);
     }

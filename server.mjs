@@ -129,6 +129,7 @@ const __dirname = path.dirname(__filename);
 
 // Demo data is only allowed via /api/load-demo
 import { demoData } from './data/demoData.js';
+import { localParse } from './lib/localParser.js';
 
 // Hard limits (must match client gates)
 const MAX_PAGES = 112; // UI hard limit (PDF page cap)
@@ -357,7 +358,7 @@ async function docxBufferToText(buf) {
   const buffer = Buffer.isBuffer(buf) ? buf : Buffer.from(buf || []);
   try {
     const result = await mammoth.extractRawText({ buffer });
-    return normalizeText(result?.value || "");
+    return normalizeTextPreserveLines(result?.value || "");
   } catch (e) {
     const msg = safeErrorMessage(e, "");
     if (!msg.toLowerCase().includes("could not find file in options")) {
@@ -368,7 +369,7 @@ async function docxBufferToText(buf) {
     await fsp.writeFile(tmp, buffer);
     try {
       const result2 = await mammoth.extractRawText({ path: tmp });
-      return normalizeText(result2?.value || "");
+      return normalizeTextPreserveLines(result2?.value || "");
     } finally {
       try { await fsp.unlink(tmp); } catch (_) {}
     }
@@ -1832,9 +1833,21 @@ app.post('/api/ai/parse', async (req, res) => {
       }
     }
 
-    // Deterministic parse (server-side heuristic; no external localParser dependency)
+    // Deterministic parse: prefer local parser for full-field coverage.
+    let localPid = null;
+    let localWarnings = [];
+    try {
+      const local = localParse(parseText);
+      if (local && local.parse_success && local.data) {
+        localPid = local.data;
+      }
+      if (Array.isArray(local?.warnings)) {
+        localWarnings = local.warnings.map((w) => String(w)).filter(Boolean);
+      }
+    } catch {}
+
     const activityPid = buildActivityLogPidFromText(parseText, fileName);
-    const detPid = activityPid || buildFallbackPidFromText(parseText, fileName);
+    const detPid = localPid || activityPid || buildFallbackPidFromText(parseText, fileName);
     let detFields = pidToLegacyFields(detPid);
 
     // Collect AI legacy fields from either aiObj.fields or top-level fld-* keys
@@ -1868,8 +1881,8 @@ app.post('/api/ai/parse', async (req, res) => {
     } catch (err) {
     const fallback = mergeWithEmptyPid(buildFallbackPidFromText(parseText, fileName));
       const warnings = (process.env.DEBUG_PARSE_WARNINGS === '1')
-        ? [...prepWarnings, ...aiWarnings, 'Parsed PID failed validation; returned a lightweight PID from extracted text.']
-        : [...aiWarnings];
+        ? [...prepWarnings, ...aiWarnings, ...localWarnings, 'Parsed PID failed validation; returned a lightweight PID from extracted text.']
+        : [...aiWarnings, ...localWarnings];
       const durationMs = Math.max(1, Date.now() - startMs);
       const guardedFallback = guardDemoPid(fallback, req.path, mergeWithEmptyPid(detPid));
       const guardedWarnings = guardedFallback.blocked
@@ -1878,7 +1891,9 @@ app.post('/api/ai/parse', async (req, res) => {
       return sendJson(res, { ok: true, pid: guardedFallback.pid, warnings: guardedWarnings, durationMs, length: parseText.length });
     }
 
-    const userWarnings = (process.env.DEBUG_PARSE_WARNINGS === '1') ? [...prepWarnings, ...aiWarnings] : [...aiWarnings];
+    const userWarnings = (process.env.DEBUG_PARSE_WARNINGS === '1')
+      ? [...prepWarnings, ...aiWarnings, ...localWarnings]
+      : [...aiWarnings, ...localWarnings];
     const guarded = guardDemoPid(pid, req.path, mergeWithEmptyPid(detPid));
     const finalWarnings = guarded.blocked
       ? [...userWarnings, 'Demo data suppressed; returning extracted text only.']
