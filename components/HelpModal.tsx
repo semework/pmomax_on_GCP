@@ -37,6 +37,11 @@ function normalizeKey(context?: string | null) {
   return compact;
 }
 
+const SafeMarkdown = (props: any) => {
+  const { className, ...rest } = props || {};
+  return <ReactMarkdown {...rest} />;
+};
+
 type HelpEntry = {
   title: string;
   bullets: string[];
@@ -393,7 +398,7 @@ export const HelpModal: React.FC<HelpModalProps> = ({
             </div>
           ) : (
             <div className="prose prose-invert max-w-none">
-              <ReactMarkdown
+              <SafeMarkdown
                 components={{
                   h1: ({ children }) => (
                     <h1 className="text-amber-300 font-extrabold mb-3">{children}</h1>
@@ -407,7 +412,7 @@ export const HelpModal: React.FC<HelpModalProps> = ({
                 }}
               >
                 {MAIN_HELP_MARKDOWN}
-              </ReactMarkdown>
+              </SafeMarkdown>
             </div>
           )}
 

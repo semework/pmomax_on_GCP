@@ -294,6 +294,11 @@ async function parseViaServer(
 /** Ensure we don't proceed with truly empty extraction; server fallback then placeholder. */
 async function ensureNonEmpty(result: FileTextResult, file: File): Promise<FileTextResult> {
   const safeText = String(result?.text ?? '');
+  const ext = (file?.name || '').split('.').pop()?.toLowerCase() || '';
+  // Allow very small CSV/TSV payloads without forcing server fallback.
+  if ((ext === 'csv' || ext === 'tsv') && safeText.trim().length > 0) {
+    return { ...result, text: safeText };
+  }
   if (!isNearEmptyText(safeText)) return { ...result, text: safeText };
 
   // Browser/server fallback if possible

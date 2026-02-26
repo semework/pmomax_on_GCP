@@ -121,6 +121,10 @@ export const InputPanel: React.FC<InputPanelProps> = ({
         text = fallback.text;
         parseWarnings = [...parseWarnings, ...(fallback.warnings || [])];
       }
+      if (text && text.trim().length > 0 && text.trim().length < 80) {
+        text = `${text.trim()}\n\nProject summary: ${file.name.replace(/\.[^.]+$/, '').replace(/[_\-]+/g, ' ')}`;
+        parseWarnings = [...parseWarnings, 'Short document: appended a minimal summary line for parsing.'];
+      }
       // Always clear previous data and show new content
       setInputText(''); // Do not show file text in paste area
       setLastSource('upload');
@@ -164,10 +168,20 @@ export const InputPanel: React.FC<InputPanelProps> = ({
       abortControllerRef.current = new AbortController();
       if (setIsCreateMode) setIsCreateMode(false);
       const result = await fileToText(file);
-      const extractedText = result.text;
+      let extractedText = result.text;
+      let parseWarnings = result.warnings || [];
+      if (!extractedText || !extractedText.trim()) {
+        const fallback = await processInChunks(file);
+        extractedText = fallback.text;
+        parseWarnings = [...parseWarnings, ...(fallback.warnings || [])];
+      }
+      if (extractedText && extractedText.trim().length > 0 && extractedText.trim().length < 80) {
+        extractedText = `${extractedText.trim()}\n\nProject summary: ${file.name.replace(/\.[^.]+$/, '').replace(/[_\-]+/g, ' ')}`;
+        parseWarnings = [...parseWarnings, 'Short document: appended a minimal summary line for parsing.'];
+      }
       setInputText(''); // Do not show dropped file text in paste area
       setLastSource('upload');
-      await onParse('upload', { fileName: file.name, text: extractedText, warnings: result.warnings || [], signal: abortControllerRef.current.signal });
+      await onParse('upload', { fileName: file.name, text: extractedText, warnings: parseWarnings, signal: abortControllerRef.current.signal });
     } catch (err: any) {
       if (abortControllerRef.current?.signal.aborted) return;
       setLastError(formatErr(err) || '');

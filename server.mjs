@@ -1409,8 +1409,14 @@ function ensureMinimumPidContent(pid, text, fileName = '') {
   if (!Array.isArray(base.scopeInclusions) || base.scopeInclusions.length === 0) {
     base.scopeInclusions = pick(/\b(in scope|include|will build|will deliver|focus)\b/i, 4);
   }
+  if (Array.isArray(base.scopeInclusions) && base.scopeInclusions.length === 0) {
+    base.scopeInclusions = ['Core deliverables defined in the source document.'];
+  }
   if (!Array.isArray(base.scopeExclusions) || base.scopeExclusions.length === 0) {
     base.scopeExclusions = pick(/\b(out of scope|exclude|will not|not include)\b/i, 3);
+  }
+  if (Array.isArray(base.scopeExclusions) && base.scopeExclusions.length === 0) {
+    base.scopeExclusions = ['Out-of-scope items to be confirmed.'];
   }
 
   if (!Array.isArray(base.assumptions) || base.assumptions.length === 0) {
@@ -1448,18 +1454,48 @@ function ensureMinimumPidContent(pid, text, fileName = '') {
   if (!Array.isArray(base.stakeholders) || base.stakeholders.length === 0) {
     base.stakeholders = uniqueNames.map((n) => ({ name: n, role: '', contact: '' }));
   }
+  if (Array.isArray(base.stakeholders) && base.stakeholders.length === 0) {
+    base.stakeholders = [{ name: 'Stakeholder TBD', role: '', contact: '' }];
+  }
   if (!base.projectSponsor?.name && base.stakeholders.length > 0) {
     base.projectSponsor = { name: base.stakeholders[0].name || '', role: 'Sponsor' };
+  }
+  if (!base.projectSponsor?.name) {
+    base.projectSponsor = { name: 'Sponsor TBD', role: 'Sponsor' };
   }
   if (!base.projectManagerOwner?.name && base.stakeholders.length > 1) {
     base.projectManagerOwner = { name: base.stakeholders[1].name || base.stakeholders[0]?.name || '', role: 'Project Manager' };
   }
+  if (!base.projectManagerOwner?.name) {
+    base.projectManagerOwner = { name: base.stakeholders[0]?.name || 'Project Manager TBD', role: 'Project Manager' };
+  }
+  if (!Array.isArray(base.teamRaci) || base.teamRaci.length === 0) {
+    base.teamRaci = [
+      {
+        teamMember: base.projectManagerOwner?.name || 'Project Manager',
+        role: 'PM',
+        responsible: 'R',
+        accountable: 'A',
+        consulted: 'C',
+        informed: 'I',
+      },
+    ];
+  }
 
   if (!base.timelineOverview) {
-    base.timelineOverview = dates.length ? `Key dates: ${Array.from(new Set(dates)).join(', ')}.` : '';
+    base.timelineOverview = dates.length
+      ? `Key dates: ${Array.from(new Set(dates)).join(', ')}.`
+      : 'Timeline to be confirmed; expected phases include discovery, build, test, and launch.';
   }
   if (!Array.isArray(base.milestones) || base.milestones.length === 0) {
     base.milestones = Array.from(new Set(dates)).slice(0, 6).map((d) => ({ milestone: `Milestone: ${d}`, targetDate: d }));
+  }
+  if (Array.isArray(base.milestones) && base.milestones.length === 0) {
+    base.milestones = [
+      { milestone: 'Discovery complete', targetDate: '' },
+      { milestone: 'Build complete', targetDate: '' },
+      { milestone: 'Launch', targetDate: '' },
+    ];
   }
   if (!Array.isArray(base.workBreakdownTasks) || base.workBreakdownTasks.length === 0) {
     const tasks = pick(/\b(will|build|implement|design|test|deploy|deliver)\b/i, 5);
@@ -1478,6 +1514,9 @@ function ensureMinimumPidContent(pid, text, fileName = '') {
   if (!Array.isArray(base.resourcesTools) || base.resourcesTools.length === 0) {
     const res = pick(/\b(tool|platform|database|api|dashboard|cloud|storage)\b/i, 4);
     base.resourcesTools = res.map((r) => ({ resource: r, purpose: '' }));
+  }
+  if (Array.isArray(base.resourcesTools) && base.resourcesTools.length === 0) {
+    base.resourcesTools = [{ resource: 'TBD', purpose: 'Tools and resources to be confirmed.' }];
   }
   if (!Array.isArray(base.budgetCostBreakdown) || base.budgetCostBreakdown.length === 0) {
     const budgeted = computeDeterministicBudget(base, base.notesBackground || raw || '');
@@ -1498,6 +1537,9 @@ function ensureMinimumPidContent(pid, text, fileName = '') {
       contingency: '',
     }));
   }
+  if (Array.isArray(base.mitigationsContingencies) && base.mitigationsContingencies.length === 0) {
+    base.mitigationsContingencies = [{ mitigation: 'Mitigations to be defined.', contingency: 'Contingencies to be defined.' }];
+  }
   if (!Array.isArray(base.issuesDecisionsLog) || base.issuesDecisionsLog.length === 0) {
     base.issuesDecisionsLog = pick(/\b(issue|decision|resolved|approved)\b/i, 2).map((i) => ({
       issue: i,
@@ -1506,12 +1548,18 @@ function ensureMinimumPidContent(pid, text, fileName = '') {
       date: '',
     }));
   }
+  if (Array.isArray(base.issuesDecisionsLog) && base.issuesDecisionsLog.length === 0) {
+    base.issuesDecisionsLog = [{ issue: 'Issues to be tracked.', decision: 'Decisions to be logged.', owner: '', date: '' }];
+  }
   if (!Array.isArray(base.communicationPlan) || base.communicationPlan.length === 0) {
     base.communicationPlan = pick(/\b(weekly|status|update|meeting|standup|sync)\b/i, 2).map((c) => ({
       audience: 'Stakeholders',
       cadence: 'Weekly',
       channel: c,
     }));
+  }
+  if (Array.isArray(base.communicationPlan) && base.communicationPlan.length === 0) {
+    base.communicationPlan = [{ audience: 'Stakeholders', cadence: 'Weekly', channel: 'Status update' }];
   }
 
   if (!Array.isArray(base.governanceApprovals) || base.governanceApprovals.length === 0) {
@@ -1520,17 +1568,26 @@ function ensureMinimumPidContent(pid, text, fileName = '') {
       signoffRequirement: g,
     }));
   }
+  if (Array.isArray(base.governanceApprovals) && base.governanceApprovals.length === 0) {
+    base.governanceApprovals = [{ gate: 'Approval', signoffRequirement: 'Sponsor signoff required.' }];
+  }
   if (!Array.isArray(base.complianceSecurityPrivacy) || base.complianceSecurityPrivacy.length === 0) {
     base.complianceSecurityPrivacy = pick(/\b(compliance|security|privacy|audit)\b/i, 2).map((c) => ({
       requirement: c,
       notes: '',
     }));
   }
+  if (Array.isArray(base.complianceSecurityPrivacy) && base.complianceSecurityPrivacy.length === 0) {
+    base.complianceSecurityPrivacy = [{ requirement: 'Compliance review', notes: '' }];
+  }
   if (!Array.isArray(base.openQuestionsNextSteps) || base.openQuestionsNextSteps.length === 0) {
     base.openQuestionsNextSteps = pick(/\b(next step|next steps|follow up|open question)\b/i, 2).map((q) => ({
       question: q,
       nextStep: '',
     }));
+  }
+  if (Array.isArray(base.openQuestionsNextSteps) && base.openQuestionsNextSteps.length === 0) {
+    base.openQuestionsNextSteps = [{ question: 'Confirm objectives and scope.', nextStep: 'Review with stakeholders.' }];
   }
   if (!base.notesBackground) {
     base.notesBackground = sentences.slice(0, 8).join(' ');

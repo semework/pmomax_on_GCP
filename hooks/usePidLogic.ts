@@ -62,6 +62,176 @@ const isTimeoutError = (err: any) => {
   return /timed\s*out|timeout/i.test(msg);
 };
 
+const ensurePidMinimumContent = (pid: PMOMaxPID, sourceText: string, fileName?: string): PMOMaxPID => {
+  const text = String(sourceText || '').replace(/\s+/g, ' ').trim();
+  const sentences = text.split(/[.!?]\s+/).map((s) => s.trim()).filter(Boolean);
+  const first = sentences[0] || '';
+  const second = sentences[1] || '';
+  const pick = (re: RegExp, max = 2) => sentences.filter((s) => re.test(s)).slice(0, max);
+  const nameMatches = Array.from(String(sourceText || '').matchAll(/\b([A-Z][a-z]+ [A-Z][a-z]+)\b/g)).map((m) => m[1]);
+  const uniqueNames = Array.from(new Set(nameMatches)).slice(0, 8);
+  const dates = Array.from(String(sourceText || '').matchAll(/(\b(?:jan|feb|mar|apr|may|jun|jul|aug|sep|sept|oct|nov|dec)[a-z]*\s+\d{1,2},\s*\d{4}\b|\b\d{4}-\d{2}-\d{2}\b)/gi)).map((m) => m[0]);
+
+  const next: PMOMaxPID = { ...pid };
+  if (!next.titleBlock?.projectTitle) {
+    next.titleBlock = {
+      ...(next.titleBlock || {}),
+      projectTitle: String(fileName || '').replace(/\.[^.]+$/, '').replace(/[_\-]+/g, ' ').trim() || first || 'Project Initiation Document',
+    };
+  }
+
+  if (!next.executiveSummary) {
+    next.executiveSummary = [first, second].filter(Boolean).join(' ').slice(0, 1200);
+  }
+  if (!next.problemStatement) {
+    const ps = pick(/\b(problem|issue|challenge|pain|risk|gap)\b/i, 2).join(' ');
+    next.problemStatement = ps || (first ? `Problem context inferred: ${first}` : 'Problem context to be confirmed.');
+  }
+  if (!next.businessCaseExpectedValue) {
+    const bc = pick(/\b(value|benefit|roi|improve|increase|reduce|impact|outcome)\b/i, 2).join(' ');
+    next.businessCaseExpectedValue = bc || (second ? `Expected value inferred: ${second}` : 'Expected value to be defined.');
+  }
+  if (!next.objectivesSmart || next.objectivesSmart.length === 0) {
+    const objs = pick(/\b(objective|goal|aim|deliver|build|implement)\b/i, 2);
+    next.objectivesSmart = objs.length
+      ? objs.map((o) => ({ objective: o, successMeasure: '' }))
+      : [{ objective: first ? `Objective inferred from narrative: ${first}` : 'Define scope and deliverables.', successMeasure: '' }];
+  }
+  if (!next.kpis || next.kpis.length === 0) {
+    next.kpis = [{ kpi: 'On-time delivery (%)', baseline: 'TBD', target: 'TBD' }];
+  }
+  if (!next.scopeInclusions || next.scopeInclusions.length === 0) {
+    const inc = pick(/\b(in scope|include|will build|deliver|focus)\b/i, 3);
+    next.scopeInclusions = inc.length ? inc : ['Core deliverables defined in the source document.'];
+  }
+  if (!next.scopeExclusions || next.scopeExclusions.length === 0) {
+    const exc = pick(/\b(out of scope|exclude|will not|not include)\b/i, 2);
+    next.scopeExclusions = exc.length ? exc : ['Out-of-scope items to be confirmed.'];
+  }
+  if (!next.assumptions || next.assumptions.length === 0) {
+    next.assumptions = [{ assumption: first ? `Assumption inferred from narrative: ${first}` : 'Assumptions to be confirmed.' }];
+  }
+  if (!next.constraints || next.constraints.length === 0) {
+    next.constraints = [{ constraint: second ? `Constraint inferred from narrative: ${second}` : 'Constraints to be confirmed.' }];
+  }
+  if (!next.dependencies || next.dependencies.length === 0) {
+    next.dependencies = [{ dependency: 'Dependencies to be confirmed.', teamOrSystem: '', status: 'Pending' }];
+  }
+  if (!next.stakeholders || next.stakeholders.length === 0) {
+    next.stakeholders = uniqueNames.length
+      ? uniqueNames.map((n) => ({ name: n, role: '', contact: '' }))
+      : [{ name: 'Stakeholder TBD', role: '', contact: '' }];
+  }
+  if (!next.projectSponsor?.name) {
+    const sponsorName = next.stakeholders?.[0]?.name || '';
+    next.projectSponsor = { name: sponsorName || 'Sponsor TBD', role: 'Sponsor' };
+  }
+  if (!next.projectManagerOwner?.name) {
+    const pmName = next.stakeholders?.[1]?.name || next.stakeholders?.[0]?.name || '';
+    next.projectManagerOwner = { name: pmName || 'Project Manager TBD', role: 'Project Manager' };
+  }
+  if (!next.teamRaci || next.teamRaci.length === 0) {
+    next.teamRaci = [
+      {
+        teamMember: next.projectManagerOwner?.name || 'Project Manager',
+        role: 'PM',
+        responsible: 'R',
+        accountable: 'A',
+        consulted: 'C',
+        informed: 'I',
+      },
+    ];
+  }
+  if (!next.timelineOverview) {
+    next.timelineOverview = dates.length
+      ? `Key dates: ${Array.from(new Set(dates)).join(', ')}.`
+      : 'Timeline to be confirmed; expected phases include discovery, build, test, and launch.';
+  }
+  if (!next.milestones || next.milestones.length === 0) {
+    const uniqueDates = Array.from(new Set(dates)).slice(0, 4);
+    next.milestones = uniqueDates.length
+      ? uniqueDates.map((d) => ({ milestone: `Milestone: ${d}`, targetDate: d }))
+      : [
+          { milestone: 'Discovery complete', targetDate: '' },
+          { milestone: 'Build complete', targetDate: '' },
+          { milestone: 'Launch', targetDate: '' },
+        ];
+  }
+  if (!next.workBreakdownTasks || next.workBreakdownTasks.length === 0) {
+    next.workBreakdownTasks = [
+      {
+        name: first || 'Initial planning and discovery',
+        start: '',
+        end: '',
+        owner: next.projectManagerOwner?.name || '',
+        status: 'Planned',
+        priority: 'Medium',
+        kind: '',
+        dependencies: [],
+      },
+    ];
+  }
+  if (!next.resourcesTools || next.resourcesTools.length === 0) {
+    const tools = pick(/\b(tool|platform|database|api|cloud|storage|dashboard)\b/i, 3);
+    next.resourcesTools = tools.length
+      ? tools.map((t) => ({ resource: t, purpose: '' }))
+      : [{ resource: 'TBD', purpose: 'Tools and resources to be confirmed.' }];
+  }
+  if (!next.budgetCostBreakdown || next.budgetCostBreakdown.length === 0) {
+    next.budgetCostBreakdown = [
+      {
+        task: 'Project management',
+        role: 'PM',
+        estimatedHours: 40,
+        rateUsdPerHour: 100,
+        complexityMultiplier: 1,
+        totalCostUsd: 4000,
+        justification: 'Baseline estimate.',
+        source: 'deterministic',
+      },
+    ];
+  }
+  if (!next.budgetSummary) {
+    next.budgetSummary = {
+      currency: 'USD',
+      totalCostUsd: Array.isArray(next.budgetCostBreakdown) && next.budgetCostBreakdown.length > 0
+        ? next.budgetCostBreakdown.reduce((sum, row) => sum + (Number(row.totalCostUsd) || 0), 0)
+        : 0,
+      subtotalByRoleUsd: {
+        PM: Array.isArray(next.budgetCostBreakdown)
+          ? next.budgetCostBreakdown.reduce((sum, row) => sum + (row.role === 'PM' ? Number(row.totalCostUsd) || 0 : 0), 0)
+          : 0,
+      },
+      notes: ['Baseline budget placeholder.'],
+    };
+  }
+  if (!next.risks || next.risks.length === 0) {
+    next.risks = [{ risk: 'Delivery risks to be assessed.', probability: '', impact: '' }];
+  }
+  if (!next.mitigationsContingencies || next.mitigationsContingencies.length === 0) {
+    next.mitigationsContingencies = [{ mitigation: 'Mitigations to be defined.', contingency: 'Contingencies to be defined.' }];
+  }
+  if (!next.issuesDecisionsLog || next.issuesDecisionsLog.length === 0) {
+    next.issuesDecisionsLog = [{ issue: 'Issues to be tracked.', decision: 'Decisions to be logged.', owner: '', date: '' }];
+  }
+  if (!next.communicationPlan || next.communicationPlan.length === 0) {
+    next.communicationPlan = [{ audience: 'Stakeholders', cadence: 'Weekly', channel: 'Status update' }];
+  }
+  if (!next.governanceApprovals || next.governanceApprovals.length === 0) {
+    next.governanceApprovals = [{ gate: 'Approval', signoffRequirement: 'Sponsor signoff required.' }];
+  }
+  if (!next.complianceSecurityPrivacy || next.complianceSecurityPrivacy.length === 0) {
+    next.complianceSecurityPrivacy = [{ requirement: 'Compliance review', notes: '' }];
+  }
+  if (!next.openQuestionsNextSteps || next.openQuestionsNextSteps.length === 0) {
+    next.openQuestionsNextSteps = [{ question: 'Confirm objectives and scope.', nextStep: 'Review with stakeholders.' }];
+  }
+  if (!next.notesBackground) {
+    next.notesBackground = sentences.slice(0, 6).join(' ');
+  }
+  return next;
+};
+
 // -----------------------------
 // Fetch helpers (timeout + retry)
 // -----------------------------
@@ -667,8 +837,13 @@ export const usePidLogic = () => {
             controller,
           );
         } catch (fetchErr) {
-          setError('Parse API request failed. Please try again later.');
-          return { ok: false as const, error: 'Parse API request failed.' };
+          const fallbackPid = ensurePidMinimumContent(normalizePid({ notesBackground: safeText }), safeText, meta?.fileName);
+          startTransition(() => {
+            setPid(fallbackPid);
+            setError(null);
+            setWarnings(['Parse API request failed; used local fallback content.']);
+          });
+          return { ok: true as const };
         }
 
         if (!env || typeof env !== 'object') {
@@ -678,26 +853,26 @@ export const usePidLogic = () => {
 
         if (env.ok !== true) {
           const errMsg = (env as any)?.error || '';
-          // Only set error if there is a real error message
-          if (errMsg && !/parse failed/i.test(errMsg)) {
-            setError(errMsg);
-            return { ok: false as const, error: errMsg };
-          }
-          // If no real error, clear error and continue
-          setError(null);
-          return { ok: false as const, error: '' };
+          const fallbackPid = ensurePidMinimumContent(normalizePid({ notesBackground: safeText }), safeText, meta?.fileName);
+          startTransition(() => {
+            setPid(fallbackPid);
+            setError(errMsg && !/parse failed/i.test(errMsg) ? errMsg : null);
+            setWarnings(errMsg ? [errMsg] : ['Parse returned no PID; used local fallback content.']);
+          });
+          return { ok: true as const };
         }
 
         const merged = normalizePid((env as any).pid);
+        const ensured = ensurePidMinimumContent(merged, text, meta?.fileName);
         setError(null); // Clear any lingering error on success
-        const notesText = String((merged as any).notesBackground || '');
+        const notesText = String((ensured as any).notesBackground || '');
         const chunkSize = 2000;
 
         if (notesText.length > 10_000) {
           const firstChunk = notesText.slice(0, chunkSize);
 
           startTransition(() => {
-            setPid({ ...(merged as any), notesBackground: firstChunk });
+            setPid({ ...(ensured as any), notesBackground: firstChunk });
             setError(null);
           });
 
@@ -719,7 +894,7 @@ export const usePidLogic = () => {
           requestAnimationFrame(pump);
         } else {
           startTransition(() => {
-            setPid(merged);
+            setPid(ensured);
             setError(null);
           });
         }

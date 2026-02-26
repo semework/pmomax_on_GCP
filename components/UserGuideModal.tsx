@@ -38,6 +38,11 @@ function slugify(s: string): string {
     .replace(/-+/g, '-');
 }
 
+const SafeMarkdown = (props: any) => {
+  const { className, ...rest } = props || {};
+  return <ReactMarkdown {...rest} />;
+};
+
 const USER_MANUAL_MARKDOWN = `# PMOMax User Guide
 
 PMOMax turns your **Project Initiation Document (PID)** into a structured plan you can **navigate, refine, visualize (Gantt), and export**.
@@ -235,9 +240,9 @@ export const UserGuideModal: React.FC<UserGuideModalProps> = ({
           {/* Info content (scrollable) */}
           <div className="flex-1 overflow-y-auto p-5 md:p-8 bg-transparent" style={{ minHeight: 0 }}>
             <div className="prose prose-invert max-w-none">
-              <ReactMarkdown components={mdComponents as any}>
+              <SafeMarkdown components={mdComponents as any}>
                 {USER_MANUAL_MARKDOWN}
-              </ReactMarkdown>
+              </SafeMarkdown>
             </div>
           </div>
         </div>

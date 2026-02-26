@@ -23,6 +23,11 @@ function normalizeText(x: any): string {
   return String(x);
 }
 
+const SafeMarkdown = (props: any) => {
+  const { className, ...rest } = props || {};
+  return <ReactMarkdown {...rest} />;
+};
+
 
 // Enhanced AI Assistant Panel: fast, context-aware, robust error handling, recent chat on top
 
@@ -280,7 +285,7 @@ export const AIAssistantPanel: React.FC<AIAssistantPanelProps & { title?: string
                     {role === 'assistant' ? '🤖 AI Assistant' : '👤 You'}
                   </div>
                   <div className="whitespace-pre-wrap text-[12px] sm:text-[13px] text-slate-100 leading-relaxed">
-                    <ReactMarkdown
+                    <SafeMarkdown
                       components={{
                         strong: ({ children }) => <strong className="font-extrabold text-amber-200">{children}</strong>,
                         em: ({ children }) => <em className="text-amber-100">{children}</em>,
@@ -290,7 +295,7 @@ export const AIAssistantPanel: React.FC<AIAssistantPanelProps & { title?: string
                       }}
                     >
                       {content.replace(/\n/g, '  \n')}
-                    </ReactMarkdown>
+                    </SafeMarkdown>
                   </div>
                 </div>
               );
