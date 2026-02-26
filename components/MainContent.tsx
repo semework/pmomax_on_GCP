@@ -18,6 +18,32 @@ interface MainContentProps {
   warnings?: string[];
 }
 
+const MAX_TEXT_PREVIEW = 3000;
+
+const ExpandableText: React.FC<{ text: string; clamp?: number }> = ({ text, clamp = MAX_TEXT_PREVIEW }) => {
+  const [expanded, setExpanded] = useState(false);
+  const safe = String(text || '');
+  if (!safe.trim()) return null;
+  const isLong = safe.length > clamp;
+  const display = isLong && !expanded ? `${safe.slice(0, clamp).trimEnd()}…` : safe;
+  return (
+    <div className="text-sm text-white whitespace-pre-wrap">
+      {display}
+      {isLong && (
+        <div className="mt-2">
+          <button
+            type="button"
+            className="rounded border border-amber-400/70 px-2 py-1 text-xs font-semibold text-amber-200 hover:bg-amber-300/10"
+            onClick={() => setExpanded((v) => !v)}
+          >
+            {expanded ? 'Show less' : 'Show full text'}
+          </button>
+        </div>
+      )}
+    </div>
+  );
+};
+
 const MainContent: React.FC<MainContentProps> = ({ pidData, onReset, onHelp, onLoadDemo, showAllSections, warnings }) => {
   // ---- Gantt chart controls and state (canonical wiring) ----
   const [ganttStyleIdx, setGanttStyleIdx] = useState(() => {
@@ -1138,17 +1164,17 @@ useEffect(() => {
         <Section id="executive-summary" title="02 — Overview & Rationale" onHelp={onHelp} helpContext="executiveSummary">
           {hasContent(executiveSummary) && (
             <Field title="Executive Summary">
-              <p className="text-sm text-white whitespace-pre-wrap">{executiveSummary}</p>
+              <ExpandableText text={executiveSummary} />
             </Field>
           )}
           {hasContent(problemStatement) && (
             <Field title="Problem Statement">
-              <p className="text-sm text-white whitespace-pre-wrap">{problemStatement}</p>
+              <ExpandableText text={problemStatement} />
             </Field>
           )}
           {hasContent(businessCaseExpectedValue) && (
             <Field title="Business Case & Expected Value">
-              <p className="text-sm text-white whitespace-pre-wrap">{businessCaseExpectedValue}</p>
+              <ExpandableText text={businessCaseExpectedValue} />
             </Field>
           )}
         </Section>
@@ -1260,7 +1286,7 @@ useEffect(() => {
         <Section id="gantt" title="06 — Schedule & Gantt" onHelp={onHelp} helpContext="gantt">
           {hasContent(timelineOverview) && (
             <Field title="Timeline Overview">
-              <p className="text-sm text-white whitespace-pre-wrap">{timelineOverview}</p>
+              <ExpandableText text={timelineOverview} />
             </Field>
           )}
 
@@ -1836,7 +1862,7 @@ useEffect(() => {
 
           {hasContent(notesBackground) && (
             <Field title="Notes & Background">
-              <p className="text-sm text-white whitespace-pre-wrap">{notesBackground}</p>
+              <ExpandableText text={notesBackground} clamp={6000} />
             </Field>
           )}
         </Section>
