@@ -544,6 +544,8 @@ export function localParse(text: string) {
   const warnings: string[] = [];
   try {
     const raw = normalizeWhitespace(text);
+    const normalized = raw.replace(/\s+/g, ' ').trim();
+    const sentences = normalized ? normalized.split(/[.!?]\s+/).map((s) => s.trim()).filter(Boolean) : [];
     const pid = emptyPid();
 
     // CSV key/value exports
@@ -687,6 +689,148 @@ export function localParse(text: string) {
     if (!pid.projectManagerOwner?.name) {
       const m = fullText.match(/\b([A-Z][a-z]+\s+[A-Z][a-z]+)\s+will\s+lead\b/i);
       if (m?.[1]) pid.projectManagerOwner.name = m[1];
+    }
+
+    // Narrative fallbacks for unstructured docs: fill key sections from sentences
+    const pickSentences = (re: RegExp, max = 4) =>
+      sentences.filter((s) => re.test(s)).slice(0, max);
+
+    if (!pid.executiveSummary) {
+      pid.executiveSummary = sentences.slice(0, 3).join(' ').slice(0, 1200);
+    }
+
+    if (!pid.problemStatement) {
+      const hits = pickSentences(/\b(issue|problem|challenge|fragmented|inefficien)/i, 2);
+      if (hits.length) pid.problemStatement = hits.join(' ');
+    }
+
+    if (!pid.businessCaseExpectedValue) {
+      const hits = pickSentences(/\b(intended outcome|meant to|so that|aims to|expected outcome)\b/i, 2);
+      if (hits.length) pid.businessCaseExpectedValue = hits.join(' ');
+    }
+
+    if (!pid.objectivesSmart?.length) {
+      const hits = pickSentences(/\b(goal|objective|aim|purpose)\b/i, 3);
+      pid.objectivesSmart = hits.map((h) => ({ objective: h }));
+    }
+
+    if (!pid.kpis?.length) {
+      const hits = pickSentences(/%|\b(increase|reduce|improve|decrease|target)\b/i, 5);
+      pid.kpis = hits.map((h) => ({ kpi: h }));
+    }
+
+    if (!pid.scopeInclusions?.length) {
+      const hits = pickSentences(/\b(focus|core|phase|pilot|include|will build|will create|will provide)\b/i, 5);
+      pid.scopeInclusions = hits;
+    }
+
+    if (!pid.scopeExclusions?.length) {
+      const hits = pickSentences(/\b(no |not include|will not|without)\b/i, 4);
+      pid.scopeExclusions = hits;
+    }
+
+    if (!pid.assumptions?.length) {
+      const hits = pickSentences(/\b(expected|assume|plan|likely|should)\b/i, 4);
+      pid.assumptions = hits.map((h) => ({ assumption: h }));
+    }
+
+    if (!pid.constraints?.length) {
+      const hits = pickSentences(/\b(must|required|limited|narrow|only)\b/i, 4);
+      pid.constraints = hits.map((h) => ({ constraint: h }));
+    }
+
+    if (!pid.dependencies?.length) {
+      const hits = pickSentences(/\b(depend|requires|before|after|in parallel)\b/i, 4);
+      pid.dependencies = hits.map((h) => ({ dependency: h }));
+    }
+
+    if (!pid.stakeholders?.length) {
+      const stakeholderMatches = Array.from(fullText.matchAll(/\b([A-Z][a-z]+ [A-Z][a-z]+)\s+will\s+([^.\n]{6,120})/g));
+      pid.stakeholders = stakeholderMatches.map((m) => ({ name: m[1], role: safeTrim(m[2]) }));
+    }
+
+    if (!pid.projectSponsor?.name && pid.stakeholders?.length) {
+      pid.projectSponsor.name = pid.stakeholders[0]?.name || '';
+    }
+
+    if (!pid.projectManagerOwner?.name && pid.stakeholders?.length > 1) {
+      pid.projectManagerOwner.name = pid.stakeholders[1]?.name || '';
+    }
+
+    if (!pid.teamRaci?.length && pid.stakeholders?.length) {
+      pid.teamRaci = pid.stakeholders.slice(0, 4).map((s, idx) => ({
+        teamMember: s.name,
+        role: s.role || (idx === 0 ? 'Program Lead' : 'Contributor'),
+        responsible: idx === 0 ? 'X' : 'X',
+        accountable: idx === 0 ? 'X' : '',
+        consulted: idx > 0 ? 'X' : '',
+        informed: idx > 1 ? 'X' : '',
+      }));
+    }
+
+    if (!pid.milestones?.length) {
+      const dateRe = /(\b(?:jan|feb|mar|apr|may|jun|jul|aug|sep|sept|oct|nov|dec)[a-z]*\s+\d{1,2},\s*\d{4}\b|\b\d{4}-\d{2}-\d{2}\b|\bmid-\w+\s+\d{4}\b)/gi;
+      const dates = Array.from(fullText.matchAll(dateRe)).map((m) => m[0]);
+      pid.milestones = Array.from(new Set(dates)).slice(0, 5).map((d) => ({ milestone: `Milestone: ${d}`, targetDate: d }));
+    }
+
+    if (!pid.workBreakdownTasks?.length) {
+      const hits = pickSentences(/\b(will|focus on|build|implement|design|test|deploy)\b/i, 6);
+      pid.workBreakdownTasks = hits.map((h, idx) => ({ name: h, status: 'Planned', priority: 'Medium', owner: pid.projectManagerOwner?.name || '', start: '', end: '' }));
+    }
+
+    if (!pid.budgetCostBreakdown?.length) {
+      pid.budgetCostBreakdown = [
+        {
+          task: 'Budget planning',
+          role: 'PMO',
+          estimatedHours: 0,
+          rateUsdPerHour: 0,
+          complexityMultiplier: 1,
+          totalCostUsd: 0,
+          justification: 'Budget details not explicitly specified in source; requires estimation.',
+          source: 'deterministic',
+        },
+      ];
+    }
+
+    if (!pid.resourcesTools?.length) {
+      const hits = pickSentences(/\b(tool|platform|dashboard|model|routing|analytics)\b/i, 4);
+      pid.resourcesTools = hits.map((h) => ({ resource: h, purpose: 'Referenced in source' }));
+    }
+
+    if (!pid.risks?.length) {
+      const hits = pickSentences(/\b(risk|delay|issue|blocked|bottleneck|lock|timeout)\b/i, 4);
+      pid.risks = hits.map((h) => ({ risk: h }));
+    }
+
+    if (!pid.mitigationsContingencies?.length) {
+      const hits = pickSentences(/\b(mitigat|contingenc|fallback|handle)\b/i, 3);
+      pid.mitigationsContingencies = hits.map((h) => ({ mitigation: h }));
+    }
+
+    if (!pid.communicationPlan?.length) {
+      const hits = pickSentences(/\b(weekly|stand-up|sync|updates|digest|communication)\b/i, 3);
+      pid.communicationPlan = hits.map((h) => ({ audience: 'Team', cadence: 'Weekly', channel: h }));
+    }
+
+    if (!pid.governanceApprovals?.length) {
+      const hits = pickSentences(/\b(approval|signoff|governance|gate)\b/i, 3);
+      pid.governanceApprovals = hits.map((h) => ({ gate: 'Approval', signOffRequirement: h }));
+    }
+
+    if (!pid.complianceSecurityPrivacy?.length) {
+      const hits = pickSentences(/\b(compliance|privacy|security|audit)\b/i, 3);
+      pid.complianceSecurityPrivacy = hits.map((h) => ({ requirement: h }));
+    }
+
+    if (!pid.openQuestionsNextSteps?.length) {
+      const hits = pickSentences(/\b(next step|next steps|open question|follow up)\b/i, 3);
+      pid.openQuestionsNextSteps = hits.map((h) => ({ question: h, nextStep: '' }));
+    }
+
+    if (!pid.notesBackground) {
+      pid.notesBackground = sentences.slice(0, 8).join(' ');
     }
     // parse_success heuristic
     const nonEmptyMajor =

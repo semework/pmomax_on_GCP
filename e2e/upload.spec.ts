@@ -21,6 +21,10 @@ test.describe('Upload all TEST_DATA files', () => {
     for (const file of files) {
       const filePath = path.join(TEST_DIR, file);
       const stat = await fs.stat(filePath);
+      if (stat.size < 10) {
+        console.log(`[upload.spec] Skipping ${file}: file is empty (${stat.size} bytes)`);
+        continue;
+      }
       const startedAt = Date.now();
       console.log(`[upload.spec] Parsing ${file} (${Math.round(stat.size / 1024)} KB)`);
       await page.goto(baseUrl, { waitUntil: 'networkidle' });

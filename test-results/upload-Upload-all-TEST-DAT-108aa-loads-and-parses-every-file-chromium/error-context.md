@@ -1,0 +1,211 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - generic [ref=e5]:
+      - img "PMOMax logo" [ref=e6]
+      - heading "PMOMAX" [level=1] [ref=e7]
+      - generic [ref=e8]: PID Architect
+    - generic [ref=e9]:
+      - link "Open PMO Agent website" [ref=e10] [cursor=pointer]:
+        - /url: https://pmoagent.katalyststreet.com/
+        - text: WEBSITE
+      - generic [ref=e11]:
+        - generic [ref=e12]: Built by
+        - img "Katalyst Street logo" [ref=e13]
+        - generic [ref=e14]: Katalyst Street
+      - button "Open help" [ref=e15] [cursor=pointer]: Help
+      - button "Open user guide" [ref=e16] [cursor=pointer]:
+        - img [ref=e17]
+        - text: User Guide
+      - button "Contact Us" [ref=e20] [cursor=pointer]
+  - generic [ref=e21]:
+    - complementary [ref=e22]:
+      - generic [ref=e23]:
+        - generic [ref=e24]:
+          - generic [ref=e25]:
+            - heading "Project Initiation Controls" [level=2] [ref=e26]
+            - button "Help for Project Initiation Controls" [ref=e27] [cursor=pointer]: "?"
+          - strong [ref=e30]: Click Create to start a new blank PID or use an example.
+          - generic [ref=e31]:
+            - generic [ref=e33]: INPUT
+            - generic [ref=e34]: Paste, drop, upload, or create a Project Initiation Document (PID)
+            - textbox "Paste, drop, upload, or create a PID document" [ref=e35]:
+              - /placeholder: Paste PID text, drop a file, upload (DOCX, PDF, TXT, MD, CSV, XLS/XLSX), create from scratch, or load an example.
+            - generic [ref=e36]:
+              - button "Parse" [disabled] [ref=e37]
+              - button "Reset" [ref=e38] [cursor=pointer]
+              - button "Create" [ref=e39] [cursor=pointer]
+              - generic [ref=e41] [cursor=pointer]: Upload file
+              - button "Load Demo PID" [ref=e42] [cursor=pointer]: Load Demo
+        - generic [ref=e43]:
+          - generic [ref=e44]:
+            - heading "Export Document" [level=2] [ref=e45]
+            - button "Help for Export Document" [ref=e46] [cursor=pointer]: "?"
+          - paragraph [ref=e47]: Export the current PID as a Word, PDF, or JSON document. If a Gantt chart is plotted, it will be embedded automatically.
+          - generic [ref=e49]:
+            - button "Export PDF" [ref=e50] [cursor=pointer]: PDF
+            - button "Export Word" [ref=e51] [cursor=pointer]: Word
+            - button "Export ZIP" [ref=e52] [cursor=pointer]: Zip (Word+Gantt)
+            - button "Export JSON" [ref=e53] [cursor=pointer]: JSON
+        - generic [ref=e54]:
+          - generic [ref=e55]:
+            - heading "AI Assistant" [level=2] [ref=e56]
+            - button "Risk" [ref=e57] [cursor=pointer]:
+              - generic [ref=e58]: ⚠️
+              - generic [ref=e59]: Risk
+            - button "Compliance" [ref=e60] [cursor=pointer]:
+              - generic [ref=e61]: 🔒
+              - generic [ref=e62]: Compliance
+          - generic [ref=e63]:
+            - generic [ref=e65]:
+              - heading "PMOMax AI Assistant" [level=2] [ref=e67]
+              - paragraph [ref=e68]: Ask about project status, create mode, risks, compliance, summaries, or request help. The assistant knows about create mode and current PID status.
+            - generic [ref=e70]:
+              - generic [ref=e71]: Ask about your project, get a summary, or check for risks and compliance gaps.
+              - generic [ref=e72]:
+                - text: "Try:"
+                - list [ref=e73]:
+                  - listitem [ref=e74]: "\"Summarize this project in 5 bullets.\""
+                  - listitem [ref=e75]: "\"List the top 3 risks.\""
+                  - listitem [ref=e76]: "\"What compliance issues should I check?\""
+            - generic [ref=e77]:
+              - textbox "Ask the PMOMax AI assistant" [ref=e78]:
+                - /placeholder: Ask about project status, create mode, risks, compliance, summaries, or request help.
+              - button "Send message to AI assistant" [disabled] [ref=e79]: Send
+        - generic [ref=e80]:
+          - generic [ref=e81]:
+            - heading "General Notes" [level=2] [ref=e82]
+            - button "Help for General Notes" [ref=e83] [cursor=pointer]: "?"
+          - textbox "Add notes, comments, or instructions here. These will be saved and exported." [ref=e85]
+    - main [ref=e86]:
+      - main [ref=e88]:
+        - generic [ref=e89]:
+          - generic [ref=e90]:
+            - heading "01 — Project Info" [level=3] [ref=e91]
+            - button "Help" [ref=e92] [cursor=pointer]: "?"
+          - generic [ref=e94]:
+            - generic [ref=e95]:
+              - generic [ref=e96]: Project Title
+              - generic [ref=e97]: "[No extractable text] RoadRunner_Original_Exact_1808Words.csv"
+            - generic [ref=e98]:
+              - generic [ref=e99]: Subtitle
+              - generic [ref=e100]: Project Initiation Document
+            - generic [ref=e101]:
+              - generic [ref=e102]: Generated On
+              - generic [ref=e103]: 2026-02-26
+            - generic [ref=e104]:
+              - generic [ref=e105]: Sponsor Role
+              - generic [ref=e106]: Sponsor
+        - generic [ref=e107]:
+          - generic [ref=e108]:
+            - heading "02 — Overview & Rationale" [level=3] [ref=e109]
+            - button "Help" [ref=e110] [cursor=pointer]: "?"
+          - generic [ref=e112]:
+            - heading "Executive Summary" [level=3] [ref=e113]
+            - paragraph [ref=e114]: "[No extractable text] RoadRunner_Original_Exact_1808Words.csv If this document is scanned, run OCR and try again."
+        - generic [ref=e115]:
+          - generic [ref=e116]:
+            - heading "03 — Objectives & KPIs" [level=3] [ref=e117]
+            - button "Help" [ref=e118] [cursor=pointer]: "?"
+          - generic [ref=e119]:
+            - generic [ref=e120]:
+              - heading "Objectives (SMART)" [level=3] [ref=e121]
+              - list [ref=e122]:
+                - listitem [ref=e123]: "Objective inferred from narrative: [No extractable text] RoadRunner_Original_Exact_1808Words.csv If this document is scanned, run OCR and try again."
+            - generic [ref=e124]:
+              - heading "KPIs / Success Metrics" [level=3] [ref=e125]
+              - list [ref=e126]:
+                - listitem [ref=e127]:
+                  - text: On-time delivery (%)
+                  - generic [ref=e128]: "(Baseline: TBD, Target: TBD)"
+        - generic [ref=e129]:
+          - generic [ref=e130]:
+            - heading "04 — Scope & Deliverables" [level=3] [ref=e131]
+            - button "Help" [ref=e132] [cursor=pointer]: "?"
+          - generic [ref=e134]:
+            - heading "Scope Exclusions" [level=3] [ref=e135]
+            - list [ref=e136]:
+              - listitem [ref=e137]: "[No extractable text] RoadRunner_Original_Exact_1808Words.csv If this document is scanned, run OCR and try again."
+        - generic [ref=e138]:
+          - generic [ref=e139]:
+            - heading "05 — Assumptions, Constraints, Dependencies" [level=3] [ref=e140]
+            - button "Help" [ref=e141] [cursor=pointer]: "?"
+          - generic [ref=e142]:
+            - generic [ref=e143]:
+              - heading "Assumptions" [level=3] [ref=e144]
+              - list [ref=e145]:
+                - listitem [ref=e146]: "Assumption inferred from narrative: [No extractable text] RoadRunner_Original_Exact_1808Words.csv If this document is scanned, run OCR and try again."
+            - generic [ref=e147]:
+              - heading "Constraints" [level=3] [ref=e148]
+              - list [ref=e149]:
+                - listitem [ref=e150]: Constraint to be confirmed with stakeholders.
+            - generic [ref=e151]:
+              - heading "Dependencies" [level=3] [ref=e152]
+              - list [ref=e153]:
+                - listitem [ref=e154]:
+                  - text: Dependency to be confirmed.
+                  - generic [ref=e155]: (Pending)
+        - generic [ref=e156]:
+          - generic [ref=e157]:
+            - heading "07 — People, Resources & Budget" [level=3] [ref=e158]
+            - button "Help" [ref=e159] [cursor=pointer]: "?"
+          - generic [ref=e161]:
+            - heading "Budget & Cost Breakdown" [level=3] [ref=e162]
+            - generic [ref=e163]: "Currency: USD"
+            - table [ref=e165]:
+              - rowgroup [ref=e166]:
+                - row "Task Persona Hours B M Total Justification" [ref=e167]:
+                  - columnheader "Task" [ref=e168]
+                  - columnheader "Persona" [ref=e169]
+                  - columnheader "Hours" [ref=e170]
+                  - columnheader "B" [ref=e171]
+                  - columnheader "M" [ref=e172]
+                  - columnheader "Total" [ref=e173]
+                  - columnheader "Justification" [ref=e174]
+              - rowgroup [ref=e175]:
+                - row "Budget planning PMO 0 $0.00 ×1 $0.00 Budget details not explicitly specified in source; requires estimation." [ref=e176]:
+                  - cell "Budget planning" [ref=e177]
+                  - cell "PMO" [ref=e178]
+                  - cell "0" [ref=e179]
+                  - cell "$0.00" [ref=e180]
+                  - cell "×1" [ref=e181]
+                  - cell "$0.00" [ref=e182]
+                  - cell "Budget details not explicitly specified in source; requires estimation." [ref=e183]
+            - generic [ref=e184]: "Total: —"
+        - generic [ref=e185]:
+          - generic [ref=e186]:
+            - heading "09 — Governance, Compliance, Open Questions" [level=3] [ref=e187]
+            - button "Help" [ref=e188] [cursor=pointer]: "?"
+          - generic [ref=e189]:
+            - generic [ref=e190]:
+              - heading "Compliance, Security & Privacy" [level=3] [ref=e191]
+              - list [ref=e192]:
+                - listitem [ref=e193]: Access control — Least privilege and access review
+                - listitem [ref=e194]: Data privacy — PII handling and retention policy
+                - listitem [ref=e195]: Data retention — Retention and deletion schedule for logs/data
+                - listitem [ref=e196]: Security checklist — Threat model, pen test / checklist
+                - listitem [ref=e197]: Go-live approvals — Sponsor and Ops signoff for production release
+            - generic [ref=e198]:
+              - heading "Notes & Background" [level=3] [ref=e199]
+              - paragraph [ref=e200]: "[No extractable text] RoadRunner_Original_Exact_1808Words.csv If this document is scanned, run OCR and try again."
+    - complementary [ref=e201]:
+      - generic [ref=e202]:
+        - heading "NAVIGATION" [level=3] [ref=e204]
+        - list [ref=e205]:
+          - listitem [ref=e206]:
+            - button "01 — Project Info" [ref=e207] [cursor=pointer]
+          - listitem [ref=e208]:
+            - button "02 — Overview & Rationale" [ref=e209] [cursor=pointer]
+          - listitem [ref=e210]:
+            - button "03 — Objectives & KPIs" [ref=e211] [cursor=pointer]
+          - listitem [ref=e212]:
+            - button "04 — Scope & Deliverables" [ref=e213] [cursor=pointer]
+          - listitem [ref=e214]:
+            - button "05 — Assumptions & Dependencies" [ref=e215] [cursor=pointer]
+          - listitem [ref=e216]:
+            - button "07 — People & Budget" [ref=e217] [cursor=pointer]
+          - listitem [ref=e218]:
+            - button "09 — Governance & Open Questions" [ref=e219] [cursor=pointer]
+```

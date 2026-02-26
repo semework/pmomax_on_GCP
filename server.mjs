@@ -1009,6 +1009,536 @@ function buildActivityLogPidFromText(text, fileName = '') {
   return pid;
 }
 
+function buildNarrativePidFromText(text, fileName = '') {
+  const raw = String(text || '');
+  if (!raw.trim()) return null;
+  const normalized = raw.replace(/\s+/g, ' ').trim();
+  const sentences = normalized.split(/[.!?]\s+/).map((s) => s.trim()).filter(Boolean);
+
+  const pickSentences = (re, max = 4) =>
+    sentences.filter((s) => re.test(s)).slice(0, max);
+
+  const dateRe = /(\b(?:jan|feb|mar|apr|may|jun|jul|aug|sep|sept|oct|nov|dec)[a-z]*\s+\d{1,2},\s*\d{4}\b|\b\d{4}-\d{2}-\d{2}\b|\bmid-\w+\s+\d{4}\b)/gi;
+  const dates = Array.from(raw.matchAll(dateRe)).map((m) => m[0]);
+
+  const stakeholderMatches = Array.from(raw.matchAll(/\b([A-Z][a-z]+ [A-Z][a-z]+)\s+will\s+([^.\n]{6,120})/g));
+  const stakeholders = stakeholderMatches.map((m) => ({ name: m[1], role: String(m[2] || '').trim() }));
+
+  const projectTitleFromFile = String(fileName || '').replace(/\.[^.]+$/, '').replace(/[_\-]+/g, ' ').trim();
+  const projectTitle = projectTitleFromFile || sentences[0] || 'Project Initiation Document';
+
+  const pid = {
+    titleBlock: {
+      projectTitle,
+      subtitle: 'Project Initiation Document',
+      generatedOn: new Date().toISOString().slice(0, 10),
+      projectId: '',
+    },
+    executiveSummary: sentences.slice(0, 3).join(' ').slice(0, 1200),
+    problemStatement: pickSentences(/\b(issue|problem|challenge|fragmented|inefficien)/i, 2).join(' '),
+    businessCaseExpectedValue: pickSentences(/\b(intended outcome|meant to|so that|aims to|expected outcome)\b/i, 2).join(' '),
+    objectivesSmart: pickSentences(/\b(goal|objective|aim|purpose)\b/i, 3).map((h) => ({ objective: h })),
+    kpis: pickSentences(/%|\b(increase|reduce|improve|decrease|target)\b/i, 5).map((h) => ({ kpi: h })),
+    scopeInclusions: pickSentences(/\b(focus|core|phase|pilot|include|will build|will create|will provide)\b/i, 5),
+    scopeExclusions: pickSentences(/\b(no |not include|will not|without)\b/i, 4),
+    assumptions: pickSentences(/\b(expected|assume|plan|likely|should)\b/i, 4).map((h) => ({ assumption: h })),
+    constraints: pickSentences(/\b(must|required|limited|narrow|only)\b/i, 4).map((h) => ({ constraint: h })),
+    dependencies: pickSentences(/\b(depend|requires|before|after|in parallel)\b/i, 4).map((h) => ({ dependency: h })),
+    stakeholders: stakeholders,
+    projectSponsor: { name: stakeholders[0]?.name || '', role: stakeholders[0]?.role || '' },
+    projectManagerOwner: { name: stakeholders[1]?.name || stakeholders[0]?.name || '' },
+    teamRaci: stakeholders.slice(0, 4).map((s, idx) => ({
+      teamMember: s.name,
+      role: s.role || (idx === 0 ? 'Program Lead' : 'Contributor'),
+      responsible: 'X',
+      accountable: idx === 0 ? 'X' : '',
+      consulted: idx > 0 ? 'X' : '',
+      informed: idx > 1 ? 'X' : '',
+    })),
+    timelineOverview: dates.length ? `Key dates mentioned: ${Array.from(new Set(dates)).join(', ')}.` : '',
+    milestones: Array.from(new Set(dates)).slice(0, 5).map((d) => ({ milestone: `Milestone: ${d}`, targetDate: d })),
+    workBreakdownTasks: pickSentences(/\b(will|focus on|build|implement|design|test|deploy)\b/i, 6).map((h) => ({
+      name: h,
+      status: 'Planned',
+      priority: 'Medium',
+      owner: stakeholders[0]?.name || '',
+      start: '',
+      end: '',
+    })),
+    budgetCostBreakdown: [
+      {
+        task: 'Budget planning',
+        role: 'PMO',
+        estimatedHours: 0,
+        rateUsdPerHour: 0,
+        complexityMultiplier: 1,
+        totalCostUsd: 0,
+        justification: 'Budget details not explicitly specified in source; requires estimation.',
+        source: 'deterministic',
+      },
+    ],
+    resourcesTools: pickSentences(/\b(tool|platform|dashboard|model|routing|analytics|api|database|infrastructure|auth)\b/i, 4).map((h) => ({ resource: h, purpose: 'Referenced in source' })),
+    risks: pickSentences(/\b(risk|delay|issue|vendor|lock|timeout|spike)\b/i, 4).map((h) => ({ risk: h })),
+    mitigationsContingencies: pickSentences(/\b(mitigat|contingenc|fallback|handle)\b/i, 3).map((h) => ({ mitigation: h })),
+    issuesDecisionsLog: [],
+    communicationPlan: pickSentences(/\b(weekly|stand-up|sync|updates|digest|communication)\b/i, 3).map((h) => ({ audience: 'Team', cadence: 'Weekly', channel: h })),
+    governanceApprovals: pickSentences(/\b(approval|signoff|governance|gate)\b/i, 3).map((h) => ({ gate: 'Approval', signOffRequirement: h })),
+    complianceSecurityPrivacy: pickSentences(/\b(compliance|privacy|security|audit)\b/i, 3).map((h) => ({ requirement: h })),
+    openQuestionsNextSteps: pickSentences(/\b(next step|next steps|open question|follow up)\b/i, 3).map((h) => ({ question: h, nextStep: '' })),
+    notesBackground: sentences.slice(0, 8).join(' '),
+  };
+
+  return pid;
+}
+
+function normalizeListText(value) {
+  if (!value) return [];
+  const lines = String(value)
+    .split(/\r?\n/)
+    .map((l) => l.trim())
+    .filter(Boolean);
+  const out = [];
+  for (const line of lines) {
+    const m = line.match(/^[-*•\d+.]+\s+(.*)$/);
+    out.push((m ? m[1] : line).trim());
+  }
+  return out.filter(Boolean);
+}
+
+function normalizeDateMaybe(value) {
+  const s = String(value || '').trim();
+  if (!s) return '';
+  const t = Date.parse(s);
+  if (!Number.isFinite(t)) return s;
+  return new Date(t).toISOString().slice(0, 10);
+}
+
+function rowValue(row, keys) {
+  if (!row || typeof row !== 'object') return '';
+  for (const key of keys) {
+    if (row[key] != null && String(row[key]).trim()) return String(row[key]).trim();
+  }
+  const lower = {};
+  for (const [k, v] of Object.entries(row)) {
+    lower[String(k).toLowerCase()] = v;
+  }
+  for (const key of keys) {
+    const v = lower[String(key).toLowerCase()];
+    if (v != null && String(v).trim()) return String(v).trim();
+  }
+  return '';
+}
+
+function mapRows(rows, mapper) {
+  if (!Array.isArray(rows)) return [];
+  return rows.map(mapper).filter((r) => r && Object.values(r).some((v) => String(v || '').trim() !== ''));
+}
+
+function buildPidFromLegacyFieldsTables(raw, fileName = '') {
+  if (!raw || typeof raw !== 'object') return null;
+  const fields = raw.fields || {};
+  const tables = raw.tables || {};
+  const getField = (key) => String(fields?.[key] || '').trim();
+
+  const projectTitle =
+    getField('fld-project-name') ||
+    String(fileName || '').replace(/\.[^.]+$/, '').replace(/[_\-]+/g, ' ').trim();
+  const generatedOn = getField('fld-date') || new Date().toISOString().slice(0, 10);
+
+  const objectivesSmart = mapRows(tables['tbl-objectives'], (row) => ({
+    objective: rowValue(row, ['Objective', 'objective', 'Goal', 'goal']),
+    successMeasure: rowValue(row, ['Success Measure', 'successMeasure', 'Measure', 'measure', 'Target']),
+  }));
+  const kpis = mapRows(tables['tbl-kpis'], (row) => ({
+    kpi: rowValue(row, ['Metric', 'KPI', 'kpi', 'Metric/KPI']),
+    baseline: rowValue(row, ['Baseline', 'baseline']),
+    target: rowValue(row, ['Target', 'target']),
+  }));
+  const constraints = mapRows(tables['tbl-constraints'], (row) => ({
+    constraint: rowValue(row, ['Description', 'Constraint', 'constraint']),
+  }));
+  const dependencies = mapRows(tables['tbl-dependencies'], (row) => ({
+    dependency: rowValue(row, ['Description', 'Dependency', 'dependency']),
+    teamOrSystem: rowValue(row, ['Team/System', 'Team', 'System', 'Owner', 'owner']),
+    status: rowValue(row, ['Status', 'status']) || 'Pending',
+  }));
+  const stakeholders = mapRows(tables['tbl-stakeholders'], (row) => ({
+    name: rowValue(row, ['Name', 'name']),
+    role: rowValue(row, ['Role', 'role']),
+    contact: rowValue(row, ['Contact', 'Email', 'email']),
+  }));
+  const teamRaci = mapRows(tables['tbl-team'], (row) => ({
+    teamMember: rowValue(row, ['Team Member', 'Member', 'Name', 'name']),
+    role: rowValue(row, ['Role', 'role']),
+    responsible: rowValue(row, ['R', 'Responsible', 'responsible']) || '',
+    accountable: rowValue(row, ['A', 'Accountable', 'accountable']) || '',
+    consulted: rowValue(row, ['C', 'Consulted', 'consulted']) || '',
+    informed: rowValue(row, ['I', 'Informed', 'informed']) || '',
+  }));
+  const milestones = mapRows(tables['tbl-milestones'], (row) => ({
+    milestone: rowValue(row, ['name', 'Milestone', 'milestone', 'Title', 'title']),
+    targetDate: normalizeDateMaybe(rowValue(row, ['date', 'Date', 'Target Date', 'targetDate'])),
+  }));
+  const deliverablesOutputs = mapRows(tables['tbl-deliverables'], (row) => ({
+    name: rowValue(row, ['name', 'Deliverable', 'deliverable', 'Output']),
+  }));
+  const workBreakdownTasks = mapRows(tables['tbl-deliverables'], (row) => ({
+    name: rowValue(row, ['name', 'Deliverable', 'deliverable', 'Output']),
+    start: normalizeDateMaybe(rowValue(row, ['start', 'Start', 'Start Date'])),
+    end: normalizeDateMaybe(rowValue(row, ['end', 'End', 'End Date'])),
+    owner: rowValue(row, ['owner', 'Owner', 'Team']),
+    status: rowValue(row, ['status', 'Status']) || 'Planned',
+    priority: rowValue(row, ['priority', 'Priority']) || 'Medium',
+    kind: rowValue(row, ['kind', 'Kind', 'Type']) || '',
+    dependencies: normalizeListText(rowValue(row, ['deps', 'Dependencies', 'Dependency'])),
+  }));
+  const budgetCostBreakdown = mapRows(tables['tbl-costs'], (row) => {
+    const costRaw = rowValue(row, ['Cost', 'cost', 'Amount', 'amount']);
+    const cost = Number(String(costRaw).replace(/[^\d.\-]/g, ''));
+    return {
+      task: rowValue(row, ['Task', 'Item', 'task', 'Item']) || rowValue(row, ['Category', 'category']),
+      role: rowValue(row, ['Category', 'category', 'Role', 'role']),
+      estimatedHours: 0,
+      rateUsdPerHour: 0,
+      complexityMultiplier: 1,
+      totalCostUsd: Number.isFinite(cost) ? cost : 0,
+      justification: rowValue(row, ['Item', 'item']) || 'Cost line item',
+      source: 'deterministic',
+    };
+  });
+  const risks = mapRows(tables['tbl-risks'], (row) => ({
+    risk: rowValue(row, ['Risk', 'risk', 'Issue']),
+    probability: rowValue(row, ['Probability', 'probability']),
+    impact: rowValue(row, ['Impact', 'impact']),
+  }));
+  const mitigationsContingencies = mapRows(tables['tbl-risks'], (row) => ({
+    mitigation: rowValue(row, ['Mitigation', 'mitigation']),
+    contingency: '',
+  }));
+  const issuesDecisionsLog = mapRows(tables['tbl-decisions'], (row) => ({
+    issue: rowValue(row, ['Decision', 'Issue', 'decision', 'issue']),
+    decision: rowValue(row, ['Decision', 'decision']),
+    owner: rowValue(row, ['Owner', 'owner']),
+    date: normalizeDateMaybe(rowValue(row, ['Date', 'date'])),
+  }));
+  const communicationPlan = mapRows(tables['tbl-comms-plan'], (row) => ({
+    audience: rowValue(row, ['Audience', 'audience']),
+    cadence: rowValue(row, ['Frequency', 'Cadence', 'frequency', 'cadence']),
+    channel: rowValue(row, ['Channel', 'channel', 'Communication']),
+  }));
+  const governanceApprovals = mapRows(tables['tbl-approvals'], (row) => ({
+    gate: rowValue(row, ['Gate', 'gate', 'Role']),
+    signoffRequirement: rowValue(row, ['Approver', 'name', 'Name', 'signature', 'Signoff']),
+  }));
+  const openQuestionsNextSteps = mapRows(tables['tbl-open-questions'], (row) => ({
+    question: rowValue(row, ['Task', 'Question', 'question']),
+    nextStep: rowValue(row, ['Assignee', 'DueDate', 'Next', 'nextStep']),
+  }));
+
+  const pid = {
+    titleBlock: {
+      projectTitle,
+      subtitle: 'Project Initiation Document',
+      projectId: getField('fld-project-id'),
+      generatedOn,
+    },
+    executiveSummary: getField('fld-exec'),
+    problemStatement: getField('fld-problem'),
+    businessCaseExpectedValue: getField('fld-business-case'),
+    objectivesSmart: objectivesSmart.length ? objectivesSmart : normalizeListText(getField('fld-objectives')).map((o) => ({ objective: o, successMeasure: '' })),
+    kpis: kpis.length ? kpis : normalizeListText(getField('fld-kpis')).map((k) => ({ kpi: k, baseline: '', target: '' })),
+    scopeInclusions: normalizeListText(getField('fld-scope-inclusions')),
+    scopeExclusions: normalizeListText(getField('fld-scope-exclusions')),
+    assumptions: normalizeListText(getField('fld-assumptions')).map((a) => ({ assumption: a })),
+    constraints: constraints.length ? constraints : normalizeListText(getField('fld-constraints-notes')).map((c) => ({ constraint: c })),
+    dependencies: dependencies.length ? dependencies : normalizeListText(getField('fld-dependencies-notes')).map((d) => ({ dependency: d, teamOrSystem: '', status: 'Pending' })),
+    stakeholders: stakeholders.length ? stakeholders : normalizeListText(getField('fld-stakeholders-notes')).map((s) => ({ name: s, role: '', contact: '' })),
+    projectSponsor: {
+      name: getField('fld-sponsor-notes'),
+      role: 'Sponsor',
+    },
+    projectManagerOwner: {
+      name: getField('fld-project-manager-notes'),
+    },
+    teamRaci: teamRaci.length
+      ? teamRaci
+      : normalizeListText(getField('fld-raci-notes')).map((s) => ({
+          teamMember: s,
+          role: '',
+          responsible: 'X',
+          accountable: '',
+          consulted: '',
+          informed: '',
+        })),
+    timelineOverview: getField('fld-timeline-overview'),
+    milestones: milestones.length
+      ? milestones
+      : normalizeListText(getField('fld-milestones')).map((m) => ({ milestone: m, targetDate: '' })),
+    workBreakdownTasks: workBreakdownTasks.length
+      ? workBreakdownTasks
+      : normalizeListText(getField('fld-work-breakdown-notes')).map((n) => ({
+          name: n,
+          start: '',
+          end: '',
+          owner: '',
+          status: 'Planned',
+          priority: 'Medium',
+          kind: '',
+          dependencies: [],
+        })),
+    budgetCostBreakdown: budgetCostBreakdown,
+    budgetSummary: {},
+    resourcesTools: normalizeListText(getField('fld-resources-notes') || getField('fld-resources-tools')).map((r) => ({ resource: r, purpose: '' })),
+    risks: risks.length ? risks : normalizeListText(getField('fld-risks')).map((r) => ({ risk: r, probability: '', impact: '' })),
+    mitigationsContingencies: mitigationsContingencies.length
+      ? mitigationsContingencies
+      : normalizeListText(getField('fld-mitigations')).map((m) => ({ mitigation: m, contingency: '' })),
+    issuesDecisionsLog: issuesDecisionsLog.length
+      ? issuesDecisionsLog
+      : normalizeListText(getField('fld-issues')).map((i) => ({ issue: i, decision: '', owner: '', date: '' })),
+    communicationPlan: communicationPlan.length
+      ? communicationPlan
+      : normalizeListText(getField('fld-comms-plan-notes')).map((c) => ({ audience: c, cadence: '', channel: '' })),
+    governanceApprovals: governanceApprovals.length
+      ? governanceApprovals
+      : normalizeListText(getField('fld-governance-approvals-notes')).map((g) => ({ gate: g, signoffRequirement: '' })),
+    complianceSecurityPrivacy: normalizeListText(getField('fld-compliance-notes')).map((c) => ({ requirement: c, notes: '' })),
+    openQuestionsNextSteps: openQuestionsNextSteps.length
+      ? openQuestionsNextSteps
+      : normalizeListText(getField('fld-open-questions')).map((q) => ({ question: q, nextStep: '' })),
+    notesBackground: getField('notes-area'),
+  };
+
+  if (!pid.projectSponsor.name && pid.stakeholders.length > 0) {
+    pid.projectSponsor.name = pid.stakeholders[0].name || '';
+  }
+  if (!pid.projectManagerOwner.name && pid.stakeholders.length > 1) {
+    pid.projectManagerOwner.name = pid.stakeholders[1].name || pid.stakeholders[0].name || '';
+  }
+  if (pid.budgetCostBreakdown.length === 0) {
+    const budgeted = computeDeterministicBudget(pid, pid.notesBackground || '');
+    pid.budgetCostBreakdown = budgeted.items || [];
+    pid.budgetSummary = budgeted.summary || {};
+  }
+  if (!pid.timelineOverview && milestones.length > 0) {
+    pid.timelineOverview = `Milestones: ${milestones.map((m) => `${m.milestone} ${m.targetDate || ''}`.trim()).join(' • ')}`;
+  }
+
+  return pid;
+}
+
+function mergePidPreferPrimary(primary, fallback) {
+  const base = makeEmptyPid();
+  const out = { ...base };
+  for (const key of Object.keys(base)) {
+    const baseVal = base[key];
+    const pVal = primary ? primary[key] : undefined;
+    const fVal = fallback ? fallback[key] : undefined;
+    if (Array.isArray(baseVal)) {
+      if (Array.isArray(pVal) && pVal.length > 0) out[key] = pVal;
+      else if (Array.isArray(fVal) && fVal.length > 0) out[key] = fVal;
+      else out[key] = baseVal;
+    } else if (typeof baseVal === 'object' && baseVal !== null) {
+      out[key] = { ...baseVal, ...(fVal || {}), ...(pVal || {}) };
+    } else {
+      const pOk = pVal != null && String(pVal).trim() !== '';
+      const fOk = fVal != null && String(fVal).trim() !== '';
+      out[key] = pOk ? pVal : fOk ? fVal : baseVal;
+    }
+  }
+  return out;
+}
+
+function pidHasContent(pid) {
+  if (!pid || typeof pid !== 'object') return false;
+  if (pid.titleBlock && pid.titleBlock.projectTitle) return true;
+  for (const [k, v] of Object.entries(pid)) {
+    if (Array.isArray(v) && v.length > 0) return true;
+    if (typeof v === 'string' && v.trim().length > 0) return true;
+  }
+  return false;
+}
+
+function ensureMinimumPidContent(pid, text, fileName = '') {
+  const base = mergeWithEmptyPid(pid);
+  const raw = String(text || '').replace(/\s+/g, ' ').trim();
+  const sentences = raw.split(/[.!?]\s+/).map((s) => s.trim()).filter(Boolean);
+  const pick = (re, max = 2) => sentences.filter((s) => re.test(s)).slice(0, max);
+
+  const firstSentence = sentences[0] || '';
+  const secondSentence = sentences[1] || '';
+  const nameMatches = Array.from(String(text || '').matchAll(/\b([A-Z][a-z]+ [A-Z][a-z]+)\b/g)).map((m) => m[1]);
+  const uniqueNames = Array.from(new Set(nameMatches)).slice(0, 12);
+  const dates = Array.from(String(text || '').matchAll(/(\b(?:jan|feb|mar|apr|may|jun|jul|aug|sep|sept|oct|nov|dec)[a-z]*\s+\d{1,2},\s*\d{4}\b|\b\d{4}-\d{2}-\d{2}\b)/gi)).map((m) => m[0]);
+
+  if (!base.titleBlock.projectTitle) {
+    base.titleBlock.projectTitle = String(fileName || '').replace(/\.[^.]+$/, '').replace(/[_\-]+/g, ' ').trim() || firstSentence || 'Project Initiation Document';
+  }
+  if (!base.titleBlock.generatedOn) base.titleBlock.generatedOn = new Date().toISOString().slice(0, 10);
+
+  if (!base.executiveSummary) {
+    base.executiveSummary = [firstSentence, secondSentence].filter(Boolean).join(' ').slice(0, 1200);
+  }
+  if (!base.problemStatement) {
+    base.problemStatement = pick(/\b(problem|issue|challenge|pain|risk|gap)\b/i, 2).join(' ');
+  }
+  if (!base.businessCaseExpectedValue) {
+    base.businessCaseExpectedValue = pick(/\b(value|benefit|roi|improve|increase|reduce|impact|outcome)\b/i, 2).join(' ');
+  }
+
+  if (!Array.isArray(base.objectivesSmart) || base.objectivesSmart.length === 0) {
+    const objs = pick(/\b(objective|goal|aim|deliver|build|implement)\b/i, 3);
+    base.objectivesSmart = objs.map((o) => ({ objective: o, successMeasure: '' }));
+  }
+  if (Array.isArray(base.objectivesSmart) && base.objectivesSmart.length === 0) {
+    const fallback = sentences[0] || '';
+    base.objectivesSmart = [
+      { objective: fallback ? `Objective inferred from narrative: ${fallback}` : 'Define scope, deliverables, and success criteria.', successMeasure: '' },
+    ];
+  }
+  if (!Array.isArray(base.kpis) || base.kpis.length === 0) {
+    const metrics = pick(/\b(%|percent|increase|reduce|target|baseline|kpi|metric)\b/i, 3);
+    base.kpis = metrics.map((m) => ({ kpi: m, baseline: '', target: '' }));
+  }
+  if (Array.isArray(base.kpis) && base.kpis.length === 0) {
+    base.kpis = [
+      { kpi: 'On-time delivery (%)', baseline: 'TBD', target: 'TBD' },
+    ];
+  }
+
+  if (!Array.isArray(base.scopeInclusions) || base.scopeInclusions.length === 0) {
+    base.scopeInclusions = pick(/\b(in scope|include|will build|will deliver|focus)\b/i, 4);
+  }
+  if (!Array.isArray(base.scopeExclusions) || base.scopeExclusions.length === 0) {
+    base.scopeExclusions = pick(/\b(out of scope|exclude|will not|not include)\b/i, 3);
+  }
+
+  if (!Array.isArray(base.assumptions) || base.assumptions.length === 0) {
+    base.assumptions = pick(/\b(assume|assumption|expected|likely)\b/i, 3).map((a) => ({ assumption: a }));
+  }
+  if (Array.isArray(base.assumptions) && base.assumptions.length === 0) {
+    const fallback = sentences[2] || sentences[0] || '';
+    if (fallback) base.assumptions = [{ assumption: `Assumption inferred from narrative: ${fallback}` }];
+  }
+  if (!Array.isArray(base.constraints) || base.constraints.length === 0) {
+    base.constraints = pick(/\b(constraint|limited|must|required)\b/i, 3).map((c) => ({ constraint: c }));
+  }
+  if (Array.isArray(base.constraints) && base.constraints.length === 0) {
+    const fallback = sentences[3] || sentences[1] || '';
+    base.constraints = [{ constraint: fallback ? `Constraint inferred from narrative: ${fallback}` : 'Constraint to be confirmed with stakeholders.' }];
+  }
+  if (!Array.isArray(base.dependencies) || base.dependencies.length === 0) {
+    base.dependencies = pick(/\b(depend|dependency|required|needs)\b/i, 3).map((d) => ({
+      dependency: d,
+      teamOrSystem: '',
+      status: 'Pending',
+    }));
+  }
+  if (Array.isArray(base.dependencies) && base.dependencies.length === 0) {
+    const fallback = sentences[4] || sentences[2] || '';
+    base.dependencies = [
+      {
+        dependency: fallback ? `Dependency inferred from narrative: ${fallback}` : 'Dependency to be confirmed.',
+        teamOrSystem: '',
+        status: 'Pending',
+      },
+    ];
+  }
+
+  if (!Array.isArray(base.stakeholders) || base.stakeholders.length === 0) {
+    base.stakeholders = uniqueNames.map((n) => ({ name: n, role: '', contact: '' }));
+  }
+  if (!base.projectSponsor?.name && base.stakeholders.length > 0) {
+    base.projectSponsor = { name: base.stakeholders[0].name || '', role: 'Sponsor' };
+  }
+  if (!base.projectManagerOwner?.name && base.stakeholders.length > 1) {
+    base.projectManagerOwner = { name: base.stakeholders[1].name || base.stakeholders[0]?.name || '', role: 'Project Manager' };
+  }
+
+  if (!base.timelineOverview) {
+    base.timelineOverview = dates.length ? `Key dates: ${Array.from(new Set(dates)).join(', ')}.` : '';
+  }
+  if (!Array.isArray(base.milestones) || base.milestones.length === 0) {
+    base.milestones = Array.from(new Set(dates)).slice(0, 6).map((d) => ({ milestone: `Milestone: ${d}`, targetDate: d }));
+  }
+  if (!Array.isArray(base.workBreakdownTasks) || base.workBreakdownTasks.length === 0) {
+    const tasks = pick(/\b(will|build|implement|design|test|deploy|deliver)\b/i, 5);
+    base.workBreakdownTasks = tasks.map((t) => ({
+      name: t,
+      start: '',
+      end: '',
+      owner: base.projectManagerOwner?.name || '',
+      status: 'Planned',
+      priority: 'Medium',
+      kind: '',
+      dependencies: [],
+    }));
+  }
+
+  if (!Array.isArray(base.resourcesTools) || base.resourcesTools.length === 0) {
+    const res = pick(/\b(tool|platform|database|api|dashboard|cloud|storage)\b/i, 4);
+    base.resourcesTools = res.map((r) => ({ resource: r, purpose: '' }));
+  }
+  if (!Array.isArray(base.budgetCostBreakdown) || base.budgetCostBreakdown.length === 0) {
+    const budgeted = computeDeterministicBudget(base, base.notesBackground || raw || '');
+    base.budgetCostBreakdown = budgeted.items || [];
+    base.budgetSummary = budgeted.summary || {};
+  }
+
+  if (!Array.isArray(base.risks) || base.risks.length === 0) {
+    base.risks = pick(/\b(risk|issue|delay|blocker|security)\b/i, 3).map((r) => ({
+      risk: r,
+      probability: '',
+      impact: '',
+    }));
+  }
+  if (!Array.isArray(base.mitigationsContingencies) || base.mitigationsContingencies.length === 0) {
+    base.mitigationsContingencies = pick(/\b(mitigat|contingenc|fallback|plan)\b/i, 2).map((m) => ({
+      mitigation: m,
+      contingency: '',
+    }));
+  }
+  if (!Array.isArray(base.issuesDecisionsLog) || base.issuesDecisionsLog.length === 0) {
+    base.issuesDecisionsLog = pick(/\b(issue|decision|resolved|approved)\b/i, 2).map((i) => ({
+      issue: i,
+      decision: '',
+      owner: '',
+      date: '',
+    }));
+  }
+  if (!Array.isArray(base.communicationPlan) || base.communicationPlan.length === 0) {
+    base.communicationPlan = pick(/\b(weekly|status|update|meeting|standup|sync)\b/i, 2).map((c) => ({
+      audience: 'Stakeholders',
+      cadence: 'Weekly',
+      channel: c,
+    }));
+  }
+
+  if (!Array.isArray(base.governanceApprovals) || base.governanceApprovals.length === 0) {
+    base.governanceApprovals = pick(/\b(approval|signoff|governance|gate)\b/i, 2).map((g) => ({
+      gate: 'Approval',
+      signoffRequirement: g,
+    }));
+  }
+  if (!Array.isArray(base.complianceSecurityPrivacy) || base.complianceSecurityPrivacy.length === 0) {
+    base.complianceSecurityPrivacy = pick(/\b(compliance|security|privacy|audit)\b/i, 2).map((c) => ({
+      requirement: c,
+      notes: '',
+    }));
+  }
+  if (!Array.isArray(base.openQuestionsNextSteps) || base.openQuestionsNextSteps.length === 0) {
+    base.openQuestionsNextSteps = pick(/\b(next step|next steps|follow up|open question)\b/i, 2).map((q) => ({
+      question: q,
+      nextStep: '',
+    }));
+  }
+  if (!base.notesBackground) {
+    base.notesBackground = sentences.slice(0, 8).join(' ');
+  }
+
+  return base;
+}
+
 function buildFallbackPidFromText(text, fileName = '') {
   const src = normalizeTextPreserveLines(String(text || ""));
   const lines = src.split(/\r?\n/);
@@ -1839,7 +2369,11 @@ app.post('/api/ai/parse', async (req, res) => {
     try {
       const local = localParse(parseText);
       if (local && local.parse_success && local.data) {
-        localPid = local.data;
+        if (local.data.fields && local.data.tables) {
+          localPid = buildPidFromLegacyFieldsTables(local.data, fileName);
+        } else {
+          localPid = local.data;
+        }
       }
       if (Array.isArray(local?.warnings)) {
         localWarnings = local.warnings.map((w) => String(w)).filter(Boolean);
@@ -1847,7 +2381,14 @@ app.post('/api/ai/parse', async (req, res) => {
     } catch {}
 
     const activityPid = buildActivityLogPidFromText(parseText, fileName);
-    const detPid = localPid || activityPid || buildFallbackPidFromText(parseText, fileName);
+    const narrativePid = buildNarrativePidFromText(parseText, fileName);
+    let detPid = null;
+    if (localPid && pidHasContent(localPid)) {
+      detPid = mergePidPreferPrimary(localPid, activityPid || narrativePid || buildFallbackPidFromText(parseText, fileName));
+    } else {
+      detPid = activityPid || narrativePid || buildFallbackPidFromText(parseText, fileName);
+    }
+    detPid = ensureMinimumPidContent(detPid, parseText, fileName);
     let detFields = pidToLegacyFields(detPid);
 
     // Collect AI legacy fields from either aiObj.fields or top-level fld-* keys
