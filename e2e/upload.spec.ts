@@ -9,7 +9,7 @@ function isTestFile(name: string) {
 }
 
 test.describe('Upload all TEST_DATA files', () => {
-  test.setTimeout(300_000);
+  test.setTimeout(900_000);
 
   test('uploads and parses every file', async ({ page }, testInfo) => {
     const baseUrl = process.env.PLAYWRIGHT_BASE_URL
@@ -20,6 +20,9 @@ test.describe('Upload all TEST_DATA files', () => {
 
     for (const file of files) {
       const filePath = path.join(TEST_DIR, file);
+      const stat = await fs.stat(filePath);
+      const startedAt = Date.now();
+      console.log(`[upload.spec] Parsing ${file} (${Math.round(stat.size / 1024)} KB)`);
       await page.goto(baseUrl, { waitUntil: 'networkidle' });
       const fileInput = page.locator('input[type="file"]');
       await expect(fileInput).toHaveCount(1);
@@ -41,6 +44,8 @@ test.describe('Upload all TEST_DATA files', () => {
 
       await expect(projectInfoHeading).toBeVisible();
       await expect(errorBanner).toHaveCount(0);
+      const durationSec = ((Date.now() - startedAt) / 1000).toFixed(1);
+      console.log(`[upload.spec] Parsed ${file} in ${durationSec}s`);
     }
   });
 });

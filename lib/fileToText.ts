@@ -4,6 +4,7 @@
 // unless a caller explicitly chooses to throw.
 
 import * as XLSX from 'xlsx';
+import { INTERNAL_MAX_WORDS } from './supportedFormats';
 
 export type FileTextResult = {
   text: string;
@@ -12,7 +13,6 @@ export type FileTextResult = {
 };
 
 // Internal caps (keep aligned with server limits as closely as practical)
-const INTERNAL_MAX_WORDS = 50_000; // hard word cap (matches server)
 const MAX_CHARS = 3_500_000; // hard char cap for preview text (prevents UI lockups)
 
 /** Best-effort error normalizer (keeps this file buildable without importing shared helpers). */
@@ -61,6 +61,19 @@ function normalizeExtractedText(text: string): string {
   const nl = noNul.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
   // Collapse excessive whitespace while preserving paragraph boundaries
   return nl.replace(/[ \t]+\n/g, '\n').replace(/\n{3,}/g, '\n\n').trim();
+}
+
+/** Normalize text while preserving line structure (better for TXT/MD/CSV parsing). */
+function normalizeTextPreserveLines(text: string): string {
+  const s = String(text ?? '');
+  if (!s) return '';
+  const noNul = s.replace(/\u0000/g, '');
+  const nl = noNul.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+  const trimmedLines = nl
+    .split('\n')
+    .map((line) => line.replace(/[ \t]+$/g, ''))
+    .join('\n');
+  return trimmedLines.replace(/\n{3,}/g, '\n\n').trim();
 }
 
 function capWords(text: string, maxWords: number): { text: string; truncated: boolean } {
@@ -162,7 +175,10 @@ async function docxToTextServer(file: File): Promise<FileTextResult> {
  *  - POST /api/extract/start  -> { ok: true, jobId }
  *  - GET  /api/extract/status/:jobId -> { ok: true, status: "completed", text, warnings?, truncated? }
  */
-async function parseViaServer(file: File): Promise<FileTextResult> {
+async function parseViaServer(
+  file: File,
+  opts: { preserveLines?: boolean } = {},
+): Promise<FileTextResult> {
   const formData = new FormData();
   formData.append('file', file);
 
@@ -230,7 +246,7 @@ async function parseViaServer(file: File): Promise<FileTextResult> {
     }
 
     if (!statusRes.ok || !statusData?.ok) {
-      const msg =
+      let msg =
         statusData?.error?.message || statusData?.errorMessage || statusRes.statusText || 'Server parse failed';
       if (msg && msg.startsWith('{')) {
         try {
@@ -259,7 +275,9 @@ async function parseViaServer(file: File): Promise<FileTextResult> {
     throw new Error('Sorry, the server took too long to parse your file. Please try again.');
   }
 
-  const baseText = normalizeExtractedText(String(statusData?.text || ''));
+  const baseText = opts.preserveLines
+    ? normalizeTextPreserveLines(String(statusData?.text || ''))
+    : normalizeExtractedText(String(statusData?.text || ''));
   const warnings = Array.isArray(statusData?.warnings)
     ? statusData.warnings.map((w: any) => String(w)).filter(Boolean)
     : [];
@@ -299,8 +317,10 @@ async function ensureNonEmpty(result: FileTextResult, file: File): Promise<FileT
 }
 
 export async function processInChunks(file: File): Promise<FileTextResult> {
+  const ext = (file?.name || '').split('.').pop()?.toLowerCase() || '';
+  const preserveLines = ['txt', 'md', 'csv', 'tsv'].includes(ext);
   try {
-    const server = await parseViaServer(file);
+    const server = await parseViaServer(file, { preserveLines });
     return await ensureNonEmpty(server, file);
   } catch {
     return await ensureNonEmpty({ text: '', warnings: [], truncated: false }, file);
@@ -452,7 +472,7 @@ export async function fileToText(file: File): Promise<FileTextResult> {
     if (ext === 'csv') {
       try {
         const raw = await file.text();
-        const text = normalizeExtractedText(raw || '');
+        const text = normalizeTextPreserveLines(raw || '');
         if (text.length > 0) {
           const truncated = text.length > MAX_CHARS;
           const clipped = truncated ? text.slice(0, MAX_CHARS) : text;
@@ -541,10 +561,10 @@ export async function fileToText(file: File): Promise<FileTextResult> {
     // TXT / MD / unknown: read as text (server fallback if large)
     try {
       if (isBrowser && file.size > SERVER_FALLBACK_BYTES) {
-        return await ensureNonEmpty(await parseViaServer(file), file);
+        return await ensureNonEmpty(await parseViaServer(file, { preserveLines: true }), file);
       }
       const buf = await file.arrayBuffer();
-      const t = normalizeExtractedText(decodeTextBuffer(buf));
+      const t = normalizeTextPreserveLines(decodeTextBuffer(buf));
       if (!t.trim()) return { text: `[Empty file] ${name || 'Unnamed file'}`.trim(), warnings: [], truncated: false };
       if (looksBinary(t)) throw new Error('File appears to be binary, corrupt, or empty.');
       return await ensureNonEmpty(withWordCap(t), file);

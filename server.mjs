@@ -131,7 +131,7 @@ const __dirname = path.dirname(__filename);
 import { demoData } from './data/demoData.js';
 
 // Hard limits (must match client gates)
-const MAX_PAGES = 112; // UI only, for 50,000 words at 450/page
+const MAX_PAGES = 112; // UI hard limit (PDF page cap)
 const WORDS_PER_PAGE = 450;
 const INTERNAL_MAX_PAGES = 112;
 const INTERNAL_MAX_WORDS = 75_000;
@@ -557,7 +557,7 @@ async function parseUploadedFile(file, startMs = Date.now()) {
       const exceeded = enforceWordLimit(text);
       const capped = clampText(text);
       const warnings = capped.truncated ? ['Document truncated to server limit.'] : [];
-      if (exceeded) warnings.push('Document exceeds the 50-page limit; truncated to the first 50 pages.');
+      if (exceeded) warnings.push('Document exceeds the server word limit; truncated to the maximum allowed.');
       if (isNearEmptyText(capped.text)) {
         return buildAiFallbackResult(file, warnings, startMs);
       }
@@ -650,7 +650,7 @@ async function parseUploadedFile(file, startMs = Date.now()) {
         : normalizeText(text);
       const capped = clampText(normalized);
       const warnings = capped.truncated ? ['Document truncated to server limit.'] : [];
-      if (exceeded) warnings.push('Document exceeds the 50-page limit; truncated to the first 50 pages.');
+      if (exceeded) warnings.push('Document exceeds the server word limit; truncated to the maximum allowed.');
       if (!capped.text || !String(capped.text).trim()) {
         const fallbackText = buildEmptyFallbackText(file?.originalname || '');
         const durationMs = Math.max(1, Date.now() - startMs);

@@ -1,7 +1,7 @@
 // lib/supportedFormats.ts
 // Central place for all supported input formats and hard limits.
 
-export const MAX_PAGES = 112; // UI only, for 50,000 words at 450/page
+export const MAX_PAGES = 112; // UI hard limit (PDF page cap)
 export const WORDS_PER_PAGE = 450;
 export const INTERNAL_MAX_PAGES = 112;
 export const INTERNAL_MAX_WORDS = 75_000;
