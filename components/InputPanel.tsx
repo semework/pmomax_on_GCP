@@ -282,9 +282,11 @@ export const InputPanel: React.FC<InputPanelProps> = ({
       <label className="block text-base font-semibold text-white mb-1" htmlFor="input-panel-textarea">
         Paste, drop, upload, or create a Project Initiation Document (PID)
       </label>
-      <div className="text-xs text-amber-200 mb-1">
-        Supported: DOCX, PDF, TXT, MD, CSV, XLS/XLSX — Options: paste, drop, upload, create, or load example. Tip: Recommended ≤50 pages (hard limit {MAX_PAGES}).
-      </div>
+      {lastError && lastSource === 'upload' ? (
+        <div className="text-xs text-amber-200 mb-1">
+          Supported: DOCX, PDF, TXT, MD, CSV, XLS/XLSX — Options: paste, drop, upload, create, or load example. Tip: Recommended ≤50 pages (hard limit {MAX_PAGES}).
+        </div>
+      ) : null}
       <textarea
         id="input-panel-textarea"
         rows={3}
