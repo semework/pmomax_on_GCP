@@ -84,6 +84,74 @@ function capWords(text: string, maxWords: number): { text: string; truncated: bo
   return { text: capped, truncated: true };
 }
 
+const LOG_HEADER_HINTS = [
+  'activity',
+  'activity_log',
+  'summary',
+  'notes',
+  'log',
+  'narrative',
+  'details',
+  'description',
+];
+
+const DATE_HEADER_HINTS = ['date', 'day', 'timestamp'];
+
+const normalizeHeader = (h: any) =>
+  String(h ?? '')
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '_')
+    .replace(/^_+|_+$/g, '');
+
+function rowsToNarrative(rows: Array<Record<string, any>>): string | null {
+  if (!Array.isArray(rows) || rows.length === 0) return null;
+  const headers = Object.keys(rows[0] || {});
+  if (headers.length === 0) return null;
+  const normalized = headers.map((h) => normalizeHeader(h));
+  const dateIdx = normalized.findIndex((h) => DATE_HEADER_HINTS.some((k) => h.includes(k)));
+  let textIdx = normalized.findIndex((h) => LOG_HEADER_HINTS.some((k) => h.includes(k)));
+  if (textIdx < 0) {
+    // Fallback: pick the longest textual column (excluding date)
+    let bestIdx = -1;
+    let bestLen = 0;
+    normalized.forEach((_, idx) => {
+      if (idx === dateIdx) return;
+      const len = rows.reduce((acc, r) => acc + String(r[headers[idx]] ?? '').length, 0);
+      if (len > bestLen) {
+        bestLen = len;
+        bestIdx = idx;
+      }
+    });
+    textIdx = bestIdx;
+  }
+  if (textIdx < 0) return null;
+
+  const lines: string[] = [];
+  for (const r of rows) {
+    const textVal = String(r[headers[textIdx]] ?? '').trim();
+    if (!textVal) continue;
+    const dateVal = dateIdx >= 0 ? String(r[headers[dateIdx]] ?? '').trim() : '';
+    if (dateVal) lines.push(`${dateVal}: ${textVal}`);
+    else lines.push(textVal);
+  }
+  const out = lines.join('\n').trim();
+  return out.length > 0 ? out : null;
+}
+
+function csvToNarrative(raw: string): string | null {
+  try {
+    const wb = XLSX.read(raw, { type: 'string' });
+    const sheetName = wb.SheetNames[0];
+    if (!sheetName) return null;
+    const sheet = wb.Sheets[sheetName];
+    const rows = XLSX.utils.sheet_to_json(sheet, { defval: '' }) as Array<Record<string, any>>;
+    return rowsToNarrative(rows);
+  } catch {
+    return null;
+  }
+}
+
 function withWordCap(text: string): FileTextResult {
   const capped = capWords(text, INTERNAL_MAX_WORDS);
   return { text: capped.text, warnings: [], truncated: capped.truncated };
@@ -477,6 +545,18 @@ export async function fileToText(file: File): Promise<FileTextResult> {
     if (ext === 'csv') {
       try {
         const raw = await file.text();
+        const narrative = csvToNarrative(raw);
+        if (narrative && narrative.trim()) {
+          const cappedNarrative = withWordCap(narrative);
+          return ensureNonEmpty(
+            {
+              text: cappedNarrative.text,
+              warnings: ['Converted CSV rows to narrative text for parsing.'],
+              truncated: cappedNarrative.truncated,
+            },
+            file,
+          );
+        }
         const text = normalizeTextPreserveLines(raw || '');
         if (text.length > 0) {
           const truncated = text.length > MAX_CHARS;
@@ -535,8 +615,14 @@ export async function fileToText(file: File): Promise<FileTextResult> {
         let text = '';
         workbook.SheetNames.forEach((sheetName) => {
           const sheet = workbook.Sheets[sheetName];
-          text += `${sheetName}\n`;
-          text += XLSX.utils.sheet_to_csv(sheet) + '\n';
+          const rows = XLSX.utils.sheet_to_json(sheet, { defval: '' }) as Array<Record<string, any>>;
+          const narrative = rowsToNarrative(rows);
+          if (narrative) {
+            text += `${sheetName}\n${narrative}\n`;
+          } else {
+            text += `${sheetName}\n`;
+            text += XLSX.utils.sheet_to_csv(sheet) + '\n';
+          }
         });
 
         const normalized = normalizeExtractedText(text);
