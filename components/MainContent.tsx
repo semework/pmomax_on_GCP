@@ -44,6 +44,8 @@ const ExpandableText: React.FC<{ text: string; clamp?: number }> = ({ text, clam
   );
 };
 
+const MemoGanttChart = React.memo(GanttChart);
+
 const MainContent: React.FC<MainContentProps> = ({ pidData, onReset, onHelp, onLoadDemo, showAllSections, warnings }) => {
   // ---- Gantt chart controls and state (canonical wiring) ----
   const [ganttStyleIdx, setGanttStyleIdx] = useState(() => {
@@ -132,21 +134,19 @@ const MainContent: React.FC<MainContentProps> = ({ pidData, onReset, onHelp, onL
   };
 
   // Memoize unique owners for owner filter dropdown
+  const workTasks = pidData?.workBreakdownTasks;
   const uniqueOwners = useMemo(() => {
-    if (!pidData || !Array.isArray(pidData.workBreakdownTasks)) return [];
-    const owners = pidData.workBreakdownTasks.map((t: any) => t.owner).filter(Boolean);
+    if (!Array.isArray(workTasks)) return [];
+    const owners = workTasks.map((t: any) => t.owner).filter(Boolean);
     return Array.from(new Set(owners));
-  }, [pidData]);
+  }, [workTasks]);
 
   // Memoize ganttTasks for GanttChart (respect owner filter)
   const ganttTasks = useMemo(() => {
-    if (!pidData || !Array.isArray(pidData.workBreakdownTasks)) return [];
-    let tasks = pidData.workBreakdownTasks;
-    if (ownerFilter.length > 0) {
-      tasks = tasks.filter((t: any) => ownerFilter.includes(t.owner));
-    }
-    return tasks;
-  }, [pidData, ownerFilter]);
+    if (!Array.isArray(workTasks)) return [];
+    if (ownerFilter.length === 0) return workTasks;
+    return workTasks.filter((t: any) => ownerFilter.includes(t.owner));
+  }, [workTasks, ownerFilter]);
 
   // (displayedRisks / displayedCompliance are declared later after `pidData` is
   // destructured to ensure hook order is stable and variables are in-scope)
@@ -1434,7 +1434,7 @@ useEffect(() => {
 
               <div className="mt-2 rounded border border-[var(--color-border)] bg-slate-950 p-2">
                 <span className="text-xs text-slate-400">Preview: {STYLE_PRESETS[ganttStyleIdx]?.name}</span>
-                <GanttChart
+                <MemoGanttChart
                   tasks={ganttTasks as any}
                   stylePreset={
                     { ...STYLE_PRESETS[ganttStyleIdx], box: { ...STYLE_PRESETS[ganttStyleIdx].box, height: ganttBarHeight } } as any

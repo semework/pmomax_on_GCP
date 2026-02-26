@@ -868,36 +868,12 @@ export const usePidLogic = () => {
         const notesText = String((ensured as any).notesBackground || '');
         const chunkSize = 2000;
 
-        if (notesText.length > 10_000) {
-          const firstChunk = notesText.slice(0, chunkSize);
-
-          startTransition(() => {
-            setPid({ ...(ensured as any), notesBackground: firstChunk });
-            setError(null);
-          });
-
-          let offset = chunkSize;
-          const pump = () => {
-            if (notesChunkTokenRef.current !== notesToken) return;
-            if (offset >= notesText.length) return;
-            const next = notesText.slice(offset, offset + chunkSize);
-            offset += chunkSize;
-
-            setPid((prev) => {
-              if (!prev) return prev;
-              return { ...(prev as any), notesBackground: `${String((prev as any).notesBackground || '')}${next}` } as any;
-            });
-
-            requestAnimationFrame(pump);
-          };
-
-          requestAnimationFrame(pump);
-        } else {
-          startTransition(() => {
-            setPid(ensured);
-            setError(null);
-          });
-        }
+        // Avoid chunked notes updates (causes many re-renders + Chrome stalls on large docs).
+        // Render-side clamping handles very long text safely.
+        startTransition(() => {
+          setPid(ensured);
+          setError(null);
+        });
 
         setLastParsedText(String(text || ''));
         setLastParsedTextLength(String(text || '').length);
