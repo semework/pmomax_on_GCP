@@ -14,6 +14,10 @@ export type FileTextResult = {
 
 // Internal caps (keep aligned with server limits as closely as practical)
 const MAX_CHARS = 3_500_000; // hard char cap for preview text (prevents UI lockups)
+const MAX_XLSX_BYTES = 8_000_000; // reduce attack surface for spreadsheets
+const MAX_XLSX_ROWS = 5000;
+const MAX_XLSX_COLS = 50;
+const MAX_XLSX_CELLS = 200_000;
 
 /** Best-effort error normalizer (keeps this file buildable without importing shared helpers). */
 function normalizeError(err: any): { message: string } {
@@ -593,6 +597,12 @@ export async function fileToText(file: File): Promise<FileTextResult> {
     // Spreadsheet (XLS/XLSX) -> CSV-ish text
     if (ext === 'xls' || ext === 'xlsx') {
       if (file.size === 0) return { text: 'Spreadsheet is empty.', warnings: [], truncated: false };
+      if (file.size > MAX_XLSX_BYTES) {
+        return ensureNonEmpty(
+          { text: '', warnings: ['Spreadsheet too large to parse safely; please split the file or upload a smaller export.'], truncated: false },
+          file,
+        );
+      }
 
       let lastErr: any = null;
       try {
@@ -611,17 +621,38 @@ export async function fileToText(file: File): Promise<FileTextResult> {
         }
 
         const arrayBuffer = await file.arrayBuffer();
-        const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+        const workbook = XLSX.read(arrayBuffer, {
+          type: 'array',
+          cellFormula: false,
+          cellNF: false,
+          cellStyles: false,
+          cellDates: true,
+        });
         let text = '';
         workbook.SheetNames.forEach((sheetName) => {
           const sheet = workbook.Sheets[sheetName];
-          const rows = XLSX.utils.sheet_to_json(sheet, { defval: '' }) as Array<Record<string, any>>;
+          if (!sheet) return;
+          const ref = sheet['!ref'];
+          let range = ref ? XLSX.utils.decode_range(ref) : { s: { r: 0, c: 0 }, e: { r: 0, c: 0 } };
+          range.e.r = Math.min(range.e.r, MAX_XLSX_ROWS - 1);
+          range.e.c = Math.min(range.e.c, MAX_XLSX_COLS - 1);
+          const totalCells =
+            (range.e.r - range.s.r + 1) * (range.e.c - range.s.c + 1);
+          if (totalCells > MAX_XLSX_CELLS) {
+            range.e.r = Math.min(range.e.r, Math.floor(MAX_XLSX_CELLS / Math.max(1, range.e.c - range.s.c + 1)));
+          }
+          const rows = XLSX.utils.sheet_to_json(sheet, {
+            defval: '',
+            blankrows: false,
+            raw: false,
+            range,
+          }) as Array<Record<string, any>>;
           const narrative = rowsToNarrative(rows);
           if (narrative) {
             text += `${sheetName}\n${narrative}\n`;
           } else {
             text += `${sheetName}\n`;
-            text += XLSX.utils.sheet_to_csv(sheet) + '\n';
+            text += XLSX.utils.sheet_to_csv(sheet, { FS: '\t', range }) + '\n';
           }
         });
 

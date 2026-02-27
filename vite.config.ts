@@ -75,6 +75,10 @@ export default defineConfig(({ mode }) => ({
 			},
 		},
 	},
+	test: {
+		environment: 'node',
+		include: ['tests/**/*.test.ts'],
+	},
 	// Helps dev prebundle; harmless in prod build.
 	optimizeDeps: {
 		include: ['pdfjs-dist', 'mammoth'],

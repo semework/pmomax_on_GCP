@@ -1,6 +1,16 @@
 
+import { sanitizeUntrustedText, redactSecrets } from './security/promptDefense';
+
+const sanitizePdfText = (value: any): string => {
+  const raw = typeof value === 'string' ? value : value == null ? '' : String(value);
+  const cleaned = sanitizeUntrustedText(raw).sanitized;
+  const redacted = redactSecrets(cleaned);
+  // Strip control chars that can break PDF text rendering
+  return redacted.replace(/[^\x09\x0A\x0D\x20-\x7E\u00A0-\uFFFF]/g, '');
+};
+
 const sanitizeNotesForExport = (notes: string): string => {
-  const raw = String(notes || '').trim();
+  const raw = sanitizePdfText(String(notes || '').trim());
   if (!raw) return '';
   // Keep exports readable: cap extremely long notes
   const MAX_CHARS = 1600;
@@ -55,9 +65,9 @@ const isStringArray = (v: any): v is string[] =>
 
 const formatInline = (v: any): string => {
   if (v === null || v === undefined) return '';
-  if (typeof v === 'string') return v;
-  if (typeof v === 'number' || typeof v === 'boolean') return String(v);
-  if (Array.isArray(v)) return v.map(formatInline).filter(Boolean).join(', ');
+  if (typeof v === 'string') return sanitizePdfText(v);
+  if (typeof v === 'number' || typeof v === 'boolean') return sanitizePdfText(String(v));
+  if (Array.isArray(v)) return sanitizePdfText(v.map(formatInline).filter(Boolean).join(', '));
   if (typeof v === 'object') {
     const totalCostUsd = (v as any).totalCostUsd ?? (v as any).total;
     const currency = (v as any).currency || 'USD';
@@ -81,23 +91,23 @@ const formatInline = (v: any): string => {
         if (byRole) lines.push(`Subtotal by role: ${byRole}`);
       }
       if (notes.length) lines.push(`Notes: ${notes.map(formatInline).filter(Boolean).join('; ')}`);
-      return lines.filter(Boolean).join('\n');
+      return sanitizePdfText(lines.filter(Boolean).join('\n'));
     }
     const name = (v as any).name || (v as any).fullName || (v as any).displayName;
     const role = (v as any).role || (v as any).title;
     const email = (v as any).email || (v as any).contact;
-    if (name && role && email) return `${name} — ${role} (${email})`;
-    if (name && role) return `${name} — ${role}`;
-    if (name && email) return `${name} (${email})`;
-    if (name) return String(name);
+    if (name && role && email) return sanitizePdfText(`${name} — ${role} (${email})`);
+    if (name && role) return sanitizePdfText(`${name} — ${role}`);
+    if (name && email) return sanitizePdfText(`${name} (${email})`);
+    if (name) return sanitizePdfText(String(name));
     try {
-      return JSON.stringify(v);
+      return sanitizePdfText(JSON.stringify(v));
     } catch {
       return '[object]';
     }
   }
   try {
-    return String(v);
+    return sanitizePdfText(String(v));
   } catch {
     return '[unstringifiable]';
   }
@@ -157,10 +167,10 @@ export async function exportToPdf(pid: PIDData, generalNotes: string) {
   const MARGIN = 56;
   const CONTENT_WIDTH = PAGE_WIDTH - MARGIN * 2;
 
-  const title = pid.titleBlock?.projectTitle || 'Project Initiation Document';
+  const title = sanitizePdfText(pid.titleBlock?.projectTitle || 'Project Initiation Document');
   const subtitle =
-    pid.titleBlock?.subtitle || 'Project Initiation Document';
-  const generatedOn = pid.titleBlock?.generatedOn || '';
+    sanitizePdfText(pid.titleBlock?.subtitle || 'Project Initiation Document');
+  const generatedOn = sanitizePdfText(pid.titleBlock?.generatedOn || '');
 
   // --- Title Page (professional + concise) ---
   doc.setTextColor(20);
@@ -216,7 +226,7 @@ export async function exportToPdf(pid: PIDData, generalNotes: string) {
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(13);
     doc.setTextColor(30, 30, 30);
-    doc.text(text, MARGIN + barWidth + 6, currentY + headerHeight / 2);
+    doc.text(sanitizePdfText(text), MARGIN + barWidth + 6, currentY + headerHeight / 2);
 
     currentY = barTop + barHeight + 6;
   };
@@ -227,13 +237,13 @@ export async function exportToPdf(pid: PIDData, generalNotes: string) {
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(12);
     doc.setTextColor(80, 60, 20);
-    doc.text(text, MARGIN, currentY);
+    doc.text(sanitizePdfText(text), MARGIN, currentY);
     currentY += 18;
   };
 
   const addBodyText = (text: string) => {
     if (!text) return;
-    const trimmed = text.trim();
+    const trimmed = sanitizePdfText(text).trim();
     if (!trimmed) return;
 
     doc.setFont('helvetica', 'normal');

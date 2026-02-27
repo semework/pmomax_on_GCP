@@ -12,7 +12,8 @@
     "start": "node server.mjs",
     "docs:compliance:docx": "node scripts/generate-google-marketplace-compliance-docx.ts",
     "clean:deps": "rm -rf node_modules && ln -s ~/.pmomax_deps node_modules",
-    "reinstall": "npm run clean:deps && npm install"
+    "reinstall": "npm run clean:deps && npm install",
+    "test": "vitest run"
   },
   "engines": {
     "node": ">=18.x"
@@ -51,7 +52,7 @@
     "express-rate-limit": "^8.2.1",
     "express-winston": "^4.2.0",
     "html2canvas": "^1.4.1",
-    "jspdf": "^4.1.0",
+    "jspdf": "^4.2.0",
     "jszip": "^3.10.1",
     "lru-cache": "^11.2.2",
     "lucide-react": "^0.554.0",
@@ -70,6 +71,11 @@
     "xlsx": "^0.18.5"
   },
   "overrides": {
-    "unist-util-position": "4.0.0"
+    "unist-util-position": "4.0.0",
+    "rollup": "4.59.0",
+    "minimatch": "9.0.7",
+    "minimatch@3.1.3": "3.1.4",
+    "ajv": "6.14.0",
+    "qs": "6.14.2"
   }
 }
