@@ -46,6 +46,7 @@ const copyPublicFiltered = () => ({
 // NODE_ENV don't end up in a development mode in the bundle.
 export default defineConfig(({ mode }) => ({
 	plugins: [react({ jsxRuntime: 'automatic', jsxDev: false }), copyPublicFiltered()],
+	cacheDir: process.env.VITE_CACHE_DIR || '/tmp/pmo26_vite',
 	resolve: {
 		alias: {
 			'style-to-object': path.resolve(process.cwd(), 'src/shims/style-to-object.ts'),

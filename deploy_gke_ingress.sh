@@ -37,7 +37,11 @@ AR_REPO="${AR_REPO:-pmomax}"
 IMAGE_NAME="${IMAGE_NAME:-pmo-architect}"
 TAG="${TAG:-$(date -u +%Y%m%d-%H%M%S)}"
 
-IMAGE_URI="${REGION}-docker.pkg.dev/${PROJECT_ID}/${AR_REPO}/${IMAGE_NAME}:${TAG}"
+# Allow Artifact Registry to live in a different (multi-)region than the GKE cluster.
+AR_LOCATION="${AR_LOCATION:-${REGION}}"
+AR_HOST="${AR_HOST:-${AR_LOCATION}-docker.pkg.dev}"
+
+IMAGE_URI="${IMAGE_URI:-${AR_HOST}/${PROJECT_ID}/${AR_REPO}/${IMAGE_NAME}:${TAG}}"
 
 # Cluster control flags (see deploy-gke.sh for more detailed options)
 AUTOPILOT="${AUTOPILOT:-false}"
@@ -55,6 +59,7 @@ say() { echo "[$(date +%H:%M:%S)] $*"; }
 
 say "Using project: ${PROJECT_ID}"
 say "Region: ${REGION}"
+say "Artifact Registry location: ${AR_LOCATION} (${AR_HOST})"
 say "Cluster: ${CLUSTER}"
 say "Namespace: ${NAMESPACE}"
 say "Image: ${IMAGE_URI}"
@@ -65,23 +70,28 @@ gcloud services enable \
   cloudbuild.googleapis.com \
   artifactregistry.googleapis.com \
   compute.googleapis.com \
+  cloudcommerceprocurement.googleapis.com \
+  servicecontrol.googleapis.com \
+  secretmanager.googleapis.com \
+  monitoring.googleapis.com \
+  logging.googleapis.com \
   --project "${PROJECT_ID}" \
   --quiet
 
-say "Ensuring Artifact Registry repo exists (${AR_REPO})…"
+say "Ensuring Artifact Registry repo exists (${AR_REPO} in ${AR_LOCATION})…"
 if ! gcloud artifacts repositories describe "${AR_REPO}" \
-  --location "${REGION}" \
+  --location "${AR_LOCATION}" \
   --project "${PROJECT_ID}" >/dev/null 2>&1; then
   gcloud artifacts repositories create "${AR_REPO}" \
     --repository-format=docker \
-    --location "${REGION}" \
+    --location "${AR_LOCATION}" \
     --project "${PROJECT_ID}" \
     --description="PMOMax Docker images" \
     --quiet
 fi
 
 say "Configuring Docker auth for Artifact Registry…"
-gcloud auth configure-docker "${REGION}-docker.pkg.dev" --quiet
+gcloud auth configure-docker "${AR_HOST}" --quiet
 
 say "Building & pushing image with Cloud Build…"
 # (Assumes Dockerfile in current directory.)

@@ -82,6 +82,30 @@ import {
 } from './lib/security/promptDefense.js';
 import { sanitizeBySchema, stripHighRiskContext, allowlistPatch } from './lib/security/pidGuard.js';
 import { validatePMOMaxPID } from './lib/validatePMOMaxPID.js';
+
+let enqueueUsage = () => ({ ok: true, skipped: true });
+let flushUsage = async () => ({ ok: true, skipped: true });
+let startUsageReporter = () => {};
+try {
+  const usageReporter = await import('./lib/marketplace/usageReporter.js');
+  enqueueUsage = usageReporter.enqueueUsage;
+  flushUsage = usageReporter.flushUsage;
+  startUsageReporter = usageReporter.startUsageReporter;
+} catch (err) {
+  console.warn('[marketplace] usage reporter unavailable; metrics disabled.', err?.message || err);
+}
+
+let getEntitlement = async (entitlementName) => ({
+  name: String(entitlementName || ''),
+  active: false,
+  state: 'ENTITLEMENT_STATE_UNSPECIFIED',
+  reason: 'marketplace_module_unavailable',
+});
+try {
+  ({ getEntitlement } = await import('./lib/marketplace/entitlementClient.js'));
+} catch (err) {
+  console.warn('[marketplace] entitlement client unavailable; treating users as not entitled.', err?.message || err);
+}
 // Canonical FIELD_KEYS for legacy field mapping (for completeness, not used for PID shape)
 const FIELD_KEYS = [
   'fld-project-name',
@@ -117,6 +141,7 @@ const FIELD_KEYS = [
 ];
 
 dotenv.config();
+startUsageReporter();
 // --- Crash-hardening: log unexpected errors instead of silent process death ---
 process.on('unhandledRejection', (reason) => {
   console.error('[UNHANDLED_REJECTION]', reason);
@@ -2316,6 +2341,52 @@ app.get('/_ah/health', (_req, res) => res.status(200).send('ok'));
 // --------------------
 // API routes
 // --------------------
+// Marketplace Usage Reporting (Service Control)
+app.post('/api/marketplace/usage/report', async (req, res) => {
+  try {
+    const payload = req.body || {};
+    const result = enqueueUsage({
+      metric: payload.metric,
+      quantity: payload.quantity,
+      consumerId: payload.consumerId,
+      startTime: payload.startTime,
+      endTime: payload.endTime,
+      labels: payload.labels,
+    });
+    if (!result.ok) return sendJson(res, { ok: false, error: result.error || 'Invalid usage sample.' }, 400);
+    if (payload.flushImmediately) {
+      const flushed = await flushUsage();
+      return sendJson(res, { ok: true, queued: true, flushed });
+    }
+    return sendJson(res, { ok: true, queued: true });
+  } catch (e) {
+    return sendJson(res, { ok: false, error: safeErrorMessage(e, 'Usage report failed.') }, 500);
+  }
+});
+
+app.post('/api/marketplace/usage/flush', async (_req, res) => {
+  try {
+    const flushed = await flushUsage();
+    return sendJson(res, { ok: true, flushed });
+  } catch (e) {
+    return sendJson(res, { ok: false, error: safeErrorMessage(e, 'Usage flush failed.') }, 500);
+  }
+});
+
+// Marketplace: Entitlement check (minimal)
+app.get('/api/marketplace/entitlement', async (req, res) => {
+  try {
+    const entitlementName = String(req.query?.entitlement || '').trim();
+    if (!entitlementName) {
+      return sendJson(res, { ok: false, error: 'Missing entitlement query param.' }, 400);
+    }
+    const data = await getEntitlement(entitlementName);
+    return sendJson(res, { ok: true, entitlement: data });
+  } catch (e) {
+    return sendJson(res, { ok: false, error: safeErrorMessage(e, 'Entitlement check failed.') }, 500);
+  }
+});
+
 // Risk Agent Endpoint
 app.post('/api/ai/risk', async (req, res) => {
   try {
