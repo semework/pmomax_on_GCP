@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: app
-          image: us-docker.pkg.dev/katalyststreet-public/pmomax/deployer:v1.0.0
+          image: MacBookPro.lan/katalyststreet-public/pmomax/deployer:1.0.0
           imagePullPolicy: Always
           ports:
             - name: http
