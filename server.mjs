@@ -2467,7 +2467,7 @@ app.post('/api/ai/parse', async (req, res) => {
       return sendJson(res, { ok: false, error: msg }, 400);
     }
 
-    const modelName = process.env.GEMINI_MODEL || process.env.GEMINI_FALLBACK_MODEL || 'gemini-2.0-flash-001';
+    const modelName = process.env.GEMINI_MODEL || process.env.GEMINI_FALLBACK_MODEL || 'gemini-2.5-pro';
     const prep = await prepareParseText(untrusted.sanitized, modelName);
     const parseText = prep.parseText;
     const parseTextWrapped = wrapUntrusted(parseText);
@@ -2479,7 +2479,7 @@ app.post('/api/ai/parse', async (req, res) => {
     let aiWarnings = [];
     let aiRaw = null;
 
-    const fallbackModelName = process.env.GEMINI_FALLBACK_MODEL || 'gemini-2.0-flash-001';
+    const fallbackModelName = process.env.GEMINI_FALLBACK_MODEL || 'gemini-2.5-flash';
     const modelTryOrder = [modelName, fallbackModelName].filter((m, i, a) => m && a.indexOf(m) === i);
 
     for (const m of modelTryOrder) {
@@ -2615,7 +2615,7 @@ app.post('/api/ai/budget', async (req, res) => {
       return sendJson(res, { ok: true, pid: baseResponsePid, warnings: ['AI budget not configured; deterministic baseline applied.'] });
     }
 
-    const modelName = process.env.GEMINI_BUDGET_MODEL || process.env.GEMINI_MODEL || process.env.GEMINI_FALLBACK_MODEL || 'gemini-2.0-flash-001';
+    const modelName = process.env.GEMINI_BUDGET_MODEL || process.env.GEMINI_MODEL || process.env.GEMINI_FALLBACK_MODEL || 'gemini-2.5-pro';
     const sourceText = String(req.body?.text || '');
     const safePidContext = sanitizePidObject(stripHighRiskContext(pidData));
     const safeContext = sanitizeUntrustedText(contextText).sanitized;
@@ -3427,7 +3427,7 @@ Rules:
         process.env.GEMINI_ASSISTANT_QA_MODEL ||
         process.env.GEMINI_ASSISTANT_MODEL ||
         process.env.GEMINI_MODEL ||
-        'gemini-2.0-flash-001';
+        'gemini-2.5-pro';
       const fallbackModel = process.env.GEMINI_FALLBACK_MODEL || 'gemini-2.5-flash';
       const qaModel = genAI.getGenerativeModel({ model: modelName });
 
@@ -3502,7 +3502,7 @@ ${wrapUntrusted(recentQA)}
       modelOverride ||
       process.env.GEMINI_ASSISTANT_MODEL ||
       process.env.GEMINI_MODEL ||
-      'gemini-2.0-flash-001';
+      'gemini-2.5-pro';
 
     const key = process.env.GOOGLE_API_KEY;
     const genAI = new GoogleGenerativeAI(key);
