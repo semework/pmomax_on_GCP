@@ -51,3 +51,4 @@ For support, see SUPPORT.md or contact the maintainers listed in metadata.json.
 
 ## Documentation
 See pmomax-docs.html for full user and API documentation.
+# pmomax
