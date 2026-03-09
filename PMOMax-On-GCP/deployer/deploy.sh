@@ -29,6 +29,9 @@ export DOMAIN="${DOMAIN:-pmomax.example.com}"
 export REPORTING_SECRET="${REPORTING_SECRET:-reporting-secret}"
 export PMOMAX_APP_IMAGE="${PMOMAX_APP_IMAGE:-us-docker.pkg.dev/katalyststreet-public/pmomax/pmo-architect:20260303-233534}"
 export PMOMAX_APP_PORT="${PMOMAX_APP_PORT:-8080}"
+export TESTER_IMAGE="${TESTER_IMAGE:-curlimages/curl:8.12.1}"
+export PARTNER_ID="${PARTNER_ID:-katalyststreet}"
+export PRODUCT_ID="${PRODUCT_ID:-pmomax}"
 
 if is_schema_extract_mode; then
   echo "[INFO] Schema/config mode detected. Skipping cluster apply."

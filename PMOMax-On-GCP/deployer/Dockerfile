@@ -1,4 +1,5 @@
 FROM gcr.io/cloud-marketplace-tools/k8s/deployer_envsubst/onbuild
+LABEL "com.googleapis.cloudmarketplace.product.service.name"="services/pmomax.endpoints.katalyststreet-public.cloud.goog"
 
 # Copy deploy scripts expected by Marketplace
 COPY --chmod=755 deployer/deploy.sh /bin/deploy.sh

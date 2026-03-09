@@ -109,3 +109,20 @@ Both templates are PMOMax-only and parameterized with:
 2. Set production domain and namespace.
 3. Validate Marketplace schema metadata and links.
 4. Build and publish deployer image with `publish_marketplace_deployer*.sh`.
+
+## Command-line Deployment (Kubernetes)
+
+Authoritative Kubernetes deployment script: `../deploy_gke_ingress.sh`
+
+Example (from parent `pmo26` root):
+
+```bash
+./deploy_gke_ingress.sh
+```
+
+If you deploy from this package alone (without parent scripts), use:
+
+```bash
+envsubst < manifest/manifests.yaml.template | kubectl apply -n "$NAMESPACE" -f -
+envsubst < manifest/application.yaml.template | kubectl apply -n "$NAMESPACE" -f -
+```

@@ -6,6 +6,8 @@ metadata:
   labels:
     app: ${APP_INSTANCE_NAME}
     component: tester
+  annotations:
+    marketplace.cloud.google.com/verification: "test"
 spec:
   backoffLimit: 0
   ttlSecondsAfterFinished: 600
@@ -18,7 +20,7 @@ spec:
       restartPolicy: Never
       containers:
         - name: curl
-          image: curlimages/curl:8.5.0
+          image: ${TESTER_IMAGE}
           args:
             - /bin/sh
             - -c

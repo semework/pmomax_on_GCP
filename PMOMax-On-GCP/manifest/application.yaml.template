@@ -3,6 +3,8 @@ kind: Application
 metadata:
   name: ${APP_INSTANCE_NAME}
   namespace: ${NAMESPACE}
+  annotations:
+    marketplace.cloud.google.com/deploy-info: '{"partner_id":"${PARTNER_ID}","product_id":"${PRODUCT_ID}"}'
 spec:
   selector:
     matchLabels:
@@ -13,9 +15,9 @@ spec:
     - group: ""
       kind: Service
   descriptor:
-    type: "web-service"
+    type: "pmomax"
     description: "PMOMax PID Architect deployment for Google Cloud Marketplace"
-    version: "20260303-233534"
+    version: "1.0.0"
     links:
       - description: "PMOMax documentation"
         url: "https://docs.pmomax.com"

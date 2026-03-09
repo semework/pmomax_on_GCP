@@ -1,50 +1,55 @@
 x-google-marketplace:
-	schemaVersion: v2
-	applicationApiVersion: v1beta1
+  schemaVersion: v2
+  applicationApiVersion: v1beta1
 
 properties:
-	APP_INSTANCE_NAME:
-		type: string
-		default: "pmo-architect"
-		pattern: "^[a-z0-9-]+$"
-		x-google-marketplace:
-			type: NAME
+  APP_INSTANCE_NAME:
+    type: string
+    default: "pmo-architect"
+    pattern: "^[a-z0-9-]+$"
+    x-google-marketplace:
+      type: NAME
 
-	NAMESPACE:
-		type: string
-		default: "pmomax"
-		x-google-marketplace:
-			type: NAMESPACE
+  NAMESPACE:
+    type: string
+    default: "pmomax"
+    x-google-marketplace:
+      type: NAMESPACE
 
-	DOMAIN:
-		type: string
-		default: "pmomax.example.com"
-		pattern: "^[a-zA-Z0-9.-]+$"
+  DOMAIN:
+    type: string
+    default: "pmomax.example.com"
+    pattern: "^[a-zA-Z0-9.-]+$"
 
-	reportingSecret:
-		type: string
-		x-google-marketplace:
-			type: REPORTING_SECRET
+  reportingSecret:
+    type: string
+    x-google-marketplace:
+      type: REPORTING_SECRET
 
-	deployerServiceAccount:
-		type: string
-		default: "deployer-sa"
-		x-google-marketplace:
-			type: SERVICE_ACCOUNT
+  deployerServiceAccount:
+    type: string
+    default: "deployer-sa"
+    x-google-marketplace:
+      type: SERVICE_ACCOUNT
 
-	PMOMAX_APP_IMAGE:
-		type: string
-		default: us-docker.pkg.dev/katalyststreet-public/pmomax/pmo-architect:20260303-233534
+  PMOMAX_APP_IMAGE:
+    type: string
+    default: us-docker.pkg.dev/katalyststreet-public/pmomax/pmo-architect:20260303-233534
 
-	PMOMAX_APP_PORT:
-		type: integer
-		default: 8080
+  PMOMAX_APP_PORT:
+    type: integer
+    default: 8080
+
+  TESTER_IMAGE:
+    type: string
+    default: curlimages/curl:8.12.1
 
 required:
-	- APP_INSTANCE_NAME
-	- NAMESPACE
-	- DOMAIN
-	- reportingSecret
-	- deployerServiceAccount
-	- PMOMAX_APP_IMAGE
-	- PMOMAX_APP_PORT
+  - APP_INSTANCE_NAME
+  - NAMESPACE
+  - DOMAIN
+  - reportingSecret
+  - deployerServiceAccount
+  - PMOMAX_APP_IMAGE
+  - PMOMAX_APP_PORT
+  - TESTER_IMAGE
