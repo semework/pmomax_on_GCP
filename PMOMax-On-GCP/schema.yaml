@@ -4,7 +4,6 @@ schema:
   x-google-marketplace:
     schemaVersion: v2
     applicationApiVersion: v1beta1
-
     publishedVersion: "20260303"
     publishedVersionMetadata:
       releaseNote: >
@@ -12,10 +11,8 @@ schema:
         Includes deployer and pmo-architect images aligned to GKE Autopilot.
         Adds reportingSecret for usage-based billing and aligns RBAC with Marketplace requirements.
       recommended: true
-
     managedUpdates:
       kalmSupported: false
-
     images:
       '':
         properties:
@@ -25,7 +22,6 @@ schema:
             type: REPO_WITHOUT_REGISTRY
           image.tag:
             type: TAG
-
   type: object
   properties:
     APP_INSTANCE_NAME:
@@ -34,33 +30,27 @@ schema:
       pattern: "^[a-z0-9-]+$"
       x-google-marketplace:
         type: NAME
-
     NAMESPACE:
       type: string
       default: "pmomax"
       x-google-marketplace:
         type: NAMESPACE
-
     DOMAIN:
       type: string
       pattern: "^[a-zA-Z0-9.-]+$"
       default: "pmomax.example.com"
-
     reportingSecret:
       type: string
       x-google-marketplace:
         type: REPORTING_SECRET
-
     deployer.image:
       type: string
       default: us-docker.pkg.dev/katalyststreet-public/pmomax/deployer:20260303-220259
       x-google-marketplace:
         type: DEPLOYER_IMAGE
-
     PMOMAX_APP_IMAGE:
       type: string
       default: us-docker.pkg.dev/katalyststreet-public/pmomax/pmo-architect:20260303-233534
-
     deployerServiceAccount:
       type: string
       title: Service Account for deployer
@@ -92,7 +82,6 @@ schema:
                 - apiGroups: ["batch"]
                   resources: ["jobs"]
                   verbs: ["get", "list", "create", "update", "patch", "delete", "watch"]
-
   required:
     - APP_INSTANCE_NAME
     - NAMESPACE

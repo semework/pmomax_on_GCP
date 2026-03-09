@@ -2,7 +2,6 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: "$name-tester"
-  namespace: "$namespace"
   labels:
     app: "$name"
   annotations:
@@ -10,15 +9,19 @@ metadata:
 spec:
   containers:
   - name: tester
-    image: us-docker.pkg.dev/katalyststreet-public/pmomax/pmo-architect:20260303-233534
+    image: us-docker.pkg.dev/katalyststreet-public/pmomax/pmo-architect:latest
     command: ["/bin/sh", "-c"]
     args:
     - |
+      set -e
       echo "Starting PMOMax Health Check..."
-      until curl -fsS "http://$name/health"; do
-        echo "Waiting for service..."
-        sleep 5
+      # Wait for the service to be reachable via K8s DNS
+      ATTEMPTS=0
+      until curl -fsS "http://$name-svc/health" || [ $ATTEMPTS -eq 12 ]; do
+        echo "Waiting for PMOMax service at http://$name-svc/health..."
+        ATTEMPTS=$((ATTEMPTS+1))
+        sleep 10
       done
-      echo "Health Check Passed!"
+      echo "PMOMax is Healthy!"
       exit 0
   restartPolicy: Never

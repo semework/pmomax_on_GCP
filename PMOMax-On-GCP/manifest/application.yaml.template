@@ -17,7 +17,7 @@ spec:
   descriptor:
     type: "pmomax"
     description: "PMOMax PID Architect deployment for Google Cloud Marketplace"
-    version: "1.0.0"
+    version: "1.0"
     links:
       - description: "PMOMax documentation"
         url: "https://docs.pmomax.com"
