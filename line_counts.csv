@@ -1,6 +1,0 @@
-file,orig_lines,new_lines,delta
-App.tsx,284,255,-29
-components/MainContent.tsx,483,598,115
-components/NavPanel.tsx,134,104,-30
-components/WelcomePanel.tsx,132,24,-108
-server.mjs,258,194,-64

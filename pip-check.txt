@@ -1,5 +1,0 @@
-jupyter-server 1.23.3 has requirement anyio<4,>=3.1.0, but you have anyio 4.12.1.
-pyarrow 15.0.0 has requirement numpy<2,>=1.16.6, but you have numpy 2.2.6.
-scipy 1.8.0 has requirement numpy<1.25.0,>=1.17.3, but you have numpy 2.2.6.
-wandb 0.15.5 has requirement protobuf!=4.21.0,<5,>=3.19.0; sys_platform != "linux", but you have protobuf 6.33.5.
-scipy 1.8.0 is not supported on this platform

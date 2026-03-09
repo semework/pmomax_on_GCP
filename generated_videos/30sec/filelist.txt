@@ -1,5 +1,0 @@
-file 'generated_videos/30sec/scene_01/output.mp4'
-file 'generated_videos/30sec/scene_02/output.mp4'
-file 'generated_videos/30sec/scene_03/output.mp4'
-file 'generated_videos/30sec/scene_04/output.mp4'
-file 'generated_videos/30sec/scene_05/output.mp4'
