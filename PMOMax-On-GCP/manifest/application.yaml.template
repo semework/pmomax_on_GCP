@@ -1,0 +1,22 @@
+apiVersion: app.k8s.io/v1beta1
+kind: Application
+metadata:
+  name: ${APP_INSTANCE_NAME}
+  namespace: ${NAMESPACE}
+spec:
+  selector:
+    matchLabels:
+      app: ${APP_INSTANCE_NAME}
+  componentKinds:
+    - group: apps
+      kind: Deployment
+    - group: ""
+      kind: Service
+  descriptor:
+    type: "web-service"
+    description: "PMOMax PID Architect deployment for Google Cloud Marketplace"
+    version: "20260303-233534"
+    links:
+      - description: "PMOMax documentation"
+        url: "https://docs.pmomax.com"
+  addOwnerRef: true
