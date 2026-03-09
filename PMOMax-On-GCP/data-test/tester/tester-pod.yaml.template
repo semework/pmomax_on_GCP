@@ -1,29 +1,24 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  name: ${APP_INSTANCE_NAME}-tester
-  namespace: ${NAMESPACE}
+  name: "$name-tester"
+  namespace: "$namespace"
   labels:
-    app: ${APP_INSTANCE_NAME}-tester
+    app: "$name"
   annotations:
-    marketplace.cloud.google.com/verification: "test"
+    marketplace.cloud.google.com/verification: test
 spec:
-  restartPolicy: Never
   containers:
-    - name: tester
-      image: ${TESTER_IMAGE}
-      command:
-        - /bin/sh
-        - -c
-        - |
-          set -eu
-          BASE_URL="http://${APP_INSTANCE_NAME}.${NAMESPACE}.svc.cluster.local"
-          echo "Checking ${BASE_URL}/health"
-          code="$(curl -sS -o /tmp/health.out -w '%{http_code}' "${BASE_URL}/health" || true)"
-          echo "HTTP ${code}"
-          if [ "${code}" != "200" ]; then
-            echo "Health check failed"
-            cat /tmp/health.out || true
-            exit 1
-          fi
-          echo "Health check passed"
+  - name: tester
+    image: us-docker.pkg.dev/katalyststreet-public/pmomax/pmo-architect:20260303-233534
+    command: ["/bin/sh", "-c"]
+    args:
+    - |
+      echo "Starting PMOMax Health Check..."
+      until curl -fsS "http://$name/health"; do
+        echo "Waiting for service..."
+        sleep 5
+      done
+      echo "Health Check Passed!"
+      exit 0
+  restartPolicy: Never

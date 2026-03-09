@@ -5,6 +5,8 @@ set -euo pipefail
 
 NAMESPACE="${NAMESPACE:-pmomax}"
 APP_INSTANCE_NAME="${APP_INSTANCE_NAME:-pmo-architect}"
+export name="${APP_INSTANCE_NAME}"
+export namespace="${NAMESPACE}"
 
 kubectl get pods -n "${NAMESPACE}" || true
 kubectl get svc -n "${NAMESPACE}" || true
