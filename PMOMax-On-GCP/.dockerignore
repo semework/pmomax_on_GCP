@@ -1,0 +1,5 @@
+.git
+.mpdev
+Library/
+**/*.log
+.DS_Store

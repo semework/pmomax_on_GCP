@@ -1,0 +1,29 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: apptest-v5-deployer
+  namespace: apptest-repro
+spec:
+  backoffLimit: 0
+  template:
+    spec:
+      serviceAccountName: deployer-sa
+      restartPolicy: Never
+      volumes:
+      - name: values
+        configMap:
+          name: deployer-values
+          items:
+          - key: values.yaml
+            path: values.yaml
+      containers:
+      - name: deployer
+        image: us-docker.pkg.dev/katalyststreet-public/pmomax/deployer@sha256:5fe244daf0421708cd5d4975f701931f5a080262859d71c83d7258f3618276ef
+        imagePullPolicy: Always
+        volumeMounts:
+        - name: values
+          mountPath: /data/values.yaml
+          subPath: values.yaml
+        env:
+        - name: NAMESPACE
+          value: apptest-repro

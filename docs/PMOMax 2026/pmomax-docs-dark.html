@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PMOMax Documentation — PID Architect by Katalyst Street</title>
+  <meta name="description" content="PMOMax (PID Architect) documentation — Professional Project Initiation Documents with structured workflows, AI assistance, and enterprise-ready exports." />
+
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    :root{
+      --bg: #070B16;
+      --bg2: #0B1228;
+      --panel: rgba(255,255,255,0.06);
+      --panel2: rgba(255,255,255,0.08);
+      --border: rgba(251, 191, 36, 0.35);
+      --border2: rgba(255,255,255,0.12);
+
+      --text: rgba(255,255,255,0.92);
+      --muted: rgba(255,255,255,0.70);
+      --muted2: rgba(255,255,255,0.55);
+
+      --gold: #FBBF24;
+      --gold2: #FDE68A;
+      --blue: #2563EB;
+      --blue2: #1D4ED8;
+      --success: #34D399;
+
+      --shadow: 0 14px 45px rgba(0,0,0,0.35);
+      --shadow2: 0 6px 20px rgba(0,0,0,0.25);
+
+      --radius: 18px;
+      --max: 1240px;
+    }
+
+    body{
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+      line-height: 1.7;
+      color: var(--text);
+      background:
+        radial-gradient(1200px 650px at 18% -10%, rgba(37,99,235,0.30), transparent 60%),
+        radial-gradient(800px 540px at 90% 10%, rgba(251,191,36,0.22), transparent 55%),
+        linear-gradient(180deg, var(--bg) 0%, var(--bg2) 100%);
+    }
+
+    a{ color: var(--gold2); text-decoration: none; }
+    a:hover{ text-decoration: underline; }
+
+    header{
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      backdrop-filter: blur(14px);
+      background: rgba(7, 11, 22, 0.70);
+      border-bottom: 1px solid rgba(251,191,36,0.25);
+    }
+
+    nav{
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 14px 18px;
+      display:flex;
+      justify-content: space-between;
+      align-items:center;
+      gap: 12px;
+    }
+
+    .brand{
+      display:flex;
+      align-items:center;
+      gap: 12px;
+      min-width: 220px;
+    }
+
+    .brand img{
+      height: 40px;
+      width: auto;
+      border-radius: 10px;
+      filter: drop-shadow(0 6px 18px rgba(0,0,0,0.35));
+    }
+
+    .brand h1{
+      font-size: 18px;
+      letter-spacing: 0.2px;
+      line-height: 1.1;
+      margin-bottom: 2px;
+    }
+    .brand p{
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .nav-links{
+      display:flex;
+      gap: 14px;
+      align-items:center;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      list-style:none;
+    }
+
+    .nav-links a{
+      display:inline-flex;
+      padding: 8px 10px;
+      border-radius: 12px;
+      color: var(--text);
+      border: 1px solid transparent;
+      background: transparent;
+      font-weight: 600;
+      font-size: 13px;
+      opacity: 0.92;
+    }
+
+    .nav-links a:hover{
+      text-decoration: none;
+      border-color: rgba(251,191,36,0.25);
+      background: rgba(255,255,255,0.06);
+    }
+
+    .nav-cta{
+      display:inline-flex;
+      align-items:center;
+      gap: 8px;
+      padding: 9px 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(251,191,36,0.35);
+      background: linear-gradient(180deg, rgba(251,191,36,0.16), rgba(251,191,36,0.06));
+      color: var(--gold2);
+      font-weight: 800;
+      font-size: 13px;
+      box-shadow: var(--shadow2);
+      white-space: nowrap;
+    }
+
+    .nav-cta:hover{
+      text-decoration:none;
+      transform: translateY(-1px);
+      box-shadow: 0 10px 26px rgba(0,0,0,0.35);
+    }
+
+    .hero{
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 56px 18px 14px;
+    }
+
+    .hero-card{
+      border-radius: calc(var(--radius) + 8px);
+      border: 1px solid rgba(251,191,36,0.22);
+      background:
+        radial-gradient(900px 500px at 20% 0%, rgba(37,99,235,0.25), transparent 58%),
+        radial-gradient(900px 500px at 90% 20%, rgba(251,191,36,0.20), transparent 62%),
+        rgba(255,255,255,0.05);
+      box-shadow: var(--shadow);
+      padding: 44px 28px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-card:before{
+      content:"";
+      position:absolute; inset:-2px;
+      background:
+        linear-gradient(90deg, transparent 0%, rgba(251,191,36,0.14) 20%, transparent 45%),
+        linear-gradient(180deg, rgba(255,255,255,0.05), transparent);
+      pointer-events:none;
+      opacity: 0.55;
+    }
+
+    .hero-grid{
+      position: relative;
+      display:grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    .hero h2{
+      font-size: 44px;
+      line-height: 1.05;
+      letter-spacing: -0.6px;
+      margin-bottom: 10px;
+    }
+
+    .hero .subtitle{
+      color: var(--muted);
+      font-size: 16px;
+      max-width: 62ch;
+    }
+
+    .hero .tagline{
+      margin-top: 14px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .badges{
+      display:flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 18px;
+    }
+    .badge{
+      display:inline-flex;
+      gap: 8px;
+      align-items:center;
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(0,0,0,0.18);
+      color: var(--text);
+      font-weight: 700;
+      font-size: 12px;
+    }
+    .badge b{ color: var(--gold2); }
+
+    .hero-actions{
+      margin-top: 18px;
+      display:flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .btn{
+      display:inline-flex;
+      align-items:center;
+      gap: 10px;
+      padding: 11px 14px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.06);
+      color: var(--text);
+      font-weight: 800;
+      font-size: 14px;
+      text-decoration:none;
+    }
+    .btn:hover{
+      text-decoration:none;
+      transform: translateY(-1px);
+      border-color: rgba(251,191,36,0.28);
+      background: rgba(255,255,255,0.08);
+    }
+    .btn.primary{
+      border-color: rgba(251,191,36,0.40);
+      background: linear-gradient(180deg, rgba(251,191,36,0.20), rgba(251,191,36,0.07));
+      color: var(--gold2);
+    }
+
+    .hero-side{
+      border-radius: var(--radius);
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(0,0,0,0.18);
+      padding: 18px 18px 16px;
+      box-shadow: var(--shadow2);
+    }
+
+    .hero-side h3{
+      font-size: 14px;
+      letter-spacing: 0.2px;
+      margin-bottom: 10px;
+      color: var(--gold2);
+    }
+
+    .hero-side ul{
+      list-style:none;
+      display:flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .hero-side li{
+      display:flex;
+      gap: 10px;
+      align-items:flex-start;
+      padding: 10px 10px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.10);
+      background: rgba(255,255,255,0.04);
+      color: var(--muted);
+      font-weight: 600;
+      font-size: 13px;
+    }
+
+    .hero-side li span{
+      color: var(--success);
+      font-weight: 900;
+      margin-top: 1px;
+    }
+
+    main{
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 22px 18px 70px;
+    }
+
+    .section{
+      margin-top: 34px;
+      padding-top: 14px;
+    }
+
+    .section-head{
+      display:flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .section-head h3{
+      font-size: 22px;
+      letter-spacing: -0.2px;
+    }
+
+    .section-head p{
+      color: var(--muted);
+      max-width: 80ch;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 14px;
+    }
+
+    .card{
+      border-radius: var(--radius);
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.05);
+      box-shadow: var(--shadow2);
+      padding: 18px 18px 16px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card:before{
+      content:"";
+      position:absolute;
+      inset: -2px;
+      background: radial-gradient(600px 260px at 0% 0%, rgba(251,191,36,0.12), transparent 55%);
+      opacity: 0.6;
+      pointer-events:none;
+    }
+
+    .card > *{ position: relative; }
+
+    .card h4{
+      display:flex;
+      align-items:center;
+      gap: 10px;
+      font-size: 16px;
+      letter-spacing: -0.2px;
+      margin-bottom: 10px;
+      color: var(--gold2);
+    }
+
+    .pill{
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: 0.2px;
+      padding: 5px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(251,191,36,0.35);
+      color: var(--gold2);
+      background: rgba(251,191,36,0.08);
+      margin-left: auto;
+    }
+
+    .card p{ color: var(--muted); margin-bottom: 10px; }
+
+    .list{
+      list-style:none;
+      display:flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 8px;
+    }
+    .list li{
+      display:flex;
+      gap: 10px;
+      align-items:flex-start;
+      padding: 9px 10px;
+      border-radius: 14px;
+      background: rgba(0,0,0,0.18);
+      border: 1px solid rgba(255,255,255,0.10);
+      color: var(--muted);
+      font-weight: 600;
+      font-size: 13px;
+    }
+    .list li i{
+      font-style: normal;
+      color: var(--success);
+      font-weight: 900;
+      margin-top: 1px;
+    }
+
+    .agent-grid{
+      grid-column: 1 / -1;
+      display:grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 14px;
+    }
+    .agent{
+      grid-column: span 4;
+    }
+    .agent .tag{
+      display:inline-flex;
+      align-items:center;
+      gap: 8px;
+      font-weight: 900;
+      font-size: 12px;
+      color: rgba(255,255,255,0.82);
+      margin-bottom: 10px;
+    }
+    .agent .tag b{ color: var(--gold2); }
+
+    .cta{
+      grid-column: 1 / -1;
+      border-radius: calc(var(--radius) + 8px);
+      border: 1px solid rgba(251,191,36,0.26);
+      background:
+        radial-gradient(800px 340px at 18% 0%, rgba(37,99,235,0.22), transparent 55%),
+        radial-gradient(800px 340px at 92% 40%, rgba(251,191,36,0.18), transparent 60%),
+        rgba(255,255,255,0.05);
+      box-shadow: var(--shadow);
+      padding: 22px 18px;
+      display:flex;
+      align-items:center;
+      justify-content: space-between;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+    .cta h4{
+      color: var(--gold2);
+      font-size: 16px;
+      margin-bottom: 3px;
+    }
+    .cta p{ color: var(--muted); max-width: 70ch; }
+    .cta .btn{ margin-left: auto; }
+
+    .pricing{
+      grid-column: 1 / -1;
+      display:grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 14px;
+    }
+    .price{
+      grid-column: span 4;
+      padding: 20px 18px;
+      border-radius: var(--radius);
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.05);
+      box-shadow: var(--shadow2);
+    }
+    .price.highlight{
+      border-color: rgba(251,191,36,0.42);
+      background: linear-gradient(180deg, rgba(251,191,36,0.10), rgba(255,255,255,0.05));
+    }
+    .price h4{ color: var(--gold2); font-size: 16px; margin-bottom: 6px; }
+    .price .sub{ color: var(--muted); font-weight: 700; font-size: 13px; margin-bottom: 10px; }
+    .price .amt{
+      font-size: 30px;
+      font-weight: 900;
+      letter-spacing: -0.6px;
+      margin-bottom: 6px;
+    }
+    .price .amt span{ font-size: 13px; color: var(--muted); font-weight: 800; }
+    .price .why{ color: var(--muted); font-size: 13px; margin-bottom: 10px; }
+    .price ul{ list-style:none; display:flex; flex-direction:column; gap: 8px; }
+    .price li{ display:flex; gap: 10px; align-items:flex-start; color: var(--muted); font-weight: 700; font-size: 13px; }
+    .price li i{ font-style: normal; color: var(--success); font-weight: 900; margin-top: 1px; }
+
+    .tabs{
+      display:flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      border-bottom: 1px solid rgba(255,255,255,0.10);
+      padding-bottom: 10px;
+      margin-top: 10px;
+      margin-bottom: 14px;
+    }
+    .tab{
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.05);
+      color: var(--text);
+      padding: 10px 12px;
+      border-radius: 14px;
+      font-weight: 900;
+      cursor: pointer;
+      font-size: 13px;
+    }
+    .tab.active{
+      border-color: rgba(251,191,36,0.35);
+      background: rgba(251,191,36,0.08);
+      color: var(--gold2);
+    }
+
+    .doc{
+      display:none;
+      border-radius: var(--radius);
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.05);
+      box-shadow: var(--shadow2);
+      padding: 18px;
+    }
+    .doc.active{ display:block; animation: fadeIn 0.25s ease; }
+
+    @keyframes fadeIn{
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .doc h4{ color: var(--gold2); margin-bottom: 10px; font-size: 18px; }
+    .doc p{ color: var(--muted); margin-bottom: 10px; }
+
+    footer{
+      border-top: 1px solid rgba(255,255,255,0.10);
+      background: rgba(0,0,0,0.22);
+      padding: 26px 18px;
+    }
+    .footer{
+      max-width: var(--max);
+      margin: 0 auto;
+      display:flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      align-items:flex-start;
+      justify-content: space-between;
+    }
+    .footer small{ color: var(--muted2); }
+    .footer .links{
+      display:flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+    .footer .links a{
+      color: var(--muted);
+      font-weight: 800;
+      font-size: 13px;
+      padding: 6px 10px;
+      border-radius: 12px;
+      border: 1px solid transparent;
+    }
+    .footer .links a:hover{
+      text-decoration:none;
+      border-color: rgba(251,191,36,0.25);
+      background: rgba(255,255,255,0.05);
+      color: var(--gold2);
+    }
+
+    @media (max-width: 980px){
+      .hero-grid{ grid-template-columns: 1fr; }
+      .agent{ grid-column: span 6; }
+      .price{ grid-column: span 6; }
+    }
+    @media (max-width: 640px){
+      .hero h2{ font-size: 34px; }
+      .agent{ grid-column: span 12; }
+      .price{ grid-column: span 12; }
+      .nav-cta{ width: 100%; justify-content: center; }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <nav>
+      <div class="brand">
+        <img src="public/logos/pmomax_logo.png" alt="PMOMax Logo" onerror="this.style.display='none'">
+        <div>
+          <h1>PMOMax <span style="color: var(--gold2);">•</span> PID Architect</h1>
+          <p>by <span style="color: var(--gold2); font-weight: 800;">Katalyst Street</span></p>
+        </div>
+      </div>
+
+      <ul class="nav-links">
+        <li><a href="#overview">Overview</a></li>
+        <li><a href="#agents">AI Agents</a></li>
+        <li><a href="#features">Features</a></li>
+        <li><a href="#docs">Docs</a></li>
+        <li><a href="#pricing">Pricing</a></li>
+      </ul>
+
+      <a class="nav-cta" href="#docs">📚 Open Guides</a>
+    </nav>
+  </header>
+
+  <section class="hero" id="overview">
+    <div class="hero-card">
+      <div class="hero-grid">
+        <div>
+          <h2>PMOMax</h2>
+          <p class="subtitle">
+            A structured, governance-first PID workspace that turns messy project inputs into clear, board-ready Project Initiation Documents.
+          </p>
+
+          <div class="badges">
+            <div class="badge">⚡ <b>Fast</b> intake</div>
+            <div class="badge">🧩 <b>Structured</b> PID model</div>
+            <div class="badge">🛡️ <b>Risk + Compliance</b> ready</div>
+            <div class="badge">📤 <b>Export</b> to Word/PDF/CSV</div>
+          </div>
+
+          <p class="tagline">
+            Built for PMOs, program managers, consultants, and delivery teams that need repeatable quality — without losing speed.
+          </p>
+
+          <div class="hero-actions">
+            <a class="btn primary" href="#agents">🤖 Meet the agents</a>
+            <a class="btn" href="#features">✨ Explore features</a>
+            <a class="btn" href="#pricing">💳 See pricing tiers</a>
+          </div>
+        </div>
+
+        <aside class="hero-side">
+          <h3>What you get</h3>
+          <ul>
+            <li><span>✓</span> Create Mode with example PIDs for instant starts</li>
+            <li><span>✓</span> Project-aware AI assistants (multiple roles)</li>
+            <li><span>✓</span> Timeline/Gantt planning that matches the PID</li>
+            <li><span>✓</span> Exports designed for governance & approvals</li>
+          </ul>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <main>
+    <section class="section" id="agents">
+      <div class="section-head">
+        <h3>AI Agents</h3>
+        <p>
+          PMOMax uses specialized assistants that focus on a specific job. This keeps outputs consistent, auditable, and easy to review.
+          <span style="color: var(--muted2);">Two new agents were added recently — included below.</span>
+        </p>
+      </div>
+
+      <div class="agent-grid">
+        <div class="card agent">
+          <h4>⚡ AI Assistant <span class="pill">Core</span></h4>
+          <div class="tag">Best for: <b>editing & clarity</b></div>
+          <p>Ask questions about your PID, rewrite sections, tighten language, and generate structured improvements.</p>
+          <ul class="list">
+            <li><i>✓</i> Executive summaries & tone control</li>
+            <li><i>✓</i> Objectives, KPIs, and scope refinement</li>
+            <li><i>✓</i> Works directly with PID content</li>
+          </ul>
+        </div>
+
+        <div class="card agent">
+          <h4>🧠 AI Create Assistant <span class="pill">Create</span></h4>
+          <div class="tag">Best for: <b>generating full PIDs</b></div>
+          <p>Start from a blank slate with an agent that drafts a complete PID structure in one pass.</p>
+          <ul class="list">
+            <li><i>✓</i> Full PID generation + examples</li>
+            <li><i>✓</i> Drafts tables (risks, milestones, deliverables)</li>
+            <li><i>✓</i> Optimized for quick first draft</li>
+          </ul>
+        </div>
+
+        <div class="card agent">
+          <h4>🧾 Parser & Intake Agent <span class="pill">Input</span></h4>
+          <div class="tag">Best for: <b>turning files into structure</b></div>
+          <p>Ingest paste/upload/drop content (DOCX/PDF/TXT/XLSX/MD/CSV) and map it into the PID sections and tables.</p>
+          <ul class="list">
+            <li><i>✓</i> Hybrid parsing: headings + tables</li>
+            <li><i>✓</i> Faster iteration than manual templates</li>
+            <li><i>✓</i> Designed for real-world messy inputs</li>
+          </ul>
+        </div>
+
+        <div class="card agent">
+          <h4>🛡️ Risk & Compliance Agent <span class="pill">New</span></h4>
+          <div class="tag">Best for: <b>governance readiness</b></div>
+          <p>Helps you define risk registers, mitigations, decision logs, and compliance language that exports cleanly.</p>
+          <ul class="list">
+            <li><i>✓</i> Risk identification + mitigations</li>
+            <li><i>✓</i> Compliance notes, approvals, governance</li>
+            <li><i>✓</i> Built for audit-friendly review</li>
+          </ul>
+        </div>
+
+        <div class="card agent">
+          <h4>📊 Timeline & Export Agent <span class="pill">New</span></h4>
+          <div class="tag">Best for: <b>deliverables & publishing</b></div>
+          <p>Align milestones with timelines and ensure exports (Word/PDF/CSV/MD) are stakeholder-ready and consistent.</p>
+          <ul class="list">
+            <li><i>✓</i> Milestone-to-Gantt alignment</li>
+            <li><i>✓</i> Export formatting sanity checks</li>
+            <li><i>✓</i> Packaging for sharing & handoff</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="cta" style="margin-top: 14px;">
+        <div>
+          <h4>Make it website-ready</h4>
+          <p>Use this page as your public documentation hub. Pair it with your PMOMax promo deck for a complete marketing + enablement package.</p>
+        </div>
+        <a class="btn primary" href="#docs">📚 Jump to Guides</a>
+      </div>
+    </section>
+
+    <section class="section" id="features">
+      <div class="section-head">
+        <h3>Core features</h3>
+        <p>Everything is designed around one outcome: a complete, consistent PID that can survive real governance, reviews, and delivery.</p>
+      </div>
+
+      <div class="grid">
+        <div class="card" style="grid-column: span 6;">
+          <h4>🧩 Structured PID workspace <span class="pill">28+ fields</span></h4>
+          <p>Capture executive summary, business case, objectives, scope, assumptions, constraints, dependencies, stakeholders, risks, governance, budget, timeline, and more.</p>
+          <ul class="list">
+            <li><i>✓</i> Tables for risks, milestones, deliverables, stakeholders</li>
+            <li><i>✓</i> Navigation for large PIDs without scroll fatigue</li>
+            <li><i>✓</i> Clear separation of narrative vs. structured data</li>
+          </ul>
+        </div>
+
+        <div class="card" style="grid-column: span 6;">
+          <h4>📥 Fast input intake <span class="pill">Paste/Drop/Upload</span></h4>
+          <p>Bring your existing project materials into PMOMax and convert them into a draft PID quickly.</p>
+          <ul class="list">
+            <li><i>✓</i> DOCX, PDF, TXT, XLSX, MD, CSV</li>
+            <li><i>✓</i> Best-effort table extraction</li>
+            <li><i>✓</i> Built for iterative refinement</li>
+          </ul>
+        </div>
+
+        <div class="card" style="grid-column: span 6;">
+          <h4>📊 Timeline & Gantt view <span class="pill">Visual planning</span></h4>
+          <p>Translate milestones and deliverables into an executive-friendly timeline that matches your PID.</p>
+          <ul class="list">
+            <li><i>✓</i> Multiple visual styles</li>
+            <li><i>✓</i> Critical path support (where available)</li>
+            <li><i>✓</i> Exportable visuals for decks & docs</li>
+          </ul>
+        </div>
+
+        <div class="card" style="grid-column: span 6;">
+          <h4>📤 Enterprise-ready exports <span class="pill">Share</span></h4>
+          <p>Deliver polished artifacts for governance, approvals, and distribution without reformatting.</p>
+          <ul class="list">
+            <li><i>✓</i> Word & PDF for leadership review</li>
+            <li><i>✓</i> CSV/XLSX/MD/TXT for analytics & handoff</li>
+            <li><i>✓</i> Consistent section ordering and tables</li>
+          </ul>
+        </div>
+
+        <div class="card" style="grid-column: span 12;">
+          <h4>Why PMOMax is different <span class="pill">PID-first</span></h4>
+          <p>
+            Most tools optimize for task tracking. PMOMax optimizes for <b>project definition and governance</b> — the part that determines whether delivery succeeds.
+            It complements tools like Jira/Asana/Monday/Smartsheet by producing the single source of truth that those tools often lack.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="docs">
+      <div class="section-head">
+        <h3>Guides & documentation</h3>
+        <p>Use these as your public enablement hub (web), and optionally link to downloadable Word/PDF manuals.</p>
+      </div>
+
+      <div class="tabs" role="tablist" aria-label="Documentation tabs">
+        <button class="tab active" onclick="showTab('doc-user')" role="tab" aria-selected="true">User Manual</button>
+        <button class="tab" onclick="showTab('doc-app')" role="tab" aria-selected="false">Application Guide</button>
+      </div>
+
+      <div id="doc-user" class="doc active" role="tabpanel">
+        <h4>User Manual</h4>
+        <p>Step-by-step usage: intake → refine → export. Use it for onboarding and training.</p>
+        <p>
+          Suggested download links (update paths to match your hosting):
+          <br/>• <a href="docs/USER_MANUAL.md" target="_blank" rel="noopener">User Manual (Markdown)</a>
+          <br/>• <a href="docs/word-from-md/USER_MANUAL.docx" target="_blank" rel="noopener">User Manual (Word)</a>
+        </p>
+      </div>
+
+      <div id="doc-app" class="doc" role="tabpanel">
+        <h4>Application Guide</h4>
+        <p>Architecture-level explanation for stakeholders, IT/security, and marketplace reviewers.</p>
+        <p>
+          Suggested download links (update paths to match your hosting):
+          <br/>• <a href="PMO_APP_GUIDE.md" target="_blank" rel="noopener">Application Guide (Markdown)</a>
+          <br/>• <a href="docs/word-from-md/PMO_APP_GUIDE.docx" target="_blank" rel="noopener">Application Guide (Word)</a>
+        </p>
+      </div>
+    </section>
+
+    <section class="section" id="pricing">
+      <div class="section-head">
+        <h3>Pricing tiers</h3>
+        <p>
+          These tiers are designed to align with how PMOMax is adopted: individual proof-of-value → team standardization → regulated enterprise rollout.
+          (Update exact prices to match your go-to-market.)
+        </p>
+      </div>
+
+      <div class="pricing">
+        <div class="price">
+          <h4>Starter</h4>
+          <div class="sub">For individuals / pilots</div>
+          <div class="amt">$19<span> /user/mo</span></div>
+          <div class="why">Low friction entry for learning the workflow and producing professional PIDs quickly.</div>
+          <ul>
+            <li><i>✓</i> Core PID editing + exports</li>
+            <li><i>✓</i> Upload/paste intake</li>
+            <li><i>✓</i> Basic AI assistance</li>
+          </ul>
+        </div>
+
+        <div class="price highlight">
+          <h4>Professional</h4>
+          <div class="sub">For teams / PMO standardization</div>
+          <div class="amt">$49<span> /user/mo</span></div>
+          <div class="why">Best value for teams that need consistent governance artifacts and repeatable quality.</div>
+          <ul>
+            <li><i>✓</i> Full Create Mode + examples</li>
+            <li><i>✓</i> Risk & compliance workflows</li>
+            <li><i>✓</i> Advanced exports (tables & packaging)</li>
+          </ul>
+        </div>
+
+        <div class="price">
+          <h4>Enterprise</h4>
+          <div class="sub">For regulated orgs / marketplace</div>
+          <div class="amt">Custom<span> /year</span></div>
+          <div class="why">Dedicated deployment, enterprise controls, and support aligned to procurement and security requirements.</div>
+          <ul>
+            <li><i>✓</i> Dedicated environment (GKE/Marketplace)</li>
+            <li><i>✓</i> SSO / governance controls (optional)</li>
+            <li><i>✓</i> SLAs + support + onboarding</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="cta" style="margin-top: 14px;">
+        <div>
+          <h4>Marketplace-ready messaging</h4>
+          <p>These tiers map cleanly to Google Cloud Marketplace packaging and billing models. Keep “Professional” as your default plan and reserve “Enterprise” for regulated deployments.</p>
+        </div>
+        <a class="btn primary" href="#overview">⬆ Back to top</a>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer">
+      <div>
+        <div style="display:flex; align-items:center; gap: 10px; margin-bottom: 6px;">
+          <img src="public/logos/pmomax_logo.png" alt="PMOMax Logo" style="height: 34px; width:auto;" onerror="this.style.display='none'">
+          <div style="font-weight: 900;">PMOMax — PID Architect</div>
+        </div>
+        <small>
+          Created by <b style="color: var(--gold2);">Katalyst Street</b> ·
+          <span id="lastUpdated">Last updated: —</span>
+        </small>
+      </div>
+
+      <div class="links">
+        <a href="#agents">AI Agents</a>
+        <a href="#features">Features</a>
+        <a href="#docs">Docs</a>
+        <a href="#pricing">Pricing</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    function showTab(id){
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.doc').forEach(d => d.classList.remove('active'));
+
+      const tabButtons = Array.from(document.querySelectorAll('.tab'));
+      const idx = (id === 'doc-user') ? 0 : 1;
+      if (tabButtons[idx]) tabButtons[idx].classList.add('active');
+
+      const panel = document.getElementById(id);
+      if (panel) panel.classList.add('active');
+    }
+
+    (function(){
+      const el = document.getElementById('lastUpdated');
+      if (!el) return;
+      const d = new Date();
+      const fmt = d.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: '2-digit' });
+      el.textContent = 'Last updated: ' + fmt;
+    })();
+  </script>
+</body>
+</html>

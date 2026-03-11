@@ -1,0 +1,117 @@
+<svg xmlns='http://www.w3.org/2000/svg' width='1760' height='940' viewBox='0 0 1760 940'>
+<defs>
+<style><![CDATA[
+.title{font:700 24px Arial, sans-serif; fill:#f8fafc}
+.label{font:700 15px Arial, sans-serif; fill:#1f2937}
+.text{font:13px Arial, sans-serif; fill:#111}
+.small{font:11.5px Arial, sans-serif; fill:#111}
+.outer{fill:#3b66c4; stroke:#234a8c; stroke-width:2}
+.inner{fill:#f7f8fa; stroke:#111; stroke-width:1.5}
+.tenant{fill:#e9f0ff; stroke:#2c5aa0; stroke-width:2}
+.module{fill:#d9d9d9; stroke:#555; stroke-width:1.5}
+.tile{fill:#fff; stroke:#777; stroke-width:1}
+.headerbar{fill:#2e56a6; stroke:#234a8c; stroke-width:0}
+.arrow{stroke:#333; stroke-width:1.7; fill:none; marker-end:url(#arrow)}
+.arrow-dot{stroke:#333; stroke-width:1.7; fill:none; stroke-dasharray:4 4; marker-end:url(#arrow)}
+]]></style>
+<marker id='arrow' viewBox='0 0 10 10' refX='8' refY='5' markerWidth='6' markerHeight='6' orient='auto-start-reverse'>
+<path d='M 0 0 L 10 5 L 0 10 z' fill='#333'/>
+</marker>
+</defs>
+<rect x='20' y='20' width='1720' height='900' class='outer'/>
+<rect x='20' y='20' width='1720' height='64' class='headerbar'/>
+<text x='880.0' y='58' class='title' text-anchor='middle'>PMOMax GKE Architecture – Tenancy &amp; Flow (Autopilot)</text>
+<rect x='40' y='92' width='1680' height='808' class='inner'/>
+<rect x='70' y='150' width='300' height='640' class='tenant'/>
+<text x='220.0' y='172' class='label' text-anchor='middle'>Customer Tenant</text>
+<rect x='100' y='230' width='260' height='230' class='module'/>
+<text x='230.0' y='254' class='label' text-anchor='middle'>User</text>
+<rect x='120' y='295' width='220' height='80' class='tile'/>
+<text x='230.0' y='340' class='text' text-anchor='middle'>Browser / User</text>
+<image x='150' y='382' width='20' height='20' href='icons/files/file-pdf.svg' />
+<image x='176' y='382' width='20' height='20' href='icons/files/file-word.svg' />
+<image x='202' y='382' width='20' height='20' href='icons/files/file-excel.svg' />
+<image x='150' y='407' width='20' height='20' href='icons/files/file-csv.svg' />
+<image x='176' y='407' width='20' height='20' href='icons/files/file-code.svg' />
+<image x='202' y='407' width='20' height='20' href='icons/files/file-lines.svg' />
+<text x='230.0' y='435' class='small' text-anchor='middle'>Uploads / Paste / Drop</text>
+<text x='230.0' y='451' class='small' text-anchor='middle'>Create / Load Demo</text>
+<rect x='400' y='150' width='1230' height='640' class='tenant'/>
+<text x='1015.0' y='172' class='label' text-anchor='middle'>Partner Tenant (GCP Project)</text>
+<rect x='430' y='220' width='280' height='175' class='module'/>
+<text x='570.0' y='244' class='label' text-anchor='middle'>Frontend</text>
+<image x='555.0' y='254' width='30' height='30' href='icons/webmobile.png' />
+<rect x='450' y='285' width='240' height='75' class='tile'/>
+<text x='570.0' y='323' class='text' text-anchor='middle'>React SPA (Vite)</text>
+<text x='570.0' y='343' class='small' text-anchor='middle'>Served by Node/Express</text>
+<rect x='430' y='405' width='130' height='110' class='module'/>
+<text x='495.0' y='428' class='label' text-anchor='middle'>Artifact</text>
+<text x='495.0' y='447' class='label' text-anchor='middle'>Registry</text>
+<rect x='440' y='460' width='110' height='40' class='tile'/>
+<text x='495.0' y='485' class='small' text-anchor='middle'>Container Images</text>
+<rect x='580' y='405' width='130' height='110' class='module'/>
+<text x='645.0' y='428' class='label' text-anchor='middle'>Secret</text>
+<text x='645.0' y='447' class='label' text-anchor='middle'>Manager</text>
+<rect x='590' y='460' width='110' height='40' class='tile'/>
+<text x='645.0' y='485' class='small' text-anchor='middle'>API Keys / Secrets</text>
+<rect x='740' y='200' width='860' height='520' class='inner'/>
+<text x='1170.0' y='224' class='label' text-anchor='middle'>GKE Cluster (Autopilot)</text>
+<rect x='770' y='245' width='200' height='120' class='module'/>
+<text x='870.0' y='268' class='label' text-anchor='middle'>Ingress / Edge</text>
+<image x='856.0' y='277' width='28' height='28' href='icons/networking.png' />
+<rect x='784' y='307' width='172' height='50' class='tile'/>
+<text x='870.0' y='337' class='text' text-anchor='middle'>GCE Ingress</text>
+<rect x='990' y='245' width='240' height='120' class='module'/>
+<text x='1110.0' y='268' class='label' text-anchor='middle'>Service</text>
+<image x='1096.0' y='277' width='28' height='28' href='icons/networking.png' />
+<rect x='1004' y='307' width='212' height='50' class='tile'/>
+<text x='1110.0' y='331' class='small' text-anchor='middle'>Cloud Load Balancer</text>
+<text x='1110.0' y='349' class='small' text-anchor='middle'>80 → 8080</text>
+<rect x='1240' y='240' width='230' height='130' class='module'/>
+<text x='1355.0' y='263' class='label' text-anchor='middle'>Compute</text>
+<image x='1341.0' y='272' width='28' height='28' href='icons/gke.png' />
+<rect x='1255' y='300' width='200' height='55' class='tile'/>
+<text x='1355.0' y='335' class='small' text-anchor='middle'>GKE Pod: pmomax-pid-architect</text>
+<rect x='770' y='405' width='200' height='140' class='module'/>
+<text x='870.0' y='428' class='label' text-anchor='middle'>Networking</text>
+<image x='857.0' y='437' width='26' height='26' href='icons/networking.png' />
+<rect x='784' y='475' width='172' height='50' class='tile'/>
+<text x='870.0' y='505' class='small' text-anchor='middle'>Private Nodes (egress controlled)</text>
+<rect x='770' y='560' width='200' height='120' class='module'/>
+<text x='870.0' y='583' class='label' text-anchor='middle'>Operations</text>
+<rect x='784' y='600' width='172' height='32' class='tile'/>
+<text x='870.0' y='620' class='small' text-anchor='middle'>Cloud Logging</text>
+<rect x='784' y='636' width='172' height='32' class='tile'/>
+<text x='870.0' y='656' class='small' text-anchor='middle'>Cloud Monitoring</text>
+<rect x='990' y='405' width='480' height='235' class='module'/>
+<text x='1230.0' y='428' class='label' text-anchor='middle'>Backend API (Partner)</text>
+<rect x='1005' y='465' width='210' height='60' class='tile'/>
+<text x='1110' y='500' class='text' text-anchor='middle'>Parse / AI / Export</text>
+<rect x='1235' y='465' width='210' height='60' class='tile'/>
+<text x='1340' y='500' class='text' text-anchor='middle'>Compliance / Health</text>
+<rect x='1005' y='535' width='440' height='90' class='tile'/>
+<text x='1230.0' y='563' class='small' text-anchor='middle'>Endpoints: parse, assistant, risk</text>
+<text x='1230.0' y='580' class='small' text-anchor='middle'>compliance, budget, file upload</text>
+<rect x='1480' y='245' width='140' height='210' class='inner'/>
+<text x='1550.0' y='268' class='label' text-anchor='middle'>Google Cloud AI</text>
+<rect x='1490' y='300' width='120' height='120' class='module'/>
+<text x='1550.0' y='323' class='label' text-anchor='middle'>Gemini API</text>
+<image x='1537.0' y='333' width='26' height='26' href='icons/vertexai.png' />
+<rect x='1500' y='367' width='100' height='48' class='tile'/>
+<text x='1550.0' y='397' class='text' text-anchor='middle'>Required</text>
+<text x='1550.0' y='415' class='small' text-anchor='middle'>Default: Gemini 2.5 Pro</text>
+<text x='1550.0' y='432' class='small' text-anchor='middle'>Fallback: Gemini 2.5 Flash</text>
+<line x1='360' y1='322' x2='430' y2='322' class='arrow' />
+<line x1='710' y1='322' x2='770' y2='322' class='arrow' />
+<line x1='970' y1='322' x2='990' y2='322' class='arrow' />
+<line x1='1230' y1='322' x2='1240' y2='322' class='arrow' />
+<line x1='1370' y1='370' x2='1370' y2='405' class='arrow' />
+<line x1='1470' y1='520' x2='1480' y2='350' class='arrow-dot' />
+<path d='M 1008 675 L 820 710 L 580 710 L 580 395' class='arrow' />
+<text x='690' y='344' class='small'>Requests</text>
+<text x='1110' y='382' class='small' text-anchor='middle'>Route to Pod</text>
+<text x='1460' y='498' class='small'>AI Calls</text>
+<text x='740' y='705' class='small'>Returns PID / Exports</text>
+<text x='70' y='820' class='small'>Managed Service: Deployed &amp; operated in Partner tenant.</text>
+<text x='70' y='838' class='small'>Note: Gemini API is required for AI parsing and assistant responses.</text>
+</svg>

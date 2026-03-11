@@ -1,0 +1,5 @@
+Project: Customer Analytics Dashboard
+Goal: Improve reporting latency by 40%.
+Timeline: 2026-03-01 to 2026-06-30.
+Stakeholders: Data Platform, Finance, Sales Ops.
+Risks: Data quality gaps, integration delays.

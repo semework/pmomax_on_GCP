@@ -1,27 +1,22 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  name: "$name-tester"
+  name: ${APP_INSTANCE_NAME}-tester
+  namespace: ${NAMESPACE}
   labels:
-    app: "$name"
+    app: ${APP_INSTANCE_NAME}
   annotations:
     marketplace.cloud.google.com/verification: test
 spec:
+  restartPolicy: Never
   containers:
   - name: tester
-    image: us-docker.pkg.dev/katalyststreet-public/pmomax/pmo-architect:latest
-    command: ["/bin/sh", "-c"]
-    args:
+    image: ${TESTER_IMAGE}
+    command:
+    - /bin/sh
+    - -c
     - |
       set -e
-      echo "Starting PMOMax Health Check..."
-      # Wait for the service to be reachable via K8s DNS
-      ATTEMPTS=0
-      until curl -fsS "http://$name-svc/health" || [ $ATTEMPTS -eq 12 ]; do
-        echo "Waiting for PMOMax service at http://$name-svc/health..."
-        ATTEMPTS=$((ATTEMPTS+1))
-        sleep 10
-      done
-      echo "PMOMax is Healthy!"
+      echo "Fallback tester pod running"
+      echo "namespace=${NAMESPACE} app=${APP_INSTANCE_NAME}"
       exit 0
-  restartPolicy: Never

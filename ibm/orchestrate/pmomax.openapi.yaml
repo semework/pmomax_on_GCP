@@ -1,0 +1,356 @@
+openapi: 3.0.3
+info:
+  title: PMOMax Orchestrate API
+  version: 1.0.0
+  description: Orchestrate-facing API for PMOMax parsing, creation, gantt rendering, and exports.
+servers:
+  - url: https://your-pmomax-host
+paths:
+  /api/orch/parse:
+    post:
+      summary: Parse PID from text
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                text:
+                  type: string
+              required: [text]
+      responses:
+        '200':
+          description: Parsed PID
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrchResponse'
+  /api/orch/create:
+    post:
+      summary: Create PID from prompt
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                prompt:
+                  type: string
+              required: [prompt]
+      responses:
+        '200':
+          description: Created PID
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrchResponse'
+  /api/orch/gantt:
+    post:
+      summary: Render Gantt asset from PID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                pid:
+                  $ref: '#/components/schemas/PMOMaxPID'
+                tasks:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/WorkTask'
+      responses:
+        '200':
+          description: Gantt asset links
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrchResponse'
+  /api/orch/export:
+    post:
+      summary: Export PID to DOCX (and Gantt asset)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                pid:
+                  $ref: '#/components/schemas/PMOMaxPID'
+                generalNotes:
+                  type: string
+      responses:
+        '200':
+          description: Export links
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrchResponse'
+components:
+  schemas:
+    OrchResponse:
+      type: object
+      properties:
+        ok:
+          type: boolean
+        summary:
+          type: string
+        pid:
+          $ref: '#/components/schemas/PMOMaxPID'
+        tables:
+          type: object
+          additionalProperties: true
+        assets:
+          type: object
+          properties:
+            gantt_png_url:
+              type: string
+            gantt_svg_url:
+              type: string
+            export_docx_url:
+              type: string
+      required: [ok, summary, pid, tables, assets]
+    PMOMaxPID:
+      type: object
+      properties:
+        titleBlock:
+          type: object
+          properties:
+            projectTitle:
+              type: string
+            subtitle:
+              type: string
+            generatedOn:
+              type: string
+        executiveSummary:
+          type: string
+        problemStatement:
+          type: string
+        businessCaseExpectedValue:
+          type: string
+        objectivesSmart:
+          type: array
+          items:
+            type: object
+            properties:
+              objective:
+                type: string
+              successMeasure:
+                type: string
+        kpis:
+          type: array
+          items:
+            type: object
+            properties:
+              kpi:
+                type: string
+              baseline:
+                type: string
+              target:
+                type: string
+        scopeInclusions:
+          type: array
+          items:
+            type: string
+        scopeExclusions:
+          type: array
+          items:
+            type: string
+        assumptions:
+          type: array
+          items:
+            type: object
+            properties:
+              assumption:
+                type: string
+        constraints:
+          type: array
+          items:
+            type: object
+            properties:
+              constraint:
+                type: string
+        dependencies:
+          type: array
+          items:
+            type: object
+            properties:
+              dependency:
+                type: string
+              teamOrSystem:
+                type: string
+              status:
+                type: string
+        stakeholders:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              role:
+                type: string
+              contact:
+                type: string
+        projectSponsor:
+          type: object
+          properties:
+            name:
+              type: string
+            role:
+              type: string
+        projectManagerOwner:
+          type: object
+          properties:
+            name:
+              type: string
+        teamRaci:
+          type: array
+          items:
+            type: object
+            properties:
+              teamMember:
+                type: string
+              role:
+                type: string
+              responsible:
+                type: string
+              accountable:
+                type: string
+              consulted:
+                type: string
+              informed:
+                type: string
+        timelineOverview:
+          type: string
+        milestones:
+          type: array
+          items:
+            type: object
+            properties:
+              milestone:
+                type: string
+              targetDate:
+                type: string
+        workBreakdownTasks:
+          type: array
+          items:
+            $ref: '#/components/schemas/WorkTask'
+        budgetCostBreakdown:
+          type: array
+          items:
+            type: object
+            properties:
+              item:
+                type: string
+              category:
+                type: string
+              cost:
+                type: string
+        resourcesTools:
+          type: array
+          items:
+            type: object
+            properties:
+              resource:
+                type: string
+              purpose:
+                type: string
+        risks:
+          type: array
+          items:
+            type: object
+            properties:
+              risk:
+                type: string
+              probability:
+                type: string
+              impact:
+                type: string
+        mitigationsContingencies:
+          type: array
+          items:
+            type: object
+            properties:
+              mitigation:
+                type: string
+              contingency:
+                type: string
+        issuesDecisionsLog:
+          type: array
+          items:
+            type: object
+            properties:
+              issue:
+                type: string
+              decision:
+                type: string
+              owner:
+                type: string
+              date:
+                type: string
+        communicationPlan:
+          type: array
+          items:
+            type: object
+            properties:
+              audience:
+                type: string
+              cadence:
+                type: string
+              channel:
+                type: string
+        governanceApprovals:
+          type: array
+          items:
+            type: object
+            properties:
+              gate:
+                type: string
+              signoffRequirement:
+                type: string
+        complianceSecurityPrivacy:
+          type: array
+          items:
+            type: object
+            properties:
+              requirement:
+                type: string
+              notes:
+                type: string
+        openQuestionsNextSteps:
+          type: array
+          items:
+            type: object
+            properties:
+              question:
+                type: string
+              nextStep:
+                type: string
+        notesBackground:
+          type: string
+    WorkTask:
+      type: object
+      properties:
+        name:
+          type: string
+        start:
+          type: string
+        end:
+          type: string
+        owner:
+          type: string
+        status:
+          type: string
+        priority:
+          type: string
+        kind:
+          type: string
+        dependencies:
+          type: array
+          items:
+            type: string

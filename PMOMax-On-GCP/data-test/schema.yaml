@@ -1,6 +1,11 @@
 x-google-marketplace:
   schemaVersion: v2
   applicationApiVersion: v1beta1
+  publishedVersion: "1.0.1"
+  publishedVersionMetadata:
+    releaseNote: >
+      PMOMax 1.0.0 freeze for Marketplace approval with stable deploy/test behavior.
+    recommended: true
 
 properties:
   APP_INSTANCE_NAME:
@@ -34,7 +39,7 @@ properties:
 
   PMOMAX_APP_IMAGE:
     type: string
-    default: us-docker.pkg.dev/katalyststreet-public/pmomax/pmo-architect:20260303-233534
+    default: us-docker.pkg.dev/katalyststreet-public/pmomax/pmomax:1.0.1
 
   PMOMAX_APP_PORT:
     type: integer
@@ -42,7 +47,7 @@ properties:
 
   TESTER_IMAGE:
     type: string
-    default: curlimages/curl:8.12.1
+    default: us-docker.pkg.dev/katalyststreet-public/pmomax/deployer:1.0.1
 
 required:
   - APP_INSTANCE_NAME

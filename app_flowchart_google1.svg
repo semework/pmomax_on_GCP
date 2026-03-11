@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 472 504">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: none;
+      }
+
+      .cls-1, .cls-2, .cls-3, .cls-4, .cls-5, .cls-6, .cls-7 {
+        stroke: #000;
+        stroke-miterlimit: 4;
+        stroke-width: 1px;
+      }
+
+      .cls-2 {
+        fill: #f3e5f5;
+      }
+
+      .cls-3 {
+        fill: #f5f5f5;
+      }
+
+      .cls-4 {
+        fill: #e8f5e9;
+      }
+
+      .cls-8 {
+        font-size: 12px;
+      }
+
+      .cls-8, .cls-9 {
+        font-family: ArialMT, Arial;
+        isolation: isolate;
+      }
+
+      .cls-10 {
+        fill: #fff;
+      }
+
+      .cls-5 {
+        fill: #e3f2fd;
+      }
+
+      .cls-6 {
+        fill: #fff9c4;
+      }
+
+      .cls-9 {
+        font-size: 16px;
+      }
+    </style>
+  </defs>
+  <!-- Generator: Adobe Illustrator 28.7.1, SVG Export Plug-In . SVG Version: 1.2.0 Build 142)  -->
+  <g>
+    <g id="Layer_1">
+      <g id="graph0">
+        <polygon class="cls-10" points=".3 504 .3 0 471.7 0 471.7 504 .3 504"/>
+        <g id="node1">
+          <polygon class="cls-5" points="329.1 4 185.2 4 185.2 90.3 329.1 90.3 329.1 4"/>
+          <text class="cls-9" transform="translate(196.4 43.6)"><tspan x="0" y="0">Customer Tenant</tspan></text>
+          <text class="cls-9" transform="translate(234.9 62.4)"><tspan x="0" y="0">(User)</tspan></text>
+        </g>
+        <g id="node2">
+          <polygon class="cls-3" points="329.1 140.6 185.2 140.6 185.2 226.9 329.1 226.9 329.1 140.6"/>
+          <text class="cls-9" transform="translate(225.1 180.2)"><tspan x="0" y="0">Frontend</tspan></text>
+          <text class="cls-9" transform="translate(213.3 198.9)"><tspan x="0" y="0">(React SPA)</tspan></text>
+        </g>
+        <g id="edge1">
+          <path class="cls-1" d="M195.5,90.5c-4.7,5.5-8.8,11.4-11.8,17.8-3.7,7.7-3.5,15.1-.8,22"/>
+          <polygon class="cls-7" points="185.8 128.4 187.8 138.8 179.8 131.9 185.8 128.4"/>
+          <text class="cls-8" transform="translate(183.8 119.7)"><tspan x="0" y="0">Uploads Text/Document</tspan></text>
+        </g>
+        <g id="edge6">
+          <path class="cls-1" d="M301.6,140.2c3.8-5.6,7.1-11.5,9.5-17.7,2.8-7.4,2.5-14.7.2-21.8"/>
+          <polygon class="cls-7" points="308.3 102.7 307.2 92.2 314.6 99.7 308.3 102.7"/>
+          <text class="cls-8" transform="translate(313.3 119.7)"><tspan x="0" y="0">Shows Assistant</tspan></text>
+        </g>
+        <g id="node3">
+          <polygon class="cls-6" points="273.1 277.1 129.2 277.1 129.2 363.4 273.1 363.4 273.1 277.1"/>
+          <text class="cls-9" transform="translate(148.9 316.7)"><tspan x="0" y="0">Partner Tenant</tspan></text>
+          <text class="cls-9" transform="translate(150 335.5)"><tspan x="0" y="0">(Backend API)</tspan></text>
+        </g>
+        <g id="edge2">
+          <path class="cls-1" d="M184.8,187.4c-41.9,5.7-91.5,20.6-118.5,57.5-20.2,27.5,13.2,46.1,51.8,57.8"/>
+          <polygon class="cls-7" points="118.9 299.3 127.6 305.4 117 306 118.9 299.3"/>
+          <text class="cls-8" transform="translate(66.4 256.3)"><tspan x="0" y="0">Sends Data</tspan></text>
+        </g>
+        <g id="edge7">
+          <path class="cls-1" d="M184.8,210.7c-14.4,8.6-27.7,19.8-36.1,34.2-4.2,7.1-4.5,14.5-2.3,21.6"/>
+          <polygon class="cls-7" points="149.5 264.9 150.6 275.4 143.2 267.9 149.5 264.9"/>
+          <text class="cls-8" transform="translate(148.6 256.3)"><tspan x="0" y="0">Export Request</tspan></text>
+        </g>
+        <g id="edge5">
+          <path class="cls-1" d="M226.7,276.8c3.1-5.8,6-11.9,8.4-17.7,2.9-6.8,5.5-14,7.9-21.2"/>
+          <polygon class="cls-7" points="239.6 236.9 246 228.5 246.3 239 239.6 236.9"/>
+          <text class="cls-8" transform="translate(240.4 256.3)"><tspan x="0" y="0">Returns Data</tspan></text>
+        </g>
+        <g id="edge8">
+          <path class="cls-1" d="M273.5,295.9c16.5-8.9,31.9-20.8,41.6-36.8,4.4-7.3,4.6-14.6,2.2-21.7"/>
+          <polygon class="cls-7" points="314.2 239 312.7 228.5 320.4 235.8 314.2 239"/>
+          <text class="cls-8" transform="translate(319 256.3)"><tspan x="0" y="0">Export File</tspan></text>
+        </g>
+        <g id="node4">
+          <polygon class="cls-2" points="148.2 413.7 4.3 413.7 4.3 500 148.2 500 148.2 413.7"/>
+          <text class="cls-9" transform="translate(18 453.3)"><tspan x="0" y="0">AI/Parsing Logic</tspan></text>
+          <text class="cls-9" transform="translate(22 472)"><tspan x="0" y="0">(Gemini, Local)</tspan></text>
+        </g>
+        <g id="edge3">
+          <path class="cls-1" d="M128.9,326.3c-37.8,6.8-81.1,21.8-104.9,55.1-5,7-5.5,14.3-3.2,21.6"/>
+          <polygon class="cls-7" points="23.9 401.4 25.1 411.9 17.6 404.4 23.9 401.4"/>
+          <text class="cls-8" transform="translate(23.6 392.8)"><tspan x="0" y="0">Parse/AI/Export</tspan></text>
+        </g>
+        <g id="node5">
+          <polygon class="cls-4" points="467.7 413.7 288.3 413.7 288.3 500 467.7 500 467.7 413.7"/>
+          <text class="cls-9" transform="translate(297.2 453.3)"><tspan x="0" y="0">Google Cloud Platform</tspan></text>
+          <text class="cls-9" transform="translate(311.4 472)"><tspan x="0" y="0">(Cloud Run / GKE)</tspan></text>
+        </g>
+        <g id="edge9">
+          <path class="cls-1" d="M225.4,363.7c7.9,11.4,17.4,23,27.9,31.9,7.7,6.5,16.2,12.5,25,18"/>
+          <polygon class="cls-7" points="279.9 410.5 286.8 418.6 276.4 416.5 279.9 410.5"/>
+          <text class="cls-8" transform="translate(254 392.8)"><tspan x="0" y="0">Compliance/Health</tspan></text>
+        </g>
+        <g id="edge4">
+          <path class="cls-1" d="M104.4,413.5c7.9-10.9,16.9-22.3,26-32.1,3.1-3.4,6.5-6.8,9.9-10.1"/>
+          <polygon class="cls-7" points="137.7 369 147.4 364.7 142.5 374.1 137.7 369"/>
+          <text class="cls-8" transform="translate(130.6 392.8)"><tspan x="0" y="0">Returns Reply</tspan></text>
+        </g>
+        <g id="edge10">
+          <path class="cls-1" d="M395.6,413.3c1.8-5.8,3.3-11.8,4.4-17.6,11.8-66.6,19.9-96.2-20-150.8-10.3-14.1-24.8-25-40.2-33.5"/>
+          <polygon class="cls-7" points="338.2 214.5 330.9 206.9 341.4 208.3 338.2 214.5"/>
+          <text class="cls-8" transform="translate(409.7 324.6)"><tspan x="0" y="0">Hosts</tspan></text>
+        </g>
+        <g id="edge11">
+          <path class="cls-1" d="M372.5,413.4c-3.2-11.5-8.4-23.2-16.5-32-19-20.6-45.8-34.2-71.9-43.2"/>
+          <polygon class="cls-7" points="283.3 341.6 274.9 335.2 285.5 335 283.3 341.6"/>
+          <text class="cls-8" transform="translate(365.5 392.8)"><tspan x="0" y="0">Hosts</tspan></text>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>

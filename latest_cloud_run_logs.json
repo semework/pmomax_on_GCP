@@ -1,0 +1,337 @@
+[
+  {
+    "httpRequest": {
+      "latency": "0s",
+      "protocol": "HTTP/1.1",
+      "remoteIp": "2603:7000:6100:248f:1927:88d:3e78:7d84",
+      "requestMethod": "GET",
+      "requestSize": "1096",
+      "requestUrl": "https://pmomax-839982691485.us-east1.run.app/",
+      "serverIp": "2600:1900:4245:200::",
+      "status": 500,
+      "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+    },
+    "insertId": "699a6786000b245d0b502496",
+    "logName": "projects/katalyststreet-public/logs/run.googleapis.com%2Frequests",
+    "receiveTimestamp": "2026-02-22T02:18:46.734685485Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "pmomax",
+        "location": "us-east1",
+        "project_id": "katalyststreet-public",
+        "revision_name": "pmomax-00011-mlf",
+        "service_name": "pmomax"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "ERROR",
+    "spanId": "1ceab66f643307a6",
+    "textPayload": "The request failed because billing is disabled for this project.",
+    "timestamp": "2026-02-22T02:18:46.710146Z",
+    "trace": "projects/katalyststreet-public/traces/36790fd52658fffa43d1001c4ec9500f",
+    "traceSampled": true
+  },
+  {
+    "httpRequest": {
+      "latency": "0s",
+      "protocol": "HTTP/1.1",
+      "remoteIp": "2603:7000:6100:248f:1927:88d:3e78:7d84",
+      "requestMethod": "GET",
+      "requestSize": "725",
+      "requestUrl": "https://pmo-architect-zxofcfyioq-ue.a.run.app/",
+      "serverIp": "2600:1900:4244:200::",
+      "status": 500,
+      "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Code/1.109.4 Chrome/142.0.7444.265 Electron/39.3.0 Safari/537.36"
+    },
+    "insertId": "699a66f40006944b929345d7",
+    "logName": "projects/katalyststreet-public/logs/run.googleapis.com%2Frequests",
+    "receiveTimestamp": "2026-02-22T02:16:20.435744074Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "pmo-architect",
+        "location": "us-east1",
+        "project_id": "katalyststreet-public",
+        "revision_name": "pmo-architect-00017-rkr",
+        "service_name": "pmo-architect"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "ERROR",
+    "spanId": "f62890f90e6ff621",
+    "textPayload": "The request failed because billing is disabled for this project.",
+    "timestamp": "2026-02-22T02:16:20.418031Z",
+    "trace": "projects/katalyststreet-public/traces/abc3c9aaa7f4f04516a6e43424148ad3",
+    "traceSampled": true
+  },
+  {
+    "httpRequest": {
+      "latency": "0s",
+      "protocol": "HTTP/1.1",
+      "remoteIp": "2a04:4e41:399e:930f::b9e:930f",
+      "requestMethod": "GET",
+      "requestSize": "642",
+      "requestUrl": "https://pmo-architect-839982691485.us-east1.run.app/",
+      "serverIp": "2600:1901:81d5:200::",
+      "status": 500,
+      "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_1) AppleWebKit/601.2.4 (KHTML, like Gecko) Version/9.0.1 Safari/601.2.4 facebookexternalhit/1.1 Facebot Twitterbot/1.0"
+    },
+    "insertId": "699a1bd2000a45e51b831854",
+    "logName": "projects/katalyststreet-public/logs/run.googleapis.com%2Frequests",
+    "receiveTimestamp": "2026-02-21T20:55:46.676653338Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "pmo-architect",
+        "location": "us-east1",
+        "project_id": "katalyststreet-public",
+        "revision_name": "pmo-architect-00017-rkr",
+        "service_name": "pmo-architect"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "ERROR",
+    "spanId": "0d8c488cdd2a61b5",
+    "textPayload": "The request failed because billing is disabled for this project.",
+    "timestamp": "2026-02-21T20:55:36.649664Z",
+    "trace": "projects/katalyststreet-public/traces/1c6ce6044f34d409235be0324fb6de28",
+    "traceSampled": true
+  },
+  {
+    "httpRequest": {
+      "latency": "0s",
+      "protocol": "HTTP/1.1",
+      "remoteIp": "2a04:4e41:399e:930f::b9e:930f",
+      "requestMethod": "GET",
+      "requestSize": "425",
+      "requestUrl": "https://pmo-architect-839982691485.us-east1.run.app/favicon.ico",
+      "serverIp": "2600:1901:81d5:200::",
+      "status": 500,
+      "userAgent": "NetworkingExtension/8621.5.1.10.7 Network/4277.140.33.700.1 iOS/18.7.2"
+    },
+    "insertId": "699a1bc8000a122c47a9fa8a",
+    "logName": "projects/katalyststreet-public/logs/run.googleapis.com%2Frequests",
+    "receiveTimestamp": "2026-02-21T20:55:36.997247861Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "pmo-architect",
+        "location": "us-east1",
+        "project_id": "katalyststreet-public",
+        "revision_name": "pmo-architect-00017-rkr",
+        "service_name": "pmo-architect"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "ERROR",
+    "spanId": "5c4b6c6ca5eac80d",
+    "textPayload": "The request failed because billing is disabled for this project.",
+    "timestamp": "2026-02-21T20:55:36.644735Z",
+    "trace": "projects/katalyststreet-public/traces/9f68aeffbf71d31b235be0324fb6d347",
+    "traceSampled": true
+  },
+  {
+    "httpRequest": {
+      "latency": "0s",
+      "protocol": "HTTP/1.1",
+      "remoteIp": "2a04:4e41:399e:930f::b9e:930f",
+      "requestMethod": "GET",
+      "requestSize": "446",
+      "requestUrl": "https://pmo-architect-839982691485.us-east1.run.app/apple-touch-icon-precomposed.png",
+      "serverIp": "2600:1901:81d5:200::",
+      "status": 500,
+      "userAgent": "NetworkingExtension/8621.5.1.10.7 Network/4277.140.33.700.1 iOS/18.7.2"
+    },
+    "insertId": "699a1bc8000a0e385c9e6914",
+    "logName": "projects/katalyststreet-public/logs/run.googleapis.com%2Frequests",
+    "receiveTimestamp": "2026-02-21T20:55:36.662788272Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "pmo-architect",
+        "location": "us-east1",
+        "project_id": "katalyststreet-public",
+        "revision_name": "pmo-architect-00017-rkr",
+        "service_name": "pmo-architect"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "ERROR",
+    "spanId": "be03615eb39c1980",
+    "textPayload": "The request failed because billing is disabled for this project.",
+    "timestamp": "2026-02-21T20:55:36.644227Z",
+    "trace": "projects/katalyststreet-public/traces/3372243953c49990235be0324fb6deed"
+  },
+  {
+    "insertId": "69991b6400048b135eb280c4",
+    "labels": {
+      "instanceId": "00da6cd2c4b595b926c33d2323d59d6b4fb0fbc9b372afeff9532214d6e5bf5e634de138833b8a509baf4a676b3267079cb3a69e677aeebdc4a928c0084c8b26191ee390e408f2b7639a36ad80",
+      "scaling_reason": "AUTOSCALING"
+    },
+    "logName": "projects/katalyststreet-public/logs/run.googleapis.com%2Fvarlog%2Fsystem",
+    "receiveTimestamp": "2026-02-21T02:41:40.300399531Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "pmo-architect",
+        "location": "us-east1",
+        "project_id": "katalyststreet-public",
+        "revision_name": "pmo-architect-00017-rkr",
+        "service_name": "pmo-architect"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "textPayload": "Starting new instance. Reason: AUTOSCALING - Instance started due to configured scaling factors (e.g. CPU utilization, request throughput, etc.) or no existing capacity for current traffic.",
+    "timestamp": "2026-02-21T02:41:40.297747Z"
+  },
+  {
+    "insertId": "69991b6400048b11f7af57c7",
+    "labels": {
+      "instanceId": "00da6cd2c463cf8e25be2100f7a5ba7c84e9ffaee9d65f8521fd196ebf7d0ac64c565b7d63a985a71d752fc776277c76563bd595f6a7d5ec7f87d9b7c958fba810c10d5e0455822dcf1b6eb6d8",
+      "scaling_reason": "AUTOSCALING"
+    },
+    "logName": "projects/katalyststreet-public/logs/run.googleapis.com%2Fvarlog%2Fsystem",
+    "receiveTimestamp": "2026-02-21T02:41:40.300399531Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "pmo-architect",
+        "location": "us-east1",
+        "project_id": "katalyststreet-public",
+        "revision_name": "pmo-architect-00017-rkr",
+        "service_name": "pmo-architect"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "textPayload": "Starting new instance. Reason: AUTOSCALING - Instance started due to configured scaling factors (e.g. CPU utilization, request throughput, etc.) or no existing capacity for current traffic.",
+    "timestamp": "2026-02-21T02:41:40.297745Z"
+  },
+  {
+    "httpRequest": {
+      "latency": "0s",
+      "protocol": "HTTP/1.1",
+      "remoteIp": "2a04:4e41:2fc5:f7df::b8c5:f7df",
+      "requestMethod": "GET",
+      "requestSize": "412",
+      "requestUrl": "https://pmo-architect-839982691485.us-east1.run.app/favicon.ico",
+      "serverIp": "2600:1900:4240:200::",
+      "status": 500,
+      "userAgent": "com.apple.WebKit.Networking/20623.2.7.18.1 Network/4277.140.33.701.1 macOS/15.7.3"
+    },
+    "insertId": "69991b5a000420ee5125373b",
+    "logName": "projects/katalyststreet-public/logs/run.googleapis.com%2Frequests",
+    "receiveTimestamp": "2026-02-21T02:41:30.273944917Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "pmo-architect",
+        "location": "us-east1",
+        "project_id": "katalyststreet-public",
+        "revision_name": "pmo-architect-00017-rkr",
+        "service_name": "pmo-architect"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "ERROR",
+    "spanId": "20ea4eb86e1859d4",
+    "textPayload": "The request failed because billing is disabled for this project.",
+    "timestamp": "2026-02-21T02:41:30.253253Z",
+    "trace": "projects/katalyststreet-public/traces/b5ead9c8d4be052530711b37fbe4ca55",
+    "traceSampled": true
+  },
+  {
+    "httpRequest": {
+      "latency": "0s",
+      "protocol": "HTTP/1.1",
+      "remoteIp": "2a04:4e41:2fc5:f7df::b8c5:f7df",
+      "requestMethod": "GET",
+      "requestSize": "616",
+      "requestUrl": "https://pmo-architect-839982691485.us-east1.run.app/",
+      "serverIp": "2600:1900:4240:200::",
+      "status": 500,
+      "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_1) AppleWebKit/601.2.4 (KHTML, like Gecko) Version/9.0.1 Safari/601.2.4 facebookexternalhit/1.1 Facebot Twitterbot/1.0"
+    },
+    "insertId": "69991b5a0004271c5eef57e9",
+    "logName": "projects/katalyststreet-public/logs/run.googleapis.com%2Frequests",
+    "receiveTimestamp": "2026-02-21T02:41:30.608577369Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "pmo-architect",
+        "location": "us-east1",
+        "project_id": "katalyststreet-public",
+        "revision_name": "pmo-architect-00017-rkr",
+        "service_name": "pmo-architect"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "ERROR",
+    "spanId": "11be4271db16d46a",
+    "textPayload": "The request failed because billing is disabled for this project.",
+    "timestamp": "2026-02-21T02:41:30.252431Z",
+    "trace": "projects/katalyststreet-public/traces/eea7bc8b9d23b36230711b37fbe4cb96"
+  },
+  {
+    "httpRequest": {
+      "latency": "0s",
+      "protocol": "HTTP/1.1",
+      "remoteIp": "2a04:4e41:2fc5:f7df::b8c5:f7df",
+      "requestMethod": "GET",
+      "requestSize": "432",
+      "requestUrl": "https://pmo-architect-839982691485.us-east1.run.app/apple-touch-icon-precomposed.png",
+      "serverIp": "2600:1900:4240:200::",
+      "status": 500,
+      "userAgent": "com.apple.WebKit.Networking/20623.2.7.18.1 Network/4277.140.33.701.1 macOS/15.7.3"
+    },
+    "insertId": "69991b640004b9c6b9084f5a",
+    "logName": "projects/katalyststreet-public/logs/run.googleapis.com%2Frequests",
+    "receiveTimestamp": "2026-02-21T02:41:40.313404890Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "pmo-architect",
+        "location": "us-east1",
+        "project_id": "katalyststreet-public",
+        "revision_name": "pmo-architect-00017-rkr",
+        "service_name": "pmo-architect"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "ERROR",
+    "spanId": "61b71032bab6c3dd",
+    "textPayload": "The request failed because billing is disabled for this project.",
+    "timestamp": "2026-02-21T02:41:30.252276Z",
+    "trace": "projects/katalyststreet-public/traces/75702954d16c05bd30711b37fbe4c6a8",
+    "traceSampled": true
+  },
+  {
+    "errorGroups": [
+      {
+        "id": "CKqF4cGSuODxngE"
+      }
+    ],
+    "httpRequest": {
+      "latency": "0s",
+      "protocol": "HTTP/1.1",
+      "remoteIp": "2a04:4e41:2fc5:f7df::b8c5:f7df",
+      "requestMethod": "GET",
+      "requestSize": "420",
+      "requestUrl": "https://pmo-architect-839982691485.us-east1.run.app/apple-touch-icon.png",
+      "responseSize": "14",
+      "serverIp": "2600:1900:4240:200::",
+      "status": 429,
+      "userAgent": "com.apple.WebKit.Networking/20623.2.7.18.1 Network/4277.140.33.701.1 macOS/15.7.3"
+    },
+    "insertId": "69991b6e0004b363bd6abd7f",
+    "logName": "projects/katalyststreet-public/logs/run.googleapis.com%2Frequests",
+    "receiveTimestamp": "2026-02-21T02:41:50.312084193Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "pmo-architect",
+        "location": "us-east1",
+        "project_id": "katalyststreet-public",
+        "revision_name": "pmo-architect-00017-rkr",
+        "service_name": "pmo-architect"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "WARNING",
+    "spanId": "abacc0c43a68ab5a",
+    "textPayload": "The request was aborted because there was no available instance. Additional troubleshooting documentation can be found at: https://cloud.google.com/run/docs/troubleshooting#abort-request",
+    "timestamp": "2026-02-21T02:41:30.252184Z",
+    "trace": "projects/katalyststreet-public/traces/43c93c6e3a65be7f30711b37fbe4cf43"
+  }
+]

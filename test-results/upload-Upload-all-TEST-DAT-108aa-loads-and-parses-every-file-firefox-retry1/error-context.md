@@ -1,0 +1,283 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - generic [ref=e5]:
+      - img "PMOMax logo" [ref=e6]
+      - heading "PMOMAX" [level=1] [ref=e7]
+      - generic [ref=e8]: PID Architect
+    - generic [ref=e9]:
+      - link "Open PMO Agent website" [ref=e10] [cursor=pointer]:
+        - /url: https://pmoagent.katalyststreet.com/
+        - text: WEBSITE
+      - generic [ref=e11]:
+        - generic [ref=e12]: Built by
+        - img "Katalyst Street logo" [ref=e13]
+        - generic [ref=e14]: Katalyst Street
+      - button "Open help" [ref=e15] [cursor=pointer]: Help
+      - button "Open user guide" [ref=e16] [cursor=pointer]:
+        - img [ref=e17]
+        - text: User Guide
+      - button "Contact Us" [ref=e21] [cursor=pointer]
+  - generic [ref=e22]:
+    - complementary [ref=e23]:
+      - generic [ref=e24]:
+        - generic [ref=e25]:
+          - generic [ref=e26]:
+            - heading "Project Initiation Controls" [level=2] [ref=e27]
+            - button "Help for Project Initiation Controls" [ref=e28] [cursor=pointer]: "?"
+          - strong [ref=e31]: Click Create to start a new blank PID or use an example.
+          - generic [ref=e32]:
+            - generic [ref=e34]: INPUT
+            - generic [ref=e35]: Paste, drop, upload, or create a Project Initiation Document (PID)
+            - textbox "Paste, drop, upload, or create a PID document" [ref=e36]:
+              - /placeholder: Paste PID text, drop a file, upload (DOCX, PDF, TXT, MD, CSV, XLS/XLSX), create from scratch, or load an example.
+            - generic [ref=e37]:
+              - button "Parse" [disabled] [ref=e38]
+              - button "Reset" [ref=e39] [cursor=pointer]
+              - button "Create" [ref=e40] [cursor=pointer]
+              - generic [ref=e42] [cursor=pointer]: Upload file
+              - button "Load Demo PID" [ref=e43] [cursor=pointer]: Load Demo
+        - generic [ref=e44]:
+          - generic [ref=e45]:
+            - heading "Export Document" [level=2] [ref=e46]
+            - button "Help for Export Document" [ref=e47] [cursor=pointer]: "?"
+          - paragraph [ref=e48]: Export the current PID as a Word, PDF, or JSON document. If a Gantt chart is plotted, it will be embedded automatically.
+          - generic [ref=e50]:
+            - button "Export PDF" [ref=e51] [cursor=pointer]: PDF
+            - button "Export Word" [ref=e52] [cursor=pointer]: Word
+            - button "Export ZIP" [ref=e53] [cursor=pointer]: Zip (Word+Gantt)
+            - button "Export JSON" [ref=e54] [cursor=pointer]: JSON
+        - generic [ref=e55]:
+          - generic [ref=e56]:
+            - heading "AI Assistant" [level=2] [ref=e57]
+            - button "Risk" [ref=e58] [cursor=pointer]:
+              - generic [ref=e59]: ⚠️
+              - generic [ref=e60]: Risk
+            - button "Compliance" [ref=e61] [cursor=pointer]:
+              - generic [ref=e62]: 🔒
+              - generic [ref=e63]: Compliance
+          - generic [ref=e64]:
+            - generic [ref=e66]:
+              - heading "PMOMax AI Assistant" [level=2] [ref=e68]
+              - paragraph [ref=e69]: Ask about project status, create mode, risks, compliance, summaries, or request help. The assistant knows about create mode and current PID status.
+            - generic [ref=e71]:
+              - generic [ref=e72]: Ask about your project, get a summary, or check for risks and compliance gaps.
+              - generic [ref=e73]:
+                - text: "Try:"
+                - list [ref=e74]:
+                  - listitem [ref=e75]: "\"Summarize this project in 5 bullets.\""
+                  - listitem [ref=e76]: "\"List the top 3 risks.\""
+                  - listitem [ref=e77]: "\"What compliance issues should I check?\""
+            - generic [ref=e78]:
+              - textbox "Ask the PMOMax AI assistant" [ref=e79]:
+                - /placeholder: Ask about project status, create mode, risks, compliance, summaries, or request help.
+              - button "Send message to AI assistant" [disabled] [ref=e80]: Send
+        - generic [ref=e81]:
+          - generic [ref=e82]:
+            - heading "General Notes" [level=2] [ref=e83]
+            - button "Help for General Notes" [ref=e84] [cursor=pointer]: "?"
+          - textbox "Add notes, comments, or instructions here. These will be saved and exported." [ref=e86]
+    - main [ref=e87]:
+      - main [ref=e89]:
+        - generic [ref=e90]:
+          - generic [ref=e91]:
+            - heading "01 — Project Info" [level=3] [ref=e92]
+            - button "Help" [ref=e93] [cursor=pointer]: "?"
+          - generic [ref=e95]:
+            - generic [ref=e96]:
+              - generic [ref=e97]: Project Title
+              - generic [ref=e98]: Date,Summary
+            - generic [ref=e99]:
+              - generic [ref=e100]: Subtitle
+              - generic [ref=e101]: Project Initiation Document
+            - generic [ref=e102]:
+              - generic [ref=e103]: Generated On
+              - generic [ref=e104]: ",Summary"
+            - generic [ref=e105]:
+              - generic [ref=e106]: Sponsor Role
+              - generic [ref=e107]: Sponsor
+        - generic [ref=e108]:
+          - generic [ref=e109]:
+            - heading "02 — Overview & Rationale" [level=3] [ref=e110]
+            - button "Help" [ref=e111] [cursor=pointer]: "?"
+          - generic [ref=e113]:
+            - heading "Executive Summary" [level=3] [ref=e114]
+            - paragraph [ref=e115]: Date,Summary 2025-10-29,Subset content
+        - generic [ref=e116]:
+          - generic [ref=e117]:
+            - heading "03 — Objectives & KPIs" [level=3] [ref=e118]
+            - button "Help" [ref=e119] [cursor=pointer]: "?"
+          - generic [ref=e120]:
+            - generic [ref=e121]:
+              - heading "Objectives (SMART)" [level=3] [ref=e122]
+              - list [ref=e123]:
+                - listitem [ref=e124]: "Objective inferred from narrative: Date,Summary 2025-10-29,Subset content"
+            - generic [ref=e125]:
+              - heading "KPIs / Success Metrics" [level=3] [ref=e126]
+              - list [ref=e127]:
+                - listitem [ref=e128]:
+                  - text: On-time delivery (%)
+                  - generic [ref=e129]: "(Baseline: TBD, Target: TBD)"
+        - generic [ref=e130]:
+          - generic [ref=e131]:
+            - heading "05 — Assumptions, Constraints, Dependencies" [level=3] [ref=e132]
+            - button "Help" [ref=e133] [cursor=pointer]: "?"
+          - generic [ref=e134]:
+            - generic [ref=e135]:
+              - heading "Assumptions" [level=3] [ref=e136]
+              - list [ref=e137]:
+                - listitem [ref=e138]: "Assumption inferred from narrative: Date,Summary 2025-10-29,Subset content"
+            - generic [ref=e139]:
+              - heading "Constraints" [level=3] [ref=e140]
+              - list [ref=e141]:
+                - listitem [ref=e142]: Constraint to be confirmed with stakeholders.
+            - generic [ref=e143]:
+              - heading "Dependencies" [level=3] [ref=e144]
+              - list [ref=e145]:
+                - listitem [ref=e146]:
+                  - text: Dependency to be confirmed.
+                  - generic [ref=e147]: (Pending)
+        - generic [ref=e148]:
+          - generic [ref=e149]:
+            - heading "06 — Schedule & Gantt" [level=3] [ref=e150]
+            - button "Help" [ref=e151] [cursor=pointer]: "?"
+          - generic [ref=e152]:
+            - generic [ref=e153]:
+              - heading "Timeline Overview" [level=3] [ref=e154]
+              - paragraph [ref=e155]: "Key dates mentioned: 2025-10-29."
+            - generic [ref=e156]:
+              - generic [ref=e157]:
+                - combobox [ref=e158]:
+                  - option "Executive Brief" [selected]
+                  - option "Sprint / Iteration"
+                  - option "Engineering Build & Gates"
+                  - option "Outcome / Milestone-Centric"
+                  - option "Risk & Mitigation"
+                  - option "Critical Chain + Buffers"
+                  - option "Dependency-Dense (Architecture)"
+                  - option "Resource / Capacity Load"
+                  - option "Baseline vs Forecast"
+                  - option "Industrial / Ops Schedule"
+                - combobox [ref=e159]:
+                  - option "Prism" [selected]
+                  - option "Pastel"
+                  - option "Metro"
+                - button "Labels" [ref=e160] [cursor=pointer]
+                - button "Grid" [ref=e161] [cursor=pointer]
+                - button "Today" [ref=e162] [cursor=pointer]
+                - button "Arrows" [ref=e163] [cursor=pointer]
+                - button "Weekends" [ref=e164] [cursor=pointer]
+                - button "Critical Path" [ref=e165] [cursor=pointer]
+                - generic [ref=e166]:
+                  - generic [ref=e167]: Export Gantt
+                  - generic [ref=e168]:
+                    - button "PNG" [ref=e169] [cursor=pointer]
+                    - button "JPEG" [ref=e170] [cursor=pointer]
+                    - button "SVG" [ref=e171] [cursor=pointer]
+                - slider [ref=e172]: "20"
+                - combobox [ref=e173]:
+                  - option "Dark" [selected]
+                  - option "Light"
+                  - option "Custom…"
+              - generic [ref=e174]:
+                - generic [ref=e175]: "Preview: Executive Brief"
+                - img "PMOMax Gantt Chart" [ref=e177]:
+                  - text: Date,Summary
+                  - generic [ref=e179]:
+                    - text: Start
+                    - text: End
+                  - generic [ref=e185]: Feb '26
+                  - generic [ref=e187]: Today
+                  - generic [ref=e191]: Readiness & Launch
+                  - generic [ref=e196]: Date,Summary2025-10-29,Subset
+                  - generic [ref=e200]:
+                    - generic [ref=e201]: Critical path
+                    - generic [ref=e205]: Critical connector
+                    - generic [ref=e207]: Project Start
+                    - generic [ref=e209]: Project End
+            - generic [ref=e211]:
+              - heading "Milestones" [level=3] [ref=e212]
+              - list [ref=e213]:
+                - listitem [ref=e214]: "Milestone: 2025-10-29"
+            - generic [ref=e215]:
+              - heading "Work Breakdown" [level=3] [ref=e216]
+              - list [ref=e217]:
+                - listitem [ref=e218]: Date,Summary 2025-10-29,Subset content — Owner
+        - generic [ref=e219]:
+          - generic [ref=e220]:
+            - heading "07 — People, Resources & Budget" [level=3] [ref=e221]
+            - button "Help" [ref=e222] [cursor=pointer]: "?"
+          - generic [ref=e224]:
+            - heading "Budget & Cost Breakdown" [level=3] [ref=e225]
+            - generic [ref=e226]: "Currency: USD"
+            - table [ref=e228]:
+              - rowgroup [ref=e229]:
+                - row "Task Persona Hours B M Total Justification" [ref=e230]:
+                  - columnheader "Task" [ref=e231]
+                  - columnheader "Persona" [ref=e232]
+                  - columnheader "Hours" [ref=e233]
+                  - columnheader "B" [ref=e234]
+                  - columnheader "M" [ref=e235]
+                  - columnheader "Total" [ref=e236]
+                  - columnheader "Justification" [ref=e237]
+              - rowgroup [ref=e238]:
+                - row "Budget planning PMO 0 $0.00 ×1 $0.00 Budget details not explicitly specified in source; requires estimation." [ref=e239]:
+                  - cell "Budget planning" [ref=e240]
+                  - cell "PMO" [ref=e241]
+                  - cell "0" [ref=e242]
+                  - cell "$0.00" [ref=e243]
+                  - cell "×1" [ref=e244]
+                  - cell "$0.00" [ref=e245]
+                  - cell "Budget details not explicitly specified in source; requires estimation." [ref=e246]
+            - generic [ref=e247]: "Total: —"
+        - generic [ref=e248]:
+          - generic [ref=e249]:
+            - heading "08 — Risks, Issues & Communications" [level=3] [ref=e250]
+            - button "Help" [ref=e251] [cursor=pointer]: "?"
+          - generic [ref=e253]:
+            - heading "Key Risks" [level=3] [ref=e254]
+            - list [ref=e255]:
+              - listitem [ref=e256]: Delivery risks to be assessed.
+        - generic [ref=e257]:
+          - generic [ref=e258]:
+            - heading "09 — Governance, Compliance, Open Questions" [level=3] [ref=e259]
+            - button "Help" [ref=e260] [cursor=pointer]: "?"
+          - generic [ref=e261]:
+            - generic [ref=e262]:
+              - heading "Governance & Approvals" [level=3] [ref=e263]
+              - list [ref=e264]:
+                - listitem [ref=e265]: Approval — Sponsor signoff required.
+            - generic [ref=e266]:
+              - heading "Compliance, Security & Privacy" [level=3] [ref=e267]
+              - list [ref=e268]:
+                - listitem [ref=e269]: Compliance review — —
+            - generic [ref=e270]:
+              - heading "Open Questions & Next Steps" [level=3] [ref=e271]
+              - list [ref=e272]:
+                - listitem [ref=e273]: Confirm objectives and scope. — Review with stakeholders.
+            - generic [ref=e274]:
+              - heading "Notes & Background" [level=3] [ref=e275]
+              - paragraph [ref=e276]: Date,Summary 2025-10-29,Subset content
+    - complementary [ref=e277]:
+      - generic [ref=e278]:
+        - heading "NAVIGATION" [level=3] [ref=e280]
+        - list [ref=e281]:
+          - listitem [ref=e282]:
+            - button "01 — Project Info" [ref=e283] [cursor=pointer]
+          - listitem [ref=e284]:
+            - button "02 — Overview & Rationale" [ref=e285] [cursor=pointer]
+          - listitem [ref=e286]:
+            - button "03 — Objectives & KPIs" [ref=e287] [cursor=pointer]
+          - listitem [ref=e288]:
+            - button "05 — Assumptions & Dependencies" [ref=e289] [cursor=pointer]
+          - listitem [ref=e290]:
+            - button "06 — Schedule & Gantt" [ref=e291] [cursor=pointer]
+          - listitem [ref=e292]:
+            - button "07 — People & Budget" [ref=e293] [cursor=pointer]
+          - listitem [ref=e294]:
+            - button "08 — Risks & Comms" [ref=e295] [cursor=pointer]
+          - listitem [ref=e296]:
+            - button "09 — Governance & Open Questions" [ref=e297] [cursor=pointer]
+```

@@ -1,0 +1,60 @@
+x-google-marketplace:
+  schemaVersion: v2
+  applicationApiVersion: v1beta1
+  publishedVersion: "1.0.0"
+  publishedVersionMetadata:
+    releaseNote: >
+      PMOMax 1.0.0 freeze for Marketplace approval with stable deploy/test behavior.
+    recommended: true
+
+properties:
+  APP_INSTANCE_NAME:
+    type: string
+    default: "pmo-architect"
+    pattern: "^[a-z0-9-]+$"
+    x-google-marketplace:
+      type: NAME
+
+  NAMESPACE:
+    type: string
+    default: "pmomax"
+    x-google-marketplace:
+      type: NAMESPACE
+
+  DOMAIN:
+    type: string
+    default: "pmomax.example.com"
+    pattern: "^[a-zA-Z0-9.-]+$"
+
+  reportingSecret:
+    type: string
+    x-google-marketplace:
+      type: REPORTING_SECRET
+
+  deployerServiceAccount:
+    type: string
+    default: "deployer-sa"
+    x-google-marketplace:
+      type: SERVICE_ACCOUNT
+
+  PMOMAX_APP_IMAGE:
+    type: string
+    default: us-docker.pkg.dev/katalyststreet-public/pmomax/pmomax:1.0.0
+
+  PMOMAX_APP_PORT:
+    type: integer
+    default: 8080
+
+  TESTER_IMAGE:
+    type: string
+    default: us-docker.pkg.dev/katalyststreet-public/pmomax/deployer:1.0.0
+
+required:
+  - APP_INSTANCE_NAME
+  - NAMESPACE
+  - DOMAIN
+  - reportingSecret
+  - deployerServiceAccount
+  - PMOMAX_APP_IMAGE
+  - PMOMAX_APP_PORT
+  - TESTER_IMAGE

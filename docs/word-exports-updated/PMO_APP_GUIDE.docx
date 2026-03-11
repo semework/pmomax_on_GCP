@@ -1,0 +1,24 @@
+# PMOMax App Guide (Updated)
+
+## Introduction
+PMOMax is a gold-themed, AI-powered PID builder for modern project teams. This guide covers all new features, workflows, and compliance updates.
+
+## Main Features
+- Unified input panel (paste, drop, upload)
+- AI assistant for document editing
+- Export to Word, PDF, JSON
+- Health check endpoint
+- SBOM and vulnerability reporting
+
+## Workflow
+1. Clear all state
+2. Upload or paste data
+3. Parse and edit
+4. Export
+
+## Compliance
+- All Marketplace requirements met
+- See README.md and metadata.json for details
+
+---
+*This markdown is the source for the updated Word App Guide export.*

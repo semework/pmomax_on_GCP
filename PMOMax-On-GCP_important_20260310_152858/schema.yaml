@@ -1,0 +1,110 @@
+x-google-marketplace:
+  schemaVersion: v2
+  applicationApiVersion: v1beta1
+  publishedVersion: "1.0.0"
+  publishedVersionMetadata:
+    releaseNote: >
+      PMOMax 1.0 freeze for Marketplace approval with stable deploy/test behavior.
+    recommended: true
+  managedUpdates:
+    kalmSupported: false
+  images:
+    'deployer':
+      properties:
+        deployerImageRepo:
+          type: REPO_WITH_REGISTRY
+        deployerImageTag:
+          type: TAG
+    'pmomax':
+      properties:
+        pmomaxAppRepo:
+          type: REPO_WITH_REGISTRY
+        pmomaxAppTag:
+          type: TAG
+
+properties:
+  APP_INSTANCE_NAME:
+    type: string
+    default: "pmo-architect"
+    pattern: "^[a-z0-9-]+$"
+    x-google-marketplace:
+      type: NAME
+  NAMESPACE:
+    type: string
+    default: "pmomax"
+    x-google-marketplace:
+      type: NAMESPACE
+  DOMAIN:
+    type: string
+    pattern: "^[a-zA-Z0-9.-]+$"
+    default: "pmomax.example.com"
+  reportingSecret:
+    type: string
+    x-google-marketplace:
+      type: REPORTING_SECRET
+  deployerImageRepo:
+    type: string
+    default: us-docker.pkg.dev/katalyststreet-public/pmomax/deployer
+  deployerImageTag:
+    type: string
+    default: "1.0.0"
+  pmomaxAppRepo:
+    type: string
+    default: us-docker.pkg.dev/katalyststreet-public/pmomax/pmomax
+  pmomaxAppTag:
+    type: string
+    default: "1.0.0"
+  deployerImage:
+    type: string
+    default: us-docker.pkg.dev/katalyststreet-public/pmomax/deployer:1.0.0
+    x-google-marketplace:
+      type: DEPLOYER_IMAGE
+  PMOMAX_APP_IMAGE:
+    type: string
+    default: us-docker.pkg.dev/katalyststreet-public/pmomax/pmomax:1.0.0
+  TESTER_IMAGE:
+    type: string
+    default: us-docker.pkg.dev/katalyststreet-public/pmomax/deployer:1.0.0
+  PMOMAX_APP_PORT:
+    type: integer
+    default: 8080
+  deployerServiceAccount:
+    type: string
+    title: Service Account for deployer
+    default: "deployer-sa"
+    description: "Service account used by Marketplace deployer for install/update operations."
+    x-google-marketplace:
+      type: SERVICE_ACCOUNT
+      serviceAccount:
+        description: "Used by deployer to create/update/delete app resources."
+        roles:
+          - type: Role
+            rulesType: CUSTOM
+            rules:
+              - apiGroups: [""]
+                resources: ["pods", "services", "serviceaccounts", "configmaps", "secrets", "persistentvolumeclaims", "events"]
+                verbs: ["get", "list", "create", "update", "patch", "delete", "watch"]
+              - apiGroups: ["apps"]
+                resources: ["deployments", "statefulsets", "replicasets", "daemonsets"]
+                verbs: ["get", "list", "create", "update", "patch", "delete", "watch"]
+              - apiGroups: ["rbac.authorization.k8s.io"]
+                resources: ["roles", "rolebindings"]
+                verbs: ["get", "list", "create", "update", "patch", "delete", "watch"]
+              - apiGroups: ["app.k8s.io"]
+                resources: ["applications"]
+                verbs: ["get", "list", "create", "update", "patch", "delete", "watch"]
+              - apiGroups: ["networking.k8s.io"]
+                resources: ["ingresses", "networkpolicies"]
+                verbs: ["get", "list", "create", "update", "patch", "delete"]
+              - apiGroups: ["batch"]
+                resources: ["jobs"]
+                verbs: ["get", "list", "create", "update", "patch", "delete", "watch"]
+
+required:
+  - APP_INSTANCE_NAME
+  - NAMESPACE
+  - DOMAIN
+  - reportingSecret
+  - deployerServiceAccount
+  - PMOMAX_APP_IMAGE
+  - TESTER_IMAGE

@@ -1,0 +1,24 @@
+# Skeleton Application CR for PMOMax Kubernetes Marketplace app
+# This should be aligned with the manifests under k8s/base and k8s/overlays.
+
+apiVersion: app.k8s.io/v1beta1
+kind: Application
+metadata:
+  name: pmomax-pid-architect
+spec:
+  selector:
+    matchLabels:
+      app: pmomax-pid-architect
+  componentKinds:
+    - group: apps
+      kind: Deployment
+    - group: ""
+      kind: Service
+  descriptor:
+    type: "web-service"
+    description: "PMOMax PID Architect – AI-powered Project Initiation Document workspace."
+    version: "0.0.1"
+    links:
+      - description: "Documentation"
+        url: "https://pmomax01-mpiofkuhtq-uc.a.run.app"
+  addOwnerRef: true

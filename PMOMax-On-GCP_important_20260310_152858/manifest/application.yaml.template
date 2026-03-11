@@ -1,0 +1,26 @@
+apiVersion: app.k8s.io/v1beta1
+kind: Application
+metadata:
+  name: ${APP_INSTANCE_NAME}
+  namespace: ${NAMESPACE}
+  annotations:
+    marketplace.cloud.google.com/deploy-info: '{"partner_id":"${PARTNER_ID}","product_id":"${PRODUCT_ID}"}'
+spec:
+  selector:
+    matchLabels:
+      app: ${APP_INSTANCE_NAME}
+  componentKinds:
+    - group: apps
+      kind: Deployment
+    - group: ""
+      kind: Service
+    - group: ""
+      kind: ConfigMap
+  descriptor:
+    type: "pmomax"
+    description: "PMOMax PID Architect deployment for Google Cloud Marketplace"
+    version: "1.0.0"
+    links:
+      - description: "PMOMax documentation"
+        url: "https://github.com/semework/pmomax_on_GCP"
+  addOwnerRef: true

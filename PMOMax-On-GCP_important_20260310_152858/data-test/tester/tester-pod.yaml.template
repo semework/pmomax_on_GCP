@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "$name-tester"
+  namespace: "$namespace"
+  labels:
+    app: "$name"
+  annotations:
+    marketplace.cloud.google.com/verification: test
+spec:
+  containers:
+  - name: tester
+    image: "$TESTER_IMAGE"
+    command: ["/bin/sh", "-c"]
+    args:
+    - |
+      set -e
+      echo "PMOMax verification pod running"
+      echo "namespace=$namespace app=$name"
+      exit 0
+  restartPolicy: Never

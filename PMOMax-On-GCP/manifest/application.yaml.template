@@ -14,11 +14,13 @@ spec:
       kind: Deployment
     - group: ""
       kind: Service
+    - group: ""
+      kind: ConfigMap
   descriptor:
     type: "pmomax"
     description: "PMOMax PID Architect deployment for Google Cloud Marketplace"
-    version: "1.0"
+    version: "1.0.1"
     links:
       - description: "PMOMax documentation"
-        url: "https://docs.pmomax.com"
+        url: "https://github.com/semework/pmomax_on_GCP"
   addOwnerRef: true

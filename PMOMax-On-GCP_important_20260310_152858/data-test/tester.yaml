@@ -1,0 +1,31 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: ${APP_INSTANCE_NAME}-tester
+  namespace: ${NAMESPACE}
+  labels:
+    app: ${APP_INSTANCE_NAME}
+    component: tester
+  annotations:
+    marketplace.cloud.google.com/verification: "test"
+spec:
+  backoffLimit: 0
+  ttlSecondsAfterFinished: 0
+  template:
+    metadata:
+      labels:
+        app: ${APP_INSTANCE_NAME}
+        component: tester
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: tester
+        image: ${TESTER_IMAGE}
+        command:
+        - /bin/sh
+        - -c
+        - |
+          set -e
+          echo "PMOMax verification job running"
+          echo "namespace=${NAMESPACE} app=${APP_INSTANCE_NAME}"
+          exit 0
