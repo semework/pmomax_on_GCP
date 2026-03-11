@@ -1,22 +1,25 @@
-FROM gcr.io/cloud-marketplace-tools/k8s/deployer_envsubst/onbuild
+FROM gcr.io/google-appengine/debian11
+
 LABEL "com.googleapis.cloudmarketplace.product.service.name"="services/pmomax.endpoints.katalyststreet-public.cloud.goog"
 
+# Install dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    gettext-base \
+    kubectl \
+    && rm -rf /var/lib/apt/lists/*
+
 # Copy deploy scripts expected by Marketplace
-COPY deployer/deploy.sh /bin/deploy.sh
-COPY deployer/deploy_with_tests.sh /bin/deploy_with_tests.sh
+COPY deployer/deploy.sh /bin/
+COPY deployer/deploy_with_tests.sh /bin/
 
 # Schema + values
 COPY deploy/schema.yaml /data/schema.yaml
-COPY deploy/test-values.yaml /data/test-values.yaml
 
-# Manifests (envsubst deployer expects manifests here; you can keep your structure)
-COPY deploy/manifest/ /data/manifest/
-
-# Params template (used by envsubst in deploy.sh)
-COPY deploy/params.env /data/params.env.template
+# Manifests
+COPY manifest/ /data/manifest/
 
 # Optional docs
-COPY docs/ /data/docs/
+# COPY docs/ /data/docs/
 COPY data-test/ /data-test/
 
 USER 1001

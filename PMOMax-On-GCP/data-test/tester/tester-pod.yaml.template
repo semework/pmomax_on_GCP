@@ -9,7 +9,7 @@ metadata:
 spec:
   containers:
   - name: tester
-    image: us-docker.pkg.dev/katalyststreet-public/pmomax/pmo-architect:latest
+    image: "$TESTER_IMAGE"
     command: ["/bin/sh", "-c"]
     args:
     - |
@@ -17,11 +17,10 @@ spec:
       echo "Starting PMOMax Health Check..."
       # Wait for the service to be reachable via K8s DNS
       ATTEMPTS=0
-      until curl -fsS "http://$name-svc/health" || [ $ATTEMPTS -eq 12 ]; do
-        echo "Waiting for PMOMax service at http://$name-svc/health..."
+      until curl -fsS "http://$name/health" || [ $ATTEMPTS -eq 12 ]; do
+        echo "Waiting for PMOMax service at http://$name/health..."
         ATTEMPTS=$((ATTEMPTS+1))
         sleep 10
       done
       echo "PMOMax is Healthy!"
-      exit 0
   restartPolicy: Never
