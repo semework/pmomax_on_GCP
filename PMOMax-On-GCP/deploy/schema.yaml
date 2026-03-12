@@ -1,90 +1,182 @@
-apiVersion: marketplace.cloud.google.com/v1
-kind: KubernetesAppSchema
-schema:
-  x-google-marketplace:
-    schemaVersion: v2
-    applicationApiVersion: v1beta1
-    publishedVersion: "20260303"
-    publishedVersionMetadata:
-      releaseNote: >
-        PMOMax 20260303 - Synced to live cluster images and resource settings.
-        Includes deployer and pmo-architect images aligned to GKE Autopilot.
-        Adds reportingSecret for usage-based billing and aligns RBAC with Marketplace requirements.
-      recommended: true
-    managedUpdates:
-      kalmSupported: false
-    images:
-      '':
-        properties:
-          image.registry:
-            type: REGISTRY
-          image.repository:
-            type: REPO_WITHOUT_REGISTRY
-          image.tag:
-            type: TAG
-  type: object
-  properties:
-    APP_INSTANCE_NAME:
-      type: string
-      default: "pmo-architect"
-      pattern: "^[a-z0-9-]+$"
-      x-google-marketplace:
-        type: NAME
-    NAMESPACE:
-      type: string
-      default: "pmomax"
-      x-google-marketplace:
-        type: NAMESPACE
-    DOMAIN:
-      type: string
-      pattern: "^[a-zA-Z0-9.-]+$"
-      default: "pmomax.example.com"
-    reportingSecret:
-      type: string
-      x-google-marketplace:
-        type: REPORTING_SECRET
-    deployer.image:
-      type: string
-      default: us-docker.pkg.dev/katalyststreet-public/pmomax/deployer:20260303-220259
-      x-google-marketplace:
-        type: DEPLOYER_IMAGE
-    PMOMAX_APP_IMAGE:
-      type: string
-      default: us-docker.pkg.dev/katalyststreet-public/pmomax/pmo-architect:20260303-233534
-    deployerServiceAccount:
-      type: string
-      title: Service Account for deployer
-      default: "deployer-sa"
-      description: "Service account used by the Marketplace deployer to create Kubernetes resources during installation."
-      x-google-marketplace:
-        type: SERVICE_ACCOUNT
-        serviceAccount:
-          description: "Used by deployer to create, update, patch, delete Deployments, Services, RBAC resources, and ConfigMaps during installation and cleanup."
-          roles:
-            - type: ClusterRole
-              rulesType: CUSTOM
-              rules:
-                - apiGroups: [""]
-                  resources: ["pods", "services", "serviceaccounts", "configmaps", "secrets", "persistentvolumeclaims", "events"]
-                  verbs: ["get", "list", "create", "update", "patch", "delete", "watch"]
-                - apiGroups: ["apps"]
-                  resources: ["deployments", "statefulsets", "replicasets", "daemonsets"]
-                  verbs: ["get", "list", "create", "update", "patch", "delete", "watch"]
-                - apiGroups: ["rbac.authorization.k8s.io"]
-                  resources: ["roles", "rolebindings", "clusterroles", "clusterrolebindings"]
-                  verbs: ["get", "list", "create", "update", "patch", "delete", "watch"]
-                - apiGroups: ["app.k8s.io"]
-                  resources: ["applications"]
-                  verbs: ["get", "list", "create", "update", "patch", "delete", "watch"]
-                - apiGroups: ["networking.k8s.io"]
-                  resources: ["ingresses", "networkpolicies"]
-                  verbs: ["get", "list", "create", "update", "patch", "delete"]
-                - apiGroups: ["batch"]
-                  resources: ["jobs"]
-                  verbs: ["get", "list", "create", "update", "patch", "delete", "watch"]
-  required:
-    - APP_INSTANCE_NAME
-    - NAMESPACE
-    - DOMAIN
-    - reportingSecret
-    - deployerServiceAccount
+x-google-marketplace:
+  schemaVersion: v2
+  applicationApiVersion: v1beta1
+  publishedVersion: "1.0.1"
+  publishedVersionMetadata:
+    releaseNote: >-
+      PMOMax 1.0.1 - Production release with hardened deployer logic.
+    recommended: true
+  managedUpdates:
+    kalmSupported: false
+  images:
+    deployer:
+      properties:
+        deployerImageRegistry:
+          type: REGISTRY
+        deployerImageRepo:
+          type: REPO_WITHOUT_REGISTRY
+        deployerImageTag:
+          type: TAG
+
+properties:
+  APP_INSTANCE_NAME:
+    type: string
+    default: pmo-architect
+    x-google-marketplace:
+      type: NAME
+
+  NAMESPACE:
+    type: string
+    x-google-marketplace:
+      type: NAMESPACE
+
+  reportingSecret:
+    type: string
+    x-google-marketplace:
+      type: REPORTING_SECRET
+
+  DOMAIN:
+    type: string
+    default: pmomax.example.com
+
+  deployerServiceAccount:
+    type: string
+    title: Service Account for deployer
+    default: deployer-sa
+    x-google-marketplace:
+      type: SERVICE_ACCOUNT
+      serviceAccount:
+        description: Used by deployer to manage Kubernetes resources during installation and cleanup.
+        roles:
+          - type: ClusterRole
+            rulesType: CUSTOM
+            rules:
+              - apiGroups: [""]
+                resources:
+                  - pods
+                  - services
+                  - serviceaccounts
+                  - configmaps
+                  - secrets
+                  - persistentvolumeclaims
+                  - events
+                verbs:
+                  - get
+                  - list
+                  - create
+                  - update
+                  - patch
+                  - delete
+                  - watch
+              - apiGroups: ["apps"]
+                resources:
+                  - deployments
+                  - statefulsets
+                  - replicasets
+                  - daemonsets
+                verbs:
+                  - get
+                  - list
+                  - create
+                  - update
+                  - patch
+                  - delete
+                  - watch
+              - apiGroups: ["rbac.authorization.k8s.io"]
+                resources:
+                  - roles
+                  - rolebindings
+                  - clusterroles
+                  - clusterrolebindings
+                verbs:
+                  - get
+                  - list
+                  - create
+                  - update
+                  - patch
+                  - delete
+                  - watch
+              - apiGroups: ["app.k8s.io"]
+                resources:
+                  - applications
+                verbs:
+                  - get
+                  - list
+                  - create
+                  - update
+                  - patch
+                  - delete
+                  - watch
+              - apiGroups: ["networking.k8s.io"]
+                resources:
+                  - ingresses
+                  - networkpolicies
+                verbs:
+                  - get
+                  - list
+                  - create
+                  - update
+                  - patch
+                  - delete
+              - apiGroups: ["batch"]
+                resources:
+                  - jobs
+                verbs:
+                  - get
+                  - list
+                  - create
+                  - update
+                  - patch
+                  - delete
+                  - watch
+
+  deployer.image:
+    type: string
+    default: us-docker.pkg.dev/katalyststreet-public/pmomax/deployer:1.0.1
+    x-google-marketplace:
+      type: DEPLOYER_IMAGE
+
+  deployerImageRepo:
+    type: string
+    default: katalyststreet-public/pmomax/deployer
+
+  deployerImageTag:
+    type: string
+    default: "1.0.1"
+
+  PMOMAX_APP_IMAGE:
+    type: string
+    default: us-east1-docker.pkg.dev/katalyststreet-public/apps/pmo-architect:1.0.1
+
+  pmomaxAppRepo:
+    type: string
+    default: us-east1-docker.pkg.dev/katalyststreet-public/apps/pmo-architect
+
+  pmomaxAppTag:
+    type: string
+    default: "1.0.1"
+
+  PMOMAX_APP_PORT:
+    type: integer
+    default: 8080
+
+  TESTER_IMAGE:
+    type: string
+    default: curlimages/curl:8.12.1
+
+  PARTNER_ID:
+    type: string
+    default: katalyststreet
+
+  PRODUCT_ID:
+    type: string
+    default: pmomax
+
+  GCP_PROJECT_ID:
+    type: string
+    default: katalyststreet-public
+
+required:
+  - APP_INSTANCE_NAME
+  - NAMESPACE
+  - reportingSecret

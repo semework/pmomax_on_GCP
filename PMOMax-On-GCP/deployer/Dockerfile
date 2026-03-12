@@ -1,18 +1,17 @@
 FROM gcr.io/cloud-marketplace-tools/k8s/deployer_envsubst/onbuild
-LABEL "com.googleapis.cloudmarketplace.product.service.name"="services/pmomax.endpoints.katalyststreet-public.cloud.goog"
+LABEL "com.googleapis.cloudmarketplace.product.service.name"="services/pmo-max.endpoints.katalyststreet-public.cloud.goog"
 
 # Copy deploy scripts expected by Marketplace
 COPY deployer/deploy.sh /bin/deploy.sh
 COPY deployer/deploy_with_tests.sh /bin/deploy_with_tests.sh
 
-# Schema + values
-COPY deploy/schema.yaml /data/schema.yaml
-COPY deploy/test-values.yaml /data/test-values.yaml
-
-# Manifests (envsubst deployer expects manifests here; you can keep your structure)
-COPY deploy/manifest/ /data/manifest/
-
-# Params template (used by envsubst in deploy.sh)
+# Keep compatibility with deploy.sh expectations:
+# /data/schema.yaml
+# /data/manifest/application.yaml.template
+# /data/manifest/manifests.yaml.template
+COPY schema.yaml /data/schema.yaml
+COPY manifest/application.yaml.template /data/manifest/application.yaml.template
+COPY manifest/manifests.yaml.template /data/manifest/manifests.yaml.template
 COPY deploy/params.env /data/params.env.template
 
 # Optional docs

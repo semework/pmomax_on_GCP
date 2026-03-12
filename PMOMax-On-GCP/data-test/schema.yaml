@@ -5,20 +5,20 @@ x-google-marketplace:
 properties:
   APP_INSTANCE_NAME:
     type: string
-    default: "pmo-architect"
+    default: pmo-architect
     pattern: "^[a-z0-9-]+$"
     x-google-marketplace:
       type: NAME
 
   NAMESPACE:
     type: string
-    default: "pmomax"
+    default: pmomax
     x-google-marketplace:
       type: NAMESPACE
 
   DOMAIN:
     type: string
-    default: "pmomax.example.com"
+    default: pmomax.example.com
     pattern: "^[a-zA-Z0-9.-]+$"
 
   reportingSecret:
@@ -28,13 +28,13 @@ properties:
 
   deployerServiceAccount:
     type: string
-    default: "deployer-sa"
+    default: deployer-sa
     x-google-marketplace:
       type: SERVICE_ACCOUNT
 
   PMOMAX_APP_IMAGE:
     type: string
-    default: us-docker.pkg.dev/katalyststreet-public/pmomax/pmo-architect:20260303-233534
+    default: us-east1-docker.pkg.dev/katalyststreet-public/apps/pmo-architect:1.0.1
 
   PMOMAX_APP_PORT:
     type: integer

@@ -9,7 +9,7 @@ metadata:
   annotations:
     marketplace.cloud.google.com/verification: "test"
 spec:
-  backoffLimit: 0
+  backoffLimit: 2
   ttlSecondsAfterFinished: 600
   template:
     metadata:
@@ -21,16 +21,23 @@ spec:
       containers:
         - name: curl
           image: ${TESTER_IMAGE}
+          command: ["/bin/sh", "-c"]
           args:
-            - /bin/sh
-            - -c
-            - "curl -fsS http://${APP_INSTANCE_NAME}:80/health"
+            - |
+              set -e
+              ATTEMPTS=0
+              until curl -fsS "http://${APP_INSTANCE_NAME}:80/health" || [ $ATTEMPTS -eq 12 ]; do
+                echo "Waiting for service (attempt $ATTEMPTS)..."
+                ATTEMPTS=$((ATTEMPTS+1))
+                sleep 10
+              done
+              curl -fsS "http://${APP_INSTANCE_NAME}:80/health"
           resources:
             requests:
+              cpu: 100m
+              memory: 128Mi
+              ephemeral-storage: 256Mi
+            limits:
               cpu: 250m
               memory: 256Mi
-              ephemeral-storage: 1Gi
-            limits:
-              cpu: 500m
-              memory: 512Mi
-              ephemeral-storage: 1Gi
+              ephemeral-storage: 512Mi
