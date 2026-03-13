@@ -49,6 +49,8 @@ items:
     metadata:
       name: ${APP_INSTANCE_NAME}
       namespace: ${NAMESPACE}
+      labels:
+        app: ${APP_INSTANCE_NAME}
     spec:
       type: ClusterIP
       selector:

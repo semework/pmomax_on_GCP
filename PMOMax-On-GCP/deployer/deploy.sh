@@ -88,17 +88,64 @@ echo "  PMOMAX_APP_PORT=${PMOMAX_APP_PORT}"
 echo "[INFO] Applying Application Resources to namespace: ${NAMESPACE}"
 
 SUBST_VARS='${APP_INSTANCE_NAME} ${NAMESPACE} ${PARTNER_ID} ${PRODUCT_ID} ${PMOMAX_APP_IMAGE} ${PMOMAX_APP_PORT} ${DOMAIN} ${REPORTING_SECRET} ${DEPLOYER_SERVICE_ACCOUNT} ${TESTER_IMAGE}'
+WORKDIR="$(mktemp -d /tmp/pmomax-deploy.XXXXXX)"
+APP_RENDERED="${WORKDIR}/application.yaml"
+MANIFESTS_RENDERED="${WORKDIR}/manifests.yaml"
+MANIFESTS_FLAT="${WORKDIR}/manifests-flat.yaml"
+OWNED_MANIFESTS="${WORKDIR}/manifests-owned.yaml"
+
+cleanup_tmp() {
+  rm -rf "${WORKDIR}"
+}
+trap cleanup_tmp EXIT
 
 if [[ -f /data/manifest/application.yaml.template ]]; then
-  envsubst "${SUBST_VARS}" < /data/manifest/application.yaml.template | kubectl apply -n "${NAMESPACE}" -f -
+  envsubst "${SUBST_VARS}" < /data/manifest/application.yaml.template > "${APP_RENDERED}"
+  kubectl apply -n "${NAMESPACE}" -f "${APP_RENDERED}"
 fi
 
 if [[ -f /data/manifest/manifests.yaml.template ]]; then
-  envsubst "${SUBST_VARS}" < /data/manifest/manifests.yaml.template | kubectl apply -n "${NAMESPACE}" -f -
+  envsubst "${SUBST_VARS}" < /data/manifest/manifests.yaml.template > "${MANIFESTS_RENDERED}"
 else
   echo "ERROR: /data/manifest/manifests.yaml.template not found"
   exit 1
 fi
+
+APP_UID="$(kubectl get application.app.k8s.io "${APP_INSTANCE_NAME}" -n "${NAMESPACE}" -o jsonpath='{.metadata.uid}')"
+APP_API_VERSION="$(kubectl get application.app.k8s.io "${APP_INSTANCE_NAME}" -n "${NAMESPACE}" -o jsonpath='{.apiVersion}')"
+if [[ -z "${APP_UID}" || -z "${APP_API_VERSION}" ]]; then
+  echo "ERROR: Unable to resolve Application UID/API version for ownership processing"
+  exit 1
+fi
+
+python3 - "${MANIFESTS_RENDERED}" "${MANIFESTS_FLAT}" <<'PY'
+import sys, yaml
+
+src, dst = sys.argv[1], sys.argv[2]
+docs = []
+with open(src, "r", encoding="utf-8") as f:
+    for doc in yaml.safe_load_all(f):
+        if not doc:
+            continue
+        if isinstance(doc, dict) and doc.get("kind") == "List":
+            docs.extend(doc.get("items", []) or [])
+        else:
+            docs.append(doc)
+
+with open(dst, "w", encoding="utf-8") as f:
+    yaml.safe_dump_all(docs, f, default_flow_style=False, sort_keys=False)
+PY
+
+/usr/bin/set_ownership.py \
+  --manifests "${MANIFESTS_FLAT}" \
+  --dest "${OWNED_MANIFESTS}" \
+  --app_name "${APP_INSTANCE_NAME}" \
+  --app_uid "${APP_UID}" \
+  --app_api_version "${APP_API_VERSION}" \
+  --namespace "${NAMESPACE}" \
+  --noapp
+
+kubectl apply -n "${NAMESPACE}" -f "${OWNED_MANIFESTS}"
 
 echo "[INFO] Waiting for ${APP_INSTANCE_NAME} deployment to become available..."
 kubectl wait --for=condition=available --timeout=300s deployment/"${APP_INSTANCE_NAME}" -n "${NAMESPACE}"
