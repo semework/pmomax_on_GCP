@@ -1,0 +1,13 @@
+# Keep gcloud build context minimal and non-sensitive.
+.git
+.github
+.DS_Store
+**/.DS_Store
+**/__pycache__
+**/*.pyc
+docs/**
+Architecture/**
+test/**
+*.local
+*.tmp
+secrets/**

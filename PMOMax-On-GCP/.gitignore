@@ -1,0 +1,23 @@
+# Local/env artifacts (do not commit)
+*.local
+*.tmp
+*.swp
+.DS_Store
+
+# Credentials and service-account materials
+*.pem
+*.key
+*.p12
+*.pfx
+*credentials*.json
+*service-account*.json
+secrets/
+
+# Python/cache outputs
+__pycache__/
+*.pyc
+
+# Build/test outputs
+dist/
+out/
+tmp/

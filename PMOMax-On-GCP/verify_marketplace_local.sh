@@ -4,7 +4,7 @@ set -euo pipefail
 DEPL_IMAGE="${1:-}"
 if [[ -z "${DEPL_IMAGE}" ]]; then
   echo "Usage: $0 <deployer-image>"
-  echo "Example: $0 us-docker.pkg.dev/katalyststreet-public/pmomax/deployer:20260303"
+  echo "Example: $0 us-docker.pkg.dev/katalyststreet-public/pmomax/deployer:1.0.10"
   exit 2
 fi
 

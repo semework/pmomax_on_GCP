@@ -5,6 +5,31 @@ echo "===================================================="
 echo " PMOMax – Google Marketplace Deployer (v1.0)"
 echo "===================================================="
 
+check_pyopenssl_version() {
+  python3 - <<'PY'
+import sys
+try:
+    import OpenSSL
+except Exception as exc:
+    print(f"ERROR: unable to import pyOpenSSL: {exc}")
+    sys.exit(1)
+
+version = getattr(OpenSSL, "__version__", "")
+parts = version.split(".")
+try:
+    major = int(parts[0])
+except Exception:
+    print(f"ERROR: cannot parse pyOpenSSL version: {version}")
+    sys.exit(1)
+
+if major < 26:
+    print(f"ERROR: pyOpenSSL version {version} is vulnerable; require >= 26.0.0")
+    sys.exit(1)
+
+print(f"[security] pyOpenSSL version check passed: {version}")
+PY
+}
+
 load_values_yaml() {
   local values_file="/data/values.yaml"
   [[ -f "${values_file}" ]] || return 0
@@ -33,9 +58,12 @@ keys = [
     "PRODUCT_ID",
     "GCP_PROJECT_ID",
     "pmomaxAppRepo",
+    "pmomaxAppRegistry",
     "pmomaxAppTag",
     "deployerImageRepo",
+    "deployerImageRegistry",
     "deployerImageTag",
+    "testerImageRegistry",
 ]
 for k in keys:
     v = data.get(k)
@@ -60,6 +88,20 @@ load_params_template() {
 
 load_values_yaml
 load_params_template
+check_pyopenssl_version
+
+compose_image_ref() {
+  local registry="$1"
+  local repo="$2"
+  local tag="$3"
+
+  # Repo may already include a registry host (legacy values); if so, use as-is.
+  if [[ "${repo}" == *"."*"/"* || "${repo}" == *":"*"/"* ]]; then
+    printf '%s:%s' "${repo}" "${tag}"
+  else
+    printf '%s/%s:%s' "${registry}" "${repo}" "${tag}"
+  fi
+}
 
 # Marketplace Variable Mapping
 export REPORTING_SECRET="${reportingSecret:-${REPORTING_SECRET:-reporting-secret}}"
@@ -68,9 +110,23 @@ export DEPLOYER_SERVICE_ACCOUNT="${deployerServiceAccount:-${DEPLOYER_SERVICE_AC
 # Canonical runtime defaults (only if still unset after values/template loading)
 export APP_INSTANCE_NAME="${APP_INSTANCE_NAME:-pmo-architect}"
 export DOMAIN="${DOMAIN:-pmomax.example.com}"
-export PMOMAX_APP_IMAGE="${PMOMAX_APP_IMAGE:-${pmomaxAppRepo:-us-east1-docker.pkg.dev/katalyststreet-public/apps/pmo-architect}:${pmomaxAppTag:-1.0.1}}"
+if [[ -z "${PMOMAX_APP_IMAGE:-}" ]]; then
+  PMOMAX_APP_IMAGE="$(
+    compose_image_ref \
+      "${pmomaxAppRegistry:-us-east1-docker.pkg.dev}" \
+      "${pmomaxAppRepo:-katalyststreet-public/apps/pmo-architect}" \
+      "${pmomaxAppTag:-1.0.1}"
+  )"
+fi
 export PMOMAX_APP_PORT="${PMOMAX_APP_PORT:-8080}"
-export TESTER_IMAGE="${TESTER_IMAGE:-curlimages/curl:8.12.1}"
+if [[ -z "${TESTER_IMAGE:-}" ]]; then
+  TESTER_IMAGE="$(
+    compose_image_ref \
+      "${testerImageRegistry:-docker.io}" \
+      "curlimages/curl" \
+      "8.12.1"
+  )"
+fi
 export PARTNER_ID="${PARTNER_ID:-katalyststreet}"
 export PRODUCT_ID="${PRODUCT_ID:-pmomax}"
 

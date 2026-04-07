@@ -6,14 +6,17 @@ deployerServiceAccount: deployer-sa
 
 # Image properties
 # Deployer image used by Marketplace installer
-deployerImageRepo: us-docker.pkg.dev/katalyststreet-public/pmomax/deployer
-deployerImageTag: "1.0"
+deployerImageRegistry: us-docker.pkg.dev
+deployerImageRepo: katalyststreet-public/pmomax/deployer
+deployerImageTag: "1.0.10"
 
 # PMOMax app image
-pmomaxAppRepo: us-east1-docker.pkg.dev/katalyststreet-public/apps/pmo-architect
+pmomaxAppRegistry: us-east1-docker.pkg.dev
+pmomaxAppRepo: katalyststreet-public/apps/pmo-architect
 pmomaxAppTag: "1.0.1"
 PMOMAX_APP_PORT: "8080"
 TESTER_IMAGE: curlimages/curl:8.12.1
+testerImageRegistry: docker.io
 PARTNER_ID: katalyststreet
 PRODUCT_ID: pmomax
 GCP_PROJECT_ID: katalyststreet-public

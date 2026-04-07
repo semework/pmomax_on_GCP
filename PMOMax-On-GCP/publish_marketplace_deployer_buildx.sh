@@ -5,7 +5,7 @@ PROJECT_ID="${PROJECT_ID:-katalyststreet-public}"
 AR_HOST="${AR_HOST:-us-docker.pkg.dev}"
 AR_REPO="${AR_REPO:-pmomax}"
 IMAGE_PATH="${IMAGE_PATH:-deployer}"
-VERSION="${1:-1.0}"
+VERSION="${1:-1.0.10}"
 PATCH="${PATCH:-0}"
 
 TAG_MM="${VERSION}"
