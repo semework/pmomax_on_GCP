@@ -25,10 +25,13 @@ fi
 
 gcloud builds submit --tag "${IMAGE_URI}" --project "${PROJECT_ID}" --quiet
 
-# Add OCI annotation required by Marketplace when crane is available.
-if command -v crane >/dev/null 2>&1; then
-  crane mutate --annotation "${ANNOTATION_KEY}=${MARKETPLACE_SERVICE_NAME}" "${IMAGE_URI}" >/dev/null
+if ! command -v crane >/dev/null 2>&1; then
+  echo "ERROR: crane is required to enforce Marketplace OCI metadata."
+  exit 1
 fi
+
+# Enforce OCI annotation required by Marketplace on every published image.
+crane mutate --annotation "${ANNOTATION_KEY}=${MARKETPLACE_SERVICE_NAME}" "${IMAGE_URI}" >/dev/null
 
 DIGEST="$(
   gcloud artifacts docker images describe "${IMAGE_URI}" \
@@ -69,7 +72,20 @@ if [[ "${VERIFY_VERSION_DIGEST}" != "${DIGEST}" || "${VERIFY_BASE_DIGEST}" != "$
   exit 1
 fi
 
+VERIFY_LABEL="$(
+  crane config "${IMAGE_URI}" \
+    | jq -r --arg key "${ANNOTATION_KEY}" '.config.Labels[$key] // empty'
+)"
+
+if [[ "${VERIFY_LABEL}" != "${MARKETPLACE_SERVICE_NAME}" ]]; then
+  echo "ERROR: Marketplace OCI label missing or incorrect."
+  echo "  expected: ${MARKETPLACE_SERVICE_NAME}"
+  echo "  actual:   ${VERIFY_LABEL:-<empty>}"
+  exit 1
+fi
+
 echo "✅ Published: ${IMAGE_URI}"
 echo "✅ Final digest: ${DIGEST}"
 echo "✅ Tag ${VERSION} -> ${VERIFY_VERSION_DIGEST}"
 echo "✅ Tag ${BASE_TAG} -> ${VERIFY_BASE_DIGEST}"
+echo "✅ Marketplace label verified: ${ANNOTATION_KEY}=${VERIFY_LABEL}"
