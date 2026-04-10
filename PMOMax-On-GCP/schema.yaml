@@ -132,7 +132,7 @@ properties:
 
   deployer.image:
     type: string
-    default: us-docker.pkg.dev/katalyststreet-public/pmomax/deployer:1.0.10
+    default: us-docker.pkg.dev/katalyststreet-public/pmomax/deployer:1.2
     x-google-marketplace:
       type: DEPLOYER_IMAGE
 
@@ -146,7 +146,7 @@ properties:
 
   deployerImageTag:
     type: string
-    default: "1.0.10"
+    default: "1.2"
 
   PMOMAX_APP_IMAGE:
     type: string
