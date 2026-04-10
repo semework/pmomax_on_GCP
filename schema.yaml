@@ -4,7 +4,7 @@ x-google-marketplace:
   publishedVersion: "1.2.1"
   publishedVersionMetadata:
     releaseNote: >-
-      PMOMax 1.2.0 - Security hardened release
+      Force Refresh 1.2.1
     recommended: true
   managedUpdates:
     kalmSupported: false
