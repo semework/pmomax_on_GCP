@@ -1,10 +1,10 @@
 x-google-marketplace:
   schemaVersion: v2
   applicationApiVersion: v1beta1
-  publishedVersion: "1.3.2"
+  publishedVersion: "1.3.3"
   publishedVersionMetadata:
     releaseNote: >-
-      Force Refresh 1.3.2 with rebuilt deployer image
+      Wire reporting secret for UBB and increase longevity memory buffer
     recommended: true
   managedUpdates:
     kalmSupported: false

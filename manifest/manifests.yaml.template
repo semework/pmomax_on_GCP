@@ -27,13 +27,19 @@ items:
               env:
                 - name: PORT
                   value: "${PMOMAX_APP_PORT}"
+                - name: GOOGLE_REPORTING_SECRET_PATH
+                  value: /var/secrets/google
+              volumeMounts:
+                - name: reporting-secret
+                  mountPath: /var/secrets/google
+                  readOnly: true
               resources:
                 requests:
                   cpu: 100m
                   memory: 256Mi
                 limits:
                   cpu: 500m
-                  memory: 512Mi
+                  memory: 1Gi
               readinessProbe:
                 httpGet:
                   path: /health
@@ -44,6 +50,10 @@ items:
                   path: /health
                   port: ${PMOMAX_APP_PORT}
                 initialDelaySeconds: 20
+          volumes:
+            - name: reporting-secret
+              secret:
+                secretName: ${REPORTING_SECRET}
   - apiVersion: v1
     kind: Service
     metadata:
