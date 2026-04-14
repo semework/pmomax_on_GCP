@@ -20,7 +20,7 @@ This package deploys the PMOMax runtime service (`pmo-architect`) through the Ma
 ## Current Baseline
 
 - Schema version: `v2`
-- `publishedVersion`: `1.2.0`
+- `publishedVersion`: `1.3.1`
 - Required install fields:
   - `APP_INSTANCE_NAME`
   - `NAMESPACE`
