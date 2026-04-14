@@ -1,6 +1,44 @@
 apiVersion: v1
 kind: List
 items:
+  - apiVersion: v1
+    kind: ConfigMap
+    metadata:
+      name: ${APP_INSTANCE_NAME}-ubbagent-config
+      namespace: ${NAMESPACE}
+      labels:
+        app: ${APP_INSTANCE_NAME}
+    data:
+      config.yaml: |
+        identities:
+          - name: gcp
+            gcp:
+              encodedServiceAccountKey: $AGENT_ENCODED_KEY
+        metrics:
+          - name: pmo-max-usage-metric
+            type: int
+            aggregation:
+              bufferSeconds: 60
+            endpoints:
+              - name: disk
+              - name: servicecontrol
+        endpoints:
+          - name: disk
+            disk:
+              reportDir: /var/lib/ubbagent/reports
+              expireSeconds: 3600
+          - name: servicecontrol
+            servicecontrol:
+              identity: gcp
+              serviceName: services/pmo-max.endpoints.katalyststreet-public.cloud.goog
+              consumerId: $AGENT_CONSUMER_ID
+        sources:
+          - name: pmomax_heartbeat
+            heartbeat:
+              metric: pmo-max-usage-metric
+              intervalSeconds: 60
+              value:
+                int64Value: 60
   - apiVersion: apps/v1
     kind: Deployment
     metadata:
@@ -33,7 +71,7 @@ items:
                   memory: 256Mi
                 limits:
                   cpu: 500m
-                  memory: 512Mi
+                  memory: 1Gi
               readinessProbe:
                 httpGet:
                   path: /health
@@ -44,6 +82,59 @@ items:
                   path: /health
                   port: ${PMOMAX_APP_PORT}
                 initialDelaySeconds: 20
+              volumeMounts:
+                - name: reporting-secret
+                  mountPath: /var/secrets/google
+                  readOnly: true
+            - name: billing-agent
+              image: gcr.io/cloud-marketplace-tools/metering-agent
+              imagePullPolicy: IfNotPresent
+              env:
+                - name: AGENT_CONFIG_FILE
+                  value: /etc/ubbagent/config.yaml
+                - name: AGENT_LOCAL_PORT
+                  value: "6080"
+                - name: AGENT_STATE_DIR
+                  value: /var/lib/ubbagent
+                - name: AGENT_REPORT_DIR
+                  value: /var/lib/ubbagent/reports
+                - name: AGENT_SERVICE_NAME
+                  value: services/pmo-max.endpoints.katalyststreet-public.cloud.goog
+                - name: AGENT_ENCODED_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: ${REPORTING_SECRET}
+                      key: reporting-key
+                - name: AGENT_CONSUMER_ID
+                  valueFrom:
+                    secretKeyRef:
+                      name: ${REPORTING_SECRET}
+                      key: consumer-id
+              resources:
+                requests:
+                  cpu: 50m
+                  memory: 64Mi
+                limits:
+                  cpu: 250m
+                  memory: 256Mi
+              volumeMounts:
+                - name: ubbagent-config
+                  mountPath: /etc/ubbagent
+                  readOnly: true
+                - name: ubbagent-state
+                  mountPath: /var/lib/ubbagent
+                - name: reporting-secret
+                  mountPath: /var/secrets/google
+                  readOnly: true
+          volumes:
+            - name: ubbagent-config
+              configMap:
+                name: ${APP_INSTANCE_NAME}-ubbagent-config
+            - name: ubbagent-state
+              emptyDir: {}
+            - name: reporting-secret
+              secret:
+                secretName: ${REPORTING_SECRET}
   - apiVersion: v1
     kind: Service
     metadata:
