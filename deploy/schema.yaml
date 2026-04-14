@@ -1,10 +1,10 @@
 x-google-marketplace:
   schemaVersion: v2
   applicationApiVersion: v1beta1
-  publishedVersion: "1.3.1"
+  publishedVersion: "1.3.2"
   publishedVersionMetadata:
     releaseNote: >-
-      Force Refresh 1.3.1
+      Force Refresh 1.3.2 with rebuilt deployer image
     recommended: true
   managedUpdates:
     kalmSupported: false
@@ -132,7 +132,7 @@ properties:
 
   deployer.image:
     type: string
-    default: us-docker.pkg.dev/katalyststreet-public/pmomax/deployer:1.3
+    default: us-docker.pkg.dev/katalyststreet-public/pmomax/deployer:1.3.2
     x-google-marketplace:
       type: DEPLOYER_IMAGE
 
@@ -146,7 +146,7 @@ properties:
 
   deployerImageTag:
     type: string
-    default: "1.3"
+    default: "1.3.2"
 
   PMOMAX_APP_IMAGE:
     type: string

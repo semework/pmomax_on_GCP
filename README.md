@@ -20,12 +20,12 @@ This package deploys the PMOMax runtime service (`pmo-architect`) through the Ma
 ## Current Baseline
 
 - Schema version: `v2`
-- `publishedVersion`: `1.3.1`
+- `publishedVersion`: `1.3.2`
 - Required install fields:
   - `APP_INSTANCE_NAME`
   - `NAMESPACE`
   - `reportingSecret`
-- Default deployer tag: `1.2`
+- Default deployer tag: `1.3.2`
 
 ## Deployment Contract (Schema Fields)
 
@@ -64,21 +64,21 @@ From `manifest/manifests.yaml.template`:
 
 ```bash
 cd PMOMax-On-GCP
-./publish_marketplace_deployer.sh 1.2
+./publish_marketplace_deployer.sh 1.3.2
 ```
 
 Optional buildx path:
 
 ```bash
 cd PMOMax-On-GCP
-./publish_marketplace_deployer_buildx.sh 1.2
+./publish_marketplace_deployer_buildx.sh 1.3 2
 ```
 
 ## Marketplace Validation (Local)
 
 ```bash
 cd PMOMax-On-GCP
-./verify_marketplace_local.sh us-docker.pkg.dev/katalyststreet-public/pmomax/deployer:1.2
+./verify_marketplace_local.sh us-docker.pkg.dev/katalyststreet-public/pmomax/deployer:1.3.2
 ```
 
 Requires `mpdev` in `PATH`.
