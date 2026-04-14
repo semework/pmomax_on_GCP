@@ -1,11 +1,15 @@
 x-google-marketplace:
   schemaVersion: v2
   applicationApiVersion: v1beta1
-  publishedVersion: "1.3.3"
+  publishedVersion: "1.3.4"
   publishedVersionMetadata:
     releaseNote: >-
-      Wire reporting secret for UBB and increase longevity memory buffer
+      Add Marketplace UBB sidecar metering for longevity billing validation.
     recommended: true
+  usage:
+    - name: pmo-max-usage-metric
+      title: PMOMax usage
+      description: Reports PMOMax running usage while the app pod is active.
   managedUpdates:
     kalmSupported: false
   images:
