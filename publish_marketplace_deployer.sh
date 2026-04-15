@@ -5,16 +5,25 @@ PROJECT_ID="${PROJECT_ID:-katalyststreet-public}"
 AR_HOST="${AR_HOST:-us-docker.pkg.dev}"
 AR_REPO="${AR_REPO:-pmomax}"
 IMAGE_PATH="${IMAGE_PATH:-deployer}"
-VERSION="${1:-1.3}"
-BASE_TAG="${BASE_TAG:-1.3}"
-# Pinned billing agent — 0.2.4 is go1.25.4 (last clean build; 0.2.5+ introduced go1.26.1 / CVE-2026-27143).
-# 0.1.5 does NOT exist in gcr.io/cloud-marketplace-tools/metering/ubbagent.
-UBBAGENT_IMAGE="gcr.io/cloud-marketplace-tools/metering/ubbagent:0.2.4"
+# Pinned to 0.2.4 (go1.25.4) — last build BEFORE CVE-2026-27143 (go1.26.1 in 0.2.5+).
+UBBAGENT_SOURCE_IMAGE="${UBBAGENT_SOURCE_IMAGE:-gcr.io/cloud-marketplace-tools/metering/ubbagent:0.2.4}"
+UBBAGENT_IMAGE_PATH="${UBBAGENT_IMAGE_PATH:-ubbagent}"
+if [[ $# -lt 1 || -z "${1:-}" ]]; then
+  echo "Usage: $0 <immutable-version-tag>"
+  echo "Example: $0 1.3.2"
+  exit 2
+fi
+
+VERSION="$1"
+UBBAGENT_VERSION="${UBBAGENT_VERSION:-${VERSION}}"
+BASE_TAG="${BASE_TAG:-}"
 MARKETPLACE_SERVICE_NAME="${MARKETPLACE_SERVICE_NAME:-services/pmo-max.endpoints.${PROJECT_ID}.cloud.goog}"
 ANNOTATION_KEY="com.googleapis.cloudmarketplace.product.service.name"
 
 IMAGE_URI="${AR_HOST}/${PROJECT_ID}/${AR_REPO}/${IMAGE_PATH}:${VERSION}"
 IMAGE_REPO_URI="${AR_HOST}/${PROJECT_ID}/${AR_REPO}/${IMAGE_PATH}"
+UBBAGENT_IMAGE_REPO_URI="${AR_HOST}/${PROJECT_ID}/${AR_REPO}/${UBBAGENT_IMAGE_PATH}"
+UBBAGENT_IMAGE_URI="${UBBAGENT_IMAGE_REPO_URI}:${UBBAGENT_VERSION}"
 
 echo "Publishing deployer image: ${IMAGE_URI}"
 gcloud config set project "${PROJECT_ID}" >/dev/null
@@ -33,36 +42,83 @@ if ! command -v crane >/dev/null 2>&1; then
   exit 1
 fi
 
-# Enforce OCI annotation required by Marketplace on every published image.
-# crane mutate rewrites the manifest, producing a NEW digest — capture it via crane.
-crane mutate --annotation "${ANNOTATION_KEY}=${MARKETPLACE_SERVICE_NAME}" "${IMAGE_URI}"
+echo "Publishing UBB agent image: ${UBBAGENT_IMAGE_URI}"
+crane copy "${UBBAGENT_SOURCE_IMAGE}" "${UBBAGENT_IMAGE_URI}"
+crane mutate --annotation "${ANNOTATION_KEY}=${MARKETPLACE_SERVICE_NAME}" "${UBBAGENT_IMAGE_URI}" >/dev/null
 
-DIGEST="$(crane digest "${IMAGE_URI}")"
+UBBAGENT_DIGEST="$(
+  gcloud artifacts docker images describe "${UBBAGENT_IMAGE_URI}" \
+    --project "${PROJECT_ID}" \
+    --format='value(image_summary.digest)'
+)"
+
+if [[ -z "${UBBAGENT_DIGEST}" ]]; then
+  echo "ERROR: Unable to resolve digest for ${UBBAGENT_IMAGE_URI}"
+  exit 1
+fi
+
+UBBAGENT_VERIFY_ANNOTATION="$(
+  crane manifest "${UBBAGENT_IMAGE_URI}" \
+    | jq -r --arg key "${ANNOTATION_KEY}" '.annotations[$key] // empty'
+)"
+
+if [[ "${UBBAGENT_VERIFY_ANNOTATION}" != "${MARKETPLACE_SERVICE_NAME}" ]]; then
+  echo "ERROR: UBB agent Marketplace OCI annotation missing or incorrect."
+  echo "  expected: ${MARKETPLACE_SERVICE_NAME}"
+  echo "  actual:   ${UBBAGENT_VERIFY_ANNOTATION:-<empty>}"
+  exit 1
+fi
+
+# Enforce OCI annotation required by Marketplace on every published image.
+crane mutate --annotation "${ANNOTATION_KEY}=${MARKETPLACE_SERVICE_NAME}" "${IMAGE_URI}" >/dev/null
+
+DIGEST="$(
+  gcloud artifacts docker images describe "${IMAGE_URI}" \
+    --project "${PROJECT_ID}" \
+    --format='value(image_summary.digest)'
+)"
 
 if [[ -z "${DIGEST}" ]]; then
   echo "ERROR: Unable to resolve digest for ${IMAGE_URI}"
   exit 1
 fi
 
-# Release-hardening rule: always ensure both VERSION and BASE_TAG point to the same digest.
+# Release-hardening rule: publish the immutable VERSION tag. Optionally also
+# move BASE_TAG when explicitly requested by the caller.
 gcloud artifacts docker tags add "${IMAGE_REPO_URI}@${DIGEST}" "${IMAGE_REPO_URI}:${VERSION}" --project "${PROJECT_ID}" || true
-gcloud artifacts docker tags add "${IMAGE_REPO_URI}@${DIGEST}" "${IMAGE_REPO_URI}:${BASE_TAG}" --project "${PROJECT_ID}" || true
+if [[ -n "${BASE_TAG}" ]]; then
+  gcloud artifacts docker tags add "${IMAGE_REPO_URI}@${DIGEST}" "${IMAGE_REPO_URI}:${BASE_TAG}" --project "${PROJECT_ID}" || true
+fi
 
-# Verify tags using crane digest — reliable after manifest mutation.
-VERIFY_VERSION_DIGEST="$(crane digest "${IMAGE_REPO_URI}:${VERSION}")" || VERIFY_VERSION_DIGEST=""
-VERIFY_BASE_DIGEST="$(crane digest "${IMAGE_REPO_URI}:${BASE_TAG}")" || VERIFY_BASE_DIGEST=""
-
-if [[ -z "${VERIFY_VERSION_DIGEST}" || -z "${VERIFY_BASE_DIGEST}" ]]; then
-  echo "ERROR: Failed to verify tags ${VERSION} and/or ${BASE_TAG}"
+VERIFY_VERSION_DIGEST="$(
+  gcloud artifacts docker images describe "${IMAGE_REPO_URI}:${VERSION}" \
+    --project "${PROJECT_ID}" \
+    --format='value(image_summary.digest)'
+)"
+if [[ -z "${VERIFY_VERSION_DIGEST}" ]]; then
+  echo "ERROR: Failed to verify tag ${VERSION}"
   exit 1
 fi
 
-if [[ "${VERIFY_VERSION_DIGEST}" != "${DIGEST}" || "${VERIFY_BASE_DIGEST}" != "${DIGEST}" ]]; then
+if [[ "${VERIFY_VERSION_DIGEST}" != "${DIGEST}" ]]; then
   echo "ERROR: Tag verification mismatch."
   echo "  expected digest: ${DIGEST}"
   echo "  ${VERSION}: ${VERIFY_VERSION_DIGEST}"
-  echo "  ${BASE_TAG}: ${VERIFY_BASE_DIGEST}"
   exit 1
+fi
+
+if [[ -n "${BASE_TAG}" ]]; then
+  VERIFY_BASE_DIGEST="$(
+    gcloud artifacts docker images describe "${IMAGE_REPO_URI}:${BASE_TAG}" \
+      --project "${PROJECT_ID}" \
+      --format='value(image_summary.digest)'
+  )"
+  if [[ "${VERIFY_BASE_DIGEST}" != "${DIGEST}" ]]; then
+    echo "ERROR: Base tag verification mismatch."
+    echo "  expected digest: ${DIGEST}"
+    echo "  ${BASE_TAG}: ${VERIFY_BASE_DIGEST:-<empty>}"
+    exit 1
+  fi
 fi
 
 VERIFY_LABEL="$(
@@ -80,5 +136,10 @@ fi
 echo "✅ Published: ${IMAGE_URI}"
 echo "✅ Final digest: ${DIGEST}"
 echo "✅ Tag ${VERSION} -> ${VERIFY_VERSION_DIGEST}"
-echo "✅ Tag ${BASE_TAG} -> ${VERIFY_BASE_DIGEST}"
+if [[ -n "${BASE_TAG}" ]]; then
+  echo "✅ Tag ${BASE_TAG} -> ${VERIFY_BASE_DIGEST}"
+fi
 echo "✅ Marketplace label verified: ${ANNOTATION_KEY}=${VERIFY_LABEL}"
+echo "✅ Published UBB agent: ${UBBAGENT_IMAGE_URI}"
+echo "✅ UBB agent digest: ${UBBAGENT_DIGEST}"
+echo "✅ UBB agent Marketplace annotation verified: ${ANNOTATION_KEY}=${UBBAGENT_VERIFY_ANNOTATION}"

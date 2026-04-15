@@ -65,6 +65,12 @@ items:
               env:
                 - name: PORT
                   value: "${PMOMAX_APP_PORT}"
+                - name: GOOGLE_REPORTING_SECRET_PATH
+                  value: /var/secrets/google
+              volumeMounts:
+                - name: reporting-secret
+                  mountPath: /var/secrets/google
+                  readOnly: true
               resources:
                 requests:
                   cpu: 100m
@@ -82,13 +88,8 @@ items:
                   path: /health
                   port: ${PMOMAX_APP_PORT}
                 initialDelaySeconds: 20
-              volumeMounts:
-                - name: reporting-secret
-                  mountPath: /var/secrets/google
-                  readOnly: true
-            - name: billing-agent
-              # Pinned to 0.2.4 (go1.25.4) — last build BEFORE CVE-2026-27143 (go1.26.1 in 0.2.5+).
-              image: gcr.io/cloud-marketplace-tools/metering/ubbagent:0.2.4
+            - name: ubbagent
+              image: ${ubbagentImageRegistry}/${ubbagentImageRepo}:${ubbagentImageTag}
               imagePullPolicy: IfNotPresent
               env:
                 - name: AGENT_CONFIG_FILE
