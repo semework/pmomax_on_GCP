@@ -7,6 +7,9 @@ AR_REPO="${AR_REPO:-pmomax}"
 IMAGE_PATH="${IMAGE_PATH:-deployer}"
 UBBAGENT_IMAGE_PATH="${UBBAGENT_IMAGE_PATH:-ubbagent}"
 UBBAGENT_DOCKERFILE="${UBBAGENT_DOCKERFILE:-ubbagent.Dockerfile}"
+# vNext: Vinod recommended checking
+# gcr.io/cloud-marketplace-tools/metering/ubbagent:latest again before future
+# releases, once Google publishes public patched UBB agent images.
 if [[ $# -lt 1 || -z "${1:-}" ]]; then
   echo "Usage: $0 <immutable-version-tag>"
   echo "Example: $0 1.3.2"

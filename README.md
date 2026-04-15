@@ -20,12 +20,16 @@ This package deploys the PMOMax runtime service (`pmo-architect`) through the Ma
 ## Current Baseline
 
 - Schema version: `v2`
-- `publishedVersion`: `1.3.3`
+- Stable Marketplace approval build: `1.4.1`
+- `publishedVersion`: `1.4.1`
+- Default deployer tag: `1.3`
+- Deployer image: `us-docker.pkg.dev/katalyststreet-public/pmomax/deployer:1.3`
+- UBB agent image: `us-docker.pkg.dev/katalyststreet-public/pmomax/ubbagent:1.4.1`
+- Security posture: `1.4.1` uses the custom rebuilt UBB agent from `ubbagent.Dockerfile`, built with patched Go `1.26.2` and pinned in Artifact Registry for final Marketplace approval.
 - Required install fields:
   - `APP_INSTANCE_NAME`
   - `NAMESPACE`
   - `reportingSecret`
-- Default deployer tag: `1.3`
 
 ## Deployment Contract (Schema Fields)
 
@@ -58,13 +62,13 @@ From `manifest/manifests.yaml.template`:
 - Readiness probe: `/health`
 - Liveness probe: `/health`
 - Requests: `100m CPU`, `256Mi memory`
-- Limits: `500m CPU`, `512Mi memory`
+- Limits: `500m CPU`, `1Gi memory`
 
 ## Publish Deployer Image
 
 ```bash
 cd PMOMax-On-GCP
-./publish_marketplace_deployer.sh 1.3.3
+BASE_TAG=1.3 ./publish_marketplace_deployer.sh 1.4.1
 ```
 
 Optional buildx path:
