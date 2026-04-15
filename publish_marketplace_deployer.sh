@@ -7,7 +7,6 @@ AR_REPO="${AR_REPO:-pmomax}"
 IMAGE_PATH="${IMAGE_PATH:-deployer}"
 UBBAGENT_SOURCE_IMAGE="${UBBAGENT_SOURCE_IMAGE:-gcr.io/cloud-marketplace-tools/metering/ubbagent:latest}"
 UBBAGENT_IMAGE_PATH="${UBBAGENT_IMAGE_PATH:-ubbagent}"
-UBBAGENT_VERSION="${UBBAGENT_VERSION:-0.1.3}"
 if [[ $# -lt 1 || -z "${1:-}" ]]; then
   echo "Usage: $0 <immutable-version-tag>"
   echo "Example: $0 1.3.2"
@@ -15,6 +14,7 @@ if [[ $# -lt 1 || -z "${1:-}" ]]; then
 fi
 
 VERSION="$1"
+UBBAGENT_VERSION="${UBBAGENT_VERSION:-${VERSION}}"
 BASE_TAG="${BASE_TAG:-}"
 MARKETPLACE_SERVICE_NAME="${MARKETPLACE_SERVICE_NAME:-services/pmo-max.endpoints.${PROJECT_ID}.cloud.goog}"
 ANNOTATION_KEY="com.googleapis.cloudmarketplace.product.service.name"

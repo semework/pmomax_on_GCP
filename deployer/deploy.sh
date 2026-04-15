@@ -124,7 +124,7 @@ fi
 export PMOMAX_APP_PORT="${PMOMAX_APP_PORT:-8080}"
 export ubbagentImageRegistry="${ubbagentImageRegistry:-us-docker.pkg.dev}"
 export ubbagentImageRepo="${ubbagentImageRepo:-katalyststreet-public/pmomax/ubbagent}"
-export ubbagentImageTag="${ubbagentImageTag:-0.1.3}"
+export ubbagentImageTag="${ubbagentImageTag:-1.3.8}"
 if [[ -z "${TESTER_IMAGE:-}" ]]; then
   TESTER_IMAGE="$(
     compose_image_ref \
