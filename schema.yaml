@@ -1,10 +1,10 @@
 x-google-marketplace:
   schemaVersion: v2
   applicationApiVersion: v1beta1
-  publishedVersion: "1.4.0"
+  publishedVersion: "1.4.1"
   publishedVersionMetadata:
     releaseNote: >-
-      PMOMax 1.4.0 - Security patch: pin ubbagent source to 0.2.4 (go1.25.4, pre-CVE-2026-27143). Mirror to project registry.
+      Build UBB agent from patched Go source to satisfy vulnerability scanning.
     recommended: true
   managedUpdates:
     kalmSupported: false
@@ -166,7 +166,7 @@ properties:
 
   ubbagentImageTag:
     type: string
-    default: "1.4.0"
+    default: "1.4.1"
 
   PMOMAX_APP_IMAGE:
     type: string

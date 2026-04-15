@@ -5,9 +5,8 @@ PROJECT_ID="${PROJECT_ID:-katalyststreet-public}"
 AR_HOST="${AR_HOST:-us-docker.pkg.dev}"
 AR_REPO="${AR_REPO:-pmomax}"
 IMAGE_PATH="${IMAGE_PATH:-deployer}"
-# Pinned to 0.2.4 (go1.25.4) — last build BEFORE CVE-2026-27143 (go1.26.1 in 0.2.5+).
-UBBAGENT_SOURCE_IMAGE="${UBBAGENT_SOURCE_IMAGE:-gcr.io/cloud-marketplace-tools/metering/ubbagent:0.2.4}"
 UBBAGENT_IMAGE_PATH="${UBBAGENT_IMAGE_PATH:-ubbagent}"
+UBBAGENT_DOCKERFILE="${UBBAGENT_DOCKERFILE:-ubbagent.Dockerfile}"
 if [[ $# -lt 1 || -z "${1:-}" ]]; then
   echo "Usage: $0 <immutable-version-tag>"
   echo "Example: $0 1.3.2"
@@ -43,7 +42,31 @@ if ! command -v crane >/dev/null 2>&1; then
 fi
 
 echo "Publishing UBB agent image: ${UBBAGENT_IMAGE_URI}"
-crane copy "${UBBAGENT_SOURCE_IMAGE}" "${UBBAGENT_IMAGE_URI}"
+if [[ ! -f "${UBBAGENT_DOCKERFILE}" ]]; then
+  echo "ERROR: patched UBB agent Dockerfile not found at ${UBBAGENT_DOCKERFILE}"
+  exit 1
+fi
+
+UBBAGENT_BUILDCONFIG="$(mktemp "${TMPDIR:-/tmp}/ubbagent-cloudbuild.XXXXXX.yaml")"
+cat > "${UBBAGENT_BUILDCONFIG}" <<EOF
+steps:
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - build
+      - -f
+      - ${UBBAGENT_DOCKERFILE}
+      - -t
+      - ${UBBAGENT_IMAGE_URI}
+      - .
+images:
+  - ${UBBAGENT_IMAGE_URI}
+EOF
+gcloud builds submit \
+  --config "${UBBAGENT_BUILDCONFIG}" \
+  --project "${PROJECT_ID}" \
+  --quiet \
+  .
+rm -f "${UBBAGENT_BUILDCONFIG}"
 crane mutate --annotation "${ANNOTATION_KEY}=${MARKETPLACE_SERVICE_NAME}" "${UBBAGENT_IMAGE_URI}" >/dev/null
 
 UBBAGENT_DIGEST="$(
