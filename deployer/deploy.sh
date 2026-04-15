@@ -63,6 +63,9 @@ keys = [
     "deployerImageRepo",
     "deployerImageRegistry",
     "deployerImageTag",
+    "ubbagentImageRegistry",
+    "ubbagentImageRepo",
+    "ubbagentImageTag",
     "testerImageRegistry",
 ]
 for k in keys:
@@ -119,6 +122,9 @@ if [[ -z "${PMOMAX_APP_IMAGE:-}" ]]; then
   )"
 fi
 export PMOMAX_APP_PORT="${PMOMAX_APP_PORT:-8080}"
+export ubbagentImageRegistry="${ubbagentImageRegistry:-us-docker.pkg.dev}"
+export ubbagentImageRepo="${ubbagentImageRepo:-katalyststreet-public/pmomax/ubbagent}"
+export ubbagentImageTag="${ubbagentImageTag:-0.1.3}"
 if [[ -z "${TESTER_IMAGE:-}" ]]; then
   TESTER_IMAGE="$(
     compose_image_ref \
@@ -140,10 +146,11 @@ echo "  APP_INSTANCE_NAME=${APP_INSTANCE_NAME}"
 echo "  NAMESPACE=${NAMESPACE}"
 echo "  PMOMAX_APP_IMAGE=${PMOMAX_APP_IMAGE}"
 echo "  PMOMAX_APP_PORT=${PMOMAX_APP_PORT}"
+echo "  UBBAGENT_IMAGE=${ubbagentImageRegistry}/${ubbagentImageRepo}:${ubbagentImageTag}"
 
 echo "[INFO] Applying Application Resources to namespace: ${NAMESPACE}"
 
-SUBST_VARS='${APP_INSTANCE_NAME} ${NAMESPACE} ${PARTNER_ID} ${PRODUCT_ID} ${PMOMAX_APP_IMAGE} ${PMOMAX_APP_PORT} ${DOMAIN} ${REPORTING_SECRET} ${DEPLOYER_SERVICE_ACCOUNT} ${TESTER_IMAGE}'
+SUBST_VARS='${APP_INSTANCE_NAME} ${NAMESPACE} ${PARTNER_ID} ${PRODUCT_ID} ${PMOMAX_APP_IMAGE} ${PMOMAX_APP_PORT} ${DOMAIN} ${REPORTING_SECRET} ${DEPLOYER_SERVICE_ACCOUNT} ${TESTER_IMAGE} ${ubbagentImageRegistry} ${ubbagentImageRepo} ${ubbagentImageTag}'
 WORKDIR="$(mktemp -d /tmp/pmomax-deploy.XXXXXX)"
 APP_RENDERED="${WORKDIR}/application.yaml"
 MANIFESTS_RENDERED="${WORKDIR}/manifests.yaml"

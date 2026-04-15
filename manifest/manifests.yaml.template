@@ -88,8 +88,8 @@ items:
                   path: /health
                   port: ${PMOMAX_APP_PORT}
                 initialDelaySeconds: 20
-            - name: billing-agent
-              image: gcr.io/cloud-marketplace-tools/metering-agent
+            - name: ubbagent
+              image: ${ubbagentImageRegistry}/${ubbagentImageRepo}:${ubbagentImageTag}
               imagePullPolicy: IfNotPresent
               env:
                 - name: AGENT_CONFIG_FILE

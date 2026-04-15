@@ -5,6 +5,9 @@ PROJECT_ID="${PROJECT_ID:-katalyststreet-public}"
 AR_HOST="${AR_HOST:-us-docker.pkg.dev}"
 AR_REPO="${AR_REPO:-pmomax}"
 IMAGE_PATH="${IMAGE_PATH:-deployer}"
+UBBAGENT_SOURCE_IMAGE="${UBBAGENT_SOURCE_IMAGE:-gcr.io/cloud-marketplace-tools/metering/ubbagent:latest}"
+UBBAGENT_IMAGE_PATH="${UBBAGENT_IMAGE_PATH:-ubbagent}"
+UBBAGENT_VERSION="${UBBAGENT_VERSION:-0.1.3}"
 if [[ $# -lt 1 || -z "${1:-}" ]]; then
   echo "Usage: $0 <immutable-version-tag>"
   echo "Example: $0 1.3.2"
@@ -18,6 +21,8 @@ ANNOTATION_KEY="com.googleapis.cloudmarketplace.product.service.name"
 
 IMAGE_URI="${AR_HOST}/${PROJECT_ID}/${AR_REPO}/${IMAGE_PATH}:${VERSION}"
 IMAGE_REPO_URI="${AR_HOST}/${PROJECT_ID}/${AR_REPO}/${IMAGE_PATH}"
+UBBAGENT_IMAGE_REPO_URI="${AR_HOST}/${PROJECT_ID}/${AR_REPO}/${UBBAGENT_IMAGE_PATH}"
+UBBAGENT_IMAGE_URI="${UBBAGENT_IMAGE_REPO_URI}:${UBBAGENT_VERSION}"
 
 echo "Publishing deployer image: ${IMAGE_URI}"
 gcloud config set project "${PROJECT_ID}" >/dev/null
@@ -33,6 +38,33 @@ gcloud builds submit --tag "${IMAGE_URI}" --project "${PROJECT_ID}" --quiet
 
 if ! command -v crane >/dev/null 2>&1; then
   echo "ERROR: crane is required to enforce Marketplace OCI metadata."
+  exit 1
+fi
+
+echo "Publishing UBB agent image: ${UBBAGENT_IMAGE_URI}"
+crane copy "${UBBAGENT_SOURCE_IMAGE}" "${UBBAGENT_IMAGE_URI}"
+crane mutate --annotation "${ANNOTATION_KEY}=${MARKETPLACE_SERVICE_NAME}" "${UBBAGENT_IMAGE_URI}" >/dev/null
+
+UBBAGENT_DIGEST="$(
+  gcloud artifacts docker images describe "${UBBAGENT_IMAGE_URI}" \
+    --project "${PROJECT_ID}" \
+    --format='value(image_summary.digest)'
+)"
+
+if [[ -z "${UBBAGENT_DIGEST}" ]]; then
+  echo "ERROR: Unable to resolve digest for ${UBBAGENT_IMAGE_URI}"
+  exit 1
+fi
+
+UBBAGENT_VERIFY_ANNOTATION="$(
+  crane manifest "${UBBAGENT_IMAGE_URI}" \
+    | jq -r --arg key "${ANNOTATION_KEY}" '.annotations[$key] // empty'
+)"
+
+if [[ "${UBBAGENT_VERIFY_ANNOTATION}" != "${MARKETPLACE_SERVICE_NAME}" ]]; then
+  echo "ERROR: UBB agent Marketplace OCI annotation missing or incorrect."
+  echo "  expected: ${MARKETPLACE_SERVICE_NAME}"
+  echo "  actual:   ${UBBAGENT_VERIFY_ANNOTATION:-<empty>}"
   exit 1
 fi
 
@@ -107,3 +139,6 @@ if [[ -n "${BASE_TAG}" ]]; then
   echo "✅ Tag ${BASE_TAG} -> ${VERIFY_BASE_DIGEST}"
 fi
 echo "✅ Marketplace label verified: ${ANNOTATION_KEY}=${VERIFY_LABEL}"
+echo "✅ Published UBB agent: ${UBBAGENT_IMAGE_URI}"
+echo "✅ UBB agent digest: ${UBBAGENT_DIGEST}"
+echo "✅ UBB agent Marketplace annotation verified: ${ANNOTATION_KEY}=${UBBAGENT_VERIFY_ANNOTATION}"

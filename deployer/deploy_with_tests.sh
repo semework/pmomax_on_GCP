@@ -60,6 +60,9 @@ keys = [
     "deployerImageRepo",
     "deployerImageRegistry",
     "deployerImageTag",
+    "ubbagentImageRegistry",
+    "ubbagentImageRepo",
+    "ubbagentImageTag",
     "testerImageRegistry",
 ]
 for k in keys:

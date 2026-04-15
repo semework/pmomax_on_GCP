@@ -1,10 +1,10 @@
 x-google-marketplace:
   schemaVersion: v2
   applicationApiVersion: v1beta1
-  publishedVersion: "1.3.5"
+  publishedVersion: "1.3.7"
   publishedVersionMetadata:
     releaseNote: >-
-      Remove invalid schema usage block while keeping UBB sidecar metering.
+      Mirror and pin Marketplace UBB agent image in the PMOMax registry.
     recommended: true
   managedUpdates:
     kalmSupported: false
@@ -16,6 +16,14 @@ x-google-marketplace:
         deployerImageRepo:
           type: REPO_WITHOUT_REGISTRY
         deployerImageTag:
+          type: TAG
+    ubbagent:
+      properties:
+        ubbagentImageRegistry:
+          type: REGISTRY
+        ubbagentImageRepo:
+          type: REPO_WITHOUT_REGISTRY
+        ubbagentImageTag:
           type: TAG
 
 properties:
@@ -147,6 +155,18 @@ properties:
   deployerImageTag:
     type: string
     default: "1.3"
+
+  ubbagentImageRegistry:
+    type: string
+    default: us-docker.pkg.dev
+
+  ubbagentImageRepo:
+    type: string
+    default: katalyststreet-public/pmomax/ubbagent
+
+  ubbagentImageTag:
+    type: string
+    default: "0.1.3"
 
   PMOMAX_APP_IMAGE:
     type: string
