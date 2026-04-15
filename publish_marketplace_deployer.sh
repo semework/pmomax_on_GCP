@@ -7,6 +7,9 @@ AR_REPO="${AR_REPO:-pmomax}"
 IMAGE_PATH="${IMAGE_PATH:-deployer}"
 VERSION="${1:-1.3}"
 BASE_TAG="${BASE_TAG:-1.3}"
+# Pinned billing agent — 0.2.4 is go1.25.4 (last clean build; 0.2.5+ introduced go1.26.1 / CVE-2026-27143).
+# 0.1.5 does NOT exist in gcr.io/cloud-marketplace-tools/metering/ubbagent.
+UBBAGENT_IMAGE="gcr.io/cloud-marketplace-tools/metering/ubbagent:0.2.4"
 MARKETPLACE_SERVICE_NAME="${MARKETPLACE_SERVICE_NAME:-services/pmo-max.endpoints.${PROJECT_ID}.cloud.goog}"
 ANNOTATION_KEY="com.googleapis.cloudmarketplace.product.service.name"
 
@@ -31,13 +34,10 @@ if ! command -v crane >/dev/null 2>&1; then
 fi
 
 # Enforce OCI annotation required by Marketplace on every published image.
-crane mutate --annotation "${ANNOTATION_KEY}=${MARKETPLACE_SERVICE_NAME}" "${IMAGE_URI}" >/dev/null
+# crane mutate rewrites the manifest, producing a NEW digest — capture it via crane.
+crane mutate --annotation "${ANNOTATION_KEY}=${MARKETPLACE_SERVICE_NAME}" "${IMAGE_URI}"
 
-DIGEST="$(
-  gcloud artifacts docker images describe "${IMAGE_URI}" \
-    --project "${PROJECT_ID}" \
-    --format='value(image_summary.digest)'
-)"
+DIGEST="$(crane digest "${IMAGE_URI}")"
 
 if [[ -z "${DIGEST}" ]]; then
   echo "ERROR: Unable to resolve digest for ${IMAGE_URI}"
@@ -48,16 +48,9 @@ fi
 gcloud artifacts docker tags add "${IMAGE_REPO_URI}@${DIGEST}" "${IMAGE_REPO_URI}:${VERSION}" --project "${PROJECT_ID}" || true
 gcloud artifacts docker tags add "${IMAGE_REPO_URI}@${DIGEST}" "${IMAGE_REPO_URI}:${BASE_TAG}" --project "${PROJECT_ID}" || true
 
-VERIFY_VERSION_DIGEST="$(
-  gcloud artifacts docker images describe "${IMAGE_REPO_URI}:${VERSION}" \
-    --project "${PROJECT_ID}" \
-    --format='value(image_summary.digest)'
-)"
-VERIFY_BASE_DIGEST="$(
-  gcloud artifacts docker images describe "${IMAGE_REPO_URI}:${BASE_TAG}" \
-    --project "${PROJECT_ID}" \
-    --format='value(image_summary.digest)'
-)"
+# Verify tags using crane digest — reliable after manifest mutation.
+VERIFY_VERSION_DIGEST="$(crane digest "${IMAGE_REPO_URI}:${VERSION}")" || VERIFY_VERSION_DIGEST=""
+VERIFY_BASE_DIGEST="$(crane digest "${IMAGE_REPO_URI}:${BASE_TAG}")" || VERIFY_BASE_DIGEST=""
 
 if [[ -z "${VERIFY_VERSION_DIGEST}" || -z "${VERIFY_BASE_DIGEST}" ]]; then
   echo "ERROR: Failed to verify tags ${VERSION} and/or ${BASE_TAG}"

@@ -1,10 +1,10 @@
 x-google-marketplace:
   schemaVersion: v2
   applicationApiVersion: v1beta1
-  publishedVersion: "1.3.0"
+  publishedVersion: "1.4.0"
   publishedVersionMetadata:
     releaseNote: >-
-      Force Refresh 1.3.0
+      PMOMax 1.4.0 - Critical Security Patch. Mirrored ubbagent:0.1.5 to resolve CVE-2026-27143 (Go toolchain 1.26.2).
     recommended: true
   managedUpdates:
     kalmSupported: false
@@ -187,6 +187,10 @@ properties:
   GCP_PROJECT_ID:
     type: string
     default: katalyststreet-public
+
+  ubbagentImageTag:
+    type: string
+    default: "0.2.4"
 
 required:
   - APP_INSTANCE_NAME

@@ -87,7 +87,8 @@ items:
                   mountPath: /var/secrets/google
                   readOnly: true
             - name: billing-agent
-              image: gcr.io/cloud-marketplace-tools/metering-agent
+              # Pinned to 0.2.4 (go1.25.4) — last build BEFORE CVE-2026-27143 (go1.26.1 in 0.2.5+).
+              image: gcr.io/cloud-marketplace-tools/metering/ubbagent:0.2.4
               imagePullPolicy: IfNotPresent
               env:
                 - name: AGENT_CONFIG_FILE
