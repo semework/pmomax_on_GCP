@@ -16,7 +16,7 @@ spec:
       kind: Service
   descriptor:
     type: "pmomax"
-    description: "PMOMax PID Architect - AI-assisted Project Initiation Document workspace for Google Cloud Marketplace"
+    description: "PMOMax PID Architect - improved Create Agent, governance, AI audit logging, and CVE-2026-39892 mitigation."
     version: "1.4.2"
     links:
       - description: "PMOMax documentation"

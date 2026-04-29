@@ -1,12 +1,12 @@
 title: PMOMax PID Architect
-description: AI-assisted Project Initiation Document workspace for Google Cloud Marketplace.
+description: Improved Create Agent, governance, AI audit logging, and CVE-2026-39892 mitigation.
 x-google-marketplace:
   schemaVersion: v2
   applicationApiVersion: v1beta1
   publishedVersion: "1.4.2"
   publishedVersionMetadata:
     releaseNote: >-
-      PMOMax 1.4.2 - patch deployer base image for CVE-2026-39892 and point runtime to app image 1.0.2 with AI audit traceability.
+      Improved Create Agent, governance, AI audit logging, and mitigated CVE-2026-39892.
     recommended: true
   managedUpdates:
     kalmSupported: false
