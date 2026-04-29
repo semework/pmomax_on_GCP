@@ -118,13 +118,13 @@ if [[ -z "${PMOMAX_APP_IMAGE:-}" ]]; then
     compose_image_ref \
       "${pmomaxAppRegistry:-us-east1-docker.pkg.dev}" \
       "${pmomaxAppRepo:-katalyststreet-public/apps/pmo-architect}" \
-      "${pmomaxAppTag:-1.0.1}"
+      "${pmomaxAppTag:-1.0.2}"
   )"
 fi
 export PMOMAX_APP_PORT="${PMOMAX_APP_PORT:-8080}"
 export ubbagentImageRegistry="${ubbagentImageRegistry:-us-docker.pkg.dev}"
 export ubbagentImageRepo="${ubbagentImageRepo:-katalyststreet-public/pmomax/ubbagent}"
-export ubbagentImageTag="${ubbagentImageTag:-1.4.1}"
+export ubbagentImageTag="${ubbagentImageTag:-1.4.2}"
 if [[ -z "${TESTER_IMAGE:-}" ]]; then
   TESTER_IMAGE="$(
     compose_image_ref \

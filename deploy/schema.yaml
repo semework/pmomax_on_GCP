@@ -1,10 +1,10 @@
 x-google-marketplace:
   schemaVersion: v2
   applicationApiVersion: v1beta1
-  publishedVersion: "1.4.1"
+  publishedVersion: "1.4.2"
   publishedVersionMetadata:
     releaseNote: >-
-      Build UBB agent from patched Go source to satisfy vulnerability scanning.
+      PMOMax 1.4.2 - patch deployer base image for CVE-2026-39892 and point runtime to app image 1.0.2 with AI audit traceability.
     recommended: true
   managedUpdates:
     kalmSupported: false
@@ -140,7 +140,7 @@ properties:
 
   deployer.image:
     type: string
-    default: us-docker.pkg.dev/katalyststreet-public/pmomax/deployer:1.3
+    default: us-docker.pkg.dev/katalyststreet-public/pmomax/deployer:1.4.2
     x-google-marketplace:
       type: DEPLOYER_IMAGE
 
@@ -154,7 +154,7 @@ properties:
 
   deployerImageTag:
     type: string
-    default: "1.3"
+    default: "1.4.2"
 
   ubbagentImageRegistry:
     type: string
@@ -166,11 +166,11 @@ properties:
 
   ubbagentImageTag:
     type: string
-    default: "1.4.1"
+    default: "1.4.2"
 
   PMOMAX_APP_IMAGE:
     type: string
-    default: us-east1-docker.pkg.dev/katalyststreet-public/apps/pmo-architect:1.0.1
+    default: us-east1-docker.pkg.dev/katalyststreet-public/apps/pmo-architect:1.0.2
 
   pmomaxAppRepo:
     type: string
@@ -182,7 +182,7 @@ properties:
 
   pmomaxAppTag:
     type: string
-    default: "1.0.1"
+    default: "1.0.2"
 
   PMOMAX_APP_PORT:
     type: integer

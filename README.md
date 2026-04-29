@@ -20,12 +20,13 @@ This package deploys the PMOMax runtime service (`pmo-architect`) through the Ma
 ## Current Baseline
 
 - Schema version: `v2`
-- Stable Marketplace approval build: `1.4.1`
-- `publishedVersion`: `1.4.1`
-- Default deployer tag: `1.3`
-- Deployer image: `us-docker.pkg.dev/katalyststreet-public/pmomax/deployer:1.3`
-- UBB agent image: `us-docker.pkg.dev/katalyststreet-public/pmomax/ubbagent:1.4.1`
-- Security posture: `1.4.1` uses the custom rebuilt UBB agent from `ubbagent.Dockerfile`, built with patched Go `1.26.2` and pinned in Artifact Registry for final Marketplace approval.
+- Stable Marketplace approval build: `1.4.2`
+- `publishedVersion`: `1.4.2`
+- Default deployer tag: `1.4.2`
+- Deployer image: `us-docker.pkg.dev/katalyststreet-public/pmomax/deployer:1.4.2`
+- Runtime app image: `us-east1-docker.pkg.dev/katalyststreet-public/apps/pmo-architect:1.0.2`
+- UBB agent image: `us-docker.pkg.dev/katalyststreet-public/pmomax/ubbagent:1.4.2`
+- Security posture: `1.4.2` updates the Marketplace deployer base to `deployer_envsubst/onbuild:0.12.17`, rebuilds the UBB agent from `ubbagent.Dockerfile`, and points runtime traffic at app image `1.0.2`.
 - Required install fields:
   - `APP_INSTANCE_NAME`
   - `NAMESPACE`
@@ -68,7 +69,7 @@ From `manifest/manifests.yaml.template`:
 
 ```bash
 cd PMOMax-On-GCP
-BASE_TAG=1.3 ./publish_marketplace_deployer.sh 1.4.1
+./publish_marketplace_deployer.sh 1.4.2
 ```
 
 Optional buildx path:
@@ -82,7 +83,7 @@ cd PMOMax-On-GCP
 
 ```bash
 cd PMOMax-On-GCP
-./verify_marketplace_local.sh us-docker.pkg.dev/katalyststreet-public/pmomax/deployer:1.3
+./verify_marketplace_local.sh us-docker.pkg.dev/katalyststreet-public/pmomax/deployer:1.4.2
 ```
 
 Requires `mpdev` in `PATH`.

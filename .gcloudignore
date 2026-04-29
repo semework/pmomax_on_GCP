@@ -9,6 +9,8 @@ docs/**
 Architecture/**
 test/**
 *.local
+.env
+.env.*
 *.tmp
 secrets/**
 node_modules/
@@ -29,3 +31,17 @@ ElexRatio-On-GCP/
 ElexRatio-On-GCP.worktrees/
 coverage/
 .nyc_output/
+REPORTS/
+deliverables/
+logs/
+*.zip
+*.pdf
+*.docx
+*.pptx
+*.mp4
+*.mov
+*.webm
+*.wav
+*.mp3
+PMOMax_*.json
+*_logs.json

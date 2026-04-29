@@ -15,7 +15,7 @@ items:
             gcp:
               encodedServiceAccountKey: $AGENT_ENCODED_KEY
         metrics:
-          - name: pmo-max-usage-metric
+          - name: M1
             type: int
             aggregation:
               bufferSeconds: 60
@@ -35,7 +35,7 @@ items:
         sources:
           - name: pmomax_heartbeat
             heartbeat:
-              metric: pmo-max-usage-metric
+              metric: M1
               intervalSeconds: 60
               value:
                 int64Value: 60
