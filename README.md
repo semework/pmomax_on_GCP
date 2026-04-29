@@ -65,6 +65,38 @@ From `manifest/manifests.yaml.template`:
 - Requests: `100m CPU`, `256Mi memory`
 - Limits: `500m CPU`, `1Gi memory`
 
+
+## Runtime Cloud Run Deployment
+
+`deploy-fast.sh` is the production Cloud Run runtime deployment helper for the hosted PMOMax demo/service. It creates a minimal allowlisted Cloud Build context, stages `Dockerfile.cloudrun` as the runtime `Dockerfile`, builds `us-east1-docker.pkg.dev/<project>/apps/pmo-architect:<tag>`, and deploys the image to Cloud Run service `pmo-architect`.
+
+The root `Dockerfile` is not the runtime app Dockerfile; it builds the Google Marketplace deployer image. Use `publish_marketplace_deployer.sh` only for Marketplace deployer/UBB image publication.
+
+Recommended hosted runtime deploy command:
+
+```bash
+PROJECT_ID=katalyststreet-public \
+REGION=us-east1 \
+SERVICE_NAME=pmo-architect \
+IMAGE_TAG=<release-tag> \
+./deploy-fast.sh
+```
+
+## AI Audit / Traceability
+
+PMOMax supports configurable AI decision traceability for AI-assisted project outputs. The default path is structured Winston JSON emitted to stdout, captured by GKE or Cloud Run, and queryable in customer-owned Cloud Logging. The structured log event uses `message="ai_decision_trace"`.
+
+Traceability fields are attached to AI endpoint responses as `_auditMeta` and `_auditTrace`. `_auditMeta` includes `requestId`, `endpoint`, `modelId`, `source`, `inputLengthChars`, `fieldsPopulated`, `warningCount`, `durationMs`, and `generatedAt`. `_auditTrace` includes `requestId`, `endpoint`, `source`, `durationMs`, `timestamp`, `traceLevel`, `stepCount`, `stepLabels`, and `steps`.
+
+Controls:
+
+- `AUDIT_TRACE_LEVEL=meta|summary|full` controls whether steps include shapes only, redacted/truncated summaries, or full redacted content.
+- `AUDIT_MAX_FIELD_CHARS=8000` controls summary truncation.
+- `AUDIT_REDACT_KEYS=apiKey,password,token,authorization,secret,cookie,bearer` controls key-name redaction.
+- Optional backends are enabled only when `AUDIT_GCS_BUCKET`, `AUDIT_BIGQUERY_TABLE`, or `AUDIT_FIRESTORE_COLLECTION` is set. They use dynamic imports and do not create a required persistence layer.
+
+See `docs/ai-audit-traceability.md`, `docs/future-agent-context.md`, and `docs/marketplace-status.md` for retrieval and operating guidance.
+
 ## Publish Deployer Image
 
 ```bash
