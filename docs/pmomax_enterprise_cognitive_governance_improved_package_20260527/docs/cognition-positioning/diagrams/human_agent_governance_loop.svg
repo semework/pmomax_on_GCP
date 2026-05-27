@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="760" viewBox="0 0 1280 760" role="img" aria-labelledby="title desc">
+  <title id="title">Human-Agent Governance Loop</title>
+  <desc id="desc">Loop from human sponsor to PMOMax, agents, checks, escalation, audit, and approval.</desc>
+  <rect width="1280" height="760" fill="#f7f9fc"/>
+  <text x="80" y="72" font-family="Inter, Arial, sans-serif" font-size="34" font-weight="700" fill="#152238">Human-Agent Governance Loop</text>
+  <text x="80" y="108" font-family="Inter, Arial, sans-serif" font-size="18" fill="#526173">Human accountability stays in the loop as AI work becomes structured and traceable</text>
+  <defs><marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M2,2 L10,6 L2,10 Z" fill="#486581"/></marker></defs>
+  <g font-family="Inter, Arial, sans-serif" font-size="17" fill="#172033" stroke="#486581" stroke-width="2" marker-end="url(#arrow)">
+    <path d="M250 245 L410 245"/><path d="M540 245 L700 245"/><path d="M830 245 L990 245"/><path d="M1050 310 L900 450"/><path d="M770 450 L610 450"/><path d="M480 450 L320 450"/><path d="M260 390 L260 315"/>
+  </g>
+  <g font-family="Inter, Arial, sans-serif">
+    <rect x="110" y="200" width="140" height="90" rx="12" fill="#e8eef7" stroke="#b8c7da"/><text x="180" y="238" text-anchor="middle" font-size="17" font-weight="700" fill="#172033">Human</text><text x="180" y="262" text-anchor="middle" font-size="17" fill="#172033">Sponsor</text>
+    <rect x="410" y="200" width="130" height="90" rx="12" fill="#dff3ee" stroke="#a8d8cc"/><text x="475" y="254" text-anchor="middle" font-size="18" font-weight="700" fill="#172033">PMOMax</text>
+    <rect x="700" y="200" width="130" height="90" rx="12" fill="#e7e8ff" stroke="#bbbdf2"/><text x="765" y="254" text-anchor="middle" font-size="18" font-weight="700" fill="#172033">Agents</text>
+    <rect x="990" y="200" width="160" height="90" rx="12" fill="#fff4d7" stroke="#e7c772"/><text x="1070" y="238" text-anchor="middle" font-size="17" font-weight="700" fill="#172033">Governance</text><text x="1070" y="262" text-anchor="middle" font-size="17" fill="#172033">Checks</text>
+    <rect x="760" y="410" width="140" height="80" rx="12" fill="#ffe9e6" stroke="#efb3a8"/><text x="830" y="458" text-anchor="middle" font-size="17" font-weight="700" fill="#172033">Escalation</text>
+    <rect x="480" y="410" width="130" height="80" rx="12" fill="#f1f7ff" stroke="#b7d1f2"/><text x="545" y="458" text-anchor="middle" font-size="17" font-weight="700" fill="#172033">Audit</text>
+    <rect x="180" y="410" width="140" height="80" rx="12" fill="#eef1f5" stroke="#cbd3df"/><text x="250" y="458" text-anchor="middle" font-size="17" font-weight="700" fill="#172033">Approval</text>
+  </g>
+</svg>

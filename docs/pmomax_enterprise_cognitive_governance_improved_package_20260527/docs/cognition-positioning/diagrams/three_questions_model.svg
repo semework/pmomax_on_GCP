@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="760" viewBox="0 0 1280 760" role="img" aria-labelledby="title desc">
+  <title id="title">The Three Questions Model</title>
+  <desc id="desc">Three governance questions surrounding the Enterprise Cognitive Governance core.</desc>
+  <rect width="1280" height="760" fill="#f7f9fc"/>
+  <text x="80" y="72" font-family="Inter, Arial, sans-serif" font-size="34" font-weight="700" fill="#152238">The Three Questions Model</text>
+  <text x="80" y="108" font-family="Inter, Arial, sans-serif" font-size="18" fill="#526173">A simple executive frame for governing machine cognition</text>
+  <circle cx="640" cy="390" r="125" fill="#dff3ee" stroke="#60b6a3" stroke-width="3"/>
+  <text x="640" y="372" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="700" fill="#172033">Enterprise</text>
+  <text x="640" y="402" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="700" fill="#172033">Cognitive</text>
+  <text x="640" y="432" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="700" fill="#172033">Governance</text>
+  <g font-family="Inter, Arial, sans-serif" fill="#172033">
+    <rect x="120" y="270" width="280" height="130" rx="16" fill="#e8eef7" stroke="#b8c7da"/>
+    <text x="260" y="322" text-anchor="middle" font-size="22" font-weight="700">What does AI</text><text x="260" y="354" text-anchor="middle" font-size="22" font-weight="700">touch?</text>
+    <rect x="500" y="575" width="280" height="110" rx="16" fill="#fff4d7" stroke="#e7c772"/>
+    <text x="640" y="625" text-anchor="middle" font-size="22" font-weight="700">What does AI</text><text x="640" y="657" text-anchor="middle" font-size="22" font-weight="700">decide?</text>
+    <rect x="880" y="270" width="280" height="130" rx="16" fill="#e7e8ff" stroke="#bbbdf2"/>
+    <text x="1020" y="322" text-anchor="middle" font-size="22" font-weight="700">Who owns</text><text x="1020" y="354" text-anchor="middle" font-size="22" font-weight="700">the outcome?</text>
+  </g>
+</svg>

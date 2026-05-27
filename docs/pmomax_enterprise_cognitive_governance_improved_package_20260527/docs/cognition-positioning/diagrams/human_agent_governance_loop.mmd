@@ -1,0 +1,10 @@
+flowchart LR
+  A[Human Sponsor] --> B[PMOMax]
+  B --> C[Agents]
+  C --> D[Governance Checks]
+  D --> E{Escalation?}
+  E -->|Yes| F[Human Review]
+  E -->|No| G[Audit]
+  F --> G
+  G --> H[Approval]
+  H --> B

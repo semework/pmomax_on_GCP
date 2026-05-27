@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="760" viewBox="0 0 1280 760" role="img" aria-labelledby="title desc">
+  <title id="title">PMOMax as Cognitive Architecture</title>
+  <desc id="desc">PMOMax positioned upstream of agent and tool execution.</desc>
+  <rect width="1280" height="760" fill="#f7f9fc"/>
+  <text x="80" y="72" font-family="Inter, Arial, sans-serif" font-size="34" font-weight="700" fill="#152238">PMOMax as Cognitive Architecture</text>
+  <text x="80" y="108" font-family="Inter, Arial, sans-serif" font-size="18" fill="#526173">Upstream governance before agent execution</text>
+  <defs><marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M2,2 L10,6 L2,10 Z" fill="#486581"/></marker></defs>
+  <g stroke="#486581" stroke-width="2.5" marker-end="url(#arrow)"><path d="M275 370 L400 370"/><path d="M580 370 L705 370"/><path d="M885 370 L1010 370"/></g>
+  <g font-family="Inter, Arial, sans-serif" fill="#172033">
+    <rect x="90" y="290" width="185" height="160" rx="16" fill="#e8eef7" stroke="#b8c7da"/><text x="182" y="352" text-anchor="middle" font-size="20" font-weight="700">Business</text><text x="182" y="382" text-anchor="middle" font-size="20" font-weight="700">Intent</text>
+    <rect x="400" y="260" width="180" height="220" rx="16" fill="#dff3ee" stroke="#60b6a3" stroke-width="3"/><text x="490" y="342" text-anchor="middle" font-size="21" font-weight="700">PMOMax</text><text x="490" y="374" text-anchor="middle" font-size="17">Governance</text><text x="490" y="402" text-anchor="middle" font-size="17">PID</text>
+    <rect x="705" y="290" width="180" height="160" rx="16" fill="#fff4d7" stroke="#e7c772"/><text x="795" y="348" text-anchor="middle" font-size="18" font-weight="700">Boundaries</text><text x="795" y="378" text-anchor="middle" font-size="18">Owners</text><text x="795" y="408" text-anchor="middle" font-size="18">Risks</text>
+    <rect x="1010" y="290" width="180" height="160" rx="16" fill="#e7e8ff" stroke="#bbbdf2"/><text x="1100" y="354" text-anchor="middle" font-size="18" font-weight="700">Agent / Tool</text><text x="1100" y="386" text-anchor="middle" font-size="18">Execution</text>
+  </g>
+  <rect x="360" y="555" width="560" height="72" rx="14" fill="#f1f7ff" stroke="#b7d1f2"/>
+  <text x="640" y="599" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="20" font-weight="700" fill="#172033">Review + Audit + Export Evidence</text>
+</svg>

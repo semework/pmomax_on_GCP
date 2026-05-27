@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720" role="img" aria-labelledby="title desc">
+  <title id="title">Cognitive Boundary Schema Flow</title>
+  <desc id="desc">Flow from inputs through boundaries, agents, tools, decisions, escalation, and audit.</desc>
+  <rect width="1280" height="720" fill="#f7f9fc"/>
+  <text x="80" y="72" font-family="Inter, Arial, sans-serif" font-size="34" font-weight="700" fill="#152238">Cognitive Boundary Schema Flow</text>
+  <text x="80" y="108" font-family="Inter, Arial, sans-serif" font-size="18" fill="#526173">Boundaries define what AI can see, do, decide, and escalate</text>
+  <defs><marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M2,2 L10,6 L2,10 Z" fill="#486581"/></marker></defs>
+  <g stroke="#486581" stroke-width="2" marker-end="url(#arrow)"><path d="M215 350 L300 350"/><path d="M480 350 L565 350"/><path d="M695 350 L780 350"/><path d="M910 350 L995 350"/></g>
+  <g font-family="Inter, Arial, sans-serif" fill="#172033">
+    <rect x="80" y="300" width="135" height="100" rx="14" fill="#e8eef7" stroke="#b8c7da"/><text x="148" y="358" text-anchor="middle" font-size="18" font-weight="700">Inputs</text>
+    <rect x="300" y="280" width="180" height="140" rx="14" fill="#fff4d7" stroke="#e7c772"/><text x="390" y="333" text-anchor="middle" font-size="17" font-weight="700">Allowed /</text><text x="390" y="360" text-anchor="middle" font-size="17" font-weight="700">Prohibited</text><text x="390" y="387" text-anchor="middle" font-size="17">Data</text>
+    <rect x="565" y="300" width="130" height="100" rx="14" fill="#e7e8ff" stroke="#bbbdf2"/><text x="630" y="358" text-anchor="middle" font-size="18" font-weight="700">Agents</text>
+    <rect x="780" y="300" width="130" height="100" rx="14" fill="#dff3ee" stroke="#a8d8cc"/><text x="845" y="358" text-anchor="middle" font-size="18" font-weight="700">Tools</text>
+    <rect x="995" y="300" width="155" height="100" rx="14" fill="#ffe9e6" stroke="#efb3a8"/><text x="1072" y="358" text-anchor="middle" font-size="18" font-weight="700">Decisions</text>
+    <rect x="405" y="520" width="180" height="82" rx="14" fill="#eef1f5" stroke="#cbd3df"/><text x="495" y="569" text-anchor="middle" font-size="18" font-weight="700">Escalation</text>
+    <rect x="700" y="520" width="180" height="82" rx="14" fill="#f1f7ff" stroke="#b7d1f2"/><text x="790" y="569" text-anchor="middle" font-size="18" font-weight="700">Audit</text>
+  </g>
+</svg>
