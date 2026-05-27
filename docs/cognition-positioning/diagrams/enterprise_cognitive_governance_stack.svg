@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="820" viewBox="0 0 1280 820" role="img" aria-labelledby="title desc">
+  <title id="title">Enterprise Cognitive Governance Stack</title>
+  <desc id="desc">Layered architecture showing foundation models, orchestration, cognitive governance, PMOMax PID, human accountability, and audit/export/compliance.</desc>
+  <rect width="1280" height="820" fill="#f7f9fc"/>
+  <text x="80" y="72" font-family="Inter, Arial, sans-serif" font-size="34" font-weight="700" fill="#152238">Enterprise Cognitive Governance Stack</text>
+  <text x="80" y="108" font-family="Inter, Arial, sans-serif" font-size="18" fill="#526173">A control layer for governing machine cognition before enterprise execution</text>
+  <g font-family="Inter, Arial, sans-serif">
+    <rect x="160" y="160" width="960" height="74" rx="14" fill="#e8eef7" stroke="#b8c7da"/>
+    <text x="640" y="205" text-anchor="middle" font-size="22" font-weight="700" fill="#172033">Human Accountability</text>
+    <rect x="160" y="256" width="960" height="74" rx="14" fill="#dff3ee" stroke="#a8d8cc"/>
+    <text x="640" y="301" text-anchor="middle" font-size="22" font-weight="700" fill="#172033">PMOMax / PID Layer</text>
+    <rect x="160" y="352" width="960" height="92" rx="14" fill="#fff4d7" stroke="#e7c772"/>
+    <text x="640" y="392" text-anchor="middle" font-size="22" font-weight="700" fill="#172033">Cognitive Governance Layer</text>
+    <text x="640" y="421" text-anchor="middle" font-size="15" fill="#5a4a18">boundaries, authority, escalation, policy checks, audit metadata</text>
+    <rect x="160" y="466" width="960" height="74" rx="14" fill="#e7e8ff" stroke="#bbbdf2"/>
+    <text x="640" y="511" text-anchor="middle" font-size="22" font-weight="700" fill="#172033">Orchestration Layer</text>
+    <rect x="160" y="562" width="960" height="74" rx="14" fill="#eef1f5" stroke="#cbd3df"/>
+    <text x="640" y="607" text-anchor="middle" font-size="22" font-weight="700" fill="#172033">Foundation Models</text>
+    <rect x="160" y="658" width="960" height="74" rx="14" fill="#f1f7ff" stroke="#b7d1f2"/>
+    <text x="640" y="703" text-anchor="middle" font-size="22" font-weight="700" fill="#172033">Audit / Export / Compliance Evidence</text>
+  </g>
+</svg>

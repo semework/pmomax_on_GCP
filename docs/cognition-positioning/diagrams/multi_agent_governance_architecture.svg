@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="760" viewBox="0 0 1280 760" role="img" aria-labelledby="title desc">
+  <title id="title">Multi-Agent Governance Architecture</title>
+  <desc id="desc">Planner, reviewer, compliance, risk agents and human owner connecting into an audit layer and governed output.</desc>
+  <rect width="1280" height="760" fill="#f7f9fc"/>
+  <text x="80" y="72" font-family="Inter, Arial, sans-serif" font-size="34" font-weight="700" fill="#152238">Multi-Agent Governance Architecture</text>
+  <text x="80" y="108" font-family="Inter, Arial, sans-serif" font-size="18" fill="#526173">Roadmap pattern for role-separated agentic governance</text>
+  <defs><marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M2,2 L10,6 L2,10 Z" fill="#486581"/></marker></defs>
+  <g stroke="#486581" stroke-width="2" marker-end="url(#arrow)">
+    <path d="M285 260 L520 360"/><path d="M285 460 L520 400"/><path d="M995 260 L760 360"/><path d="M995 460 L760 400"/><path d="M640 465 L640 555"/>
+  </g>
+  <g font-family="Inter, Arial, sans-serif" fill="#172033">
+    <rect x="120" y="210" width="165" height="90" rx="14" fill="#e7e8ff" stroke="#bbbdf2"/><text x="202" y="263" text-anchor="middle" font-size="18" font-weight="700">Planner Agent</text>
+    <rect x="120" y="420" width="165" height="90" rx="14" fill="#e8eef7" stroke="#b8c7da"/><text x="202" y="473" text-anchor="middle" font-size="18" font-weight="700">Reviewer Agent</text>
+    <rect x="995" y="210" width="165" height="90" rx="14" fill="#fff4d7" stroke="#e7c772"/><text x="1078" y="263" text-anchor="middle" font-size="18" font-weight="700">Compliance</text>
+    <rect x="995" y="420" width="165" height="90" rx="14" fill="#ffe9e6" stroke="#efb3a8"/><text x="1078" y="473" text-anchor="middle" font-size="18" font-weight="700">Risk Agent</text>
+    <rect x="520" y="315" width="240" height="150" rx="18" fill="#dff3ee" stroke="#60b6a3" stroke-width="3"/><text x="640" y="380" text-anchor="middle" font-size="22" font-weight="700">Audit Layer</text><text x="640" y="412" text-anchor="middle" font-size="16">trace, checks, warnings</text>
+    <rect x="520" y="555" width="240" height="80" rx="14" fill="#f1f7ff" stroke="#b7d1f2"/><text x="640" y="603" text-anchor="middle" font-size="18" font-weight="700">Governed Output</text>
+    <rect x="520" y="165" width="240" height="80" rx="14" fill="#eef1f5" stroke="#cbd3df"/><text x="640" y="213" text-anchor="middle" font-size="18" font-weight="700">Human Owner</text>
+  </g>
+</svg>
