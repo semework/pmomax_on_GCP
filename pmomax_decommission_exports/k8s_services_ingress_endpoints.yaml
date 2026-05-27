@@ -1,0 +1,863 @@
+apiVersion: v1
+items:
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      cloud.google.com/neg: '{"ingress":true}'
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"labels":{"app.kubernetes.io/name":"kube-app-manager","control-plane":"kube-app-manager"},"name":"kube-app-manager-metrics-service","namespace":"application-system"},"spec":{"ports":[{"name":"https","port":8443,"targetPort":"https"}],"selector":{"app.kubernetes.io/name":"kube-app-manager","control-plane":"kube-app-manager"}}}
+    creationTimestamp: "2026-03-09T18:02:10Z"
+    labels:
+      app.kubernetes.io/name: kube-app-manager
+      control-plane: kube-app-manager
+    name: kube-app-manager-metrics-service
+    namespace: application-system
+    resourceVersion: "1773079330049919016"
+    uid: 948fe4d5-0d4e-4675-9603-1e2a9789c849
+  spec:
+    clusterIP: 34.118.234.74
+    clusterIPs:
+    - 34.118.234.74
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - name: https
+      port: 8443
+      protocol: TCP
+      targetPort: https
+    selector:
+      app.kubernetes.io/name: kube-app-manager
+      control-plane: kube-app-manager
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      cloud.google.com/neg: '{"ingress":true}'
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"labels":{"app.kubernetes.io/name":"kube-app-manager","control-plane":"kube-app-manager","controller-tools.k8s.io":"1.0"},"name":"kube-app-manager-service","namespace":"application-system"},"spec":{"ports":[{"port":443}],"selector":{"app.kubernetes.io/name":"kube-app-manager","control-plane":"kube-app-manager","controller-tools.k8s.io":"1.0"}}}
+    creationTimestamp: "2026-03-09T18:02:10Z"
+    labels:
+      app.kubernetes.io/name: kube-app-manager
+      control-plane: kube-app-manager
+      controller-tools.k8s.io: "1.0"
+    name: kube-app-manager-service
+    namespace: application-system
+    resourceVersion: "1773079330261279014"
+    uid: 14af76bf-e7be-44cb-aa11-cf7b2741059b
+  spec:
+    clusterIP: 34.118.230.171
+    clusterIPs:
+    - 34.118.230.171
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - port: 443
+      protocol: TCP
+      targetPort: 443
+    selector:
+      app.kubernetes.io/name: kube-app-manager
+      control-plane: kube-app-manager
+      controller-tools.k8s.io: "1.0"
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    creationTimestamp: "2026-03-03T21:50:24Z"
+    labels:
+      component: apiserver
+      provider: kubernetes
+    name: kubernetes
+    namespace: default
+    resourceVersion: "1772574624642943006"
+    uid: b070863d-31d0-415f-b798-a764adf52575
+  spec:
+    clusterIP: 34.118.224.1
+    clusterIPs:
+    - 34.118.224.1
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - name: https
+      port: 443
+      protocol: TCP
+      targetPort: 443
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      cloud.google.com/neg: '{"ingress":true}'
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"name":"pmo-forensic","namespace":"forensic-1773343876-ca"},"spec":{"ports":[{"name":"http","port":80,"targetPort":8080}],"selector":{"app":"pmo-forensic"},"type":"ClusterIP"}}
+    creationTimestamp: "2026-03-12T19:31:20Z"
+    name: pmo-forensic
+    namespace: forensic-1773343876-ca
+    resourceVersion: "1773343880215871011"
+    uid: 8986dc40-483c-474f-8206-b688f639445d
+  spec:
+    clusterIP: 34.118.229.2
+    clusterIPs:
+    - 34.118.229.2
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - name: http
+      port: 80
+      protocol: TCP
+      targetPort: 8080
+    selector:
+      app: pmo-forensic
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      cloud.google.com/neg: '{"ingress":true}'
+      components.gke.io/component-name: managed-prometheus
+      components.gke.io/component-version: 0.18.0-gke.0
+      components.gke.io/layer: addon
+    creationTimestamp: "2026-03-03T21:54:38Z"
+    labels:
+      addonmanager.kubernetes.io/mode: Reconcile
+    name: alertmanager
+    namespace: gke-gmp-system
+    resourceVersion: "1778501139468575017"
+    uid: 90a7e13f-4676-44be-b461-47f9b7980710
+  spec:
+    clusterIP: None
+    clusterIPs:
+    - None
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - name: alertmanager
+      port: 9093
+      protocol: TCP
+      targetPort: 9093
+    selector:
+      app: managed-prometheus-alertmanager
+      app.kubernetes.io/name: alertmanager
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      cloud.google.com/neg: '{"ingress":true}'
+      components.gke.io/component-name: managed-prometheus
+      components.gke.io/component-version: 0.18.0-gke.0
+      components.gke.io/layer: addon
+    creationTimestamp: "2026-03-03T21:54:39Z"
+    labels:
+      addonmanager.kubernetes.io/mode: Reconcile
+    name: gmp-operator
+    namespace: gke-gmp-system
+    resourceVersion: "1778501139672847014"
+    uid: a662a7a5-04b0-4589-ad1b-7b482aa07b83
+  spec:
+    clusterIP: 34.118.238.135
+    clusterIPs:
+    - 34.118.238.135
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - name: legacy
+      port: 8443
+      protocol: TCP
+      targetPort: webhook
+    - name: webhook
+      port: 443
+      protocol: TCP
+      targetPort: web
+    selector:
+      app.kubernetes.io/component: operator
+      app.kubernetes.io/name: gmp-operator
+      app.kubernetes.io/part-of: gmp
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      cloud.google.com/neg: '{"ingress":true}'
+      components.gke.io/component-name: managed-prometheus
+      components.gke.io/component-version: 0.18.0-gke.0
+      components.gke.io/layer: addon
+    creationTimestamp: "2026-03-03T21:54:39Z"
+    labels:
+      addonmanager.kubernetes.io/mode: Reconcile
+    name: rule-evaluator
+    namespace: gke-gmp-system
+    resourceVersion: "1778501139571439000"
+    uid: 8952e5b0-5468-4d9f-abc8-86e77143f96f
+  spec:
+    clusterIP: 34.118.230.122
+    clusterIPs:
+    - 34.118.230.122
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - name: rule-evaluator
+      port: 19092
+      protocol: TCP
+      targetPort: 19092
+    selector:
+      app.kubernetes.io/name: rule-evaluator
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      cloud.google.com/neg: '{"ingress":true}'
+      components.gke.io/component-name: networkpolicy-antrea
+      components.gke.io/component-version: 0.6.3
+    creationTimestamp: "2026-03-03T21:54:59Z"
+    labels:
+      addonmanager.kubernetes.io/mode: Reconcile
+      app: antrea
+    name: antrea
+    namespace: kube-system
+    resourceVersion: "1778501152773503020"
+    uid: ca26261f-7625-43ca-82a6-cdf0d157cf49
+  spec:
+    clusterIP: 34.118.227.166
+    clusterIPs:
+    - 34.118.227.166
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - port: 443
+      protocol: TCP
+      targetPort: api
+    selector:
+      app: antrea
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      cloud.google.com/neg: '{"ingress":true}'
+      cloud.google.com/neg-status: '{"network_endpoint_groups":{"80":"k8s1-9e2459bd-kube-system-default-http-backend-80-297ea027"},"zones":["us-central1-b","us-central1-f"]}'
+      components.gke.io/component-name: l7-lb-controller-combined
+      components.gke.io/component-version: 1.38.6-gke.0
+      components.gke.io/layer: addon
+    creationTimestamp: "2026-03-03T21:54:32Z"
+    labels:
+      addonmanager.kubernetes.io/mode: Reconcile
+      k8s-app: glbc
+      kubernetes.io/cluster-service: "true"
+      kubernetes.io/name: GLBCDefaultBackend
+    name: default-http-backend
+    namespace: kube-system
+    resourceVersion: "1779474686139695023"
+    uid: a5bcc01b-072e-4250-adbe-2dc278219adf
+  spec:
+    clusterIP: 34.118.227.203
+    clusterIPs:
+    - 34.118.227.203
+    externalTrafficPolicy: Cluster
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - name: http
+      nodePort: 31121
+      port: 80
+      protocol: TCP
+      targetPort: 8080
+    selector:
+      k8s-app: glbc
+    sessionAffinity: None
+    type: NodePort
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      components.gke.io/component-name: kubedns
+    creationTimestamp: "2026-03-03T21:53:07Z"
+    labels:
+      addonmanager.kubernetes.io/mode: Reconcile
+      k8s-app: kube-dns
+      kubernetes.io/cluster-service: "true"
+      kubernetes.io/name: KubeDNS
+    name: kube-dns
+    namespace: kube-system
+    resourceVersion: "1772574787231327020"
+    uid: e6af8470-843b-4c6d-9e82-073bf02fb911
+  spec:
+    clusterIP: 34.118.224.10
+    clusterIPs:
+    - 34.118.224.10
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - name: dns
+      port: 53
+      protocol: UDP
+      targetPort: 53
+    - name: dns-tcp
+      port: 53
+      protocol: TCP
+      targetPort: 53
+    selector:
+      k8s-app: kube-dns
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      cloud.google.com/neg: '{"ingress":true}'
+      components.gke.io/component-name: metrics-server
+      components.gke.io/component-version: 1.35.1-gke.1
+      components.gke.io/layer: addon
+    creationTimestamp: "2026-03-03T21:54:47Z"
+    labels:
+      addonmanager.kubernetes.io/mode: Reconcile
+      kubernetes.io/cluster-service: "true"
+      kubernetes.io/name: Metrics-server
+    name: metrics-server
+    namespace: kube-system
+    resourceVersion: "1778501143975407011"
+    uid: 48329cf3-c35d-4cdd-aa7a-84c444d2252d
+  spec:
+    clusterIP: 34.118.227.107
+    clusterIPs:
+    - 34.118.227.107
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - port: 443
+      protocol: TCP
+      targetPort: https
+    selector:
+      k8s-app: metrics-server
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      cloud.google.com/neg: '{"ingress":true}'
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"labels":{"app":"deployer"},"name":"deployer-svc","namespace":"pmomax"},"spec":{"ports":[{"name":"http","port":80,"targetPort":8080}],"selector":{"app":"deployer"},"type":"ClusterIP"}}
+    creationTimestamp: "2026-03-03T21:55:49Z"
+    labels:
+      app: deployer
+    name: deployer-svc
+    namespace: pmomax
+    resourceVersion: "1776175706166127012"
+    uid: 2e7615d8-bde5-4798-8e63-7a1e679d9f5d
+  spec:
+    clusterIP: 34.118.231.55
+    clusterIPs:
+    - 34.118.231.55
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - name: http
+      port: 80
+      protocol: TCP
+      targetPort: 8080
+    selector:
+      app: deployer
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      cloud.google.com/neg: '{"ingress":true}'
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"labels":{"app":"pmo-architect"},"name":"pmo-architect","namespace":"pmomax"},"spec":{"ports":[{"name":"http","port":80,"targetPort":8080}],"selector":{"app":"pmo-architect"},"type":"ClusterIP"}}
+    creationTimestamp: "2026-03-09T17:58:36Z"
+    labels:
+      app: pmo-architect
+      app.kubernetes.io/instance: pmomax-market-sync
+      app.kubernetes.io/name: pmomax
+    name: pmo-architect
+    namespace: pmomax
+    ownerReferences:
+    - apiVersion: app.k8s.io/v1beta1
+      blockOwnerDeletion: true
+      controller: false
+      kind: Application
+      name: pmo-architect
+      uid: 11d4f711-a4d2-4ecb-a165-a41dddc0eaf6
+    resourceVersion: "1776899025679039013"
+    uid: 66cbfcfd-0ff1-429a-91f5-dbbb8d33908f
+  spec:
+    clusterIP: 34.118.237.159
+    clusterIPs:
+    - 34.118.237.159
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - name: http
+      port: 80
+      protocol: TCP
+      targetPort: 8080
+    selector:
+      app: pmo-architect
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      cloud.google.com/neg: '{"ingress":true}'
+      cloud.google.com/neg-status: '{"network_endpoint_groups":{"80":"k8s1-9e2459bd-pmomax-pmo-architect-svc-80-23160eb3"},"zones":["us-central1-b","us-central1-f"]}'
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"labels":{"app":"pmo-architect"},"name":"pmo-architect-svc","namespace":"pmomax"},"spec":{"ports":[{"name":"http","port":80,"targetPort":8080}],"selector":{"app":"pmo-architect"},"type":"ClusterIP"}}
+    creationTimestamp: "2026-03-03T22:15:36Z"
+    labels:
+      app: pmo-architect
+      app.kubernetes.io/instance: pmomax-market-sync
+      app.kubernetes.io/name: pmomax
+    name: pmo-architect-svc
+    namespace: pmomax
+    ownerReferences:
+    - apiVersion: app.k8s.io/v1beta1
+      blockOwnerDeletion: true
+      controller: false
+      kind: Application
+      name: pmo-architect
+      uid: 11d4f711-a4d2-4ecb-a165-a41dddc0eaf6
+    resourceVersion: "1779474686117855013"
+    uid: e623b540-7109-4bf0-881a-ba3702b95e95
+  spec:
+    clusterIP: 34.118.232.29
+    clusterIPs:
+    - 34.118.232.29
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - name: http
+      port: 80
+      protocol: TCP
+      targetPort: 8080
+    selector:
+      app: pmo-architect
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: networking.k8s.io/v1
+  kind: Ingress
+  metadata:
+    annotations:
+      ingress.kubernetes.io/backends: '{"k8s1-9e2459bd-kube-system-default-http-backend-80-297ea027":"HEALTHY","k8s1-9e2459bd-pmomax-pmo-architect-svc-80-23160eb3":"HEALTHY"}'
+      ingress.kubernetes.io/forwarding-rule: k8s2-fr-l7pwee7v-pmomax-pmo-architect-ingress-9g7kws0u
+      ingress.kubernetes.io/target-proxy: k8s2-tp-l7pwee7v-pmomax-pmo-architect-ingress-9g7kws0u
+      ingress.kubernetes.io/url-map: k8s2-um-l7pwee7v-pmomax-pmo-architect-ingress-9g7kws0u
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"networking.k8s.io/v1","kind":"Ingress","metadata":{"annotations":{"kubernetes.io/ingress.allow-http":"true","kubernetes.io/ingress.class":"gce"},"name":"pmo-architect-ingress","namespace":"pmomax"},"spec":{"rules":[{"http":{"paths":[{"backend":{"service":{"name":"pmo-architect-svc","port":{"number":80}}},"path":"/","pathType":"Prefix"}]}}]}}
+      kubernetes.io/ingress.allow-http: "true"
+      kubernetes.io/ingress.class: gce
+    creationTimestamp: "2026-03-03T22:15:36Z"
+    finalizers:
+    - networking.gke.io/ingress-finalizer-V2
+    generation: 1
+    name: pmo-architect-ingress
+    namespace: pmomax
+    resourceVersion: "1779148039987935011"
+    uid: 7be11faa-c74f-4207-9753-5e381dc9fd48
+  spec:
+    rules:
+    - http:
+        paths:
+        - backend:
+            service:
+              name: pmo-architect-svc
+              port:
+                number: 80
+          path: /
+          pathType: Prefix
+  status:
+    loadBalancer:
+      ingress:
+      - ip: 34.36.66.154
+- apiVersion: v1
+  kind: Endpoints
+  metadata:
+    creationTimestamp: "2026-03-09T18:02:10Z"
+    labels:
+      app.kubernetes.io/name: kube-app-manager
+      control-plane: kube-app-manager
+      endpoints.kubernetes.io/managed-by: endpoint-controller
+    name: kube-app-manager-metrics-service
+    namespace: application-system
+    resourceVersion: "1779415299905871017"
+    uid: e828a5d1-ebf2-48e4-b64d-1ed46035163c
+  subsets:
+  - notReadyAddresses:
+    - ip: 10.23.0.68
+      nodeName: gk3-pmomax-auto-pool-2-3eb71742-47nr
+      targetRef:
+        kind: Pod
+        name: kube-app-manager-controller-6c498f696c-v5zj5
+        namespace: application-system
+        uid: 16f9cfc5-6ade-42bd-8833-0d2682edfefa
+    ports:
+    - name: https
+      port: 8443
+      protocol: TCP
+- apiVersion: v1
+  kind: Endpoints
+  metadata:
+    creationTimestamp: "2026-03-09T18:02:10Z"
+    labels:
+      app.kubernetes.io/name: kube-app-manager
+      control-plane: kube-app-manager
+      controller-tools.k8s.io: "1.0"
+      endpoints.kubernetes.io/managed-by: endpoint-controller
+    name: kube-app-manager-service
+    namespace: application-system
+    resourceVersion: "1779415299923055000"
+    uid: 996ecfbc-389c-4152-b70a-27d055932ffa
+  subsets:
+  - notReadyAddresses:
+    - ip: 10.23.0.68
+      nodeName: gk3-pmomax-auto-pool-2-3eb71742-47nr
+      targetRef:
+        kind: Pod
+        name: kube-app-manager-controller-6c498f696c-v5zj5
+        namespace: application-system
+        uid: 16f9cfc5-6ade-42bd-8833-0d2682edfefa
+    ports:
+    - port: 443
+      protocol: TCP
+- apiVersion: v1
+  kind: Endpoints
+  metadata:
+    creationTimestamp: "2026-03-03T21:50:24Z"
+    labels:
+      endpointslice.kubernetes.io/skip-mirror: "true"
+    name: kubernetes
+    namespace: default
+    resourceVersion: "1779220293372463004"
+    uid: 32e3c519-ad70-42b8-8bd8-1f016a6f2ad3
+  subsets:
+  - addresses:
+    - ip: 10.128.0.3
+    ports:
+    - name: https
+      port: 443
+      protocol: TCP
+- apiVersion: v1
+  kind: Endpoints
+  metadata:
+    creationTimestamp: "2026-03-12T19:31:20Z"
+    labels:
+      endpoints.kubernetes.io/managed-by: endpoint-controller
+    name: pmo-forensic
+    namespace: forensic-1773343876-ca
+    resourceVersion: "1773343969413359015"
+    uid: ac1700b8-0e64-4b2d-8a59-83ff15527d11
+- apiVersion: v1
+  kind: Endpoints
+  metadata:
+    annotations:
+      endpoints.kubernetes.io/last-change-trigger-time: "2026-03-03T21:54:38Z"
+    creationTimestamp: "2026-03-03T21:54:38Z"
+    labels:
+      addonmanager.kubernetes.io/mode: Reconcile
+      endpoints.kubernetes.io/managed-by: endpoint-controller
+      service.kubernetes.io/headless: ""
+    name: alertmanager
+    namespace: gke-gmp-system
+    resourceVersion: "1772574878894783006"
+    uid: 0c70107d-0da3-4f70-92fb-297a78e8b0be
+- apiVersion: v1
+  kind: Endpoints
+  metadata:
+    annotations:
+      endpoints.kubernetes.io/last-change-trigger-time: "2026-05-22T02:34:23Z"
+    creationTimestamp: "2026-03-03T21:54:39Z"
+    labels:
+      addonmanager.kubernetes.io/mode: Reconcile
+      endpoints.kubernetes.io/managed-by: endpoint-controller
+    name: gmp-operator
+    namespace: gke-gmp-system
+    resourceVersion: "1779417263962399013"
+    uid: c96fc054-f91c-4b00-923c-21f1d1d165aa
+  subsets:
+  - addresses:
+    - ip: 10.23.0.75
+      nodeName: gk3-pmomax-auto-pool-2-3eb71742-47nr
+      targetRef:
+        kind: Pod
+        name: gmp-operator-8656d5969-kwhw8
+        namespace: gke-gmp-system
+        uid: fef0eeaa-c3d4-4cf7-b80c-5342b9f093ec
+    ports:
+    - name: webhook
+      port: 10250
+      protocol: TCP
+- apiVersion: v1
+  kind: Endpoints
+  metadata:
+    annotations:
+      endpoints.kubernetes.io/last-change-trigger-time: "2026-03-03T21:54:39Z"
+    creationTimestamp: "2026-03-03T21:54:39Z"
+    labels:
+      addonmanager.kubernetes.io/mode: Reconcile
+      endpoints.kubernetes.io/managed-by: endpoint-controller
+    name: rule-evaluator
+    namespace: gke-gmp-system
+    resourceVersion: "1772574879229663015"
+    uid: 462f42d4-fab9-492c-bd14-4565a418a46c
+- apiVersion: v1
+  kind: Endpoints
+  metadata:
+    annotations:
+      endpoints.kubernetes.io/last-change-trigger-time: "2026-03-03T21:54:59Z"
+    creationTimestamp: "2026-03-03T21:54:59Z"
+    labels:
+      addonmanager.kubernetes.io/mode: Reconcile
+      app: antrea
+      endpoints.kubernetes.io/managed-by: endpoint-controller
+    name: antrea
+    namespace: kube-system
+    resourceVersion: "1772574899460383005"
+    uid: dd01fa3e-eb5f-4fc0-8711-4fe0e6f65be4
+- apiVersion: v1
+  kind: Endpoints
+  metadata:
+    annotations:
+      endpoints.kubernetes.io/last-change-trigger-time: "2026-05-22T06:09:00Z"
+    creationTimestamp: "2026-03-03T21:54:32Z"
+    labels:
+      addonmanager.kubernetes.io/mode: Reconcile
+      endpoints.kubernetes.io/managed-by: endpoint-controller
+      k8s-app: glbc
+      kubernetes.io/cluster-service: "true"
+      kubernetes.io/name: GLBCDefaultBackend
+    name: default-http-backend
+    namespace: kube-system
+    resourceVersion: "1779430140344175013"
+    uid: 939d8a58-6756-4d19-9e57-4232fdd49581
+  subsets:
+  - addresses:
+    - ip: 10.23.1.6
+      nodeName: gk3-pmomax-auto-pool-2-b5af5ad0-hklr
+      targetRef:
+        kind: Pod
+        name: l7-default-backend-6d69786ffb-fn27n
+        namespace: kube-system
+        uid: c05a999e-97fc-46f2-9a67-03fb54d42502
+    ports:
+    - name: http
+      port: 8080
+      protocol: TCP
+- apiVersion: v1
+  kind: Endpoints
+  metadata:
+    annotations:
+      endpoints.kubernetes.io/last-change-trigger-time: "2026-05-22T16:52:37Z"
+    creationTimestamp: "2026-03-03T21:53:07Z"
+    labels:
+      addonmanager.kubernetes.io/mode: Reconcile
+      endpoints.kubernetes.io/managed-by: endpoint-controller
+      k8s-app: kube-dns
+      kubernetes.io/cluster-service: "true"
+      kubernetes.io/name: KubeDNS
+    name: kube-dns
+    namespace: kube-system
+    resourceVersion: "1779468757303263005"
+    uid: e31b2e56-7768-42d7-a050-e06acc34b04b
+  subsets:
+  - addresses:
+    - ip: 10.23.1.7
+      nodeName: gk3-pmomax-auto-pool-2-b5af5ad0-hklr
+      targetRef:
+        kind: Pod
+        name: kube-dns-cbd7bfcf7-9pjdt
+        namespace: kube-system
+        uid: a7aa6d5f-9f61-4eaf-8f12-b8ebba202dcd
+    - ip: 10.23.1.9
+      nodeName: gk3-pmomax-auto-pool-2-b5af5ad0-hklr
+      targetRef:
+        kind: Pod
+        name: kube-dns-cbd7bfcf7-8cdvt
+        namespace: kube-system
+        uid: 2ae97c65-8868-48a1-b59c-a217c29505f7
+    ports:
+    - name: dns-tcp
+      port: 53
+      protocol: TCP
+    - name: dns
+      port: 53
+      protocol: UDP
+- apiVersion: v1
+  kind: Endpoints
+  metadata:
+    annotations:
+      endpoints.kubernetes.io/last-change-trigger-time: "2026-05-22T16:53:51Z"
+    creationTimestamp: "2026-03-03T21:54:47Z"
+    labels:
+      addonmanager.kubernetes.io/mode: Reconcile
+      endpoints.kubernetes.io/managed-by: endpoint-controller
+      kubernetes.io/cluster-service: "true"
+      kubernetes.io/name: Metrics-server
+    name: metrics-server
+    namespace: kube-system
+    resourceVersion: "1779468831323855021"
+    uid: a02bf43e-5d89-4788-897a-d1d7c8e65ae2
+  subsets:
+  - addresses:
+    - ip: 10.23.0.79
+      nodeName: gk3-pmomax-auto-pool-2-3eb71742-47nr
+      targetRef:
+        kind: Pod
+        name: metrics-server-v1.35.1-78c7d84786-5kxkj
+        namespace: kube-system
+        uid: 716938d2-c3d3-4252-81e9-9638c079dfa7
+    ports:
+    - port: 10250
+      protocol: TCP
+- apiVersion: v1
+  kind: Endpoints
+  metadata:
+    creationTimestamp: "2026-03-03T21:55:49Z"
+    labels:
+      app: deployer
+      endpoints.kubernetes.io/managed-by: endpoint-controller
+    name: deployer-svc
+    namespace: pmomax
+    resourceVersion: "1774638955491759000"
+    uid: 07329bc8-d557-4607-9634-8e27bda77663
+- apiVersion: v1
+  kind: Endpoints
+  metadata:
+    annotations:
+      endpoints.kubernetes.io/last-change-trigger-time: "2026-05-22T06:08:33Z"
+    creationTimestamp: "2026-03-09T17:58:36Z"
+    labels:
+      app: pmo-architect
+      app.kubernetes.io/instance: pmomax-market-sync
+      app.kubernetes.io/name: pmomax
+      endpoints.kubernetes.io/managed-by: endpoint-controller
+    name: pmo-architect
+    namespace: pmomax
+    resourceVersion: "1779430113213647005"
+    uid: 2bbc47dd-6976-468f-a3db-52da1a2050e9
+  subsets:
+  - addresses:
+    - ip: 10.23.0.69
+      nodeName: gk3-pmomax-auto-pool-2-3eb71742-47nr
+      targetRef:
+        kind: Pod
+        name: pmo-architect-569577dbf4-wt86z
+        namespace: pmomax
+        uid: abdbbb26-780c-4026-aeb6-311ee8f6357a
+    - ip: 10.23.1.5
+      nodeName: gk3-pmomax-auto-pool-2-b5af5ad0-hklr
+      targetRef:
+        kind: Pod
+        name: pmo-architect-569577dbf4-jvhcn
+        namespace: pmomax
+        uid: 305f8baf-f1d5-4f50-bddf-af3e63c0603a
+    ports:
+    - name: http
+      port: 8080
+      protocol: TCP
+- apiVersion: v1
+  kind: Endpoints
+  metadata:
+    annotations:
+      endpoints.kubernetes.io/last-change-trigger-time: "2026-05-22T06:08:33Z"
+    creationTimestamp: "2026-03-03T22:15:36Z"
+    labels:
+      app: pmo-architect
+      app.kubernetes.io/instance: pmomax-market-sync
+      app.kubernetes.io/name: pmomax
+      endpoints.kubernetes.io/managed-by: endpoint-controller
+    name: pmo-architect-svc
+    namespace: pmomax
+    resourceVersion: "1779430113218847010"
+    uid: befa46a0-af3f-47de-bdee-f4d6bce47347
+  subsets:
+  - addresses:
+    - ip: 10.23.0.69
+      nodeName: gk3-pmomax-auto-pool-2-3eb71742-47nr
+      targetRef:
+        kind: Pod
+        name: pmo-architect-569577dbf4-wt86z
+        namespace: pmomax
+        uid: abdbbb26-780c-4026-aeb6-311ee8f6357a
+    - ip: 10.23.1.5
+      nodeName: gk3-pmomax-auto-pool-2-b5af5ad0-hklr
+      targetRef:
+        kind: Pod
+        name: pmo-architect-569577dbf4-jvhcn
+        namespace: pmomax
+        uid: 305f8baf-f1d5-4f50-bddf-af3e63c0603a
+    ports:
+    - name: http
+      port: 8080
+      protocol: TCP
+kind: List
+metadata:
+  resourceVersion: ""

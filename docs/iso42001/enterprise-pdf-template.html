@@ -1,0 +1,454 @@
+<!doctype html>
+<html lang="$lang$">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>$title$</title>
+  <style>
+    :root {
+      --ink: #172033;
+      --muted: #5b6678;
+      --soft: #f5f7fa;
+      --soft-2: #eef2f7;
+      --line: #d8dee8;
+      --brand: #ff6b1a;
+      --brand-dark: #b74a12;
+      --navy: #111827;
+      --accent: #d9a441;
+      --success: #0f766e;
+      --partial: #9a6b00;
+      --not: #8a1f1f;
+    }
+
+    @page {
+      size: Letter;
+      margin: 0.72in 0.66in 0.78in 0.66in;
+      @bottom-right {
+        content: "Page " counter(page);
+        color: #7b8494;
+        font-family: Inter, "Aptos", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        font-size: 8.4pt;
+      }
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: #fff;
+      color: var(--ink);
+      font-family: Inter, "Aptos", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      font-size: 10.8pt;
+      line-height: 1.52;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    body {
+      counter-reset: page;
+    }
+
+    .page {
+      break-after: page;
+      page-break-after: always;
+      min-height: 9.35in;
+      position: relative;
+    }
+
+    .title-page {
+      display: flex;
+      flex-direction: column;
+      min-height: 9.35in;
+      padding: 0.1in 0.08in 0;
+      background:
+        linear-gradient(135deg, rgba(255,107,26,0.08), rgba(17,24,39,0.02) 38%, transparent 72%),
+        #fff;
+    }
+
+    .brand-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 0.4in;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .brand-row img {
+      height: 0.74in;
+      width: auto;
+      object-fit: contain;
+    }
+
+    .brand-text {
+      text-align: right;
+      color: var(--muted);
+      font-size: 10pt;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .eyebrow {
+      margin-top: 0.7in;
+      color: var(--brand-dark);
+      font-size: 10pt;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.11em;
+    }
+
+    .title-page h1 {
+      margin: 0.22in 0 0.18in;
+      color: var(--navy);
+      font-size: 33pt;
+      line-height: 1.08;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+      max-width: 7.4in;
+    }
+
+    .subtitle {
+      max-width: 6.65in;
+      color: #364154;
+      font-size: 14pt;
+      line-height: 1.42;
+      font-weight: 500;
+    }
+
+    .title-rule {
+      width: 3.2in;
+      height: 3px;
+      background: var(--brand);
+      border-radius: 10px;
+      margin: 0.44in 0 0.38in;
+    }
+
+    .meta-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1.25fr;
+      gap: 0.16in;
+      margin-top: 0.2in;
+      max-width: 7.25in;
+    }
+
+    .meta-card {
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.82);
+      border-radius: 10px;
+      padding: 0.16in 0.18in;
+    }
+
+    .meta-label {
+      color: var(--muted);
+      font-size: 8.4pt;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 800;
+      margin-bottom: 0.04in;
+    }
+
+    .meta-value {
+      font-size: 10.4pt;
+      color: var(--ink);
+      font-weight: 700;
+      line-height: 1.35;
+    }
+
+    .title-footer {
+      margin-top: auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      border-top: 1px solid var(--line);
+      padding-top: 0.18in;
+      color: var(--muted);
+      font-size: 9.5pt;
+    }
+
+    .confidential-note {
+      max-width: 4.2in;
+      line-height: 1.35;
+    }
+
+    .content {
+      padding: 0;
+    }
+
+    .running-footer {
+      display: none;
+      position: fixed;
+      left: 0.66in;
+      right: 0.66in;
+      bottom: 0.34in;
+      color: #7b8494;
+      font-size: 8.4pt;
+      display: flex;
+      justify-content: space-between;
+      border-top: 1px solid #edf0f5;
+      padding-top: 0.06in;
+      pointer-events: none;
+    }
+
+    h1, h2, h3, h4 {
+      color: var(--navy);
+      font-family: Inter, "Aptos Display", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      break-after: avoid;
+      page-break-after: avoid;
+    }
+
+    h1 {
+      font-size: 22pt;
+      line-height: 1.14;
+      margin: 0.18in 0 0.16in;
+      padding-bottom: 0.08in;
+      border-bottom: 2px solid var(--brand);
+      letter-spacing: -0.01em;
+    }
+
+    h2 {
+      font-size: 15pt;
+      line-height: 1.22;
+      margin: 0.28in 0 0.1in;
+      color: #202a3b;
+    }
+
+    h3 {
+      font-size: 12.2pt;
+      line-height: 1.25;
+      margin: 0.2in 0 0.08in;
+      color: #2b3546;
+    }
+
+    p {
+      margin: 0 0 0.12in;
+      color: #263145;
+    }
+
+    a {
+      color: #174ea6;
+      text-decoration: none;
+    }
+
+    ul, ol {
+      margin: 0.06in 0 0.18in 0.22in;
+      padding-left: 0.16in;
+    }
+
+    li {
+      margin: 0.045in 0;
+      padding-left: 0.02in;
+    }
+
+    strong {
+      color: #121a2a;
+      font-weight: 800;
+    }
+
+    blockquote {
+      margin: 0.18in 0 0.22in;
+      padding: 0.16in 0.2in 0.16in 0.22in;
+      border: 1px solid #f0c894;
+      border-left: 5px solid var(--brand);
+      border-radius: 10px;
+      background: linear-gradient(90deg, rgba(255,107,26,0.10), rgba(255,255,255,0.95));
+      color: #263145;
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
+
+    blockquote p {
+      margin: 0;
+      color: #222c3d;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      margin: 0.12in 0 0.22in;
+      font-size: 9.6pt;
+      line-height: 1.36;
+      break-inside: auto;
+      page-break-inside: auto;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      overflow: hidden;
+    }
+
+    thead {
+      display: table-header-group;
+    }
+
+    th {
+      background: #172033;
+      color: #fff;
+      text-align: left;
+      font-weight: 800;
+      padding: 0.11in 0.12in;
+      border-right: 1px solid rgba(255,255,255,0.2);
+      vertical-align: top;
+    }
+
+    th:last-child { border-right: 0; }
+
+    td {
+      padding: 0.11in 0.12in;
+      vertical-align: top;
+      border-top: 1px solid var(--line);
+      border-right: 1px solid #e7ebf1;
+      color: #243044;
+    }
+
+    td:last-child { border-right: 0; }
+    tbody tr:nth-child(even) td { background: var(--soft); }
+    tbody tr:nth-child(odd) td { background: #fff; }
+
+    table td:nth-child(1) { width: 32%; font-weight: 700; color: #172033; }
+    table td:nth-child(2) { width: 48%; }
+    table td:nth-child(3) { width: 20%; font-weight: 700; }
+
+    #toc-page {
+      break-after: page;
+      page-break-after: always;
+      padding-top: 0.1in;
+    }
+
+    #toc-page h1 {
+      margin-bottom: 0.22in;
+    }
+
+    #TOC,
+    #toc-page > ul {
+      border: 1px solid var(--line);
+      background: var(--soft);
+      border-radius: 12px;
+      padding: 0.18in 0.22in;
+    }
+
+    #TOC ul,
+    #toc-page ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    #TOC li,
+    #toc-page li {
+      margin: 0;
+      padding: 0.055in 0;
+      border-bottom: 1px solid #e3e8f0;
+      color: var(--ink);
+      font-size: 10.6pt;
+    }
+
+    #TOC li:last-child,
+    #toc-page li:last-child { border-bottom: 0; }
+
+    #TOC ul ul,
+    #toc-page ul ul {
+      margin-top: 0.04in;
+      padding-left: 0.18in;
+    }
+
+    #TOC ul ul li,
+    #toc-page ul ul li {
+      font-size: 9.4pt;
+      color: var(--muted);
+      border-bottom: 0;
+      padding: 0.025in 0;
+    }
+
+    #toc-page a {
+      color: #16325c;
+      text-decoration: none;
+      font-weight: 650;
+    }
+
+    #toc-page ul ul a {
+      color: #536173;
+      font-weight: 550;
+    }
+
+    .page-break, .clearpage {
+      break-before: page;
+      page-break-before: always;
+    }
+
+    h1#disclaimer {
+      break-before: page;
+      page-break-before: always;
+    }
+
+    .section-kicker {
+      color: var(--brand-dark);
+      font-size: 8.8pt;
+      font-weight: 850;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 0.08in;
+    }
+
+    .html-generated-note {
+      display: none;
+    }
+
+    .refs ul, .references ul {
+      list-style: none;
+      padding-left: 0;
+      margin-left: 0;
+    }
+
+    .refs li, .references li {
+      padding: 0.08in 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    @media print {
+      .page-break { break-before: page; }
+      h1, h2, h3, blockquote, table { break-inside: avoid-page; }
+      tr { break-inside: avoid; page-break-inside: avoid; }
+      .running-footer { display: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <section class="title-page page">
+    <div class="brand-row">
+      <img src="assets/pmomax_logo.png" alt="PMOMax">
+      <div class="brand-text">Katalyst Street<br>Governance Readiness</div>
+    </div>
+    <div class="eyebrow">ISO/IEC 42001 Alignment Guide</div>
+    <h1>$title$</h1>
+    <div class="subtitle">$subtitle$</div>
+    <div class="title-rule"></div>
+    <div class="meta-grid">
+      <div class="meta-card">
+        <div class="meta-label">Version</div>
+        <div class="meta-value">v1.0</div>
+      </div>
+      <div class="meta-card">
+        <div class="meta-label">Date</div>
+        <div class="meta-value">May 19, 2026</div>
+      </div>
+      <div class="meta-card">
+        <div class="meta-label">Prepared for</div>
+        <div class="meta-value">AI governance, PMO, compliance, risk, and procurement review</div>
+      </div>
+    </div>
+    <div class="title-footer">
+      <div class="confidential-note">Buyer-facing governance collateral. Informational only; not a certification claim.</div>
+      <div>Katalyst Street / PMOMax</div>
+    </div>
+  </section>
+
+  <main class="content">
+    <section id="toc-page">
+      <h1>Table of Contents</h1>
+      $toc$
+    </section>
+    $body$
+  </main>
+
+</body>
+</html>

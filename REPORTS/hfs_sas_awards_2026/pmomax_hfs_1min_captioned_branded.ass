@@ -1,0 +1,24 @@
+[Script Info]
+Title: PMOMax HFS One-Minute Captions
+ScriptType: v4.00+
+PlayResX: 1920
+PlayResY: 1080
+WrapStyle: 0
+ScaledBorderAndShadow: yes
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Caption, Arial, 42, &H00FFFFFF, &H000000FF, &HCC000000, &HA0000000, 0, 0, 0, 0, 100, 100, 0, 0, 3, 2, 0, 2, 150, 150, 54, 1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:00.00,0:00:06.00,Caption,,0,0,0,,Project initiation usually starts fragmented\NP M O Max brings it into one structured workspace
+Dialogue: 0,0:00:06.00,0:00:12.00,Caption,,0,0,0,,Teams can paste, upload, load a complete demo\Nor begin from a guided blank start
+Dialogue: 0,0:00:12.00,0:00:18.00,Caption,,0,0,0,,From raw project material, P M O Max produces\Na complete, editable project initiation document
+Dialogue: 0,0:00:18.00,0:00:24.00,Caption,,0,0,0,,Project information and context are normalized\Nfor decision-ready review
+Dialogue: 0,0:00:24.00,0:00:30.00,Caption,,0,0,0,,Objectives and key performance indicators stay\Nmeasurable, visible, and consistent
+Dialogue: 0,0:00:30.00,0:00:36.00,Caption,,0,0,0,,Scope, deliverables, constraints, and dependencies\Nremain explicit from the start
+Dialogue: 0,0:00:36.00,0:00:42.00,Caption,,0,0,0,,The entire initiation package stays aligned\Nin one shared system
+Dialogue: 0,0:00:42.00,0:00:48.00,Caption,,0,0,0,,Planning becomes executable when schedules turn\Ninto a live Gantt chart
+Dialogue: 0,0:00:48.00,0:00:54.00,Caption,,0,0,0,,Milestones, sequencing, and delivery timing\Nbecome visible at a glance
+Dialogue: 0,0:00:54.00,0:01:00.00,Caption,,0,0,0,,Execution detail stays connected to the initiation\Ndocument that produced it

@@ -1,0 +1,882 @@
+[
+  {
+    "slug": "female_leda",
+    "label": "Female Leda",
+    "voice": "en-US-Chirp3-HD-Leda",
+    "mp3": "REPORTS/pmomax_video_3min_2026-04-24/pmomax_promo_3min_female_leda_full.mp3",
+    "wav": "REPORTS/pmomax_video_3min_2026-04-24/pmomax_promo_3min_female_leda_full.wav",
+    "duration_sec": 180.8,
+    "segments": [
+      {
+        "id": "01",
+        "start": 0.0,
+        "end": 6.0,
+        "processed_duration": 6.3,
+        "text": "Project initiation usually starts fragmented. PMOMax brings it into one structured workspace."
+      },
+      {
+        "id": "02",
+        "start": 6.0,
+        "end": 12.0,
+        "processed_duration": 5.704,
+        "text": "Teams can paste, upload, load a complete demo, or begin from a guided blank start."
+      },
+      {
+        "id": "03",
+        "start": 12.0,
+        "end": 18.0,
+        "processed_duration": 7.523,
+        "text": "From raw project material, PMOMax produces a complete, editable PID."
+      },
+      {
+        "id": "04",
+        "start": 18.0,
+        "end": 24.0,
+        "processed_duration": 5.235,
+        "text": "Project information and context are normalized immediately for decision-ready review."
+      },
+      {
+        "id": "05",
+        "start": 24.0,
+        "end": 30.0,
+        "processed_duration": 5.338,
+        "text": "Objectives and KPIs stay measurable, visible, and consistent."
+      },
+      {
+        "id": "06",
+        "start": 30.0,
+        "end": 36.0,
+        "processed_duration": 5.366,
+        "text": "Scope, deliverables, constraints, and dependencies remain explicit from the start."
+      },
+      {
+        "id": "07",
+        "start": 36.0,
+        "end": 42.0,
+        "processed_duration": 4.089,
+        "text": "The entire initiation package stays aligned in one shared system."
+      },
+      {
+        "id": "08",
+        "start": 42.0,
+        "end": 48.0,
+        "processed_duration": 5.565,
+        "text": "Planning becomes executable when schedules turn into a live Gantt."
+      },
+      {
+        "id": "09",
+        "start": 48.0,
+        "end": 54.0,
+        "processed_duration": 5.141,
+        "text": "Milestones, sequencing, and delivery timing become visible at a glance."
+      },
+      {
+        "id": "10",
+        "start": 54.0,
+        "end": 60.0,
+        "processed_duration": 4.488,
+        "text": "Execution detail stays connected to the initiation document that produced it."
+      },
+      {
+        "id": "11",
+        "start": 60.0,
+        "end": 66.0,
+        "processed_duration": 4.176,
+        "text": "People, resources, and budget are tied directly to the plan."
+      },
+      {
+        "id": "12",
+        "start": 66.0,
+        "end": 72.0,
+        "processed_duration": 5.149,
+        "text": "That gives delivery teams context for staffing, tooling, and cost tradeoffs."
+      },
+      {
+        "id": "13",
+        "start": 72.0,
+        "end": 78.0,
+        "processed_duration": 5.208,
+        "text": "Risks, issues, and communications are surfaced before execution begins."
+      },
+      {
+        "id": "14",
+        "start": 78.0,
+        "end": 84.0,
+        "processed_duration": 6.888,
+        "text": "Instead of scattered notes, teams review probability, impact, mitigation, and decisions together."
+      },
+      {
+        "id": "15",
+        "start": 84.0,
+        "end": 90.0,
+        "processed_duration": 4.111,
+        "text": "Governance and compliance stay visible, actionable, and audit-friendly."
+      },
+      {
+        "id": "16",
+        "start": 90.0,
+        "end": 96.0,
+        "processed_duration": 5.536,
+        "text": "Approvals, security, privacy, and readiness checks are built into the workflow."
+      },
+      {
+        "id": "17",
+        "start": 96.0,
+        "end": 102.0,
+        "processed_duration": 4.718,
+        "text": "The AI assistant works alongside the live PID, not outside it."
+      },
+      {
+        "id": "18",
+        "start": 102.0,
+        "end": 108.0,
+        "processed_duration": 5.838,
+        "text": "Ask for summaries, rewrites, delivery risks, or compliance gaps in project context."
+      },
+      {
+        "id": "19",
+        "start": 108.0,
+        "end": 114.0,
+        "processed_duration": 4.663,
+        "text": "The conversation stays connected to the same structured plan your team is executing."
+      },
+      {
+        "id": "20",
+        "start": 114.0,
+        "end": 120.0,
+        "processed_duration": 5.418,
+        "text": "General Notes preserve the reasoning, assumptions, and working decisions behind the plan."
+      },
+      {
+        "id": "21",
+        "start": 120.0,
+        "end": 126.0,
+        "processed_duration": 3.976,
+        "text": "Navigation keeps large project documents instantly explorable."
+      },
+      {
+        "id": "22",
+        "start": 126.0,
+        "end": 132.0,
+        "processed_duration": 5.449,
+        "text": "Built-in help gives teams fast, section-aware guidance when they need it."
+      },
+      {
+        "id": "23",
+        "start": 132.0,
+        "end": 138.0,
+        "processed_duration": 5.055,
+        "text": "And the user guide supports onboarding without forcing people out of the workflow."
+      },
+      {
+        "id": "24",
+        "start": 138.0,
+        "end": 144.0,
+        "processed_duration": 5.685,
+        "text": "When teams want to start from zero, Create mode opens a guided entry point."
+      },
+      {
+        "id": "25",
+        "start": 144.0,
+        "end": 150.0,
+        "processed_duration": 4.964,
+        "text": "When they need to prove value fast, Load Demo shows the end-to-end system immediately."
+      },
+      {
+        "id": "26",
+        "start": 150.0,
+        "end": 156.0,
+        "processed_duration": 4.873,
+        "text": "Outputs are ready to move across stakeholders, reviews, and audits."
+      },
+      {
+        "id": "27",
+        "start": 156.0,
+        "end": 162.0,
+        "processed_duration": 7.999,
+        "text": "PMOMax supports Word, PDF, JSON, and packaged deliverables from the same workspace."
+      },
+      {
+        "id": "28",
+        "start": 162.0,
+        "end": 168.0,
+        "processed_duration": 4.568,
+        "text": "What changes here is the handoff between planning and execution."
+      },
+      {
+        "id": "29",
+        "start": 168.0,
+        "end": 174.0,
+        "processed_duration": 5.833,
+        "text": "PMOMax turns project initiation into a governed, AI-assisted operating system."
+      },
+      {
+        "id": "30",
+        "start": 174.0,
+        "end": 180.0,
+        "processed_duration": 5.576,
+        "text": "PMOMax. Structure the PID, align the team, and launch with confidence."
+      }
+    ]
+  },
+  {
+    "slug": "female_kore",
+    "label": "Female Kore",
+    "voice": "en-US-Chirp3-HD-Kore",
+    "mp3": "REPORTS/pmomax_video_3min_2026-04-24/pmomax_promo_3min_female_kore_full.mp3",
+    "wav": "REPORTS/pmomax_video_3min_2026-04-24/pmomax_promo_3min_female_kore_full.wav",
+    "duration_sec": 180.8,
+    "segments": [
+      {
+        "id": "01",
+        "start": 0.0,
+        "end": 6.0,
+        "processed_duration": 6.667,
+        "text": "Project initiation usually starts fragmented. PMOMax brings it into one structured workspace."
+      },
+      {
+        "id": "02",
+        "start": 6.0,
+        "end": 12.0,
+        "processed_duration": 5.547,
+        "text": "Teams can paste, upload, load a complete demo, or begin from a guided blank start."
+      },
+      {
+        "id": "03",
+        "start": 12.0,
+        "end": 18.0,
+        "processed_duration": 7.486,
+        "text": "From raw project material, PMOMax produces a complete, editable PID."
+      },
+      {
+        "id": "04",
+        "start": 18.0,
+        "end": 24.0,
+        "processed_duration": 4.703,
+        "text": "Project information and context are normalized immediately for decision-ready review."
+      },
+      {
+        "id": "05",
+        "start": 24.0,
+        "end": 30.0,
+        "processed_duration": 6.518,
+        "text": "Objectives and KPIs stay measurable, visible, and consistent."
+      },
+      {
+        "id": "06",
+        "start": 30.0,
+        "end": 36.0,
+        "processed_duration": 5.204,
+        "text": "Scope, deliverables, constraints, and dependencies remain explicit from the start."
+      },
+      {
+        "id": "07",
+        "start": 36.0,
+        "end": 42.0,
+        "processed_duration": 4.446,
+        "text": "The entire initiation package stays aligned in one shared system."
+      },
+      {
+        "id": "08",
+        "start": 42.0,
+        "end": 48.0,
+        "processed_duration": 5.114,
+        "text": "Planning becomes executable when schedules turn into a live Gantt."
+      },
+      {
+        "id": "09",
+        "start": 48.0,
+        "end": 54.0,
+        "processed_duration": 5.329,
+        "text": "Milestones, sequencing, and delivery timing become visible at a glance."
+      },
+      {
+        "id": "10",
+        "start": 54.0,
+        "end": 60.0,
+        "processed_duration": 4.873,
+        "text": "Execution detail stays connected to the initiation document that produced it."
+      },
+      {
+        "id": "11",
+        "start": 60.0,
+        "end": 66.0,
+        "processed_duration": 4.006,
+        "text": "People, resources, and budget are tied directly to the plan."
+      },
+      {
+        "id": "12",
+        "start": 66.0,
+        "end": 72.0,
+        "processed_duration": 4.791,
+        "text": "That gives delivery teams context for staffing, tooling, and cost tradeoffs."
+      },
+      {
+        "id": "13",
+        "start": 72.0,
+        "end": 78.0,
+        "processed_duration": 5.055,
+        "text": "Risks, issues, and communications are surfaced before execution begins."
+      },
+      {
+        "id": "14",
+        "start": 78.0,
+        "end": 84.0,
+        "processed_duration": 5.416,
+        "text": "Instead of scattered notes, teams review probability, impact, mitigation, and decisions together."
+      },
+      {
+        "id": "15",
+        "start": 84.0,
+        "end": 90.0,
+        "processed_duration": 4.237,
+        "text": "Governance and compliance stay visible, actionable, and audit-friendly."
+      },
+      {
+        "id": "16",
+        "start": 90.0,
+        "end": 96.0,
+        "processed_duration": 4.42,
+        "text": "Approvals, security, privacy, and readiness checks are built into the workflow."
+      },
+      {
+        "id": "17",
+        "start": 96.0,
+        "end": 102.0,
+        "processed_duration": 5.309,
+        "text": "The AI assistant works alongside the live PID, not outside it."
+      },
+      {
+        "id": "18",
+        "start": 102.0,
+        "end": 108.0,
+        "processed_duration": 5.617,
+        "text": "Ask for summaries, rewrites, delivery risks, or compliance gaps in project context."
+      },
+      {
+        "id": "19",
+        "start": 108.0,
+        "end": 114.0,
+        "processed_duration": 5.359,
+        "text": "The conversation stays connected to the same structured plan your team is executing."
+      },
+      {
+        "id": "20",
+        "start": 114.0,
+        "end": 120.0,
+        "processed_duration": 5.286,
+        "text": "General Notes preserve the reasoning, assumptions, and working decisions behind the plan."
+      },
+      {
+        "id": "21",
+        "start": 120.0,
+        "end": 126.0,
+        "processed_duration": 4.689,
+        "text": "Navigation keeps large project documents instantly explorable."
+      },
+      {
+        "id": "22",
+        "start": 126.0,
+        "end": 132.0,
+        "processed_duration": 4.797,
+        "text": "Built-in help gives teams fast, section-aware guidance when they need it."
+      },
+      {
+        "id": "23",
+        "start": 132.0,
+        "end": 138.0,
+        "processed_duration": 5.161,
+        "text": "And the user guide supports onboarding without forcing people out of the workflow."
+      },
+      {
+        "id": "24",
+        "start": 138.0,
+        "end": 144.0,
+        "processed_duration": 4.668,
+        "text": "When teams want to start from zero, Create mode opens a guided entry point."
+      },
+      {
+        "id": "25",
+        "start": 144.0,
+        "end": 150.0,
+        "processed_duration": 5.404,
+        "text": "When they need to prove value fast, Load Demo shows the end-to-end system immediately."
+      },
+      {
+        "id": "26",
+        "start": 150.0,
+        "end": 156.0,
+        "processed_duration": 3.782,
+        "text": "Outputs are ready to move across stakeholders, reviews, and audits."
+      },
+      {
+        "id": "27",
+        "start": 156.0,
+        "end": 162.0,
+        "processed_duration": 10.325,
+        "text": "PMOMax supports Word, PDF, JSON, and packaged deliverables from the same workspace."
+      },
+      {
+        "id": "28",
+        "start": 162.0,
+        "end": 168.0,
+        "processed_duration": 4.398,
+        "text": "What changes here is the handoff between planning and execution."
+      },
+      {
+        "id": "29",
+        "start": 168.0,
+        "end": 174.0,
+        "processed_duration": 5.73,
+        "text": "PMOMax turns project initiation into a governed, AI-assisted operating system."
+      },
+      {
+        "id": "30",
+        "start": 174.0,
+        "end": 180.0,
+        "processed_duration": 5.966,
+        "text": "PMOMax. Structure the PID, align the team, and launch with confidence."
+      }
+    ]
+  },
+  {
+    "slug": "male_zephyr",
+    "label": "Male Zephyr",
+    "voice": "en-US-Chirp3-HD-Zephyr",
+    "mp3": "REPORTS/pmomax_video_3min_2026-04-24/pmomax_promo_3min_male_zephyr_full.mp3",
+    "wav": "REPORTS/pmomax_video_3min_2026-04-24/pmomax_promo_3min_male_zephyr_full.wav",
+    "duration_sec": 180.8,
+    "segments": [
+      {
+        "id": "01",
+        "start": 0.0,
+        "end": 6.0,
+        "processed_duration": 6.781,
+        "text": "Project initiation usually starts fragmented. PMOMax brings it into one structured workspace."
+      },
+      {
+        "id": "02",
+        "start": 6.0,
+        "end": 12.0,
+        "processed_duration": 5.426,
+        "text": "Teams can paste, upload, load a complete demo, or begin from a guided blank start."
+      },
+      {
+        "id": "03",
+        "start": 12.0,
+        "end": 18.0,
+        "processed_duration": 7.919,
+        "text": "From raw project material, PMOMax produces a complete, editable PID."
+      },
+      {
+        "id": "04",
+        "start": 18.0,
+        "end": 24.0,
+        "processed_duration": 4.208,
+        "text": "Project information and context are normalized immediately for decision-ready review."
+      },
+      {
+        "id": "05",
+        "start": 24.0,
+        "end": 30.0,
+        "processed_duration": 5.955,
+        "text": "Objectives and KPIs stay measurable, visible, and consistent."
+      },
+      {
+        "id": "06",
+        "start": 30.0,
+        "end": 36.0,
+        "processed_duration": 4.299,
+        "text": "Scope, deliverables, constraints, and dependencies remain explicit from the start."
+      },
+      {
+        "id": "07",
+        "start": 36.0,
+        "end": 42.0,
+        "processed_duration": 3.947,
+        "text": "The entire initiation package stays aligned in one shared system."
+      },
+      {
+        "id": "08",
+        "start": 42.0,
+        "end": 48.0,
+        "processed_duration": 5.416,
+        "text": "Planning becomes executable when schedules turn into a live Gantt."
+      },
+      {
+        "id": "09",
+        "start": 48.0,
+        "end": 54.0,
+        "processed_duration": 4.617,
+        "text": "Milestones, sequencing, and delivery timing become visible at a glance."
+      },
+      {
+        "id": "10",
+        "start": 54.0,
+        "end": 60.0,
+        "processed_duration": 4.367,
+        "text": "Execution detail stays connected to the initiation document that produced it."
+      },
+      {
+        "id": "11",
+        "start": 60.0,
+        "end": 66.0,
+        "processed_duration": 3.41,
+        "text": "People, resources, and budget are tied directly to the plan."
+      },
+      {
+        "id": "12",
+        "start": 66.0,
+        "end": 72.0,
+        "processed_duration": 4.825,
+        "text": "That gives delivery teams context for staffing, tooling, and cost tradeoffs."
+      },
+      {
+        "id": "13",
+        "start": 72.0,
+        "end": 78.0,
+        "processed_duration": 4.476,
+        "text": "Risks, issues, and communications are surfaced before execution begins."
+      },
+      {
+        "id": "14",
+        "start": 78.0,
+        "end": 84.0,
+        "processed_duration": 5.714,
+        "text": "Instead of scattered notes, teams review probability, impact, mitigation, and decisions together."
+      },
+      {
+        "id": "15",
+        "start": 84.0,
+        "end": 90.0,
+        "processed_duration": 4.349,
+        "text": "Governance and compliance stay visible, actionable, and audit-friendly."
+      },
+      {
+        "id": "16",
+        "start": 90.0,
+        "end": 96.0,
+        "processed_duration": 5.427,
+        "text": "Approvals, security, privacy, and readiness checks are built into the workflow."
+      },
+      {
+        "id": "17",
+        "start": 96.0,
+        "end": 102.0,
+        "processed_duration": 5.338,
+        "text": "The AI assistant works alongside the live PID, not outside it."
+      },
+      {
+        "id": "18",
+        "start": 102.0,
+        "end": 108.0,
+        "processed_duration": 5.189,
+        "text": "Ask for summaries, rewrites, delivery risks, or compliance gaps in project context."
+      },
+      {
+        "id": "19",
+        "start": 108.0,
+        "end": 114.0,
+        "processed_duration": 4.377,
+        "text": "The conversation stays connected to the same structured plan your team is executing."
+      },
+      {
+        "id": "20",
+        "start": 114.0,
+        "end": 120.0,
+        "processed_duration": 4.314,
+        "text": "General Notes preserve the reasoning, assumptions, and working decisions behind the plan."
+      },
+      {
+        "id": "21",
+        "start": 120.0,
+        "end": 126.0,
+        "processed_duration": 3.941,
+        "text": "Navigation keeps large project documents instantly explorable."
+      },
+      {
+        "id": "22",
+        "start": 126.0,
+        "end": 132.0,
+        "processed_duration": 4.594,
+        "text": "Built-in help gives teams fast, section-aware guidance when they need it."
+      },
+      {
+        "id": "23",
+        "start": 132.0,
+        "end": 138.0,
+        "processed_duration": 4.451,
+        "text": "And the user guide supports onboarding without forcing people out of the workflow."
+      },
+      {
+        "id": "24",
+        "start": 138.0,
+        "end": 144.0,
+        "processed_duration": 4.403,
+        "text": "When teams want to start from zero, Create mode opens a guided entry point."
+      },
+      {
+        "id": "25",
+        "start": 144.0,
+        "end": 150.0,
+        "processed_duration": 5.302,
+        "text": "When they need to prove value fast, Load Demo shows the end-to-end system immediately."
+      },
+      {
+        "id": "26",
+        "start": 150.0,
+        "end": 156.0,
+        "processed_duration": 4.51,
+        "text": "Outputs are ready to move across stakeholders, reviews, and audits."
+      },
+      {
+        "id": "27",
+        "start": 156.0,
+        "end": 162.0,
+        "processed_duration": 9.593,
+        "text": "PMOMax supports Word, PDF, JSON, and packaged deliverables from the same workspace."
+      },
+      {
+        "id": "28",
+        "start": 162.0,
+        "end": 168.0,
+        "processed_duration": 3.652,
+        "text": "What changes here is the handoff between planning and execution."
+      },
+      {
+        "id": "29",
+        "start": 168.0,
+        "end": 174.0,
+        "processed_duration": 5.398,
+        "text": "PMOMax turns project initiation into a governed, AI-assisted operating system."
+      },
+      {
+        "id": "30",
+        "start": 174.0,
+        "end": 180.0,
+        "processed_duration": 6.315,
+        "text": "PMOMax. Structure the PID, align the team, and launch with confidence."
+      }
+    ]
+  },
+  {
+    "slug": "male_orus",
+    "label": "Male Orus",
+    "voice": "en-US-Chirp3-HD-Orus",
+    "mp3": "REPORTS/pmomax_video_3min_2026-04-24/pmomax_promo_3min_male_orus_full.mp3",
+    "wav": "REPORTS/pmomax_video_3min_2026-04-24/pmomax_promo_3min_male_orus_full.wav",
+    "duration_sec": 180.8,
+    "segments": [
+      {
+        "id": "01",
+        "start": 0.0,
+        "end": 6.0,
+        "processed_duration": 5.507,
+        "text": "Project initiation usually starts fragmented. PMOMax brings it into one structured workspace."
+      },
+      {
+        "id": "02",
+        "start": 6.0,
+        "end": 12.0,
+        "processed_duration": 5.425,
+        "text": "Teams can paste, upload, load a complete demo, or begin from a guided blank start."
+      },
+      {
+        "id": "03",
+        "start": 12.0,
+        "end": 18.0,
+        "processed_duration": 5.959,
+        "text": "From raw project material, PMOMax produces a complete, editable PID."
+      },
+      {
+        "id": "04",
+        "start": 18.0,
+        "end": 24.0,
+        "processed_duration": 4.432,
+        "text": "Project information and context are normalized immediately for decision-ready review."
+      },
+      {
+        "id": "05",
+        "start": 24.0,
+        "end": 30.0,
+        "processed_duration": 5.807,
+        "text": "Objectives and KPIs stay measurable, visible, and consistent."
+      },
+      {
+        "id": "06",
+        "start": 30.0,
+        "end": 36.0,
+        "processed_duration": 5.383,
+        "text": "Scope, deliverables, constraints, and dependencies remain explicit from the start."
+      },
+      {
+        "id": "07",
+        "start": 36.0,
+        "end": 42.0,
+        "processed_duration": 4.23,
+        "text": "The entire initiation package stays aligned in one shared system."
+      },
+      {
+        "id": "08",
+        "start": 42.0,
+        "end": 48.0,
+        "processed_duration": 5.83,
+        "text": "Planning becomes executable when schedules turn into a live Gantt."
+      },
+      {
+        "id": "09",
+        "start": 48.0,
+        "end": 54.0,
+        "processed_duration": 5.014,
+        "text": "Milestones, sequencing, and delivery timing become visible at a glance."
+      },
+      {
+        "id": "10",
+        "start": 54.0,
+        "end": 60.0,
+        "processed_duration": 4.646,
+        "text": "Execution detail stays connected to the initiation document that produced it."
+      },
+      {
+        "id": "11",
+        "start": 60.0,
+        "end": 66.0,
+        "processed_duration": 3.878,
+        "text": "People, resources, and budget are tied directly to the plan."
+      },
+      {
+        "id": "12",
+        "start": 66.0,
+        "end": 72.0,
+        "processed_duration": 4.139,
+        "text": "That gives delivery teams context for staffing, tooling, and cost tradeoffs."
+      },
+      {
+        "id": "13",
+        "start": 72.0,
+        "end": 78.0,
+        "processed_duration": 5.08,
+        "text": "Risks, issues, and communications are surfaced before execution begins."
+      },
+      {
+        "id": "14",
+        "start": 78.0,
+        "end": 84.0,
+        "processed_duration": 5.324,
+        "text": "Instead of scattered notes, teams review probability, impact, mitigation, and decisions together."
+      },
+      {
+        "id": "15",
+        "start": 84.0,
+        "end": 90.0,
+        "processed_duration": 4.202,
+        "text": "Governance and compliance stay visible, actionable, and audit-friendly."
+      },
+      {
+        "id": "16",
+        "start": 90.0,
+        "end": 96.0,
+        "processed_duration": 4.33,
+        "text": "Approvals, security, privacy, and readiness checks are built into the workflow."
+      },
+      {
+        "id": "17",
+        "start": 96.0,
+        "end": 102.0,
+        "processed_duration": 4.617,
+        "text": "The AI assistant works alongside the live PID, not outside it."
+      },
+      {
+        "id": "18",
+        "start": 102.0,
+        "end": 108.0,
+        "processed_duration": 5.475,
+        "text": "Ask for summaries, rewrites, delivery risks, or compliance gaps in project context."
+      },
+      {
+        "id": "19",
+        "start": 108.0,
+        "end": 114.0,
+        "processed_duration": 5.29,
+        "text": "The conversation stays connected to the same structured plan your team is executing."
+      },
+      {
+        "id": "20",
+        "start": 114.0,
+        "end": 120.0,
+        "processed_duration": 4.973,
+        "text": "General Notes preserve the reasoning, assumptions, and working decisions behind the plan."
+      },
+      {
+        "id": "21",
+        "start": 120.0,
+        "end": 126.0,
+        "processed_duration": 4.205,
+        "text": "Navigation keeps large project documents instantly explorable."
+      },
+      {
+        "id": "22",
+        "start": 126.0,
+        "end": 132.0,
+        "processed_duration": 4.457,
+        "text": "Built-in help gives teams fast, section-aware guidance when they need it."
+      },
+      {
+        "id": "23",
+        "start": 132.0,
+        "end": 138.0,
+        "processed_duration": 4.194,
+        "text": "And the user guide supports onboarding without forcing people out of the workflow."
+      },
+      {
+        "id": "24",
+        "start": 138.0,
+        "end": 144.0,
+        "processed_duration": 4.963,
+        "text": "When teams want to start from zero, Create mode opens a guided entry point."
+      },
+      {
+        "id": "25",
+        "start": 144.0,
+        "end": 150.0,
+        "processed_duration": 4.284,
+        "text": "When they need to prove value fast, Load Demo shows the end-to-end system immediately."
+      },
+      {
+        "id": "26",
+        "start": 150.0,
+        "end": 156.0,
+        "processed_duration": 4.43,
+        "text": "Outputs are ready to move across stakeholders, reviews, and audits."
+      },
+      {
+        "id": "27",
+        "start": 156.0,
+        "end": 162.0,
+        "processed_duration": 7.082,
+        "text": "PMOMax supports Word, PDF, JSON, and packaged deliverables from the same workspace."
+      },
+      {
+        "id": "28",
+        "start": 162.0,
+        "end": 168.0,
+        "processed_duration": 3.603,
+        "text": "What changes here is the handoff between planning and execution."
+      },
+      {
+        "id": "29",
+        "start": 168.0,
+        "end": 174.0,
+        "processed_duration": 4.825,
+        "text": "PMOMax turns project initiation into a governed, AI-assisted operating system."
+      },
+      {
+        "id": "30",
+        "start": 174.0,
+        "end": 180.0,
+        "processed_duration": 5.758,
+        "text": "PMOMax. Structure the PID, align the team, and launch with confidence."
+      }
+    ]
+  }
+]

@@ -1,0 +1,23 @@
+{
+  "voice": {
+    "name": "en-US-Chirp3-HD-Leda",
+    "speaking_rate": 1.0,
+    "gain_db": -1.0
+  },
+  "duration_wav_sec": 180.201,
+  "duration_mp3_sec": 180.201,
+  "line_count": 30,
+  "character_count": 2589,
+  "script": "REPORTS/pmomax_video_3min_2026-04-24/pmomax_promo_3min_strict_google_voice_script.txt",
+  "wav": "REPORTS/pmomax_video_3min_2026-04-24/pmomax_promo_3min_strict_google_voice.wav",
+  "mp3": "REPORTS/pmomax_video_3min_2026-04-24/pmomax_promo_3min_strict_google_voice.mp3",
+  "notes": [
+    "Audio only",
+    "No timestamps",
+    "No full stops",
+    "No SSML tags",
+    "Brand spoken as Pee Em Oh Max",
+    "PDF spoken as P D F",
+    "JSON spoken as JAY sawn"
+  ]
+}

@@ -1,0 +1,19 @@
+[
+  {
+    "IPAddress": "34.36.66.154",
+    "IPProtocol": "TCP",
+    "creationTimestamp": "2026-03-03T14:18:37.430-08:00",
+    "description": "{\"kubernetes.io/ingress-name\": \"pmomax/pmo-architect-ingress\"}",
+    "fingerprint": "hm4OpNdyFJU=",
+    "id": "6264953082737254610",
+    "kind": "compute#forwardingRule",
+    "labelFingerprint": "42WmSpB8rSM=",
+    "loadBalancingScheme": "EXTERNAL",
+    "name": "k8s2-fr-l7pwee7v-pmomax-pmo-architect-ingress-9g7kws0u",
+    "networkTier": "PREMIUM",
+    "portRange": "80-80",
+    "selfLink": "https://www.googleapis.com/compute/v1/projects/katalyststreet-public/global/forwardingRules/k8s2-fr-l7pwee7v-pmomax-pmo-architect-ingress-9g7kws0u",
+    "selfLinkWithId": "https://www.googleapis.com/compute/v1/projects/katalyststreet-public/global/forwardingRules/6264953082737254610",
+    "target": "https://www.googleapis.com/compute/v1/projects/katalyststreet-public/global/targetHttpProxies/k8s2-tp-l7pwee7v-pmomax-pmo-architect-ingress-9g7kws0u"
+  }
+]

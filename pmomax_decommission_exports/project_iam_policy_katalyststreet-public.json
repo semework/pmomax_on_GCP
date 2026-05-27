@@ -1,0 +1,393 @@
+{
+  "bindings": [
+    {
+      "members": [
+        "user:mulugetas@katalyststreet.com"
+      ],
+      "role": "projects/katalyststreet-public/roles/marketplaceEntitlementViewer"
+    },
+    {
+      "members": [
+        "user:mulugetas@katalyststreet.com"
+      ],
+      "role": "roles/aiplatform.admin"
+    },
+    {
+      "members": [
+        "serviceAccount:service-839982691485@gcp-sa-aiplatform.iam.gserviceaccount.com"
+      ],
+      "role": "roles/aiplatform.serviceAgent"
+    },
+    {
+      "members": [
+        "serviceAccount:service-839982691485@gcp-gae-service.iam.gserviceaccount.com"
+      ],
+      "role": "roles/appengine.serviceAgent"
+    },
+    {
+      "members": [
+        "user:andrewi@katalyststreet.com"
+      ],
+      "role": "roles/apphub.viewer"
+    },
+    {
+      "members": [
+        "serviceAccount:cloud-commerce-procurement@system.gserviceaccount.com"
+      ],
+      "role": "roles/artifactregistry.reader"
+    },
+    {
+      "members": [
+        "serviceAccount:service-839982691485@gcp-sa-artifactregistry.iam.gserviceaccount.com"
+      ],
+      "role": "roles/artifactregistry.serviceAgent"
+    },
+    {
+      "members": [
+        "serviceAccount:839982691485-compute@developer.gserviceaccount.com",
+        "serviceAccount:839982691485@cloudbuild.gserviceaccount.com",
+        "serviceAccount:pmomax@katalyststreet-public.iam.gserviceaccount.com",
+        "user:mulugetas@katalyststreet.com"
+      ],
+      "role": "roles/artifactregistry.writer"
+    },
+    {
+      "members": [
+        "serviceAccount:service-839982691485@gcp-sa-cloudaicompanion.iam.gserviceaccount.com"
+      ],
+      "role": "roles/cloudaicompanion.serviceAgent"
+    },
+    {
+      "members": [
+        "serviceAccount:839982691485@cloudbuild.gserviceaccount.com"
+      ],
+      "role": "roles/cloudbuild.builds.builder"
+    },
+    {
+      "members": [
+        "serviceAccount:pmomax@katalyststreet-public.iam.gserviceaccount.com",
+        "user:mulugetas@katalyststreet.com"
+      ],
+      "role": "roles/cloudbuild.builds.editor"
+    },
+    {
+      "members": [
+        "serviceAccount:service-839982691485@gcp-sa-cloudbuild.iam.gserviceaccount.com"
+      ],
+      "role": "roles/cloudbuild.serviceAgent"
+    },
+    {
+      "members": [
+        "serviceAccount:service-839982691485@gcp-sa-config.iam.gserviceaccount.com"
+      ],
+      "role": "roles/cloudconfig.serviceAgent"
+    },
+    {
+      "members": [
+        "serviceAccount:service-839982691485@gcp-sa-cloudscheduler.iam.gserviceaccount.com"
+      ],
+      "role": "roles/cloudscheduler.serviceAgent"
+    },
+    {
+      "members": [
+        "serviceAccount:839982691485-compute@developer.gserviceaccount.com",
+        "serviceAccount:pmomax@katalyststreet-public.iam.gserviceaccount.com",
+        "user:andrewi@katalyststreet.com",
+        "user:mulugetas@katalyststreet.com"
+      ],
+      "role": "roles/commerceproducer.admin"
+    },
+    {
+      "members": [
+        "serviceAccount:test-optimax-deployment@katalyststreet-public.iam.gserviceaccount.com"
+      ],
+      "role": "roles/compute.admin"
+    },
+    {
+      "members": [
+        "serviceAccount:pmomax@katalyststreet-public.iam.gserviceaccount.com",
+        "user:mulugetas@katalyststreet.com"
+      ],
+      "role": "roles/compute.networkAdmin"
+    },
+    {
+      "members": [
+        "serviceAccount:service-839982691485@gcp-sa-vpcaccess.iam.gserviceaccount.com"
+      ],
+      "role": "roles/compute.networkUser"
+    },
+    {
+      "members": [
+        "serviceAccount:service-839982691485@compute-system.iam.gserviceaccount.com"
+      ],
+      "role": "roles/compute.serviceAgent"
+    },
+    {
+      "members": [
+        "serviceAccount:test-optimax-deployment@katalyststreet-public.iam.gserviceaccount.com"
+      ],
+      "role": "roles/config.agent"
+    },
+    {
+      "members": [
+        "serviceAccount:839982691485-compute@developer.gserviceaccount.com",
+        "serviceAccount:839982691485@cloudbuild.gserviceaccount.com",
+        "serviceAccount:pmomax@katalyststreet-public.iam.gserviceaccount.com"
+      ],
+      "role": "roles/container.admin"
+    },
+    {
+      "members": [
+        "serviceAccount:pmomax@katalyststreet-public.iam.gserviceaccount.com"
+      ],
+      "role": "roles/container.clusterViewer"
+    },
+    {
+      "members": [
+        "serviceAccount:service-839982691485@gcp-sa-gkenode.iam.gserviceaccount.com"
+      ],
+      "role": "roles/container.defaultNodeServiceAgent"
+    },
+    {
+      "members": [
+        "serviceAccount:pmomax@katalyststreet-public.iam.gserviceaccount.com"
+      ],
+      "role": "roles/container.developer"
+    },
+    {
+      "members": [
+        "serviceAccount:service-839982691485@container-engine-robot.iam.gserviceaccount.com"
+      ],
+      "role": "roles/container.serviceAgent"
+    },
+    {
+      "members": [
+        "serviceAccount:service-839982691485@container-analysis.iam.gserviceaccount.com"
+      ],
+      "role": "roles/containeranalysis.ServiceAgent"
+    },
+    {
+      "members": [
+        "serviceAccount:service-839982691485@containerregistry.iam.gserviceaccount.com"
+      ],
+      "role": "roles/containerregistry.ServiceAgent"
+    },
+    {
+      "members": [
+        "serviceAccount:service-839982691485@gcp-sa-containerscanning.iam.gserviceaccount.com"
+      ],
+      "role": "roles/containerscanning.ServiceAgent"
+    },
+    {
+      "members": [
+        "serviceAccount:service-839982691485@gcp-sa-ktd-control.iam.gserviceaccount.com"
+      ],
+      "role": "roles/containerthreatdetection.serviceAgent"
+    },
+    {
+      "members": [
+        "serviceAccount:service-839982691485@gcp-sa-discoveryengine.iam.gserviceaccount.com"
+      ],
+      "role": "roles/discoveryengine.serviceAgent"
+    },
+    {
+      "members": [
+        "group:cloud-commerce-marketplace-onboarding@twosync-src.google.com",
+        "serviceAccount:839982691485@cloudservices.gserviceaccount.com",
+        "serviceAccount:katalyststreet-public@appspot.gserviceaccount.com",
+        "user:mulugetas@katalyststreet.com"
+      ],
+      "role": "roles/editor"
+    },
+    {
+      "members": [
+        "serviceAccount:service-839982691485@gcp-sa-firestore.iam.gserviceaccount.com"
+      ],
+      "role": "roles/firestore.serviceAgent"
+    },
+    {
+      "members": [
+        "serviceAccount:service-839982691485@gcp-sa-gkehub.iam.gserviceaccount.com"
+      ],
+      "role": "roles/gkehub.serviceAgent"
+    },
+    {
+      "members": [
+        "serviceAccount:pmomax@katalyststreet-public.iam.gserviceaccount.com",
+        "user:mulugetas@katalyststreet.com"
+      ],
+      "role": "roles/iam.serviceAccountAdmin"
+    },
+    {
+      "members": [
+        "serviceAccount:service-839982691485@gcp-sa-pubsub.iam.gserviceaccount.com"
+      ],
+      "role": "roles/iam.serviceAccountTokenCreator"
+    },
+    {
+      "members": [
+        "serviceAccount:pmomax@katalyststreet-public.iam.gserviceaccount.com",
+        "serviceAccount:test-optimax-deployment@katalyststreet-public.iam.gserviceaccount.com",
+        "user:mulugetas@katalyststreet.com"
+      ],
+      "role": "roles/iam.serviceAccountUser"
+    },
+    {
+      "members": [
+        "user:andrewi@katalyststreet.com",
+        "user:rajeshk@katalyststreet.com"
+      ],
+      "role": "roles/iap.httpsResourceAccessor"
+    },
+    {
+      "members": [
+        "serviceAccount:839982691485-compute@developer.gserviceaccount.com",
+        "serviceAccount:pmomax@katalyststreet-public.iam.gserviceaccount.com",
+        "serviceAccount:run-pmomax-sa@katalyststreet-public.iam.gserviceaccount.com"
+      ],
+      "role": "roles/logging.logWriter"
+    },
+    {
+      "members": [
+        "serviceAccount:839982691485-compute@developer.gserviceaccount.com",
+        "serviceAccount:pmomax@katalyststreet-public.iam.gserviceaccount.com",
+        "user:mulugetas@katalyststreet.com"
+      ],
+      "role": "roles/marketplacesolutions.admin"
+    },
+    {
+      "members": [
+        "serviceAccount:service-839982691485@gcp-sa-networkconnectivity.iam.gserviceaccount.com"
+      ],
+      "role": "roles/networkconnectivity.serviceAgent"
+    },
+    {
+      "members": [
+        "serviceAccount:service-839982691485@gcp-sa-networkmanagement.iam.gserviceaccount.com"
+      ],
+      "role": "roles/networkmanagement.serviceAgent"
+    },
+    {
+      "members": [
+        "serviceAccount:pmomax@katalyststreet-public.iam.gserviceaccount.com",
+        "user:andrewi@katalyststreet.com",
+        "user:mulugetas@katalyststreet.com",
+        "user:pranayc@katalyststreet.com",
+        "user:rajeshk@katalyststreet.com",
+        "user:shreyaa@katalyststreet.com",
+        "user:spoorthis@katalyststreet.com"
+      ],
+      "role": "roles/owner"
+    },
+    {
+      "members": [
+        "serviceAccount:service-839982691485@gcp-sa-pubsub.iam.gserviceaccount.com"
+      ],
+      "role": "roles/pubsub.serviceAgent"
+    },
+    {
+      "members": [
+        "serviceAccount:pmomax@katalyststreet-public.iam.gserviceaccount.com",
+        "user:mulugetas@katalyststreet.com"
+      ],
+      "role": "roles/resourcemanager.organizationAdmin"
+    },
+    {
+      "members": [
+        "serviceAccount:pmomax@katalyststreet-public.iam.gserviceaccount.com"
+      ],
+      "role": "roles/run.invoker"
+    },
+    {
+      "members": [
+        "serviceAccount:service-839982691485@serverless-robot-prod.iam.gserviceaccount.com"
+      ],
+      "role": "roles/run.serviceAgent"
+    },
+    {
+      "members": [
+        "serviceAccount:pmomax@katalyststreet-public.iam.gserviceaccount.com",
+        "user:mulugetas@katalyststreet.com"
+      ],
+      "role": "roles/secretmanager.admin"
+    },
+    {
+      "members": [
+        "serviceAccount:pmomax@katalyststreet-public.iam.gserviceaccount.com",
+        "serviceAccount:run-pmomax-sa@katalyststreet-public.iam.gserviceaccount.com"
+      ],
+      "role": "roles/secretmanager.secretAccessor"
+    },
+    {
+      "members": [
+        "group:cloud-commerce-marketplace-onboarding@twosync-src.google.com",
+        "serviceAccount:839982691485-compute@developer.gserviceaccount.com",
+        "serviceAccount:cloud-commerce-procurement@system.gserviceaccount.com",
+        "serviceAccount:managed-services@cloud-marketplace.iam.gserviceaccount.com",
+        "serviceAccount:pmomax@katalyststreet-public.iam.gserviceaccount.com",
+        "user:andrewi@katalyststreet.com",
+        "user:mulugetas@katalyststreet.com"
+      ],
+      "role": "roles/servicemanagement.admin"
+    },
+    {
+      "members": [
+        "serviceAccount:cloud-commerce-producer@system.gserviceaccount.com"
+      ],
+      "role": "roles/servicemanagement.configEditor"
+    },
+    {
+      "members": [
+        "serviceAccount:reporter-cluster-1@katalyststreet-public.iam.gserviceaccount.com"
+      ],
+      "role": "roles/servicemanagement.serviceController"
+    },
+    {
+      "members": [
+        "serviceAccount:service-839982691485@service-networking.iam.gserviceaccount.com"
+      ],
+      "role": "roles/servicenetworking.serviceAgent"
+    },
+    {
+      "members": [
+        "serviceAccount:cloud-commerce-procurement@system.gserviceaccount.com",
+        "user:mulugetas@katalyststreet.com"
+      ],
+      "role": "roles/serviceusage.serviceUsageAdmin"
+    },
+    {
+      "members": [
+        "user:mulugetas@katalyststreet.com"
+      ],
+      "role": "roles/serviceusage.serviceUsageConsumer"
+    },
+    {
+      "members": [
+        "serviceAccount:pmomax@katalyststreet-public.iam.gserviceaccount.com",
+        "user:mulugetas@katalyststreet.com"
+      ],
+      "role": "roles/storage.admin"
+    },
+    {
+      "members": [
+        "serviceAccount:839982691485-compute@developer.gserviceaccount.com",
+        "serviceAccount:839982691485@cloudbuild.gserviceaccount.com"
+      ],
+      "role": "roles/storage.objectViewer"
+    },
+    {
+      "members": [
+        "serviceAccount:service-839982691485@gcp-sa-vpcaccess.iam.gserviceaccount.com"
+      ],
+      "role": "roles/vpcaccess.serviceAgent"
+    },
+    {
+      "members": [
+        "serviceAccount:service-839982691485@gcp-sa-websecurityscanner.iam.gserviceaccount.com"
+      ],
+      "role": "roles/websecurityscanner.serviceAgent"
+    }
+  ],
+  "etag": "BwZRuUuF7Xw=",
+  "version": 1
+}

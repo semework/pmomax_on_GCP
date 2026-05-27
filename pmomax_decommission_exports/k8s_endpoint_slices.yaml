@@ -1,0 +1,542 @@
+apiVersion: v1
+items:
+- addressType: IPv4
+  apiVersion: discovery.k8s.io/v1
+  endpoints:
+  - addresses:
+    - 10.23.0.68
+    conditions:
+      ready: false
+      serving: false
+      terminating: false
+    nodeName: gk3-pmomax-auto-pool-2-3eb71742-47nr
+    targetRef:
+      kind: Pod
+      name: kube-app-manager-controller-6c498f696c-v5zj5
+      namespace: application-system
+      uid: 16f9cfc5-6ade-42bd-8833-0d2682edfefa
+    zone: us-central1-f
+  kind: EndpointSlice
+  metadata:
+    creationTimestamp: "2026-03-09T18:02:10Z"
+    generateName: kube-app-manager-metrics-service-
+    generation: 1882
+    labels:
+      app.kubernetes.io/name: kube-app-manager
+      control-plane: kube-app-manager
+      endpointslice.kubernetes.io/managed-by: endpointslice-controller.k8s.io
+      kubernetes.io/service-name: kube-app-manager-metrics-service
+    name: kube-app-manager-metrics-service-czn2w
+    namespace: application-system
+    ownerReferences:
+    - apiVersion: v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Service
+      name: kube-app-manager-metrics-service
+      uid: 948fe4d5-0d4e-4675-9603-1e2a9789c849
+    resourceVersion: "1779415299905887012"
+    uid: c1889884-fc50-4d26-b396-846e72fbc8c0
+  ports:
+  - name: https
+    port: 8443
+    protocol: TCP
+- addressType: IPv4
+  apiVersion: discovery.k8s.io/v1
+  endpoints:
+  - addresses:
+    - 10.23.0.68
+    conditions:
+      ready: false
+      serving: false
+      terminating: false
+    nodeName: gk3-pmomax-auto-pool-2-3eb71742-47nr
+    targetRef:
+      kind: Pod
+      name: kube-app-manager-controller-6c498f696c-v5zj5
+      namespace: application-system
+      uid: 16f9cfc5-6ade-42bd-8833-0d2682edfefa
+    zone: us-central1-f
+  kind: EndpointSlice
+  metadata:
+    creationTimestamp: "2026-03-09T18:02:10Z"
+    generateName: kube-app-manager-service-
+    generation: 1882
+    labels:
+      app.kubernetes.io/name: kube-app-manager
+      control-plane: kube-app-manager
+      controller-tools.k8s.io: "1.0"
+      endpointslice.kubernetes.io/managed-by: endpointslice-controller.k8s.io
+      kubernetes.io/service-name: kube-app-manager-service
+    name: kube-app-manager-service-tghxj
+    namespace: application-system
+    ownerReferences:
+    - apiVersion: v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Service
+      name: kube-app-manager-service
+      uid: 14af76bf-e7be-44cb-aa11-cf7b2741059b
+    resourceVersion: "1779415299905903000"
+    uid: a3457fd2-47e8-492c-ae68-36281e4cf798
+  ports:
+  - name: ""
+    port: 443
+    protocol: TCP
+- addressType: IPv4
+  apiVersion: discovery.k8s.io/v1
+  endpoints:
+  - addresses:
+    - 10.128.0.3
+    conditions:
+      ready: true
+  kind: EndpointSlice
+  metadata:
+    creationTimestamp: "2026-03-03T21:50:24Z"
+    generation: 49
+    labels:
+      kubernetes.io/service-name: kubernetes
+    name: kubernetes
+    namespace: default
+    resourceVersion: "1779220293412447006"
+    uid: 1705395a-eaf6-4419-b6c7-044139d6a26b
+  ports:
+  - name: https
+    port: 443
+    protocol: TCP
+- addressType: IPv4
+  apiVersion: discovery.k8s.io/v1
+  endpoints: null
+  kind: EndpointSlice
+  metadata:
+    annotations:
+      endpoints.kubernetes.io/last-change-trigger-time: "2026-03-12T19:33:19Z"
+    creationTimestamp: "2026-03-12T19:31:20Z"
+    generateName: pmo-forensic-
+    generation: 11
+    labels:
+      endpointslice.kubernetes.io/managed-by: endpointslice-controller.k8s.io
+      kubernetes.io/service-name: pmo-forensic
+    name: pmo-forensic-hzq67
+    namespace: forensic-1773343876-ca
+    ownerReferences:
+    - apiVersion: v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Service
+      name: pmo-forensic
+      uid: 8986dc40-483c-474f-8206-b688f639445d
+    resourceVersion: "1773344000060015024"
+    uid: e00a4454-0c41-4ee4-b7f4-8e1450f64a3a
+  ports: null
+- addressType: IPv4
+  apiVersion: discovery.k8s.io/v1
+  endpoints: null
+  kind: EndpointSlice
+  metadata:
+    annotations:
+      endpoints.kubernetes.io/last-change-trigger-time: "2026-03-03T21:54:38Z"
+    creationTimestamp: "2026-03-03T21:54:38Z"
+    generateName: alertmanager-
+    generation: 1
+    labels:
+      addonmanager.kubernetes.io/mode: Reconcile
+      endpointslice.kubernetes.io/managed-by: endpointslice-controller.k8s.io
+      kubernetes.io/service-name: alertmanager
+      service.kubernetes.io/headless: ""
+    name: alertmanager-rlj5q
+    namespace: gke-gmp-system
+    ownerReferences:
+    - apiVersion: v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Service
+      name: alertmanager
+      uid: 90a7e13f-4676-44be-b461-47f9b7980710
+    resourceVersion: "1772574878894799014"
+    uid: 6428fc49-4efe-4b19-b9dd-ea854c03e1e2
+  ports: null
+- addressType: IPv4
+  apiVersion: discovery.k8s.io/v1
+  endpoints:
+  - addresses:
+    - 10.23.0.75
+    conditions:
+      ready: true
+      serving: true
+      terminating: false
+    nodeName: gk3-pmomax-auto-pool-2-3eb71742-47nr
+    targetRef:
+      kind: Pod
+      name: gmp-operator-8656d5969-kwhw8
+      namespace: gke-gmp-system
+      uid: fef0eeaa-c3d4-4cf7-b80c-5342b9f093ec
+    zone: us-central1-f
+  kind: EndpointSlice
+  metadata:
+    annotations:
+      endpoints.kubernetes.io/last-change-trigger-time: "2026-05-22T02:34:28Z"
+    creationTimestamp: "2026-03-03T21:54:39Z"
+    generateName: gmp-operator-
+    generation: 2534
+    labels:
+      addonmanager.kubernetes.io/mode: Reconcile
+      endpointslice.kubernetes.io/managed-by: endpointslice-controller.k8s.io
+      kubernetes.io/service-name: gmp-operator
+    name: gmp-operator-wfxmn
+    namespace: gke-gmp-system
+    ownerReferences:
+    - apiVersion: v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Service
+      name: gmp-operator
+      uid: a662a7a5-04b0-4589-ad1b-7b482aa07b83
+    resourceVersion: "1779417270577535016"
+    uid: 1d79b897-29da-43a0-874a-1d724f5998ae
+  ports:
+  - name: webhook
+    port: 10250
+    protocol: TCP
+- addressType: IPv4
+  apiVersion: discovery.k8s.io/v1
+  endpoints: null
+  kind: EndpointSlice
+  metadata:
+    annotations:
+      endpoints.kubernetes.io/last-change-trigger-time: "2026-03-03T21:54:39Z"
+    creationTimestamp: "2026-03-03T21:54:39Z"
+    generateName: rule-evaluator-
+    generation: 1
+    labels:
+      addonmanager.kubernetes.io/mode: Reconcile
+      endpointslice.kubernetes.io/managed-by: endpointslice-controller.k8s.io
+      kubernetes.io/service-name: rule-evaluator
+    name: rule-evaluator-zmqpm
+    namespace: gke-gmp-system
+    ownerReferences:
+    - apiVersion: v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Service
+      name: rule-evaluator
+      uid: 8952e5b0-5468-4d9f-abc8-86e77143f96f
+    resourceVersion: "1772574879236335020"
+    uid: be80388d-697d-4ccc-a9c6-c2c0995110f1
+  ports: null
+- addressType: IPv4
+  apiVersion: discovery.k8s.io/v1
+  endpoints: null
+  kind: EndpointSlice
+  metadata:
+    annotations:
+      endpoints.kubernetes.io/last-change-trigger-time: "2026-03-03T21:54:59Z"
+    creationTimestamp: "2026-03-03T21:54:59Z"
+    generateName: antrea-
+    generation: 1
+    labels:
+      addonmanager.kubernetes.io/mode: Reconcile
+      app: antrea
+      endpointslice.kubernetes.io/managed-by: endpointslice-controller.k8s.io
+      kubernetes.io/service-name: antrea
+    name: antrea-2jwn8
+    namespace: kube-system
+    ownerReferences:
+    - apiVersion: v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Service
+      name: antrea
+      uid: ca26261f-7625-43ca-82a6-cdf0d157cf49
+    resourceVersion: "1772574899466847019"
+    uid: 5e98648e-b3db-4b1a-ac56-a5a16490d123
+  ports: null
+- addressType: IPv4
+  apiVersion: discovery.k8s.io/v1
+  endpoints:
+  - addresses:
+    - 10.23.1.6
+    conditions:
+      ready: true
+      serving: true
+      terminating: false
+    nodeName: gk3-pmomax-auto-pool-2-b5af5ad0-hklr
+    targetRef:
+      kind: Pod
+      name: l7-default-backend-6d69786ffb-fn27n
+      namespace: kube-system
+      uid: c05a999e-97fc-46f2-9a67-03fb54d42502
+    zone: us-central1-b
+  kind: EndpointSlice
+  metadata:
+    annotations:
+      endpoints.kubernetes.io/last-change-trigger-time: "2026-05-22T06:09:05Z"
+    creationTimestamp: "2026-03-03T21:54:32Z"
+    generateName: default-http-backend-
+    generation: 1847
+    labels:
+      addonmanager.kubernetes.io/mode: Reconcile
+      endpointslice.kubernetes.io/managed-by: endpointslice-controller.k8s.io
+      k8s-app: glbc
+      kubernetes.io/cluster-service: "true"
+      kubernetes.io/name: GLBCDefaultBackend
+      kubernetes.io/service-name: default-http-backend
+    name: default-http-backend-8fhs8
+    namespace: kube-system
+    ownerReferences:
+    - apiVersion: v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Service
+      name: default-http-backend
+      uid: a5bcc01b-072e-4250-adbe-2dc278219adf
+    resourceVersion: "1779430146309951002"
+    uid: b746f4e6-24c1-4b5a-bbf0-38dc5c3e1527
+  ports:
+  - name: http
+    port: 8080
+    protocol: TCP
+- addressType: IPv4
+  apiVersion: discovery.k8s.io/v1
+  endpoints:
+  - addresses:
+    - 10.23.1.7
+    conditions:
+      ready: true
+      serving: true
+      terminating: false
+    nodeName: gk3-pmomax-auto-pool-2-b5af5ad0-hklr
+    targetRef:
+      kind: Pod
+      name: kube-dns-cbd7bfcf7-9pjdt
+      namespace: kube-system
+      uid: a7aa6d5f-9f61-4eaf-8f12-b8ebba202dcd
+    zone: us-central1-b
+  - addresses:
+    - 10.23.1.9
+    conditions:
+      ready: true
+      serving: true
+      terminating: false
+    nodeName: gk3-pmomax-auto-pool-2-b5af5ad0-hklr
+    targetRef:
+      kind: Pod
+      name: kube-dns-cbd7bfcf7-8cdvt
+      namespace: kube-system
+      uid: 2ae97c65-8868-48a1-b59c-a217c29505f7
+    zone: us-central1-b
+  kind: EndpointSlice
+  metadata:
+    creationTimestamp: "2026-03-03T21:53:07Z"
+    generateName: kube-dns-
+    generation: 5854
+    labels:
+      addonmanager.kubernetes.io/mode: Reconcile
+      endpointslice.kubernetes.io/managed-by: endpointslice-controller.k8s.io
+      k8s-app: kube-dns
+      kubernetes.io/cluster-service: "true"
+      kubernetes.io/name: KubeDNS
+      kubernetes.io/service-name: kube-dns
+    name: kube-dns-gxqsw
+    namespace: kube-system
+    ownerReferences:
+    - apiVersion: v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Service
+      name: kube-dns
+      uid: e6af8470-843b-4c6d-9e82-073bf02fb911
+    resourceVersion: "1779468872303071020"
+    uid: 7a3173b5-ea3a-443c-9259-2e7c0ccfd7d1
+  ports:
+  - name: dns
+    port: 53
+    protocol: UDP
+  - name: dns-tcp
+    port: 53
+    protocol: TCP
+- addressType: IPv4
+  apiVersion: discovery.k8s.io/v1
+  endpoints:
+  - addresses:
+    - 10.23.0.79
+    conditions:
+      ready: true
+      serving: true
+      terminating: false
+    nodeName: gk3-pmomax-auto-pool-2-3eb71742-47nr
+    targetRef:
+      kind: Pod
+      name: metrics-server-v1.35.1-78c7d84786-5kxkj
+      namespace: kube-system
+      uid: 716938d2-c3d3-4252-81e9-9638c079dfa7
+    zone: us-central1-f
+  kind: EndpointSlice
+  metadata:
+    annotations:
+      endpoints.kubernetes.io/last-change-trigger-time: "2026-05-22T16:53:51Z"
+    creationTimestamp: "2026-03-03T21:54:47Z"
+    generateName: metrics-server-
+    generation: 2601
+    labels:
+      addonmanager.kubernetes.io/mode: Reconcile
+      endpointslice.kubernetes.io/managed-by: endpointslice-controller.k8s.io
+      kubernetes.io/cluster-service: "true"
+      kubernetes.io/name: Metrics-server
+      kubernetes.io/service-name: metrics-server
+    name: metrics-server-d6ntl
+    namespace: kube-system
+    ownerReferences:
+    - apiVersion: v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Service
+      name: metrics-server
+      uid: 48329cf3-c35d-4cdd-aa7a-84c444d2252d
+    resourceVersion: "1779468831329567000"
+    uid: f3639271-96f7-4f12-8eb2-cf1ef071c97b
+  ports:
+  - name: ""
+    port: 10250
+    protocol: TCP
+- addressType: IPv4
+  apiVersion: discovery.k8s.io/v1
+  endpoints: null
+  kind: EndpointSlice
+  metadata:
+    creationTimestamp: "2026-03-03T21:55:49Z"
+    generateName: deployer-svc-
+    generation: 1734
+    labels:
+      app: deployer
+      endpointslice.kubernetes.io/managed-by: endpointslice-controller.k8s.io
+      kubernetes.io/service-name: deployer-svc
+    name: deployer-svc-gzrzl
+    namespace: pmomax
+    ownerReferences:
+    - apiVersion: v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Service
+      name: deployer-svc
+      uid: 2e7615d8-bde5-4798-8e63-7a1e679d9f5d
+    resourceVersion: "1774638955951103016"
+    uid: d56cdfd9-00f5-482f-967a-417b69d24b3b
+  ports: null
+- addressType: IPv4
+  apiVersion: discovery.k8s.io/v1
+  endpoints:
+  - addresses:
+    - 10.23.0.69
+    conditions:
+      ready: true
+      serving: true
+      terminating: false
+    nodeName: gk3-pmomax-auto-pool-2-3eb71742-47nr
+    targetRef:
+      kind: Pod
+      name: pmo-architect-569577dbf4-wt86z
+      namespace: pmomax
+      uid: abdbbb26-780c-4026-aeb6-311ee8f6357a
+    zone: us-central1-f
+  - addresses:
+    - 10.23.1.5
+    conditions:
+      ready: true
+      serving: true
+      terminating: false
+    nodeName: gk3-pmomax-auto-pool-2-b5af5ad0-hklr
+    targetRef:
+      kind: Pod
+      name: pmo-architect-569577dbf4-jvhcn
+      namespace: pmomax
+      uid: 305f8baf-f1d5-4f50-bddf-af3e63c0603a
+    zone: us-central1-b
+  kind: EndpointSlice
+  metadata:
+    annotations:
+      endpoints.kubernetes.io/last-change-trigger-time: "2026-05-22T06:08:50Z"
+    creationTimestamp: "2026-03-09T17:58:36Z"
+    generateName: pmo-architect-
+    generation: 4619
+    labels:
+      app: pmo-architect
+      app.kubernetes.io/instance: pmomax-market-sync
+      app.kubernetes.io/name: pmomax
+      endpointslice.kubernetes.io/managed-by: endpointslice-controller.k8s.io
+      kubernetes.io/service-name: pmo-architect
+    name: pmo-architect-dst64
+    namespace: pmomax
+    ownerReferences:
+    - apiVersion: v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Service
+      name: pmo-architect
+      uid: 66cbfcfd-0ff1-429a-91f5-dbbb8d33908f
+    resourceVersion: "1779430130069263013"
+    uid: b1ea18ab-2671-4e37-89d5-35adc17d8c41
+  ports:
+  - name: http
+    port: 8080
+    protocol: TCP
+- addressType: IPv4
+  apiVersion: discovery.k8s.io/v1
+  endpoints:
+  - addresses:
+    - 10.23.0.69
+    conditions:
+      ready: true
+      serving: true
+      terminating: false
+    nodeName: gk3-pmomax-auto-pool-2-3eb71742-47nr
+    targetRef:
+      kind: Pod
+      name: pmo-architect-569577dbf4-wt86z
+      namespace: pmomax
+      uid: abdbbb26-780c-4026-aeb6-311ee8f6357a
+    zone: us-central1-f
+  - addresses:
+    - 10.23.1.5
+    conditions:
+      ready: true
+      serving: true
+      terminating: false
+    nodeName: gk3-pmomax-auto-pool-2-b5af5ad0-hklr
+    targetRef:
+      kind: Pod
+      name: pmo-architect-569577dbf4-jvhcn
+      namespace: pmomax
+      uid: 305f8baf-f1d5-4f50-bddf-af3e63c0603a
+    zone: us-central1-b
+  kind: EndpointSlice
+  metadata:
+    annotations:
+      endpoints.kubernetes.io/last-change-trigger-time: "2026-05-22T06:08:50Z"
+    creationTimestamp: "2026-03-03T22:15:36Z"
+    generateName: pmo-architect-svc-
+    generation: 5244
+    labels:
+      app: pmo-architect
+      app.kubernetes.io/instance: pmomax-market-sync
+      app.kubernetes.io/name: pmomax
+      endpointslice.kubernetes.io/managed-by: endpointslice-controller.k8s.io
+      kubernetes.io/service-name: pmo-architect-svc
+    name: pmo-architect-svc-pkv7t
+    namespace: pmomax
+    ownerReferences:
+    - apiVersion: v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Service
+      name: pmo-architect-svc
+      uid: e623b540-7109-4bf0-881a-ba3702b95e95
+    resourceVersion: "1779430130069279017"
+    uid: b4d33aec-ffb0-4ccc-bd93-089fbacfd2ec
+  ports:
+  - name: http
+    port: 8080
+    protocol: TCP
+kind: List
+metadata:
+  resourceVersion: ""

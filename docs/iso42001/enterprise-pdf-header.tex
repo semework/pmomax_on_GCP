@@ -1,0 +1,60 @@
+\usepackage{xcolor}
+\usepackage{fancyhdr}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{colortbl}
+\usepackage{enumitem}
+\usepackage{setspace}
+\usepackage{parskip}
+\usepackage{graphicx}
+\usepackage{microtype}
+
+\definecolor{PMOBlue}{HTML}{111827}
+\definecolor{PMOGold}{HTML}{D9A441}
+\definecolor{PMOLight}{HTML}{F8FAFC}
+\definecolor{PMOBorder}{HTML}{CBD5E1}
+\definecolor{PMOText}{HTML}{1F2937}
+
+\setstretch{1.18}
+\setlength{\parskip}{8pt}
+\setlength{\parindent}{0pt}
+\setlength{\emergencystretch}{3em}
+\renewcommand{\arraystretch}{1.35}
+\setlength{\LTpre}{8pt}
+\setlength{\LTpost}{12pt}
+\setlist[itemize]{topsep=6pt,itemsep=4pt,leftmargin=1.3em}
+\setlist[enumerate]{topsep=6pt,itemsep=5pt,leftmargin=1.5em}
+
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{\small PMOMax ISO/IEC 42001 Alignment Guide}
+\rhead{\small Version v1.0}
+\cfoot{\small \thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0pt}
+
+\rowcolors{2}{PMOLight}{white}
+\arrayrulecolor{PMOBorder}
+
+\makeatletter
+\renewcommand{\maketitle}{
+  \begin{titlepage}
+  \centering
+  \vspace*{0.25in}
+  \includegraphics[width=1.35in]{docs/iso42001/assets/pmomax_logo.png}
+  \vspace{0.45in}
+  {\Huge\bfseries\color{PMOBlue}\@title\par}
+  \par
+  \vspace{0.25in}
+  {\color{PMOGold}\rule{0.72\textwidth}{1.2pt}\par}
+  \vspace{0.35in}
+  {\large\color{PMOBlue}Katalyst Street / PMOMax\par}
+  \vspace{0.25in}
+  {\large\color{PMOText}\@date\par}
+  \par\vfill
+  \vspace{0.55in}
+  \par{\small Katalyst Street / PMOMax}
+  \end{titlepage}
+}
+\makeatother

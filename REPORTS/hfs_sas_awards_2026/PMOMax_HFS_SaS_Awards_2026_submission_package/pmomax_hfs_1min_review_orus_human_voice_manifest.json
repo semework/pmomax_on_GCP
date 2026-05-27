@@ -1,0 +1,27 @@
+{
+  "voice": {
+    "name": "en-US-Chirp3-HD-Orus",
+    "speaking_rate": 0.88,
+    "gain_db": -1.0,
+    "pitch": "-0.8st",
+    "loudnorm": "I=-18:LRA=7:TP=-2"
+  },
+  "mode": "continuous executive narration",
+  "natural_voice_duration_sec": 61.013,
+  "target_voice_duration_sec": 58.8,
+  "tempo_factor": 1.0376,
+  "final_video_duration_sec": 60.0,
+  "final_audio_duration_sec": 60.0,
+  "video": "REPORTS/hfs_sas_awards_2026/pmomax_hfs_1min_review.mp4",
+  "backup_video": "REPORTS/hfs_sas_awards_2026/pmomax_hfs_1min_review_original_audio_backup.mp4",
+  "wav": "REPORTS/hfs_sas_awards_2026/pmomax_hfs_1min_review_orus_human_voice.wav",
+  "mp3": "REPORTS/hfs_sas_awards_2026/pmomax_hfs_1min_review_orus_human_voice.mp3",
+  "notes": [
+    "Video stream copied unchanged from original backup",
+    "Orus Chirp HD voice used",
+    "Continuous narration used for more human cadence than rigid six-second line fitting",
+    "PMOMax spoken as P M O Max",
+    "PID spoken as project initiation document",
+    "KPIs spoken as key performance indicators"
+  ]
+}

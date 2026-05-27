@@ -51,10 +51,16 @@ kubectl get ingress -n <namespace>
 - `docs/PMOMax_Pricing_and_Log_Storage_Requirements.md`
 - `Architecture/PMOMax_PID_Architect_Infrastructure_Architecture.md`
 
-## Parent Project Operational Scripts
+## Operational Scripts
 
-Use existing scripts from parent `pmo26` for broader deployment operations:
+Use the current PMOMax deployment scripts according to target:
 
-- `../deploy.sh` (Cloud Run flow)
-- `../deploy-marketplace.sh` (Marketplace-ready Cloud Run foundations)
-- `../deploy_gke_ingress.sh` (GKE + ingress deployment)
+- `publish_marketplace_deployer.sh`: builds and publishes the Marketplace deployer and UBB images.
+- `deployer/deploy_with_tests.sh`: Marketplace install/test entrypoint; it delegates install work to `deployer/deploy.sh`.
+- `deploy-fast.sh`: hosted Cloud Run runtime build and deployment helper.
+
+The root `Dockerfile` builds the Marketplace deployer image. `Dockerfile.cloudrun` is the runtime app Dockerfile used by `deploy-fast.sh`.
+
+## Corrected Materials
+
+Use `docs/corrected-materials/` as the source of truth for current promo copy, whitepaper language, technical summaries, user-guide language, and claim corrections.

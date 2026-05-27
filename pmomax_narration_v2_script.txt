@@ -1,0 +1,65 @@
+PMOMax Product Video — Narration v2
+Voice: en-US-AriaNeural | Style: advertisement_upbeat 0.55
+Rate: -7% | Pitch: +3Hz | Master: EBU R128 I=-16 LUFS
+==========================================================
+
+[00:02.1 – 00:09.0]
+projects fail long before delivery begins
+  (spoken as: projects fail long before delivery begins)
+
+[00:10.2 – 00:14.6]
+the cause is almost always weak initiation
+  (spoken as: the cause is almost always weak initiation)
+
+[00:17.0 – 00:22.2]
+start with raw inputs
+  (spoken as: start with raw inputs)
+
+[00:25.8 – 00:30.2]
+PMOMax structures them instantly
+  (spoken as: P.M.O. Max structures them instantly)
+
+[00:33.8 – 00:37.6]
+you get a complete PID
+  (spoken as: you get a complete P.I.D.)
+
+[00:41.0 – 00:46.4]
+governance and compliance are built in
+  (spoken as: governance and compliance are built in)
+
+[00:48.8 – 00:53.8]
+risks stay visible and actionable
+  (spoken as: risks stay visible and actionable)
+
+[00:57.6 – 01:03.2]
+people resources and budget are tracked together
+  (spoken as: people, resources, and budget are tracked together)
+
+[01:04.8 – 01:10.2]
+ask the assistant for precise answers
+  (spoken as: ask the assistant for precise answers)
+
+[01:12.4 – 01:16.6]
+everything stays connected
+  (spoken as: everything stays connected)
+
+[01:16.8 – 01:20.8]
+planning becomes executable
+  (spoken as: planning becomes executable)
+
+[01:21.0 – 01:26.0]
+export the structured project in PDF, Word, or JSON format
+  (spoken as: export the structured project in P.D.F., Word, or Jason format,)
+
+[01:26.2 – 01:33.8]
+with the Gantt chart seamlessly embedded in the PDF
+  (spoken as: with the Gantt chart seamlessly embedded in the P.D.F.)
+
+[01:34.0 – 01:39.8]
+and also available as PNG, JPEG, or SVG for easy sharing and presentation
+  (spoken as: and also available as P.N.G., J-PEG, or S.V.G., for easy sharing and presentation)
+
+[01:40.0 – 01:44.6]
+PMOMax — start projects correctly, every time
+  (spoken as: P.M.O. Max — start projects correctly, every time.)
+

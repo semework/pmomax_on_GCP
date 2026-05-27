@@ -6,8 +6,10 @@ This repository is the PMOMax Marketplace/GCP deployment repository: `https://gi
 
 - Project: `katalyststreet-public`
 - Marketplace deployer image: `us-docker.pkg.dev/katalyststreet-public/pmomax/deployer:1.4.2`
-- Deployer digest: `sha256:e88f97afce8003843bad66aabaf10f5f4590dd3e3dca1c3b3a70af8533de3120`
-- UBB agent digest: `sha256:ba544d5bdcadaa45ba43a68004935cde6b61e796a7897ae2804504ebf115978f`
+- Marketplace deployer alias: `us-docker.pkg.dev/katalyststreet-public/pmomax/deployer:1.4`
+- Deployer digest: `sha256:12a649ff0f38b69b6410cf0ebc74d706016359d86b7ec20f7d43a7356484a4a7`
+- UBB agent digest: `sha256:affb58eaa7a1e21c67b48aa97a73cac1ea53e33e0d57243a981ccf5fb47d2715`
+- Last Marketplace validation fix: the current `1.4.2` and `1.4` tags remove invalid KubernetesAppSchemaV2 `title` fields from the packaged `/data/schema.yaml`; the failed old `1.4.2` digest was `sha256:2433d22012fbda66239d25105e8b07f08fae13020400de0285f829406b0aa858`.
 - Marketplace app runtime baseline digest before the About Video redeploy: `sha256:c81ce8d1c4f8bef48fa431727d464632e197734ead2f186d6ef8090978c6de8b`
 - Hosted Cloud Run runtime after the About Video redeploy: `us-east1-docker.pkg.dev/katalyststreet-public/apps/pmo-architect:about-video-audit-20260429-1720`
 - Hosted Cloud Run runtime digest after the About Video redeploy: `sha256:b1bba17af4d969f6ca1073d745bb74d4b2fb559bdb63c689048caea765477ae4`

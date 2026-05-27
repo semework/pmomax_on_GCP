@@ -1,0 +1,17 @@
+PMOMax product voiceover spoken script
+Synthesis: Google Cloud Text-to-Speech
+Voice: en-US-Chirp3-HD-Leda
+
+0002.1-0009.0 | Projects fail long before delivery begins. | actual_duration=4.281s
+0010.5-0013.3 | The cause is almost always weak initiation. | actual_duration=2.732s
+0017.2-0021.8 | Start with raw inputs. | actual_duration=1.562s
+0026.2-0028.8 | P. M. O. Max structures them instantly. | actual_duration=2.526s
+0034.4-0036.8 | You get a complete P. I. D. | actual_duration=2.337s
+0042.0-0046.3 | Governance and compliance are built in. | actual_duration=2.545s
+0049.5-0052.8 | Risks stay visible and actionable. | actual_duration=2.720s
+0058.3-0060.4 | People, resources, and budget. | actual_duration=2.043s
+0064.6-0068.5 | Ask the assistant for precise answers. | actual_duration=2.400s
+0072.6-0076.8 | Everything stays connected to the P. I. D. | actual_duration=4.131s
+0077.0-0081.5 | Planning becomes executable. | actual_duration=1.563s
+0081.7-0095.3 | Once your analysis is complete, export the entire structured project in P. D. F., Word, or JSON format, with the Gantt chart seamlessly embedded in the P. D. F., and also available as P. N. G., J-PEG, or S. V. G. for easy sharing and presentation. | actual_duration=13.518s
+0096.2-0099.9 | P. M. O. Max. Start projects correctly every time. | actual_duration=3.624s

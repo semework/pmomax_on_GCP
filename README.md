@@ -23,10 +23,13 @@ This package deploys the PMOMax runtime service (`pmo-architect`) through the Ma
 - Stable Marketplace approval build: `1.4.2`
 - `publishedVersion`: `1.4.2`
 - Default deployer tag: `1.4.2`
+- Major/minor alias tag: `1.4`
 - Deployer image: `us-docker.pkg.dev/katalyststreet-public/pmomax/deployer:1.4.2`
+- Deployer digest: `sha256:12a649ff0f38b69b6410cf0ebc74d706016359d86b7ec20f7d43a7356484a4a7`
 - Runtime app image: `us-east1-docker.pkg.dev/katalyststreet-public/apps/pmo-architect:1.0.2`
 - UBB agent image: `us-docker.pkg.dev/katalyststreet-public/pmomax/ubbagent:1.4.2`
-- Security posture: `1.4.2` updates the Marketplace deployer base to `deployer_envsubst/onbuild:0.12.17`, rebuilds the UBB agent from `ubbagent.Dockerfile`, and points runtime traffic at app image `1.0.2`.
+- UBB agent digest: `sha256:affb58eaa7a1e21c67b48aa97a73cac1ea53e33e0d57243a981ccf5fb47d2715`
+- Security posture: `1.4.2` keeps the patched Marketplace deployer base `deployer_envsubst/onbuild:0.12.17`, rebuilds the UBB agent from `ubbagent.Dockerfile`, points runtime traffic at app image `1.0.2`, and removes invalid KubernetesAppSchemaV2 `title` fields from the packaged schema.
 - Required install fields:
   - `APP_INSTANCE_NAME`
   - `NAMESPACE`
@@ -119,6 +122,10 @@ cd PMOMax-On-GCP
 ```
 
 Requires `mpdev` in `PATH`.
+
+## Corrected External Materials
+
+Use `docs/corrected-materials/` as the source of truth for current PMOMax promo copy, whitepaper language, user-guide language, technical summaries, and claim corrections. Older copied decks, reports, and draft collateral may contain unsupported claims and should not be reused without checking against that folder.
 
 ## Security / Hygiene
 

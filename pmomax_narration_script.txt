@@ -1,0 +1,45 @@
+PMOMax Product Video — Final Spoken Narration
+=======================================================
+
+[00:02.1 – 00:09.0]
+projects fail long before delivery begins
+
+[00:10.5 – 00:13.3]
+the cause is almost always weak initiation
+
+[00:17.2 – 00:21.8]
+start with raw inputs
+
+[00:26.2 – 00:28.8]
+PMOMax structures them instantly
+
+[00:34.4 – 00:36.8]
+you get a complete PID
+
+[00:42.0 – 00:46.3]
+governance and compliance are built in
+
+[00:49.5 – 00:52.8]
+risks stay visible and actionable
+
+[00:58.3 – 01:00.4]
+people resources and budget
+
+[01:04.6 – 01:08.5]
+ask the assistant for precise answers
+
+[01:12.6 – 01:16.8]
+everything stays connected to the PID
+
+[01:17.0 – 01:21.5]
+planning becomes executable
+
+[01:21.7 – 01:35.3]
+once your analysis is complete export the entire structured project in PDF Word or JSON format with the Gantt chart seamlessly embedded in the PDF and also available as PNG JPEG or SVG for easy sharing and presentation
+
+[01:36.2 – 01:39.9]
+PMOMax start projects correctly every time
+
+
+Voice: en-US-JennyNeural | Rate: -13% | Pitch: -4Hz
+Mastering: EBU R128 loudnorm I=-16 LUFS, TP=-1.5, LRA=11

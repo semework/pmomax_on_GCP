@@ -1,0 +1,29 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "lib": ["ES2020", "DOM"],
+    "jsx": "react-jsx",
+    "strict": true,
+    "skipLibCheck": true,
+    "noEmit": true,
+    "types": ["node"]
+  },
+  "include": [
+    "server/**/*.ts",
+    "scripts/**/*.ts",
+    "lib/**/*.ts",
+    "hooks/**/*.ts",
+    "types.ts",
+    "types/**/*.d.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "build",
+    "__quarantine_duplicates__",
+    "components/**/*",
+    "public/**/*"
+  ]
+}

@@ -1,0 +1,39 @@
+1
+00:00:00,000 --> 00:00:06,000
+Project initiation usually starts fragmented. P M O Max brings it into one structured workspace.
+
+2
+00:00:06,000 --> 00:00:12,000
+Teams can paste, upload, load a complete demo, or begin from a guided blank start.
+
+3
+00:00:12,000 --> 00:00:18,000
+From raw project material, P M O Max produces a complete, editable project initiation document.
+
+4
+00:00:18,000 --> 00:00:24,000
+Project information and context are normalized for decision-ready review.
+
+5
+00:00:24,000 --> 00:00:30,000
+Objectives and key performance indicators stay measurable, visible, and consistent.
+
+6
+00:00:30,000 --> 00:00:36,000
+Scope, deliverables, constraints, and dependencies remain explicit from the start.
+
+7
+00:00:36,000 --> 00:00:42,000
+The entire initiation package stays aligned in one shared system.
+
+8
+00:00:42,000 --> 00:00:48,000
+Planning becomes executable when schedules turn into a live Gantt chart.
+
+9
+00:00:48,000 --> 00:00:54,000
+Milestones, sequencing, and delivery timing become visible at a glance.
+
+10
+00:00:54,000 --> 00:01:00,000
+Execution detail stays connected to the initiation document that produced it.

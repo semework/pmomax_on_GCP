@@ -1,0 +1,33 @@
+[
+  {
+    "creationTimestamp": "2026-03-03T14:18:32.473-08:00",
+    "defaultService": "https://www.googleapis.com/compute/v1/projects/katalyststreet-public/global/backendServices/k8s1-9e2459bd-kube-system-default-http-backend-80-297ea027",
+    "fingerprint": "njWWO8w22yE=",
+    "hostRules": [
+      {
+        "hosts": [
+          "*"
+        ],
+        "pathMatcher": "host3389dae361af79b04c9c8e7057f60cc6"
+      }
+    ],
+    "id": "2592653708471492823",
+    "kind": "compute#urlMap",
+    "name": "k8s2-um-l7pwee7v-pmomax-pmo-architect-ingress-9g7kws0u",
+    "pathMatchers": [
+      {
+        "defaultService": "https://www.googleapis.com/compute/v1/projects/katalyststreet-public/global/backendServices/k8s1-9e2459bd-kube-system-default-http-backend-80-297ea027",
+        "name": "host3389dae361af79b04c9c8e7057f60cc6",
+        "pathRules": [
+          {
+            "paths": [
+              "/*"
+            ],
+            "service": "https://www.googleapis.com/compute/v1/projects/katalyststreet-public/global/backendServices/k8s1-9e2459bd-pmomax-pmo-architect-svc-80-23160eb3"
+          }
+        ]
+      }
+    ],
+    "selfLink": "https://www.googleapis.com/compute/v1/projects/katalyststreet-public/global/urlMaps/k8s2-um-l7pwee7v-pmomax-pmo-architect-ingress-9g7kws0u"
+  }
+]

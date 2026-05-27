@@ -1,8 +1,16 @@
 # Local/env artifacts (do not commit)
+.env
+.env.*
+!.env.example
 *.local
 *.tmp
 *.swp
 .DS_Store
+.claude/
+
+# Nested local repositories/worktrees
+*.worktrees/
+ElexRatio-On-GCP/
 
 # Credentials and service-account materials
 *.pem
@@ -17,7 +25,24 @@ secrets/
 __pycache__/
 *.pyc
 
+# Node/dependency outputs
+node_modules/
+
 # Build/test outputs
 dist/
 out/
 tmp/
+logs/
+
+# Archives and generated media
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+*.7z
+*.rar
+*.mp3
+*.mp4
+*.wav
+*.mov
+*.m4a

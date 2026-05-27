@@ -1,0 +1,89 @@
+000.000-006.000 | Narrator A
+Project initiation usually starts fragmented. PMOMax brings it into one structured workspace.
+
+006.000-012.000 | Narrator B
+Teams can paste, upload, load a complete demo, or begin from a guided blank start.
+
+012.000-018.000 | Narrator A
+From raw project material, PMOMax produces a complete, editable PID.
+
+018.000-024.000 | Narrator C
+Project information and context are normalized immediately for decision-ready review.
+
+024.000-030.000 | Narrator A
+Objectives and KPIs stay measurable, visible, and consistent.
+
+030.000-036.000 | Narrator B
+Scope, deliverables, constraints, and dependencies remain explicit from the start.
+
+036.000-042.000 | Narrator A
+The entire initiation package stays aligned in one shared system.
+
+042.000-048.000 | Narrator C
+Planning becomes executable when schedules turn into a live Gantt.
+
+048.000-054.000 | Narrator A
+Milestones, sequencing, and delivery timing become visible at a glance.
+
+054.000-060.000 | Narrator B
+Execution detail stays connected to the initiation document that produced it.
+
+060.000-066.000 | Narrator A
+People, resources, and budget are tied directly to the plan.
+
+066.000-072.000 | Narrator C
+That gives delivery teams context for staffing, tooling, and cost tradeoffs.
+
+072.000-078.000 | Narrator A
+Risks, issues, and communications are surfaced before execution begins.
+
+078.000-084.000 | Narrator B
+Instead of scattered notes, teams review probability, impact, mitigation, and decisions together.
+
+084.000-090.000 | Narrator A
+Governance and compliance stay visible, actionable, and audit-friendly.
+
+090.000-096.000 | Narrator C
+Approvals, security, privacy, and readiness checks are built into the workflow.
+
+096.000-102.000 | Narrator A
+The AI assistant works alongside the live PID, not outside it.
+
+102.000-108.000 | Narrator B
+Ask for summaries, rewrites, delivery risks, or compliance gaps in project context.
+
+108.000-114.000 | Narrator A
+The conversation stays connected to the same structured plan your team is executing.
+
+114.000-120.000 | Narrator C
+General Notes preserve the reasoning, assumptions, and working decisions behind the plan.
+
+120.000-126.000 | Narrator A
+Navigation keeps large project documents instantly explorable.
+
+126.000-132.000 | Narrator B
+Built-in help gives teams fast, section-aware guidance when they need it.
+
+132.000-138.000 | Narrator A
+And the user guide supports onboarding without forcing people out of the workflow.
+
+138.000-144.000 | Narrator C
+When teams want to start from zero, Create mode opens a guided entry point.
+
+144.000-150.000 | Narrator A
+When they need to prove value fast, Load Demo shows the end-to-end system immediately.
+
+150.000-156.000 | Narrator B
+Outputs are ready to move across stakeholders, reviews, and audits.
+
+156.000-162.000 | Narrator A
+PMOMax supports Word, PDF, JSON, and packaged deliverables from the same workspace.
+
+162.000-168.000 | Narrator C
+What changes here is the handoff between planning and execution.
+
+168.000-174.000 | Narrator A
+PMOMax turns project initiation into a governed, AI-assisted operating system.
+
+174.000-180.000 | Narrator B
+PMOMax. Structure the PID, align the team, and launch with confidence.

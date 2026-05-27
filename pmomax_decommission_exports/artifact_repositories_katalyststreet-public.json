@@ -1,0 +1,90 @@
+[
+  {
+    "createTime": "2026-02-06T19:32:11.513219Z",
+    "description": "PMOMax application images (multi-region)",
+    "format": "DOCKER",
+    "mode": "STANDARD_REPOSITORY",
+    "name": "projects/katalyststreet-public/locations/us/repositories/apps",
+    "sizeBytes": "788003364",
+    "updateTime": "2026-02-17T02:37:20.038762Z",
+    "vulnerabilityScanningConfig": {
+      "enablementState": "SCANNING_ACTIVE",
+      "lastEnableTime": "2026-02-06T19:32:10.660455859Z"
+    }
+  },
+  {
+    "createTime": "2026-03-10T02:28:33.281390Z",
+    "format": "DOCKER",
+    "mode": "STANDARD_REPOSITORY",
+    "name": "projects/katalyststreet-public/locations/us/repositories/gcr.io",
+    "sizeBytes": "110510439",
+    "updateTime": "2026-03-10T02:34:22.272536Z",
+    "vulnerabilityScanningConfig": {
+      "enablementState": "SCANNING_ACTIVE"
+    }
+  },
+  {
+    "createTime": "2026-02-17T01:14:38.502208Z",
+    "format": "DOCKER",
+    "mode": "STANDARD_REPOSITORY",
+    "name": "projects/katalyststreet-public/locations/us/repositories/pmomax",
+    "sizeBytes": "369663279",
+    "updateTime": "2026-05-15T23:18:43.165056Z",
+    "vulnerabilityScanningConfig": {
+      "enablementState": "SCANNING_ACTIVE",
+      "lastEnableTime": "2026-02-17T01:14:37.135058142Z"
+    }
+  },
+  {
+    "createTime": "2024-09-29T12:25:44.588920Z",
+    "format": "DOCKER",
+    "mode": "STANDARD_REPOSITORY",
+    "name": "projects/katalyststreet-public/locations/us/repositories/us.gcr.io",
+    "sizeBytes": "630311315",
+    "updateTime": "2024-09-29T12:30:29.805864Z",
+    "vulnerabilityScanningConfig": {
+      "enablementState": "SCANNING_ACTIVE"
+    }
+  },
+  {
+    "createTime": "2026-01-22T23:31:08.752416Z",
+    "description": "PMOMax application images",
+    "format": "DOCKER",
+    "mode": "STANDARD_REPOSITORY",
+    "name": "projects/katalyststreet-public/locations/us-central1/repositories/apps",
+    "satisfiesPzi": true,
+    "updateTime": "2026-01-22T23:31:08.752416Z",
+    "vulnerabilityScanningConfig": {
+      "enablementState": "SCANNING_ACTIVE",
+      "lastEnableTime": "2026-01-22T23:31:01.342719650Z"
+    }
+  },
+  {
+    "createTime": "2026-01-22T23:38:53.732227Z",
+    "description": "PMOMax application images",
+    "format": "DOCKER",
+    "mode": "STANDARD_REPOSITORY",
+    "name": "projects/katalyststreet-public/locations/us-east1/repositories/apps",
+    "satisfiesPzi": true,
+    "sizeBytes": "1495809440",
+    "updateTime": "2026-05-13T21:04:56.865127Z",
+    "vulnerabilityScanningConfig": {
+      "enablementState": "SCANNING_ACTIVE",
+      "lastEnableTime": "2026-01-22T23:38:36.189456285Z"
+    }
+  },
+  {
+    "createTime": "2026-02-02T06:06:47.071182Z",
+    "description": "PMOMax Docker images",
+    "format": "DOCKER",
+    "mode": "STANDARD_REPOSITORY",
+    "name": "projects/katalyststreet-public/locations/us-east1/repositories/pmomax",
+    "satisfiesPzi": true,
+    "sizeBytes": "1265540951",
+    "updateTime": "2026-03-04T01:27:14.910559Z",
+    "vulnerabilityScanningConfig": {
+      "enablementState": "SCANNING_ACTIVE",
+      "lastEnableTime": "2026-02-02T06:06:46.629211958Z"
+    }
+  }
+]

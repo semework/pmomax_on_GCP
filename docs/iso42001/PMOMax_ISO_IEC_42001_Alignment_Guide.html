@@ -1,0 +1,1093 @@
+<!doctype html>
+<html lang="en-US">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PMOMax PID as ISO/IEC 42001 Supporting Documented Information:
+Alignment Guide</title>
+  <style>
+    :root {
+      --ink: #172033;
+      --muted: #5b6678;
+      --soft: #f5f7fa;
+      --soft-2: #eef2f7;
+      --line: #d8dee8;
+      --brand: #ff6b1a;
+      --brand-dark: #b74a12;
+      --navy: #111827;
+      --accent: #d9a441;
+      --success: #0f766e;
+      --partial: #9a6b00;
+      --not: #8a1f1f;
+    }
+
+    @page {
+      size: Letter;
+      margin: 0.72in 0.66in 0.78in 0.66in;
+      @bottom-right {
+        content: "Page " counter(page);
+        color: #7b8494;
+        font-family: Inter, "Aptos", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        font-size: 8.4pt;
+      }
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: #fff;
+      color: var(--ink);
+      font-family: Inter, "Aptos", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      font-size: 10.8pt;
+      line-height: 1.52;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    body {
+      counter-reset: page;
+    }
+
+    .page {
+      break-after: page;
+      page-break-after: always;
+      min-height: 9.35in;
+      position: relative;
+    }
+
+    .title-page {
+      display: flex;
+      flex-direction: column;
+      min-height: 9.35in;
+      padding: 0.1in 0.08in 0;
+      background:
+        linear-gradient(135deg, rgba(255,107,26,0.08), rgba(17,24,39,0.02) 38%, transparent 72%),
+        #fff;
+    }
+
+    .brand-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 0.4in;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .brand-row img {
+      height: 0.74in;
+      width: auto;
+      object-fit: contain;
+    }
+
+    .brand-text {
+      text-align: right;
+      color: var(--muted);
+      font-size: 10pt;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .eyebrow {
+      margin-top: 0.7in;
+      color: var(--brand-dark);
+      font-size: 10pt;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.11em;
+    }
+
+    .title-page h1 {
+      margin: 0.22in 0 0.18in;
+      color: var(--navy);
+      font-size: 33pt;
+      line-height: 1.08;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+      max-width: 7.4in;
+    }
+
+    .subtitle {
+      max-width: 6.65in;
+      color: #364154;
+      font-size: 14pt;
+      line-height: 1.42;
+      font-weight: 500;
+    }
+
+    .title-rule {
+      width: 3.2in;
+      height: 3px;
+      background: var(--brand);
+      border-radius: 10px;
+      margin: 0.44in 0 0.38in;
+    }
+
+    .meta-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1.25fr;
+      gap: 0.16in;
+      margin-top: 0.2in;
+      max-width: 7.25in;
+    }
+
+    .meta-card {
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.82);
+      border-radius: 10px;
+      padding: 0.16in 0.18in;
+    }
+
+    .meta-label {
+      color: var(--muted);
+      font-size: 8.4pt;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 800;
+      margin-bottom: 0.04in;
+    }
+
+    .meta-value {
+      font-size: 10.4pt;
+      color: var(--ink);
+      font-weight: 700;
+      line-height: 1.35;
+    }
+
+    .title-footer {
+      margin-top: auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      border-top: 1px solid var(--line);
+      padding-top: 0.18in;
+      color: var(--muted);
+      font-size: 9.5pt;
+    }
+
+    .confidential-note {
+      max-width: 4.2in;
+      line-height: 1.35;
+    }
+
+    .content {
+      padding: 0;
+    }
+
+    .running-footer {
+      display: none;
+      position: fixed;
+      left: 0.66in;
+      right: 0.66in;
+      bottom: 0.34in;
+      color: #7b8494;
+      font-size: 8.4pt;
+      display: flex;
+      justify-content: space-between;
+      border-top: 1px solid #edf0f5;
+      padding-top: 0.06in;
+      pointer-events: none;
+    }
+
+    h1, h2, h3, h4 {
+      color: var(--navy);
+      font-family: Inter, "Aptos Display", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      break-after: avoid;
+      page-break-after: avoid;
+    }
+
+    h1 {
+      font-size: 22pt;
+      line-height: 1.14;
+      margin: 0.18in 0 0.16in;
+      padding-bottom: 0.08in;
+      border-bottom: 2px solid var(--brand);
+      letter-spacing: -0.01em;
+    }
+
+    h2 {
+      font-size: 15pt;
+      line-height: 1.22;
+      margin: 0.28in 0 0.1in;
+      color: #202a3b;
+    }
+
+    h3 {
+      font-size: 12.2pt;
+      line-height: 1.25;
+      margin: 0.2in 0 0.08in;
+      color: #2b3546;
+    }
+
+    p {
+      margin: 0 0 0.12in;
+      color: #263145;
+    }
+
+    a {
+      color: #174ea6;
+      text-decoration: none;
+    }
+
+    ul, ol {
+      margin: 0.06in 0 0.18in 0.22in;
+      padding-left: 0.16in;
+    }
+
+    li {
+      margin: 0.045in 0;
+      padding-left: 0.02in;
+    }
+
+    strong {
+      color: #121a2a;
+      font-weight: 800;
+    }
+
+    blockquote {
+      margin: 0.18in 0 0.22in;
+      padding: 0.16in 0.2in 0.16in 0.22in;
+      border: 1px solid #f0c894;
+      border-left: 5px solid var(--brand);
+      border-radius: 10px;
+      background: linear-gradient(90deg, rgba(255,107,26,0.10), rgba(255,255,255,0.95));
+      color: #263145;
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
+
+    blockquote p {
+      margin: 0;
+      color: #222c3d;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      margin: 0.12in 0 0.22in;
+      font-size: 9.6pt;
+      line-height: 1.36;
+      break-inside: auto;
+      page-break-inside: auto;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      overflow: hidden;
+    }
+
+    thead {
+      display: table-header-group;
+    }
+
+    th {
+      background: #172033;
+      color: #fff;
+      text-align: left;
+      font-weight: 800;
+      padding: 0.11in 0.12in;
+      border-right: 1px solid rgba(255,255,255,0.2);
+      vertical-align: top;
+    }
+
+    th:last-child { border-right: 0; }
+
+    td {
+      padding: 0.11in 0.12in;
+      vertical-align: top;
+      border-top: 1px solid var(--line);
+      border-right: 1px solid #e7ebf1;
+      color: #243044;
+    }
+
+    td:last-child { border-right: 0; }
+    tbody tr:nth-child(even) td { background: var(--soft); }
+    tbody tr:nth-child(odd) td { background: #fff; }
+
+    table td:nth-child(1) { width: 32%; font-weight: 700; color: #172033; }
+    table td:nth-child(2) { width: 48%; }
+    table td:nth-child(3) { width: 20%; font-weight: 700; }
+
+    #toc-page {
+      break-after: page;
+      page-break-after: always;
+      padding-top: 0.1in;
+    }
+
+    #toc-page h1 {
+      margin-bottom: 0.22in;
+    }
+
+    #TOC,
+    #toc-page > ul {
+      border: 1px solid var(--line);
+      background: var(--soft);
+      border-radius: 12px;
+      padding: 0.18in 0.22in;
+    }
+
+    #TOC ul,
+    #toc-page ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    #TOC li,
+    #toc-page li {
+      margin: 0;
+      padding: 0.055in 0;
+      border-bottom: 1px solid #e3e8f0;
+      color: var(--ink);
+      font-size: 10.6pt;
+    }
+
+    #TOC li:last-child,
+    #toc-page li:last-child { border-bottom: 0; }
+
+    #TOC ul ul,
+    #toc-page ul ul {
+      margin-top: 0.04in;
+      padding-left: 0.18in;
+    }
+
+    #TOC ul ul li,
+    #toc-page ul ul li {
+      font-size: 9.4pt;
+      color: var(--muted);
+      border-bottom: 0;
+      padding: 0.025in 0;
+    }
+
+    #toc-page a {
+      color: #16325c;
+      text-decoration: none;
+      font-weight: 650;
+    }
+
+    #toc-page ul ul a {
+      color: #536173;
+      font-weight: 550;
+    }
+
+    .page-break, .clearpage {
+      break-before: page;
+      page-break-before: always;
+    }
+
+    h1#disclaimer {
+      break-before: page;
+      page-break-before: always;
+    }
+
+    .section-kicker {
+      color: var(--brand-dark);
+      font-size: 8.8pt;
+      font-weight: 850;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 0.08in;
+    }
+
+    .html-generated-note {
+      display: none;
+    }
+
+    .refs ul, .references ul {
+      list-style: none;
+      padding-left: 0;
+      margin-left: 0;
+    }
+
+    .refs li, .references li {
+      padding: 0.08in 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    @media print {
+      .page-break { break-before: page; }
+      h1, h2, h3, blockquote, table { break-inside: avoid-page; }
+      tr { break-inside: avoid; page-break-inside: avoid; }
+      .running-footer { display: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <section class="title-page page">
+    <div class="brand-row">
+      <img src="assets/pmomax_logo.png" alt="PMOMax">
+      <div class="brand-text">Katalyst Street<br>Governance Readiness</div>
+    </div>
+    <div class="eyebrow">ISO/IEC 42001 Alignment Guide</div>
+    <h1>PMOMax PID as ISO/IEC 42001 Supporting Documented Information:
+Alignment Guide</h1>
+    <div class="subtitle">A conservative alignment guide for using
+PMOMax PID outputs as supporting documented information for AI
+Management System readiness.</div>
+    <div class="title-rule"></div>
+    <div class="meta-grid">
+      <div class="meta-card">
+        <div class="meta-label">Version</div>
+        <div class="meta-value">v1.0</div>
+      </div>
+      <div class="meta-card">
+        <div class="meta-label">Date</div>
+        <div class="meta-value">May 19, 2026</div>
+      </div>
+      <div class="meta-card">
+        <div class="meta-label">Prepared for</div>
+        <div class="meta-value">AI governance, PMO, compliance, risk, and procurement review</div>
+      </div>
+    </div>
+    <div class="title-footer">
+      <div class="confidential-note">Buyer-facing governance collateral. Informational only; not a certification claim.</div>
+      <div>Katalyst Street / PMOMax</div>
+    </div>
+  </section>
+
+  <main class="content">
+    <section id="toc-page">
+      <h1>Table of Contents</h1>
+      <ul>
+      <li><a href="#executive-summary" id="toc-executive-summary"><span
+      class="toc-section-number">1</span> Executive Summary</a></li>
+      <li><a href="#what-isoiec-42001-is"
+      id="toc-what-isoiec-42001-is"><span
+      class="toc-section-number">2</span> What ISO/IEC 42001 Is</a>
+      <ul>
+      <li><a href="#management-system-context"
+      id="toc-management-system-context"><span
+      class="toc-section-number">2.1</span> Management System
+      Context</a></li>
+      <li><a href="#readiness-implications"
+      id="toc-readiness-implications"><span
+      class="toc-section-number">2.2</span> Readiness
+      Implications</a></li>
+      </ul></li>
+      <li><a
+      href="#why-documented-information-matters-for-ai-governance"
+      id="toc-why-documented-information-matters-for-ai-governance"><span
+      class="toc-section-number">3</span> Why Documented Information
+      Matters for AI Governance</a>
+      <ul>
+      <li><a href="#governance-evidence-starts-at-initiation"
+      id="toc-governance-evidence-starts-at-initiation"><span
+      class="toc-section-number">3.1</span> Governance Evidence Starts
+      at Initiation</a></li>
+      </ul></li>
+      <li><a href="#how-pmomax-pid-supports-aims-evidence"
+      id="toc-how-pmomax-pid-supports-aims-evidence"><span
+      class="toc-section-number">4</span> How PMOMax PID Supports AIMS
+      Evidence</a>
+      <ul>
+      <li><a href="#verified-pmomax-pid-evidence-areas"
+      id="toc-verified-pmomax-pid-evidence-areas"><span
+      class="toc-section-number">4.1</span> Verified PMOMax PID Evidence
+      Areas</a></li>
+      <li><a href="#strongest-support-areas"
+      id="toc-strongest-support-areas"><span
+      class="toc-section-number">4.2</span> Strongest Support
+      Areas</a></li>
+      <li><a href="#boundary-areas" id="toc-boundary-areas"><span
+      class="toc-section-number">4.3</span> Boundary Areas</a></li>
+      </ul></li>
+      <li><a href="#pmomax-pid-to-isoiec-42001-alignment-crosswalk"
+      id="toc-pmomax-pid-to-isoiec-42001-alignment-crosswalk"><span
+      class="toc-section-number">5</span> PMOMax PID-to-ISO/IEC 42001
+      Alignment Crosswalk</a>
+      <ul>
+      <li><a href="#how-to-read-the-coverage-levels"
+      id="toc-how-to-read-the-coverage-levels"><span
+      class="toc-section-number">5.1</span> How to Read the Coverage
+      Levels</a></li>
+      <li><a href="#strong-project-level-support"
+      id="toc-strong-project-level-support"><span
+      class="toc-section-number">5.2</span> Strong Project-Level
+      Support</a></li>
+      <li><a href="#partial-support-areas"
+      id="toc-partial-support-areas"><span
+      class="toc-section-number">5.3</span> Partial Support
+      Areas</a></li>
+      <li><a href="#not-covered-by-pmomax-alone"
+      id="toc-not-covered-by-pmomax-alone"><span
+      class="toc-section-number">5.4</span> Not Covered by PMOMax
+      Alone</a></li>
+      </ul></li>
+      <li><a href="#what-pmomax-does-not-cover"
+      id="toc-what-pmomax-does-not-cover"><span
+      class="toc-section-number">6</span> What PMOMax Does Not Cover</a>
+      <ul>
+      <li><a href="#scope-boundaries" id="toc-scope-boundaries"><span
+      class="toc-section-number">6.1</span> Scope Boundaries</a></li>
+      </ul></li>
+      <li><a
+      href="#how-enterprises-can-use-pmomax-in-an-isoiec-42001-readiness-workflow"
+      id="toc-how-enterprises-can-use-pmomax-in-an-isoiec-42001-readiness-workflow"><span
+      class="toc-section-number">7</span> How Enterprises Can Use PMOMax
+      in an ISO/IEC 42001 Readiness Workflow</a>
+      <ul>
+      <li><a href="#recommended-workflow"
+      id="toc-recommended-workflow"><span
+      class="toc-section-number">7.1</span> Recommended
+      Workflow</a></li>
+      </ul></li>
+      <li><a
+      href="#recommended-use-with-iso-consultants-auditors-and-internal-governance-teams"
+      id="toc-recommended-use-with-iso-consultants-auditors-and-internal-governance-teams"><span
+      class="toc-section-number">8</span> Recommended Use with ISO
+      Consultants, Auditors, and Internal Governance Teams</a>
+      <ul>
+      <li><a href="#collaboration-model"
+      id="toc-collaboration-model"><span
+      class="toc-section-number">8.1</span> Collaboration Model</a></li>
+      </ul></li>
+      <li><a href="#references" id="toc-references"><span
+      class="toc-section-number">9</span> References</a></li>
+      <li><a href="#disclaimer" id="toc-disclaimer"><span
+      class="toc-section-number">10</span> Disclaimer</a></li>
+      </ul>
+    </section>
+    <h1 data-number="1" id="executive-summary"><span
+    class="header-section-number">1</span> Executive Summary</h1>
+    <p>ISO/IEC 42001 is an international management system standard for
+    Artificial Intelligence Management Systems. Public ISO materials
+    describe it as a standard for organizations that provide or use
+    AI-based products or services, with emphasis on responsible AI use,
+    risk and opportunity management, transparency, traceability,
+    accountability, reliability, and lifecycle governance.</p>
+    <blockquote>
+    <p><strong>Positioning boundary:</strong> This guide is a readiness
+    and documented-information alignment aid. It is not a certification
+    statement, not a compliance guarantee, and not a substitute for a
+    complete Artificial Intelligence Management System.</p>
+    </blockquote>
+    <p>PMOMax is not an ISO/IEC 42001 certification tool. PMOMax does
+    not make an organization ISO/IEC 42001 compliant, does not replace a
+    complete Artificial Intelligence Management System, and does not
+    replace qualified legal, compliance, audit, consulting, or
+    certification-body review.</p>
+    <p>PMOMax can, however, help organizations structure project
+    initiation documentation that may support ISO/IEC 42001 readiness
+    work. The PMOMax Project Initiation Document (PID) captures
+    project-level information around scope, objectives, ownership,
+    stakeholders, risk, mitigation, approvals, human oversight, decision
+    records, compliance notes, lifecycle planning, KPIs, communication
+    cadence, and audit traceability metadata where configured.</p>
+    <p>This guide explains how PMOMax PID outputs can be used as
+    supporting documented information in a broader AI governance and
+    ISO/IEC 42001 readiness workflow. It is intentionally conservative.
+    It uses public ISO references only for high-level framing and does
+    not reproduce paid ISO standard text.</p>
+    <p>The practical enterprise value is that PMOMax helps convert early
+    AI project planning into structured, reviewable, exportable records
+    that PMO, AI governance, risk, compliance, procurement, and digital
+    transformation teams can evaluate before an AI initiative moves into
+    production or broad operational use.</p>
+    <h1 data-number="2" id="what-isoiec-42001-is"><span
+    class="header-section-number">2</span> What ISO/IEC 42001 Is</h1>
+    <h2 data-number="2.1" id="management-system-context"><span
+    class="header-section-number">2.1</span> Management System
+    Context</h2>
+    <p>ISO describes ISO/IEC 42001 as an international standard that
+    specifies requirements for establishing, implementing, maintaining,
+    and continually improving an Artificial Intelligence Management
+    System within organizations. ISO also describes the standard as
+    designed for entities that provide or use AI-based products or
+    services.</p>
+    <p>Public ISO materials frame ISO/IEC 42001 as a management system
+    standard. That point is important. A management system standard is
+    not simply a checklist for one model, one application, or one
+    project. It is a structured way for an organization to establish
+    responsibilities, policies, objectives, processes, controls,
+    monitoring, and improvement practices around AI.</p>
+    <h2 data-number="2.2" id="readiness-implications"><span
+    class="header-section-number">2.2</span> Readiness Implications</h2>
+    <p>Public ISO explanation material states that an AI management
+    system can help organizations define responsibilities for AI use,
+    identify and assess AI-related risks, support transparency and
+    accountability, manage data quality and system performance, address
+    ethical, legal, and societal concerns, and monitor AI systems
+    throughout the lifecycle.</p>
+    <p>ISO also states publicly that certification is voluntary and
+    performed by independent certification bodies, not by ISO itself.
+    This guide therefore does not imply that PMOMax, a PMOMax PID, or
+    this alignment document creates certification status.</p>
+    <p>Related context is also relevant:</p>
+    <ul>
+    <li>ISO/IEC 42005 provides guidance for AI system impact assessments
+    and supports transparency, accountability, trust, and lifecycle
+    impact documentation.</li>
+    <li>ISO/IEC 23894 provides guidance for managing AI-related risk and
+    integrating AI risk management into AI-related activities and
+    functions.</li>
+    </ul>
+    <p>These related standards reinforce the importance of structured
+    records around purpose, risk, impact, accountability, decisions, and
+    lifecycle management. PMOMax PID outputs can help teams assemble
+    some of that project-level information, but they do not replace full
+    risk management, impact assessment, or AIMS documentation.</p>
+    <h1 data-number="3"
+    id="why-documented-information-matters-for-ai-governance"><span
+    class="header-section-number">3</span> Why Documented Information
+    Matters for AI Governance</h1>
+    <h2 data-number="3.1"
+    id="governance-evidence-starts-at-initiation"><span
+    class="header-section-number">3.1</span> Governance Evidence Starts
+    at Initiation</h2>
+    <p>AI governance depends on decisions that can be reviewed.
+    Enterprise teams need to know what was approved, what was excluded,
+    who owned the outcome, what risks were identified, what mitigations
+    were planned, what assumptions were accepted, what dependencies
+    existed, and what follow-up actions remained open.</p>
+    <p>For AI projects, this is especially important because the same
+    project can affect business operations, customer experience,
+    security, privacy, fairness, safety, vendor reliance, employee
+    workflows, legal obligations, and procurement controls. If these
+    items are not captured during initiation, teams often reconstruct
+    them later under pressure from auditors, customers, regulators,
+    security reviewers, procurement teams, or executive governance
+    forums.</p>
+    <p>Documented information is therefore not only an administrative
+    artifact. It is a practical control surface. It helps
+    organizations:</p>
+    <ul>
+    <li>Establish a consistent record of project scope and intended
+    outcomes.</li>
+    <li>Identify responsible owners and accountable governance
+    participants.</li>
+    <li>Capture risk and impact considerations before deployment.</li>
+    <li>Record approval gates, decision points, and review
+    expectations.</li>
+    <li>Preserve assumptions, constraints, dependencies, and open
+    questions.</li>
+    <li>Support later internal audits, customer assurance reviews, and
+    readiness assessments.</li>
+    </ul>
+    <p>PMOMax focuses on project initiation. That makes its contribution
+    narrow but valuable. A PID is not an AIMS. A PID can, however,
+    become an early evidence package that supports AIMS readiness
+    conversations.</p>
+    <blockquote>
+    <p><strong>Enterprise use case:</strong> PMOMax is most useful when
+    organizations need a consistent intake and initiation record before
+    an AI project enters procurement review, security review, risk
+    review, executive governance, or operational deployment
+    planning.</p>
+    </blockquote>
+    <h1 data-number="4" id="how-pmomax-pid-supports-aims-evidence"><span
+    class="header-section-number">4</span> How PMOMax PID Supports AIMS
+    Evidence</h1>
+    <h2 data-number="4.1" id="verified-pmomax-pid-evidence-areas"><span
+    class="header-section-number">4.1</span> Verified PMOMax PID
+    Evidence Areas</h2>
+    <p>The PMOMax codebase includes a canonical PID structure with
+    sections for project definition and governance. Verified PID
+    evidence areas include title metadata, executive summary, problem
+    statement, business case, SMART objectives, KPIs, scope inclusions,
+    scope exclusions, assumptions, constraints, dependencies,
+    stakeholders, sponsor, project manager or owner, RACI, timeline,
+    milestones, work breakdown tasks, budget, resources and tools,
+    risks, mitigations and contingencies, issues and decisions log,
+    communication plan, governance approvals,
+    compliance/security/privacy notes, open questions, next steps, and
+    notes/background.</p>
+    <p>The schema also includes optional audit metadata and trace
+    fields. These fields can support traceability where configured,
+    including identifiers, source, timestamps, populated-field counts,
+    warning counts, trace level, and step labels. This should be
+    positioned carefully: audit traceability support is valuable, but it
+    does not by itself establish compliance or complete evidence
+    retention.</p>
+    <p>PMOMax also supports export-oriented workflows. Local product
+    materials and code references indicate Word, PDF, and JSON export
+    positioning for PID outputs. These export formats make the PID
+    practical for governance review, procurement evidence, internal
+    audit preparation, and collaboration with external advisors.</p>
+    <h2 data-number="4.2" id="strongest-support-areas"><span
+    class="header-section-number">4.2</span> Strongest Support
+    Areas</h2>
+    <p>The strongest PMOMax support areas are:</p>
+    <ul>
+    <li>Project scope and boundary documentation.</li>
+    <li>Objectives, KPIs, intended outcomes, and business value.</li>
+    <li>Ownership, sponsorship, stakeholder visibility, and RACI.</li>
+    <li>Risk identification and mitigation planning.</li>
+    <li>Compliance, privacy, and security notes.</li>
+    <li>Governance approvals and signoff requirements.</li>
+    <li>Decision logging and follow-up actions.</li>
+    <li>Lifecycle planning through milestones, tasks, dependencies, and
+    communication cadence.</li>
+    <li>AI output traceability metadata where audit settings are
+    enabled.</li>
+    </ul>
+    <h2 data-number="4.3" id="boundary-areas"><span
+    class="header-section-number">4.3</span> Boundary Areas</h2>
+    <p>The weakest areas are full AIMS coverage, certification readiness
+    determination, organization-wide policy management, supplier-control
+    assurance, internal audit, management review, corrective action,
+    competence records, and complete AI impact assessment. Those are
+    outside the verified PMOMax PID schema and must be addressed by the
+    customer organization through broader governance processes.</p>
+    <h1 data-number="5"
+    id="pmomax-pid-to-isoiec-42001-alignment-crosswalk"><span
+    class="header-section-number">5</span> PMOMax PID-to-ISO/IEC 42001
+    Alignment Crosswalk</h1>
+    <p>This crosswalk is a conservative mapping based on public ISO
+    descriptions and verified PMOMax PID capabilities. It should be used
+    as a buyer-facing readiness discussion aid, not as an authoritative
+    clause-by-clause interpretation of ISO/IEC 42001.</p>
+    <h2 data-number="5.1" id="how-to-read-the-coverage-levels"><span
+    class="header-section-number">5.1</span> How to Read the Coverage
+    Levels</h2>
+    <table>
+    <colgroup>
+    <col style="width: 50%" />
+    <col style="width: 50%" />
+    </colgroup>
+    <thead>
+    <tr>
+    <th>Coverage level</th>
+    <th>Meaning</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+    <td>Strong</td>
+    <td>PMOMax has a direct project-level PID section that can support
+    this evidence area when completed by the organization.</td>
+    </tr>
+    <tr>
+    <td>Partial</td>
+    <td>PMOMax can support initiation-level evidence, but the
+    organization needs additional processes, records, or reviews.</td>
+    </tr>
+    <tr>
+    <td>Not covered</td>
+    <td>The area is outside the verified PMOMax PID scope and should be
+    handled by the organization’s broader AIMS or governance
+    program.</td>
+    </tr>
+    </tbody>
+    </table>
+    <h2 data-number="5.2" id="strong-project-level-support"><span
+    class="header-section-number">5.2</span> Strong Project-Level
+    Support</h2>
+    <table>
+    <colgroup>
+    <col style="width: 33%" />
+    <col style="width: 33%" />
+    <col style="width: 33%" />
+    </colgroup>
+    <thead>
+    <tr>
+    <th>ISO/IEC 42001 readiness area</th>
+    <th>PMOMax PID support</th>
+    <th>Coverage</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+    <td>Organizational / AI project scope</td>
+    <td>Captures project title, problem statement, business case, scope
+    inclusions/exclusions, assumptions, and constraints.</td>
+    <td>Strong at project level</td>
+    </tr>
+    <tr>
+    <td>AI objectives and intended outcomes</td>
+    <td>Captures SMART objectives and KPIs with baselines and
+    targets.</td>
+    <td>Strong at project level</td>
+    </tr>
+    <tr>
+    <td>Roles and responsibilities</td>
+    <td>Captures sponsor, project manager/owner, stakeholders, and
+    RACI.</td>
+    <td>Strong</td>
+    </tr>
+    <tr>
+    <td>Stakeholders and accountable owners</td>
+    <td>Captures stakeholder records, owner fields, RACI, approval
+    gates, and communication audiences.</td>
+    <td>Strong</td>
+    </tr>
+    <tr>
+    <td>Risk identification and mitigation planning</td>
+    <td>Captures risks, probability, impact, mitigations, and
+    contingencies.</td>
+    <td>Strong for initiation</td>
+    </tr>
+    <tr>
+    <td>Decision logging / decision records</td>
+    <td>Captures issues, decisions, owners, and dates.</td>
+    <td>Strong</td>
+    </tr>
+    <tr>
+    <td>Lifecycle planning</td>
+    <td>Captures timeline, milestones, work breakdown, dependencies,
+    resources/tools, and status.</td>
+    <td>Strong for planning</td>
+    </tr>
+    <tr>
+    <td>Communications and review cadence</td>
+    <td>Captures audience, cadence, and channel.</td>
+    <td>Strong</td>
+    </tr>
+    </tbody>
+    </table>
+    <h2 data-number="5.3" id="partial-support-areas"><span
+    class="header-section-number">5.3</span> Partial Support Areas</h2>
+    <table>
+    <colgroup>
+    <col style="width: 33%" />
+    <col style="width: 33%" />
+    <col style="width: 33%" />
+    </colgroup>
+    <thead>
+    <tr>
+    <th>ISO/IEC 42001 readiness area</th>
+    <th>PMOMax PID support</th>
+    <th>Coverage</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+    <td>Impact considerations</td>
+    <td>Captures impact-relevant context through objectives,
+    stakeholders, compliance notes, risks, constraints, and open
+    questions.</td>
+    <td>Partial</td>
+    </tr>
+    <tr>
+    <td>Human oversight and approval gates</td>
+    <td>Captures governance approvals, signoff requirements, decision
+    logs, owners, and communication cadence.</td>
+    <td>Partial to strong depending on user input</td>
+    </tr>
+    <tr>
+    <td>Compliance, privacy, and security notes</td>
+    <td>Captures requirements and notes for compliance/security/privacy
+    review.</td>
+    <td>Partial</td>
+    </tr>
+    <tr>
+    <td>Evidence traceability / audit metadata</td>
+    <td>Supports optional audit metadata and trace fields for
+    AI-assisted outputs where configured.</td>
+    <td>Partial</td>
+    </tr>
+    <tr>
+    <td>Performance / KPI tracking</td>
+    <td>Captures KPIs, baselines, targets, objectives, milestones, and
+    status.</td>
+    <td>Partial</td>
+    </tr>
+    <tr>
+    <td>Change or follow-up actions</td>
+    <td>Captures open questions, next steps, decisions, milestones, and
+    tasks.</td>
+    <td>Partial</td>
+    </tr>
+    <tr>
+    <td>Supplier / third-party AI governance</td>
+    <td>May identify dependencies, resources, tools, or external
+    systems.</td>
+    <td>Partial</td>
+    </tr>
+    </tbody>
+    </table>
+    <h2 data-number="5.4" id="not-covered-by-pmomax-alone"><span
+    class="header-section-number">5.4</span> Not Covered by PMOMax
+    Alone</h2>
+    <table>
+    <colgroup>
+    <col style="width: 33%" />
+    <col style="width: 33%" />
+    <col style="width: 33%" />
+    </colgroup>
+    <thead>
+    <tr>
+    <th>ISO/IEC 42001 readiness area</th>
+    <th>PMOMax PID support</th>
+    <th>Coverage</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+    <td>Complete AIMS policies and procedures</td>
+    <td>Not provided by the verified PID schema.</td>
+    <td>Not covered</td>
+    </tr>
+    <tr>
+    <td>Certification readiness determination</td>
+    <td>Not provided by PMOMax.</td>
+    <td>Not covered</td>
+    </tr>
+    </tbody>
+    </table>
+    <p>The corresponding CSV file in this package provides a more
+    detailed version of this crosswalk with public-source basis,
+    evidence generated by PMOMax, coverage level, and limitations.</p>
+    <h1 data-number="6" id="what-pmomax-does-not-cover"><span
+    class="header-section-number">6</span> What PMOMax Does Not
+    Cover</h1>
+    <h2 data-number="6.1" id="scope-boundaries"><span
+    class="header-section-number">6.1</span> Scope Boundaries</h2>
+    <p>PMOMax should not be positioned as a complete ISO/IEC 42001
+    solution. The PMOMax PID is a project initiation artifact, not a
+    full management system.</p>
+    <p>PMOMax does not cover or replace:</p>
+    <ul>
+    <li>Organization-wide AI policy ownership and full policy lifecycle
+    management.</li>
+    <li>A complete Artificial Intelligence Management System.</li>
+    <li>Formal ISO/IEC 42001 internal audit programs.</li>
+    <li>Certification-body audits or certification decisions.</li>
+    <li>Management review records.</li>
+    <li>Corrective action and continual improvement processes.</li>
+    <li>Complete supplier or third-party AI control assurance.</li>
+    <li>Complete AI system impact assessment under ISO/IEC 42005.</li>
+    <li>Complete AI risk management program under ISO/IEC 23894.</li>
+    <li>Legal, regulatory, privacy, security, employment,
+    sector-specific, or contractual analysis.</li>
+    <li>Technical model validation, safety evaluation, bias testing, or
+    production monitoring.</li>
+    <li>Data governance, data quality, model performance, and
+    operational incident records beyond what the PID captures at
+    initiation.</li>
+    <li>Evidence that an approval actually occurred outside the PID
+    unless supported by the organization’s operational records.</li>
+    </ul>
+    <p>The correct positioning is that PMOMax can support project-level
+    documented information and governance readiness. It can make early
+    evidence more complete, consistent, and reviewable. It cannot
+    independently determine whether the organization satisfies ISO/IEC
+    42001.</p>
+    <blockquote>
+    <p><strong>Commercially safe language:</strong> PMOMax helps teams
+    prepare structured project initiation evidence for governance
+    review. It does not certify, audit, or determine ISO/IEC 42001
+    compliance.</p>
+    </blockquote>
+    <h1 data-number="7"
+    id="how-enterprises-can-use-pmomax-in-an-isoiec-42001-readiness-workflow"><span
+    class="header-section-number">7</span> How Enterprises Can Use
+    PMOMax in an ISO/IEC 42001 Readiness Workflow</h1>
+    <h2 data-number="7.1" id="recommended-workflow"><span
+    class="header-section-number">7.1</span> Recommended Workflow</h2>
+    <p>Enterprises can use PMOMax as part of an ISO/IEC 42001 readiness
+    workflow without overstating its role.</p>
+    <p>Recommended workflow:</p>
+    <ol type="1">
+    <li>Identify AI initiatives that require governance review.</li>
+    <li>Create or import project context into PMOMax.</li>
+    <li>Generate or refine the PID using PMOMax.</li>
+    <li>Review scope, intended outcomes, stakeholders, owners, RACI,
+    risks, mitigations, compliance/security/privacy notes, and approval
+    gates.</li>
+    <li>Export the PID to Word, PDF, or JSON for review.</li>
+    <li>Use the PID as project-level supporting documentation in AI
+    governance forums, procurement reviews, risk reviews, or ISO/IEC
+    42001 readiness workshops.</li>
+    <li>Map the PID output to the organization’s official AIMS
+    documents, control records, risk registers, impact assessments, and
+    approval workflows.</li>
+    <li>Identify gaps that PMOMax does not cover, such as policy
+    ownership, internal audit, management review, supplier assurance,
+    operational monitoring, and corrective action.</li>
+    <li>Retain final approved records in the customer’s official
+    document management or governance system.</li>
+    </ol>
+    <p>This approach preserves the right boundary. PMOMax helps create
+    structured initiation evidence. The organization remains responsible
+    for formal AIMS ownership, approval, retention, control operation,
+    monitoring, and certification readiness.</p>
+    <h1 data-number="8"
+    id="recommended-use-with-iso-consultants-auditors-and-internal-governance-teams"><span
+    class="header-section-number">8</span> Recommended Use with ISO
+    Consultants, Auditors, and Internal Governance Teams</h1>
+    <h2 data-number="8.1" id="collaboration-model"><span
+    class="header-section-number">8.1</span> Collaboration Model</h2>
+    <p>PMOMax PID outputs can be useful in conversations with qualified
+    ISO/IEC 42001 consultants, auditors, certification bodies, and
+    internal governance teams. The recommended use is collaborative and
+    evidence-oriented.</p>
+    <p>For ISO consultants, the PID can provide a fast view of project
+    purpose, scope, ownership, risks, mitigations, and governance gaps.
+    This can reduce discovery time and make readiness workshops more
+    concrete.</p>
+    <p>For internal auditors, the PID can provide a project initiation
+    record that helps auditors understand what was intended, who owned
+    the project, what risks were identified, what decisions were made,
+    and which approvals were expected. The PID should be supported by
+    actual operational records where audit evidence is required.</p>
+    <p>For procurement and customer assurance teams, the PID can show
+    that an AI initiative was initiated with attention to scope,
+    accountability, risk, compliance, privacy, security, lifecycle
+    planning, and oversight. This can support due diligence
+    conversations without claiming certification.</p>
+    <p>For AI governance committees, the PID can serve as an intake
+    artifact that standardizes what teams must provide before an AI
+    project moves forward. It can help governance teams compare
+    projects, prioritize reviews, assign owners, and identify incomplete
+    evidence.</p>
+    <p>For certification bodies, PMOMax outputs should be treated as
+    supporting artifacts only. Certification decisions depend on the
+    organization’s complete management system and the certification
+    body’s independent assessment.</p>
+    <h1 data-number="9" id="references"><span
+    class="header-section-number">9</span> References</h1>
+    <p>The following public references were used for high-level framing
+    only:</p>
+    <ul>
+    <li>ISO/IEC 42001 official page:
+    https://www.iso.org/standard/42001</li>
+    <li>ISO 42001 explained:
+    https://www.iso.org/home/insights-news/resources/iso-42001-explained-what-it-is.html</li>
+    <li>ISO/IEC 42005 official page:
+    https://www.iso.org/standard/42005</li>
+    <li>ISO/IEC 23894 official page:
+    https://www.iso.org/standard/77304.html</li>
+    </ul>
+    <p>This guide does not reproduce the paid ISO/IEC 42001 standard
+    text. Public summaries of ISO/IEC 42001 commonly describe themes
+    around responsible AI governance, risk assessment, impact
+    assessment, documentation, accountability, transparency, and
+    lifecycle monitoring. Any detailed clause or control mapping should
+    be validated against the official standard by qualified
+    professionals.</p>
+    <h1 data-number="10" id="disclaimer"><span
+    class="header-section-number">10</span> Disclaimer</h1>
+    <p>This guide is informational and intended for enterprise readiness
+    discussions. PMOMax is not represented as ISO/IEC 42001 certified
+    unless a separate, formal certification has been obtained through an
+    appropriate independent certification process.</p>
+    <p>PMOMax does not guarantee ISO/IEC 42001 compliance. PMOMax does
+    not replace a complete Artificial Intelligence Management System,
+    internal governance program, risk management process, legal review,
+    compliance review, auditor review, certification-body review, or
+    qualified ISO/IEC 42001 consulting support.</p>
+    <p>The PMOMax PID can help structure selected project initiation
+    information that may be useful as supporting documented information
+    for AI governance readiness. Organizations remain responsible for
+    determining whether their policies, processes, controls, records,
+    approvals, monitoring activities, risk treatments, impact
+    assessments, supplier controls, and lifecycle management practices
+    satisfy applicable laws, regulations, contracts, internal policies,
+    and management system requirements.</p>
+    <p>This guide is based on public ISO descriptions and related public
+    standard pages. It does not reproduce the paid ISO/IEC 42001
+    standard text, does not provide legal advice, and does not provide
+    an authoritative interpretation of ISO/IEC 42001. Any clause or
+    control alignment should be validated by qualified professionals
+    using the official standard and the organization’s actual operating
+    context.</p>
+    <p>Organizations pursuing ISO/IEC 42001 readiness, internal
+    assurance, customer assurance, or certification should consult
+    qualified ISO/IEC 42001 professionals, internal compliance
+    leadership, legal counsel, auditors, and certification bodies as
+    appropriate.</p>
+  </main>
+
+</body>
+</html>

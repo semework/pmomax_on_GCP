@@ -1,0 +1,101 @@
+month,project_id,service,sku,gross_cost,credits,net_cost
+2026-03,optimax-build1,Cloud Run,Services CPU (Request-based billing),0.0,0.0,0.0
+2026-03,optimax-build1,Cloud Run,Services Min Instance CPU (Request-based billing),0.0,0.0,0.0
+2026-03,pid-architect-ehlu1,Security Command Center,Organization Level Security Command Center Premium for Cloud Run - CPU Time,0.0,0.0,0.0
+2026-03,katalyststreet-public,Artifact Registry,Artifact Registry Network Inter Region Egress North America to North America,0.0,0.0,0.0
+2026-03,katalyststreet-public,Artifact Registry,Artifact Registry Storage,0.0,0.0,0.0
+2026-03,katalyststreet-public,Kubernetes Engine,Autopilot SSD Pod Ephemeral Storage Requests (us-central1),0.0,0.0,0.0
+2026-03,katalyststreet-public,Security Command Center,Organization Level Security Command Center Premium for Kubernetes Pod - CPU Request,0.0,0.0,0.0
+2026-03,katalyststreet-public,Secret Manager,Secret version replica storage,-0.0,0.0,0.0
+2026-03,deltamax-v1,Secret Manager,Secret version replica storage,-0.0,0.0,0.0
+2026-03,optimax-build1,Secret Manager,Secret version replica storage,-0.0,0.0,0.0
+2026-03,optimax-build1,Cloud Run,Services Memory (Request-based billing),0.0,0.0,0.0
+2026-03,pid-architect-ehlu1,Secret Manager,Secret version replica storage,-0.0,0.0,0.0
+2026-03,deltamax-464321,Secret Manager,Secret version replica storage,-0.0,0.0,0.0
+2026-03,katalyststreet-public,Artifact Registry,Artifact Registry Network Internet Egress North America to North America,0.0,0.0,0.0
+2026-03,katalyststreet-public,Kubernetes Engine,Autopilot Pod Memory Requests (us-central1),0.0,0.0,0.0
+2026-03,optimax-build1,Security Command Center,Organization Level Security Command Center Premium for Cloud Run - CPU Time,0.0,0.0,0.0
+2026-03,optimax-build1,Cloud Run,Services Min Instance Memory (Request-based billing),0.0,0.0,0.0
+2026-03,pid-architect-ehlu1,Cloud Run,Services CPU (Request-based billing),0.0,0.0,0.0
+2026-03,katalyststreet-public,Kubernetes Engine,Autopilot Pod mCPU Requests (us-central1),0.0,0.0,0.0
+2026-04,optimax-build1,Cloud Run,Services CPU (Request-based billing),71.82,-70.39,1.43
+2026-04,katalyststreet-public,Kubernetes Engine,Autopilot Pod mCPU Requests (us-central1),23.89,-23.42,0.47
+2026-04,katalyststreet-public,Kubernetes Engine,Autopilot Kubernetes Clusters,67.9,-67.55,0.34
+2026-04,katalyststreet-public,Kubernetes Engine,Zonal Kubernetes Clusters,55.95,-55.6,0.34
+2026-04,optimax-build1,Cloud Run,Services Min Instance CPU (Request-based billing),6.11,-5.98,0.12
+2026-04,optimax-build1,Security Command Center,Organization Level Security Command Center Premium for Cloud Run - CPU Time,4.91,-4.81,0.1
+2026-04,katalyststreet-public,Kubernetes Engine,Autopilot Pod Memory Requests (us-central1),3.45,-3.38,0.07
+2026-04,optimax-build1,Cloud Run,Services Memory (Request-based billing),3.74,-3.67,0.07
+2026-04,katalyststreet-public,Security Command Center,Organization Level Security Command Center Premium for Kubernetes Pod - CPU Request,3.14,-3.08,0.06
+2026-04,optimax-build1,Cloud Run,Services Min Instance Memory (Request-based billing),3.05,-3.0,0.05
+2026-04,katalyststreet-public,Artifact Registry,Artifact Registry Storage,2.7,-2.64,0.05
+2026-04,katalyststreet-public,Artifact Registry,Artifact Registry Network Inter Region Egress North America to North America,1.4,-1.37,0.03
+2026-04,katalyststreet-public,Kubernetes Engine,Autopilot SSD Pod Ephemeral Storage Requests (us-central1),0.4,-0.39,0.01
+2026-04,optimax-build1,Cloud Run,Cloud Run GOOGLE-API Data Transfer Out,0.0,0.0,0.0
+2026-04,optimax-build1,Cloud Logging,Log Storage cost,0.0,0.0,0.0
+2026-04,optimax-build1,Secret Manager,Secret access operations,0.01,-0.01,0.0
+2026-04,pid-architect-ehlu1,Cloud Logging,Log Storage cost,0.0,0.0,0.0
+2026-04,pid-architect-ehlu1,Secret Manager,Secret version replica storage,0.04,-0.04,0.0
+2026-04,pid-architect-ehlu1,Cloud Run,Services CPU (Request-based billing),0.03,-0.03,0.0
+2026-04,pid-architect-ehlu1,Cloud Run,Services Memory (Request-based billing),0.0,0.0,0.0
+2026-04,pid-architect-ehlu1,Cloud Storage,Standard Storage US Multi-region,0.0,-0.0,0.0
+2026-04,pid-architect-ehlu1,Cloud Storage,Standard Storage US Regional,0.0,0.0,0.0
+2026-04,pid-architect-ehlu1,Firebase Hosting,Storage,0.0,0.0,0.0
+2026-04,deltamax-464321,Secret Manager,Secret version replica storage,0.03,-0.03,0.0
+2026-04,katalyststreet-public,Cloud Build,E2 ram utilization per minute in the global region (Default Pool),0.05,-0.05,0.0
+2026-04,pid-architect-ehlu1,Security Command Center,Organization Level Security Command Center Premium for Cloud Storage - Class A Operations,0.0,0.0,0.0
+2026-04,pid-architect-ehlu1,Security Command Center,Organization Level Security Command Center Premium for Cloud Storage - Class B Operations,0.0,0.0,0.0
+2026-04,pid-architect-ehlu1,PMOMax,PMO-Max Pricing By Tokens Tokens Usage,209.36,-209.36,0.0
+2026-04,deltamax-464321,Secret Manager,Secret access operations,0.0,0.0,0.0
+2026-04,deltamax-v1,Secret Manager,Secret version replica storage,0.03,-0.03,0.0
+2026-04,pid-architect-ehlu1,Cloud Run,Cloud Run GOOGLE-API Data Transfer Out,0.0,0.0,0.0
+2026-04,pid-architect-ehlu1,Security Command Center,Organization Level Security Command Center Premium for Cloud Run - CPU Time,0.0,-0.0,0.0
+2026-04,pid-architect-ehlu1,Cloud Run,Requests,0.0,0.0,0.0
+2026-04,katalyststreet-public,Artifact Registry,Artifact Registry GOOGLE-API Egress,0.0,0.0,0.0
+2026-04,katalyststreet-public,Cloud Logging,Log Storage cost,0.0,0.0,0.0
+2026-04,katalyststreet-public,Security Command Center,Organization Level Security Command Center Premium for Cloud Run - CPU Time,0.0,0.0,0.0
+2026-04,katalyststreet-public,Cloud Run,Requests,0.0,0.0,0.0
+2026-04,katalyststreet-public,Secret Manager,Secret version replica storage,0.01,-0.01,0.0
+2026-04,katalyststreet-public,Cloud Run,Services Memory (Request-based billing),0.0,0.0,0.0
+2026-04,deltamax-agent,Cloud Logging,Log Storage cost,0.0,0.0,0.0
+2026-04,rajesh-ai-agent,Cloud Logging,Log Storage cost,0.0,0.0,0.0
+2026-04,pid-architect-ehlu1,Artifact Registry,Artifact Registry Storage,0.04,-0.04,0.0
+2026-04,katalyststreet-public,Artifact Registry,Artifact Registry Network Intra Region Egress,0.0,0.0,0.0
+2026-04,katalyststreet-public,Google Service Control,Operations,0.0,0.0,0.0
+2026-04,katalyststreet-public,Cloud Run,Cloud Run GOOGLE-API Data Transfer Out,0.0,0.0,0.0
+2026-04,katalyststreet-public,PMOMax,PMO-Max Pricing By Tokens Tokens Usage,0.0,-0.0,0.0
+2026-04,katalyststreet-public,Cloud Run,"Cloud Run Network Internet Data Transfer Out Intercontinental (Excl Oceania, Africa and China)",0.0,0.0,0.0
+2026-04,katalyststreet-public,Cloud Build,Cloud Build: Network Data Transfer Out Internet Premium within North America,0.0,0.0,0.0
+2026-04,pid-architect-ehlu1,Cloud Storage,Regional Standard Class B Operations,0.0,0.0,0.0
+2026-04,optimax-build1,Cloud Run,Requests,0.0,0.0,0.0
+2026-04,optimax-build1,Secret Manager,Secret version replica storage,0.03,-0.03,0.0
+2026-04,katalyststreet-finops,Cloud Logging,Log Storage cost,0.0,0.0,0.0
+2026-04,deltamax-464321,Cloud Logging,Log Storage cost,0.0,0.0,0.0
+2026-04,katalyststreet-public,Cloud Run,Services CPU (Request-based billing),0.01,-0.01,0.0
+2026-04,deltamax-v1,Cloud Logging,Log Storage cost,0.0,0.0,0.0
+2026-04,ontomax,Cloud Logging,Log Storage cost,0.0,0.0,0.0
+2026-04,katalyststreet-public,Cloud Run,Cloud Run Network Internet Data Transfer Out North America to North America,0.0,0.0,0.0
+2026-04,katalyststreet-public,Cloud Build,Build time e2-standard-2,0.0,0.0,0.0
+2026-04,katalyststreet-public,Cloud Build,E2 cpu utilization per minute in the global region (Default Pool),0.24,-0.24,0.0
+2026-04,katalyststreet-public,Artifact Registry,Artifact Registry Network Internet Egress North America to North America,0.22,-0.22,0.0
+2026-04,pid-architect-ehlu1,Cloud Storage,Download Worldwide Destinations (excluding Asia & Australia),0.0,0.0,0.0
+2026-04,pid-architect-ehlu1,Cloud Storage,Multi-Region Standard Class B Operations,0.0,0.0,0.0
+2026-04,pid-architect-ehlu1,Cloud Storage,Regional Standard Class A Operations,0.0,0.0,0.0
+2026-05,optimax-build1,Cloud Run,Services CPU (Request-based billing),17.51,-17.14,0.37
+2026-05,katalyststreet-public,Kubernetes Engine,Autopilot Pod mCPU Requests (us-central1),5.32,-5.16,0.16
+2026-05,optimax-build1,Cloud Run,Services Min Instance CPU (Request-based billing),1.22,-1.2,0.03
+2026-05,optimax-build1,Security Command Center,Organization Level Security Command Center Premium for Cloud Run - CPU Time,0.99,-0.96,0.03
+2026-05,katalyststreet-public,Kubernetes Engine,Autopilot Pod Memory Requests (us-central1),0.8,-0.78,0.02
+2026-05,katalyststreet-public,Security Command Center,Organization Level Security Command Center Premium for Kubernetes Pod - CPU Request,0.59,-0.57,0.02
+2026-05,katalyststreet-public,Artifact Registry,Artifact Registry Network Inter Region Egress North America to North America,0.29,-0.28,0.01
+2026-05,katalyststreet-public,Kubernetes Engine,Autopilot Kubernetes Clusters,13.3,-13.29,0.01
+2026-05,optimax-build1,Cloud Run,Services Memory (Request-based billing),0.91,-0.9,0.01
+2026-05,optimax-build1,Cloud Run,Services Min Instance Memory (Request-based billing),0.61,-0.61,0.01
+2026-05,katalyststreet-public,Artifact Registry,Artifact Registry Storage,0.5,-0.48,0.01
+2026-05,katalyststreet-public,Kubernetes Engine,Zonal Kubernetes Clusters,9.09,-9.08,0.01
+2026-05,deltamax-v1,Secret Manager,Secret version replica storage,0.0,-0.0,0.0
+2026-05,katalyststreet-public,Artifact Registry,Artifact Registry GOOGLE-API Egress,0.0,0.0,0.0
+2026-05,katalyststreet-public,Kubernetes Engine,Autopilot SSD Pod Ephemeral Storage Requests (us-central1),0.11,-0.11,0.0
+2026-05,katalyststreet-public,Cloud Run,Cloud Run Network Internet Data Transfer Out North America to North America,0.0,0.0,0.0
+2026-05,katalyststreet-public,Cloud Logging,Log Storage cost,0.0,0.0,0.0
+2026-05,katalyststreet-public,Cloud Run,Services CPU (Request-based billing),0.0,0.0,0.0

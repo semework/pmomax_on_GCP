@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="$lang$">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>$title$</title>
+  <style>
+    :root {
+      --ink: #172033;
+      --muted: #5b6678;
+      --soft: #f5f7fa;
+      --line: #d8dee8;
+      --brand: #ff6b1a;
+      --brand-dark: #b74a12;
+      --navy: #111827;
+    }
+    @page {
+      size: Letter;
+      margin: 0.72in 0.68in 0.76in;
+      @bottom-right {
+        content: "Page " counter(page);
+        color: #7b8494;
+        font-family: Inter, "Aptos", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        font-size: 8.4pt;
+      }
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      background: #fff;
+      color: var(--ink);
+      font-family: Inter, "Aptos", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      font-size: 11pt;
+      line-height: 1.52;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    .title-page {
+      min-height: 9.35in;
+      display: flex;
+      flex-direction: column;
+      background: linear-gradient(135deg, rgba(255,107,26,0.08), rgba(17,24,39,0.02) 42%, transparent 72%);
+      break-after: page;
+    }
+    .brand-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 0.34in;
+    }
+    .brand-row img { height: 0.72in; width: auto; }
+    .brand-text {
+      text-align: right;
+      color: var(--muted);
+      font-size: 10pt;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .eyebrow {
+      margin-top: 0.7in;
+      color: var(--brand-dark);
+      font-size: 10pt;
+      font-weight: 850;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+    }
+    .title-page h1 {
+      color: var(--navy);
+      font-size: 34pt;
+      line-height: 1.08;
+      max-width: 7in;
+      margin: 0.22in 0 0.16in;
+      letter-spacing: -0.01em;
+    }
+    .subtitle {
+      font-size: 18pt;
+      color: #344054;
+      font-weight: 650;
+    }
+    .rule {
+      width: 3.2in;
+      height: 3px;
+      background: var(--brand);
+      border-radius: 10px;
+      margin: 0.44in 0 0.34in;
+    }
+    .meta {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1.4fr;
+      gap: 0.16in;
+      max-width: 7.2in;
+    }
+    .meta-card {
+      border: 1px solid var(--line);
+      background: #fff;
+      border-radius: 10px;
+      padding: 0.16in 0.18in;
+    }
+    .meta-label {
+      color: var(--muted);
+      font-size: 8.4pt;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 850;
+    }
+    .meta-value {
+      margin-top: 0.04in;
+      font-weight: 750;
+    }
+    .title-footer {
+      margin-top: auto;
+      border-top: 1px solid var(--line);
+      padding-top: 0.18in;
+      color: var(--muted);
+      display: flex;
+      justify-content: space-between;
+      font-size: 9.5pt;
+    }
+    h1, h2, h3 { color: var(--navy); break-after: avoid; }
+    main h1 { font-size: 24pt; border-bottom: 2px solid var(--brand); padding-bottom: 0.08in; margin: 0 0 0.18in; }
+    h2 { font-size: 15pt; margin: 0.28in 0 0.1in; }
+    p { margin: 0 0 0.12in; color: #263145; }
+    ul { margin: 0.08in 0 0.2in 0.22in; padding-left: 0.15in; }
+    li { margin: 0.05in 0; }
+    blockquote {
+      margin: 0.18in 0 0.22in;
+      padding: 0.16in 0.2in 0.16in 0.22in;
+      border: 1px solid #f0c894;
+      border-left: 5px solid var(--brand);
+      border-radius: 10px;
+      background: linear-gradient(90deg, rgba(255,107,26,0.10), #fff);
+      break-inside: avoid;
+    }
+    blockquote p { margin: 0; }
+    .running-footer {
+      display: none;
+      position: fixed;
+      left: 0.68in;
+      right: 0.68in;
+      bottom: 0.34in;
+      display: flex;
+      justify-content: space-between;
+      color: #7b8494;
+      font-size: 8.4pt;
+      border-top: 1px solid #edf0f5;
+      padding-top: 0.06in;
+    }
+    @media print {
+      .running-footer { display: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <section class="title-page">
+    <div class="brand-row">
+      <img src="assets/pmomax_logo.png" alt="PMOMax">
+      <div class="brand-text">Katalyst Street<br>Executive Summary</div>
+    </div>
+    <div class="eyebrow">ISO/IEC 42001 Readiness Positioning</div>
+    <h1>$title$</h1>
+    <div class="subtitle">$subtitle$</div>
+    <div class="rule"></div>
+    <div class="meta">
+      <div class="meta-card"><div class="meta-label">Version</div><div class="meta-value">v1.0</div></div>
+      <div class="meta-card"><div class="meta-label">Date</div><div class="meta-value">May 19, 2026</div></div>
+      <div class="meta-card"><div class="meta-label">Audience</div><div class="meta-value">Enterprise buyers, governance, PMO, risk, compliance, and procurement teams</div></div>
+    </div>
+    <div class="title-footer">
+      <span>Informational only; not a certification claim.</span>
+      <span>Katalyst Street / PMOMax</span>
+    </div>
+  </section>
+  <main>$body$</main>
+</body>
+</html>

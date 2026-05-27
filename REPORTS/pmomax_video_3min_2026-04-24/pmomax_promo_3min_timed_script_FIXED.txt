@@ -1,0 +1,89 @@
+000.000-006.000
+Project initiation often starts fragmented. P M O Max brings everything into one structured workspace.
+
+006.000-012.000
+Teams can paste content, upload documents, load a guided demo, or begin from a structured blank start.
+
+012.000-018.000
+From raw material, P M O Max produces a complete and editable project initiation document.
+
+018.000-024.000
+Project information and business context are normalized for faster executive review.
+
+024.000-030.000
+Objectives and key performance indicators stay measurable, visible, and consistent.
+
+030.000-036.000
+Scope, deliverables, constraints, and dependencies remain explicit from the very beginning.
+
+036.000-042.000
+The entire initiation package stays aligned inside one shared system of record.
+
+042.000-048.000
+Planning becomes executable when schedules transform into a live Gantt chart.
+
+048.000-054.000
+Milestones, sequencing, and delivery timing become clear at a glance.
+
+054.000-060.000
+Execution detail stays connected to the same initiation document that created it.
+
+060.000-066.000
+People, resources, and budgets remain tied directly to the operational plan.
+
+066.000-072.000
+That gives delivery teams better context for staffing, tooling, and cost tradeoffs.
+
+072.000-078.000
+Risks, issues, and communications are surfaced before execution begins.
+
+078.000-084.000
+Teams review probability, impact, mitigation strategy, and decisions in one place.
+
+084.000-090.000
+Governance and compliance remain visible, actionable, and audit friendly.
+
+090.000-096.000
+Approvals, security, privacy checks, and readiness reviews are built directly into the workflow.
+
+096.000-102.000
+The artificial intelligence assistant works alongside the live project initiation document, not outside it.
+
+102.000-108.000
+Ask for summaries, rewrites, delivery risks, or compliance gaps in context.
+
+108.000-114.000
+The conversation remains connected to the same structured plan your team is executing.
+
+114.000-120.000
+General notes preserve the reasoning, assumptions, and decisions behind the plan.
+
+120.000-126.000
+Navigation keeps large project documents instantly explorable.
+
+126.000-132.000
+Built-in help gives teams fast, section-aware guidance exactly when they need it.
+
+132.000-138.000
+The user guide supports onboarding without pushing people outside the workflow.
+
+138.000-144.000
+When teams start from zero, Create Mode opens a guided entry point.
+
+144.000-150.000
+When they need value quickly, Load Demo shows the complete end-to-end system immediately.
+
+150.000-156.000
+Outputs are ready to move across stakeholders, reviews, and audit workflows.
+
+156.000-162.000
+P M O Max supports Microsoft Word, P D F exports, structured data files, and packaged deliverables from one workspace.
+
+162.000-168.000
+What changes here is the handoff between planning and execution.
+
+168.000-174.000
+P M O Max transforms project initiation into a governed, artificial-intelligence-enabled system of work.
+
+174.000-180.000
+P M O Max helps teams structure the project initiation document, align the team, and launch with confidence.

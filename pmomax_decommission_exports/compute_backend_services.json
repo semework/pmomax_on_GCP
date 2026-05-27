@@ -1,0 +1,120 @@
+[
+  {
+    "affinityCookieTtlSec": 0,
+    "backends": [
+      {
+        "balancingMode": "RATE",
+        "capacityScaler": 1,
+        "group": "https://www.googleapis.com/compute/v1/projects/katalyststreet-public/zones/us-central1-a/networkEndpointGroups/k8s1-9e2459bd-kube-system-default-http-backend-80-297ea027",
+        "maxRatePerEndpoint": 1
+      },
+      {
+        "balancingMode": "RATE",
+        "capacityScaler": 1,
+        "group": "https://www.googleapis.com/compute/v1/projects/katalyststreet-public/zones/us-central1-b/networkEndpointGroups/k8s1-9e2459bd-kube-system-default-http-backend-80-297ea027",
+        "maxRatePerEndpoint": 1
+      },
+      {
+        "balancingMode": "RATE",
+        "capacityScaler": 1,
+        "group": "https://www.googleapis.com/compute/v1/projects/katalyststreet-public/zones/us-central1-c/networkEndpointGroups/k8s1-9e2459bd-kube-system-default-http-backend-80-297ea027",
+        "maxRatePerEndpoint": 1
+      },
+      {
+        "balancingMode": "RATE",
+        "capacityScaler": 1,
+        "group": "https://www.googleapis.com/compute/v1/projects/katalyststreet-public/zones/us-central1-f/networkEndpointGroups/k8s1-9e2459bd-kube-system-default-http-backend-80-297ea027",
+        "maxRatePerEndpoint": 1
+      }
+    ],
+    "connectionDraining": {
+      "drainingTimeoutSec": 0
+    },
+    "creationTimestamp": "2026-03-03T13:55:52.462-08:00",
+    "description": "{\"kubernetes.io/service-name\":\"kube-system/default-http-backend\",\"kubernetes.io/service-port\":\"\\u0026ServiceBackendPort{Name:http,Number:0,}\",\"x-features\":[\"NEG\"]}",
+    "enableCDN": false,
+    "fingerprint": "yjYabRo_TQ8=",
+    "healthChecks": [
+      "https://www.googleapis.com/compute/v1/projects/katalyststreet-public/global/healthChecks/k8s1-9e2459bd-kube-system-default-http-backend-80-297ea027"
+    ],
+    "id": "7065440093704218119",
+    "kind": "compute#backendService",
+    "loadBalancingScheme": "EXTERNAL",
+    "logConfig": {
+      "enable": true,
+      "optionalMode": "EXCLUDE_ALL_OPTIONAL",
+      "sampleRate": 1
+    },
+    "name": "k8s1-9e2459bd-kube-system-default-http-backend-80-297ea027",
+    "port": 31121,
+    "portName": "port31121",
+    "protocol": "HTTP",
+    "selfLink": "https://www.googleapis.com/compute/v1/projects/katalyststreet-public/global/backendServices/k8s1-9e2459bd-kube-system-default-http-backend-80-297ea027",
+    "sessionAffinity": "NONE",
+    "timeoutSec": 30,
+    "usedBy": [
+      {
+        "reference": "https://www.googleapis.com/compute/v1/projects/katalyststreet-public/global/urlMaps/k8s2-um-l7pwee7v-pmomax-pmo-architect-ingress-9g7kws0u"
+      }
+    ]
+  },
+  {
+    "affinityCookieTtlSec": 0,
+    "backends": [
+      {
+        "balancingMode": "RATE",
+        "capacityScaler": 1,
+        "group": "https://www.googleapis.com/compute/v1/projects/katalyststreet-public/zones/us-central1-a/networkEndpointGroups/k8s1-9e2459bd-pmomax-pmo-architect-svc-80-23160eb3",
+        "maxRatePerEndpoint": 1
+      },
+      {
+        "balancingMode": "RATE",
+        "capacityScaler": 1,
+        "group": "https://www.googleapis.com/compute/v1/projects/katalyststreet-public/zones/us-central1-c/networkEndpointGroups/k8s1-9e2459bd-pmomax-pmo-architect-svc-80-23160eb3",
+        "maxRatePerEndpoint": 1
+      },
+      {
+        "balancingMode": "RATE",
+        "capacityScaler": 1,
+        "group": "https://www.googleapis.com/compute/v1/projects/katalyststreet-public/zones/us-central1-b/networkEndpointGroups/k8s1-9e2459bd-pmomax-pmo-architect-svc-80-23160eb3",
+        "maxRatePerEndpoint": 1
+      },
+      {
+        "balancingMode": "RATE",
+        "capacityScaler": 1,
+        "group": "https://www.googleapis.com/compute/v1/projects/katalyststreet-public/zones/us-central1-f/networkEndpointGroups/k8s1-9e2459bd-pmomax-pmo-architect-svc-80-23160eb3",
+        "maxRatePerEndpoint": 1
+      }
+    ],
+    "connectionDraining": {
+      "drainingTimeoutSec": 0
+    },
+    "creationTimestamp": "2026-03-03T14:15:40.042-08:00",
+    "description": "{\"kubernetes.io/service-name\":\"pmomax/pmo-architect-svc\",\"kubernetes.io/service-port\":\"\\u0026ServiceBackendPort{Name:,Number:80,}\",\"x-features\":[\"NEG\"]}",
+    "enableCDN": false,
+    "fingerprint": "Oiofz2TKKIw=",
+    "healthChecks": [
+      "https://www.googleapis.com/compute/v1/projects/katalyststreet-public/global/healthChecks/k8s1-9e2459bd-pmomax-pmo-architect-svc-80-23160eb3"
+    ],
+    "id": "3419669512655135587",
+    "kind": "compute#backendService",
+    "loadBalancingScheme": "EXTERNAL",
+    "logConfig": {
+      "enable": true,
+      "optionalMode": "EXCLUDE_ALL_OPTIONAL",
+      "sampleRate": 1
+    },
+    "name": "k8s1-9e2459bd-pmomax-pmo-architect-svc-80-23160eb3",
+    "port": 80,
+    "portName": "port0",
+    "protocol": "HTTP",
+    "selfLink": "https://www.googleapis.com/compute/v1/projects/katalyststreet-public/global/backendServices/k8s1-9e2459bd-pmomax-pmo-architect-svc-80-23160eb3",
+    "sessionAffinity": "NONE",
+    "timeoutSec": 30,
+    "usedBy": [
+      {
+        "reference": "https://www.googleapis.com/compute/v1/projects/katalyststreet-public/global/urlMaps/k8s2-um-l7pwee7v-pmomax-pmo-architect-ingress-9g7kws0u"
+      }
+    ]
+  }
+]

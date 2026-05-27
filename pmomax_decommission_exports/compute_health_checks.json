@@ -1,0 +1,38 @@
+[
+  {
+    "checkIntervalSec": 15,
+    "creationTimestamp": "2026-03-03T13:55:50.222-08:00",
+    "description": "Default kubernetes L7 Loadbalancing health check for NEG.",
+    "healthyThreshold": 1,
+    "httpHealthCheck": {
+      "portSpecification": "USE_SERVING_PORT",
+      "proxyHeader": "NONE",
+      "requestPath": "/healthz"
+    },
+    "id": "7738998511698109961",
+    "kind": "compute#healthCheck",
+    "name": "k8s1-9e2459bd-kube-system-default-http-backend-80-297ea027",
+    "selfLink": "https://www.googleapis.com/compute/v1/projects/katalyststreet-public/global/healthChecks/k8s1-9e2459bd-kube-system-default-http-backend-80-297ea027",
+    "timeoutSec": 15,
+    "type": "HTTP",
+    "unhealthyThreshold": 2
+  },
+  {
+    "checkIntervalSec": 10,
+    "creationTimestamp": "2026-03-03T14:15:38.122-08:00",
+    "description": "Kubernetes L7 health check generated with readiness probe settings.",
+    "healthyThreshold": 1,
+    "httpHealthCheck": {
+      "portSpecification": "USE_SERVING_PORT",
+      "proxyHeader": "NONE",
+      "requestPath": "/health"
+    },
+    "id": "3124318737856652133",
+    "kind": "compute#healthCheck",
+    "name": "k8s1-9e2459bd-pmomax-pmo-architect-svc-80-23160eb3",
+    "selfLink": "https://www.googleapis.com/compute/v1/projects/katalyststreet-public/global/healthChecks/k8s1-9e2459bd-pmomax-pmo-architect-svc-80-23160eb3",
+    "timeoutSec": 1,
+    "type": "HTTP",
+    "unhealthyThreshold": 2
+  }
+]

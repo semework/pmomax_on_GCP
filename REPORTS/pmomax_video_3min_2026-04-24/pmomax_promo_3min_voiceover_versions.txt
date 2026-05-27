@@ -1,0 +1,12 @@
+PMOMax promo 3-minute Google TTS variants
+Preferred master copied to:
+- REPORTS/pmomax_video_3min_2026-04-24/pmomax_promo_3min_voiceover.mp3
+- REPORTS/pmomax_video_3min_2026-04-24/pmomax_promo_3min_voiceover.wav
+- REPORTS/pmomax_video_3min_2026-04-24/pmomax_promo_3min_marketing_narration.mp3
+- REPORTS/pmomax_video_3min_2026-04-24/pmomax_promo_3min_marketing_narration.wav
+
+marketing_final: Marketing final
+  voice=en-US-Chirp3-HD-Leda rate=0.97 pitch=-0.7st gain_db=-0.8
+  mp3=REPORTS/pmomax_video_3min_2026-04-24/voiceover_versions_google_v2/pmomax_promo_3min_voiceover_marketing_final.mp3
+  wav=REPORTS/pmomax_video_3min_2026-04-24/voiceover_versions_google_v2/pmomax_promo_3min_voiceover_marketing_final.wav
+  duration_sec=180.8

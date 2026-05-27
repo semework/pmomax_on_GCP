@@ -1,0 +1,76 @@
+apiVersion: v1
+items:
+- apiVersion: autoscaling/v2
+  kind: HorizontalPodAutoscaler
+  metadata:
+    annotations:
+      components.gke.io/component-name: cluster-infra-metrics
+      components.gke.io/component-version: 1.35.2-gke.1
+      components.gke.io/layer: addon
+    creationTimestamp: "2026-03-03T21:53:28Z"
+    labels:
+      addonmanager.kubernetes.io/mode: Reconcile
+    name: kube-state-metrics
+    namespace: gke-managed-cim
+    resourceVersion: "1779476676637071018"
+    uid: 131a1e74-871c-4f99-9e8b-fbd4899f66c5
+  spec:
+    behavior:
+      scaleDown:
+        policies:
+        - periodSeconds: 1800
+          type: Pods
+          value: 1
+        selectPolicy: Max
+        stabilizationWindowSeconds: 3600
+      scaleUp:
+        policies:
+        - periodSeconds: 300
+          type: Pods
+          value: 1
+        selectPolicy: Max
+        stabilizationWindowSeconds: 900
+    maxReplicas: 10
+    metrics:
+    - resource:
+        name: memory
+        target:
+          averageValue: 400Mi
+          type: AverageValue
+      type: Resource
+    minReplicas: 1
+    scaleTargetRef:
+      apiVersion: apps/v1
+      kind: StatefulSet
+      name: kube-state-metrics
+  status:
+    conditions:
+    - lastTransitionTime: "2026-03-03T21:55:55Z"
+      message: recommended size matches current size
+      reason: ReadyForNewScale
+      status: "True"
+      type: AbleToScale
+    - lastTransitionTime: "2026-05-22T02:02:44Z"
+      message: the HPA was able to successfully calculate a replica count from memory
+        resource
+      reason: ValidMetricFound
+      status: "True"
+      type: ScalingActive
+    - lastTransitionTime: "2026-03-03T21:55:55Z"
+      message: the desired count is within the acceptable range
+      reason: DesiredWithinRange
+      status: "False"
+      type: ScalingLimited
+    currentMetrics:
+    - resource:
+        current:
+          averageUtilization: 27
+          averageValue: "36659200"
+          value: "36659200"
+        name: memory
+      type: Resource
+    currentReplicas: 1
+    desiredReplicas: 1
+kind: List
+metadata:
+  resourceVersion: ""

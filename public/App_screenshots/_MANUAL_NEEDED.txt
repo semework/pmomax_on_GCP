@@ -1,0 +1,8 @@
+PMOMax screenshot refresh report
+Base URL: https://pmo-architect-zxofcfyioq-ue.a.run.app
+Generated: 2026-04-07T16:57:21.628Z
+
+Manual follow-up needed for:
+- parsing_loading_state.png -> loading overlay too brief to capture automatically
+- export_pdf_opened.png -> captured export panel after click; actual opened PDF tab must be captured manually if required.
+- export_word_opened.png -> captured export panel after click; actual opened Word output must be captured manually if required.

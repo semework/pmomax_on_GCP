@@ -1,0 +1,33 @@
+PMOMax 3-minute promo video script
+Narration status: Google TTS
+
+00:00:00.000 - 00:00:06.000 | Narrator A | 00_landing_overview.png | Project initiation usually starts fragmented. PMOMax brings it into one structured workspace. | audio=5.74s
+00:00:06.000 - 00:00:12.000 | Narrator B | 02_project_controls.png | Teams can paste, upload, load a complete demo, or begin from a guided blank start. | audio=5.53s
+00:00:12.000 - 00:00:18.000 | Narrator A | 04_pid_sections_filled.png | From raw project material, PMOMax produces a complete, editable PID. | audio=5.73s
+00:00:18.000 - 00:00:24.000 | Narrator C | 05_project_info_overview.png | Project information and context are normalized immediately for decision-ready review. | audio=5.73s
+00:00:24.000 - 00:00:30.000 | Narrator A | 06_objectives_kpis.png | Objectives and KPIs stay measurable, visible, and consistent. | audio=5.44s
+00:00:30.000 - 00:00:36.000 | Narrator B | 07_scope_constraints.png | Scope, deliverables, constraints, and dependencies remain explicit from the start. | audio=5.75s
+00:00:36.000 - 00:00:42.000 | Narrator A | 01_workspace_full_demo.png | The entire initiation package stays aligned in one shared system. | audio=4.86s
+00:00:42.000 - 00:00:48.000 | Narrator C | 08_gantt_overview.png | Planning becomes executable when schedules turn into a live Gantt. | audio=4.98s
+00:00:48.000 - 00:00:54.000 | Narrator A | 08_gantt_overview.png | Milestones, sequencing, and delivery timing become visible at a glance. | audio=5.66s
+00:00:54.000 - 00:01:00.000 | Narrator B | 08_gantt_overview.png | Execution detail stays connected to the initiation document that produced it. | audio=4.50s
+00:01:00.000 - 00:01:06.000 | Narrator A | 09_people_resources_budget.png | People, resources, and budget are tied directly to the plan. | audio=4.78s
+00:01:06.000 - 00:01:12.000 | Narrator C | 09_people_resources_budget.png | That gives delivery teams context for staffing, tooling, and cost tradeoffs. | audio=5.73s
+00:01:12.000 - 00:01:18.000 | Narrator A | 10_risks_issues_communications.png | Risks, issues, and communications are surfaced before execution begins. | audio=5.73s
+00:01:18.000 - 00:01:24.000 | Narrator B | 10_risks_issues_communications.png | Instead of scattered notes, teams review probability, impact, mitigation, and decisions together. | audio=5.76s
+00:01:24.000 - 00:01:30.000 | Narrator A | 11_governance_compliance.png | Governance and compliance stay visible, actionable, and audit-friendly. | audio=5.29s
+00:01:30.000 - 00:01:36.000 | Narrator C | 11_governance_compliance.png | Approvals, security, privacy, and readiness checks are built into the workflow. | audio=5.73s
+00:01:36.000 - 00:01:42.000 | Narrator A | 13_ai_assistant_default.png | The AI assistant works alongside the live PID, not outside it. | audio=4.97s
+00:01:42.000 - 00:01:48.000 | Narrator B | 14_ai_assistant_chat.png | Ask for summaries, rewrites, delivery risks, or compliance gaps in project context. | audio=5.76s
+00:01:48.000 - 00:01:54.000 | Narrator A | 14_ai_assistant_chat.png | The conversation stays connected to the same structured plan your team is executing. | audio=5.73s
+00:01:54.000 - 00:02:00.000 | Narrator C | 12_general_notes.png | General Notes preserve the reasoning, assumptions, and working decisions behind the plan. | audio=5.74s
+00:02:00.000 - 00:02:06.000 | Narrator A | 01_workspace_full_demo.png | Navigation keeps large project documents instantly explorable. | audio=5.15s
+00:02:06.000 - 00:02:12.000 | Narrator B | 15_help_modal_open.png | Built-in help gives teams fast, section-aware guidance when they need it. | audio=4.40s
+00:02:12.000 - 00:02:18.000 | Narrator A | 16_user_guide_open.png | And the user guide supports onboarding without forcing people out of the workflow. | audio=5.57s
+00:02:18.000 - 00:02:24.000 | Narrator C | 17_create_mode.png | When teams want to start from zero, Create mode opens a guided entry point. | audio=5.68s
+00:02:24.000 - 00:02:30.000 | Narrator A | 01_workspace_full_demo.png | When they need to prove value fast, Load Demo shows the end-to-end system immediately. | audio=5.73s
+00:02:30.000 - 00:02:36.000 | Narrator B | 03_export_panel.png | Outputs are ready to move across stakeholders, reviews, and audits. | audio=4.39s
+00:02:36.000 - 00:02:42.000 | Narrator A | 03_export_panel.png | PMOMax supports Word, PDF, JSON, and packaged deliverables from the same workspace. | audio=5.73s
+00:02:42.000 - 00:02:48.000 | Narrator C | 04_pid_sections_filled.png | What changes here is the handoff between planning and execution. | audio=4.97s
+00:02:48.000 - 00:02:54.000 | Narrator A | 01_workspace_full_demo.png | PMOMax turns project initiation into a governed, AI-assisted operating system. | audio=5.73s
+00:02:54.000 - 00:03:00.000 | Narrator B | 01_workspace_full_demo.png | PMOMax. Structure the PID, align the team, and launch with confidence. | audio=5.15s

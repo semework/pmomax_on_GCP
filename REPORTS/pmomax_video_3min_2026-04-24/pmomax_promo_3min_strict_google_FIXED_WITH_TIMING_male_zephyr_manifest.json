@@ -1,0 +1,52 @@
+{
+  "voice_preset": "male_zephyr",
+  "voice": {
+    "name": "en-US-Chirp3-HD-Zephyr",
+    "speaking_rate": 0.78,
+    "gain_db": -1.0
+  },
+  "chunk_size": 5,
+  "chunk_silence_ms": 900,
+  "brand_pronunciation": "P M O Max",
+  "duration_wav_sec": 180.044,
+  "duration_mp3_sec": 180.044,
+  "word_count": 368,
+  "estimated_duration_sec": 180.0,
+  "estimated_wpm": 122.667,
+  "average_chunk_duration_sec": 29.257,
+  "natural_unfitted_duration_sec": 224.026,
+  "rush_retry_with_074_needed": false,
+  "raw_chunk_durations_sec": [
+    40.059,
+    33.039,
+    34.625,
+    39.747,
+    30.777,
+    41.281
+  ],
+  "chunk_tempo_factors": [
+    1.36953,
+    1.12953,
+    1.18375,
+    1.35886,
+    1.05219,
+    1.4113
+  ],
+  "line_count": 30,
+  "chunk_count": 6,
+  "timed_script_source": "REPORTS/pmomax_video_3min_2026-04-24/pmomax_promo_3min_timed_script_FIXED.txt",
+  "timed_script": "REPORTS/pmomax_video_3min_2026-04-24/pmomax_promo_3min_timed_script_FIXED.txt",
+  "spoken_script": "REPORTS/pmomax_video_3min_2026-04-24/pmomax_promo_3min_strict_google_FIXED_WITH_TIMING_male_zephyr_spoken_script.txt",
+  "wav": "REPORTS/pmomax_video_3min_2026-04-24/pmomax_promo_3min_strict_google_FIXED_WITH_TIMING_male_zephyr.wav",
+  "mp3": "REPORTS/pmomax_video_3min_2026-04-24/pmomax_promo_3min_strict_google_FIXED_WITH_TIMING_male_zephyr.mp3",
+  "notes": [
+    "Timed script is preserved for video alignment",
+    "Timestamps are never sent to TTS",
+    "Natural punctuation kept for cadence",
+    "No URLs, filenames, timestamps, or version-like dotted numbers in spoken text",
+    "Brand spoken as P M O Max to avoid Pimo",
+    "PDF spoken as P D F",
+    "JSON replaced with structured data files",
+    "AI replaced with artificial intelligence"
+  ]
+}

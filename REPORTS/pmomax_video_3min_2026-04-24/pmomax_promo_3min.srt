@@ -1,0 +1,119 @@
+1
+00:00:00,000 --> 00:00:06,000
+Project initiation usually starts fragmented. PMOMax brings it into one structured workspace.
+
+2
+00:00:06,000 --> 00:00:12,000
+Teams can paste, upload, load a complete demo, or begin from a guided blank start.
+
+3
+00:00:12,000 --> 00:00:18,000
+From raw project material, PMOMax produces a complete, editable PID.
+
+4
+00:00:18,000 --> 00:00:24,000
+Project information and context are normalized immediately for decision-ready review.
+
+5
+00:00:24,000 --> 00:00:30,000
+Objectives and KPIs stay measurable, visible, and consistent.
+
+6
+00:00:30,000 --> 00:00:36,000
+Scope, deliverables, constraints, and dependencies remain explicit from the start.
+
+7
+00:00:36,000 --> 00:00:42,000
+The entire initiation package stays aligned in one shared system.
+
+8
+00:00:42,000 --> 00:00:48,000
+Planning becomes executable when schedules turn into a live Gantt.
+
+9
+00:00:48,000 --> 00:00:54,000
+Milestones, sequencing, and delivery timing become visible at a glance.
+
+10
+00:00:54,000 --> 00:01:00,000
+Execution detail stays connected to the initiation document that produced it.
+
+11
+00:01:00,000 --> 00:01:06,000
+People, resources, and budget are tied directly to the plan.
+
+12
+00:01:06,000 --> 00:01:12,000
+That gives delivery teams context for staffing, tooling, and cost tradeoffs.
+
+13
+00:01:12,000 --> 00:01:18,000
+Risks, issues, and communications are surfaced before execution begins.
+
+14
+00:01:18,000 --> 00:01:24,000
+Instead of scattered notes, teams review probability, impact, mitigation, and decisions together.
+
+15
+00:01:24,000 --> 00:01:30,000
+Governance and compliance stay visible, actionable, and audit-friendly.
+
+16
+00:01:30,000 --> 00:01:36,000
+Approvals, security, privacy, and readiness checks are built into the workflow.
+
+17
+00:01:36,000 --> 00:01:42,000
+The AI assistant works alongside the live PID, not outside it.
+
+18
+00:01:42,000 --> 00:01:48,000
+Ask for summaries, rewrites, delivery risks, or compliance gaps in project context.
+
+19
+00:01:48,000 --> 00:01:54,000
+The conversation stays connected to the same structured plan your team is executing.
+
+20
+00:01:54,000 --> 00:02:00,000
+General Notes preserve the reasoning, assumptions, and working decisions behind the plan.
+
+21
+00:02:00,000 --> 00:02:06,000
+Navigation keeps large project documents instantly explorable.
+
+22
+00:02:06,000 --> 00:02:12,000
+Built-in help gives teams fast, section-aware guidance when they need it.
+
+23
+00:02:12,000 --> 00:02:18,000
+And the user guide supports onboarding without forcing people out of the workflow.
+
+24
+00:02:18,000 --> 00:02:24,000
+When teams want to start from zero, Create mode opens a guided entry point.
+
+25
+00:02:24,000 --> 00:02:30,000
+When they need to prove value fast, Load Demo shows the end-to-end system immediately.
+
+26
+00:02:30,000 --> 00:02:36,000
+Outputs are ready to move across stakeholders, reviews, and audits.
+
+27
+00:02:36,000 --> 00:02:42,000
+PMOMax supports Word, PDF, JSON, and packaged deliverables from the same workspace.
+
+28
+00:02:42,000 --> 00:02:48,000
+What changes here is the handoff between planning and execution.
+
+29
+00:02:48,000 --> 00:02:54,000
+PMOMax turns project initiation into a governed, AI-assisted operating system.
+
+30
+00:02:54,000 --> 00:03:00,000
+PMOMax Structure the PID, align the team, and launch with confidence.

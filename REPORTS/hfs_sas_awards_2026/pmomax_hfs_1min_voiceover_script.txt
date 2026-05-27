@@ -1,0 +1,13 @@
+PMOMax 3-minute promo video script
+Narration status: Google TTS
+
+00:00:00.000 - 00:00:06.000 | Narrator A | 00_landing_overview.png | Project initiation usually starts fragmented. PMOMax brings it into one structured workspace. | audio=5.74s
+00:00:06.000 - 00:00:12.000 | Narrator B | 02_project_controls.png | Teams can paste, upload, load a complete demo, or begin from a guided blank start. | audio=5.53s
+00:00:12.000 - 00:00:18.000 | Narrator A | 04_pid_sections_filled.png | From raw project material, PMOMax produces a complete, editable PID. | audio=5.73s
+00:00:18.000 - 00:00:24.000 | Narrator C | 05_project_info_overview.png | Project information and context are normalized immediately for decision-ready review. | audio=5.73s
+00:00:24.000 - 00:00:30.000 | Narrator A | 06_objectives_kpis.png | Objectives and KPIs stay measurable, visible, and consistent. | audio=5.44s
+00:00:30.000 - 00:00:36.000 | Narrator B | 07_scope_constraints.png | Scope, deliverables, constraints, and dependencies remain explicit from the start. | audio=5.75s
+00:00:36.000 - 00:00:42.000 | Narrator A | 01_workspace_full_demo.png | The entire initiation package stays aligned in one shared system. | audio=4.86s
+
+
+Senior AI/ML Engineer, GenAI Systems Architect, and Neuroscientist with 12+ years of experience building production-grade generative AI, agentic AI, and machine-learning systems across cloud, biomedical, and enterprise environments. Expertise includes LLMs, RAG pipelines, LangChain/LangGraph orchestration, vector search, embeddings, FastAPI microservices, and scalable cloud-native AI infrastructure on GCP and AWS. Proven track record designing and deploying evaluation-driven GenAI platforms, multi-agent workflows, and enterprise GenAI applications from research through production deployment.

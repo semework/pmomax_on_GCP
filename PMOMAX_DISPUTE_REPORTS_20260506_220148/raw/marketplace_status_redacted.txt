@@ -1,0 +1,28 @@
+=== MARKETPLACE / SERVICE CONTROL SERVICES ===
+cloudcommerceconsumerprocurement.googleapis.com     Cloud Commerce Consumer Procurement API
+cloudcommerceprocurement.googleapis.com             Cloud Commerce Partner Procurement API
+cloudcommerceproducer.googleapis.com                Cloud Commerce Producer API
+pmo-max.endpoints.katalyststreet-public.cloud.goog  PMOMax
+servicecontrol.googleapis.com                       Service Control API
+
+=== CLOUD RUN MARKETPLACE ENVIRONMENT, REDACTED ===
+status:
+  traffic:
+  - latestRevision: true
+    percent: 100
+    revisionName: pmo-architect-00032-nn7
+  url: https://pmo-architect-zxofcfyioq-ue.a.run.app
+
+=== PMOMAX SERVICE ENABLED CHECK ===
+pmo-max.endpoints.katalyststreet-public.cloud.goog  PMOMax
+
+=== ARTIFACT REPOSITORIES USED FOR MARKETPLACE IMAGES ===
+                                                                               ARTIFACT_REGISTRY
+REPOSITORY  FORMAT  MODE                 DESCRIPTION                               LOCATION     LABELS  ENCRYPTION          CREATE_TIME          UPDATE_TIME          SIZE (MB)
+apps        DOCKER  STANDARD_REPOSITORY  PMOMax application images (multi-region)  us                   Google-managed key  2026-02-06T14:32:11  2026-02-16T21:37:20  751.499
+gcr.io      DOCKER  STANDARD_REPOSITORY                                            us                   Google-managed key  2026-03-09T22:28:33  2026-03-09T22:34:22  105.391
+pmomax      DOCKER  STANDARD_REPOSITORY                                            us                   Google-managed key  2026-02-16T20:14:38  2026-04-30T13:10:03  1867.255
+us.gcr.io   DOCKER  STANDARD_REPOSITORY                                            us                   Google-managed key  2024-09-29T08:25:44  2024-09-29T08:30:29  601.112
+apps        DOCKER  STANDARD_REPOSITORY  PMOMax application images                 us-central1          Google-managed key  2026-01-22T18:31:08  2026-01-22T18:31:08  0
+apps        DOCKER  STANDARD_REPOSITORY  PMOMax application images                 us-east1             Google-managed key  2026-01-22T18:38:53  2026-04-30T13:05:19  26672.122
+pmomax      DOCKER  STANDARD_REPOSITORY  PMOMax Docker images                      us-east1             Google-managed key  2026-02-02T01:06:47  2026-03-03T20:27:14  1206.914

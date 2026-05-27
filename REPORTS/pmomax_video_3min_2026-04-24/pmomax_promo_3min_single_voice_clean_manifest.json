@@ -1,0 +1,217 @@
+{
+  "voice": "en-US-Chirp3-HD-Leda",
+  "label": "Premium single voice",
+  "duration_sec": 180.8,
+  "segments": [
+    {
+      "id": "01",
+      "start": 0.0,
+      "end": 6.0,
+      "processed_duration": 5.719,
+      "text": "Project initiation often starts fragmented. PMOMax brings it into one structured workspace."
+    },
+    {
+      "id": "02",
+      "start": 6.0,
+      "end": 12.0,
+      "processed_duration": 5.64,
+      "text": "Teams can paste, upload, load a demo, or begin from a guided blank start."
+    },
+    {
+      "id": "03",
+      "start": 12.0,
+      "end": 18.0,
+      "processed_duration": 5.815,
+      "text": "From raw material, PMOMax produces a complete, editable project initiation document."
+    },
+    {
+      "id": "04",
+      "start": 18.0,
+      "end": 24.0,
+      "processed_duration": 4.265,
+      "text": "Project information and context are normalized for faster review."
+    },
+    {
+      "id": "05",
+      "start": 24.0,
+      "end": 30.0,
+      "processed_duration": 5.813,
+      "text": "Objectives and key performance indicators stay measurable, visible, and consistent."
+    },
+    {
+      "id": "06",
+      "start": 30.0,
+      "end": 36.0,
+      "processed_duration": 5.452,
+      "text": "Scope, deliverables, constraints, and dependencies stay explicit from the start."
+    },
+    {
+      "id": "07",
+      "start": 36.0,
+      "end": 42.0,
+      "processed_duration": 4.287,
+      "text": "The full initiation package stays aligned in one shared system."
+    },
+    {
+      "id": "08",
+      "start": 42.0,
+      "end": 48.0,
+      "processed_duration": 4.923,
+      "text": "Planning becomes executable when schedules turn into a live gantt chart."
+    },
+    {
+      "id": "09",
+      "start": 48.0,
+      "end": 54.0,
+      "processed_duration": 4.458,
+      "text": "Milestones, sequencing, and delivery timing become clear at a glance."
+    },
+    {
+      "id": "10",
+      "start": 54.0,
+      "end": 60.0,
+      "processed_duration": 5.064,
+      "text": "Execution detail stays connected to the initiation document that created it."
+    },
+    {
+      "id": "11",
+      "start": 60.0,
+      "end": 66.0,
+      "processed_duration": 4.586,
+      "text": "People, resources, and budget stay tied directly to the plan."
+    },
+    {
+      "id": "12",
+      "start": 66.0,
+      "end": 72.0,
+      "processed_duration": 5.122,
+      "text": "That gives delivery teams context for staffing, tooling, and cost tradeoffs."
+    },
+    {
+      "id": "13",
+      "start": 72.0,
+      "end": 78.0,
+      "processed_duration": 5.632,
+      "text": "Risks, issues, and communications are surfaced before execution begins."
+    },
+    {
+      "id": "14",
+      "start": 78.0,
+      "end": 84.0,
+      "processed_duration": 5.591,
+      "text": "Teams review probability, impact, mitigation, and decisions in one place."
+    },
+    {
+      "id": "15",
+      "start": 84.0,
+      "end": 90.0,
+      "processed_duration": 4.547,
+      "text": "Governance and compliance stay visible, actionable, and audit friendly."
+    },
+    {
+      "id": "16",
+      "start": 90.0,
+      "end": 96.0,
+      "processed_duration": 4.7,
+      "text": "Approvals, security, privacy, and readiness checks are built into the workflow."
+    },
+    {
+      "id": "17",
+      "start": 96.0,
+      "end": 102.0,
+      "processed_duration": 5.82,
+      "text": "The AI assistant works alongside the live project initiation document, not outside it."
+    },
+    {
+      "id": "18",
+      "start": 102.0,
+      "end": 108.0,
+      "processed_duration": 5.703,
+      "text": "Ask for summaries, rewrites, delivery risks, or compliance gaps in context."
+    },
+    {
+      "id": "19",
+      "start": 108.0,
+      "end": 114.0,
+      "processed_duration": 4.999,
+      "text": "The conversation stays connected to the same structured plan your team is executing."
+    },
+    {
+      "id": "20",
+      "start": 114.0,
+      "end": 120.0,
+      "processed_duration": 4.428,
+      "text": "General Notes preserve the reasoning, assumptions, and decisions behind the plan."
+    },
+    {
+      "id": "21",
+      "start": 120.0,
+      "end": 126.0,
+      "processed_duration": 4.313,
+      "text": "Navigation keeps large project documents instantly explorable."
+    },
+    {
+      "id": "22",
+      "start": 126.0,
+      "end": 132.0,
+      "processed_duration": 4.312,
+      "text": "Built-in help gives teams fast, section-aware guidance when they need it."
+    },
+    {
+      "id": "23",
+      "start": 132.0,
+      "end": 138.0,
+      "processed_duration": 3.965,
+      "text": "The user guide supports onboarding without pushing people out of the workflow."
+    },
+    {
+      "id": "24",
+      "start": 138.0,
+      "end": 144.0,
+      "processed_duration": 4.846,
+      "text": "When teams start from zero, Create mode opens a guided entry point."
+    },
+    {
+      "id": "25",
+      "start": 144.0,
+      "end": 150.0,
+      "processed_duration": 4.658,
+      "text": "When they need value fast, Load Demo shows the end-to-end system immediately."
+    },
+    {
+      "id": "26",
+      "start": 150.0,
+      "end": 156.0,
+      "processed_duration": 4.808,
+      "text": "Outputs are ready to move across stakeholders, reviews, and audits."
+    },
+    {
+      "id": "27",
+      "start": 156.0,
+      "end": 162.0,
+      "processed_duration": 5.82,
+      "text": "PMOMax exports Word, PDF, JSON, and packaged deliverables."
+    },
+    {
+      "id": "28",
+      "start": 162.0,
+      "end": 168.0,
+      "processed_duration": 3.864,
+      "text": "What changes here is the handoff between planning and execution."
+    },
+    {
+      "id": "29",
+      "start": 168.0,
+      "end": 174.0,
+      "processed_duration": 5.817,
+      "text": "PMOMax turns project initiation into a governed, AI-assisted system of work."
+    },
+    {
+      "id": "30",
+      "start": 174.0,
+      "end": 180.0,
+      "processed_duration": 5.82,
+      "text": "PMOMax: structure the project initiation document, align the team, and launch with confidence."
+    }
+  ]
+}

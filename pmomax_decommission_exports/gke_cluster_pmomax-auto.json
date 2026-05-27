@@ -1,0 +1,1272 @@
+{
+  "addonsConfig": {
+    "dnsCacheConfig": {
+      "enabled": true
+    },
+    "gcePersistentDiskCsiDriverConfig": {
+      "enabled": true
+    },
+    "gcpFilestoreCsiDriverConfig": {
+      "enabled": true
+    },
+    "gcsFuseCsiDriverConfig": {
+      "enabled": true
+    },
+    "kubernetesDashboard": {
+      "disabled": true
+    },
+    "networkPolicyConfig": {
+      "disabled": true
+    },
+    "parallelstoreCsiDriverConfig": {
+      "enabled": true
+    },
+    "statefulHaConfig": {
+      "enabled": true
+    }
+  },
+  "anonymousAuthenticationConfig": {
+    "mode": "ENABLED"
+  },
+  "autopilot": {
+    "enabled": true
+  },
+  "autoscaling": {
+    "autoprovisioningNodePoolDefaults": {
+      "imageType": "COS_CONTAINERD",
+      "management": {
+        "autoRepair": true,
+        "autoUpgrade": true
+      },
+      "oauthScopes": [
+        "https://www.googleapis.com/auth/devstorage.read_only",
+        "https://www.googleapis.com/auth/logging.write",
+        "https://www.googleapis.com/auth/monitoring",
+        "https://www.googleapis.com/auth/service.management.readonly",
+        "https://www.googleapis.com/auth/servicecontrol",
+        "https://www.googleapis.com/auth/trace.append"
+      ],
+      "serviceAccount": "default",
+      "upgradeSettings": {
+        "maxSurge": 1,
+        "strategy": "SURGE"
+      }
+    },
+    "autoscalingProfile": "OPTIMIZE_UTILIZATION",
+    "enableNodeAutoprovisioning": true,
+    "resourceLimits": [
+      {
+        "maximum": "1000000000",
+        "resourceType": "cpu"
+      },
+      {
+        "maximum": "1000000000",
+        "resourceType": "memory"
+      },
+      {
+        "maximum": "1000000000",
+        "resourceType": "nvidia-tesla-t4"
+      },
+      {
+        "maximum": "1000000000",
+        "resourceType": "nvidia-tesla-a100"
+      }
+    ]
+  },
+  "clusterIpv4Cidr": "10.23.0.0/17",
+  "controlPlaneEgress": {
+    "mode": "VIA_CONTROL_PLANE"
+  },
+  "controlPlaneEndpointsConfig": {
+    "dnsEndpointConfig": {
+      "allowExternalTraffic": false,
+      "enableK8sCertsViaDns": false,
+      "enableK8sTokensViaDns": false,
+      "endpoint": "gke-9fdece83d4254309a304ce9f9e66a19938ab-839982691485.us-central1.gke.goog"
+    },
+    "ipEndpointsConfig": {
+      "authorizedNetworksConfig": {},
+      "enablePublicEndpoint": true,
+      "enabled": true,
+      "privateEndpoint": "10.128.0.3",
+      "publicEndpoint": "34.60.95.73"
+    }
+  },
+  "createTime": "2026-03-03T21:47:21+00:00",
+  "currentMasterVersion": "1.35.3-gke.1389000",
+  "currentNodeCount": 2,
+  "currentNodeVersion": "1.35.3-gke.1389000",
+  "databaseEncryption": {
+    "currentState": "CURRENT_STATE_DECRYPTED",
+    "state": "DECRYPTED"
+  },
+  "defaultMaxPodsConstraint": {
+    "maxPodsPerNode": "110"
+  },
+  "endpoint": "34.60.95.73",
+  "enterpriseConfig": {
+    "clusterTier": "STANDARD"
+  },
+  "etag": "870bab1e-7683-4130-ba5a-a27923a928ea",
+  "id": "9fdece83d4254309a304ce9f9e66a19938abd2d43e744b949237c391362e0870",
+  "initialClusterVersion": "1.34.3-gke.1318000",
+  "instanceGroupUrls": [
+    "https://www.googleapis.com/compute/v1/projects/katalyststreet-public/zones/us-central1-a/instanceGroupManagers/gk3-pmomax-auto-default-pool-428c3988-grp",
+    "https://www.googleapis.com/compute/v1/projects/katalyststreet-public/zones/us-central1-a/instanceGroupManagers/gk3-pmomax-auto-pool-1-cc606720-grp",
+    "https://www.googleapis.com/compute/v1/projects/katalyststreet-public/zones/us-central1-b/instanceGroupManagers/gk3-pmomax-auto-pool-1-ee28cfe5-grp",
+    "https://www.googleapis.com/compute/v1/projects/katalyststreet-public/zones/us-central1-c/instanceGroupManagers/gk3-pmomax-auto-pool-1-b020ddf0-grp",
+    "https://www.googleapis.com/compute/v1/projects/katalyststreet-public/zones/us-central1-f/instanceGroupManagers/gk3-pmomax-auto-pool-1-fa02134b-grp",
+    "https://www.googleapis.com/compute/v1/projects/katalyststreet-public/zones/us-central1-a/instanceGroupManagers/gk3-pmomax-auto-pool-2-46493e36-grp",
+    "https://www.googleapis.com/compute/v1/projects/katalyststreet-public/zones/us-central1-b/instanceGroupManagers/gk3-pmomax-auto-pool-2-b5af5ad0-grp",
+    "https://www.googleapis.com/compute/v1/projects/katalyststreet-public/zones/us-central1-c/instanceGroupManagers/gk3-pmomax-auto-pool-2-08345165-grp",
+    "https://www.googleapis.com/compute/v1/projects/katalyststreet-public/zones/us-central1-f/instanceGroupManagers/gk3-pmomax-auto-pool-2-3eb71742-grp",
+    "https://www.googleapis.com/compute/v1/projects/katalyststreet-public/zones/us-central1-a/instanceGroupManagers/gk3-pmomax-auto-pool-3-4af3edff-grp",
+    "https://www.googleapis.com/compute/v1/projects/katalyststreet-public/zones/us-central1-b/instanceGroupManagers/gk3-pmomax-auto-pool-3-f2d91ccb-grp",
+    "https://www.googleapis.com/compute/v1/projects/katalyststreet-public/zones/us-central1-c/instanceGroupManagers/gk3-pmomax-auto-pool-3-57b9cd3c-grp",
+    "https://www.googleapis.com/compute/v1/projects/katalyststreet-public/zones/us-central1-f/instanceGroupManagers/gk3-pmomax-auto-pool-3-2aa84bc2-grp",
+    "https://www.googleapis.com/compute/v1/projects/katalyststreet-public/zones/us-central1-a/instanceGroupManagers/gk3-pmomax-auto-pool-4-586b0a69-grp",
+    "https://www.googleapis.com/compute/v1/projects/katalyststreet-public/zones/us-central1-b/instanceGroupManagers/gk3-pmomax-auto-pool-4-a9b052d9-grp",
+    "https://www.googleapis.com/compute/v1/projects/katalyststreet-public/zones/us-central1-c/instanceGroupManagers/gk3-pmomax-auto-pool-4-bdfde659-grp",
+    "https://www.googleapis.com/compute/v1/projects/katalyststreet-public/zones/us-central1-f/instanceGroupManagers/gk3-pmomax-auto-pool-4-78abdf84-grp",
+    "https://www.googleapis.com/compute/v1/projects/katalyststreet-public/zones/us-central1-a/instanceGroupManagers/gk3-pmomax-auto-pool-5-b54a5c25-grp",
+    "https://www.googleapis.com/compute/v1/projects/katalyststreet-public/zones/us-central1-b/instanceGroupManagers/gk3-pmomax-auto-pool-5-4aaf9393-grp",
+    "https://www.googleapis.com/compute/v1/projects/katalyststreet-public/zones/us-central1-c/instanceGroupManagers/gk3-pmomax-auto-pool-5-363169c6-grp",
+    "https://www.googleapis.com/compute/v1/projects/katalyststreet-public/zones/us-central1-f/instanceGroupManagers/gk3-pmomax-auto-pool-5-fa2bd044-grp",
+    "https://www.googleapis.com/compute/v1/projects/katalyststreet-public/zones/us-central1-a/instanceGroupManagers/gk3-pmomax-auto-pool-6-2d0d4dd6-grp",
+    "https://www.googleapis.com/compute/v1/projects/katalyststreet-public/zones/us-central1-b/instanceGroupManagers/gk3-pmomax-auto-pool-6-c8b48955-grp",
+    "https://www.googleapis.com/compute/v1/projects/katalyststreet-public/zones/us-central1-c/instanceGroupManagers/gk3-pmomax-auto-pool-6-1c11fcc8-grp",
+    "https://www.googleapis.com/compute/v1/projects/katalyststreet-public/zones/us-central1-f/instanceGroupManagers/gk3-pmomax-auto-pool-6-eb96c26f-grp",
+    "https://www.googleapis.com/compute/v1/projects/katalyststreet-public/zones/us-central1-a/instanceGroupManagers/gk3-pmomax-auto-pool-7-f44586b5-grp",
+    "https://www.googleapis.com/compute/v1/projects/katalyststreet-public/zones/us-central1-b/instanceGroupManagers/gk3-pmomax-auto-pool-7-37457f16-grp",
+    "https://www.googleapis.com/compute/v1/projects/katalyststreet-public/zones/us-central1-c/instanceGroupManagers/gk3-pmomax-auto-pool-7-7a581d41-grp",
+    "https://www.googleapis.com/compute/v1/projects/katalyststreet-public/zones/us-central1-f/instanceGroupManagers/gk3-pmomax-auto-pool-7-46acea48-grp",
+    "https://www.googleapis.com/compute/v1/projects/katalyststreet-public/zones/us-central1-a/instanceGroupManagers/gk3-pmomax-auto-pool-8-891f690f-grp",
+    "https://www.googleapis.com/compute/v1/projects/katalyststreet-public/zones/us-central1-b/instanceGroupManagers/gk3-pmomax-auto-pool-8-22a06987-grp",
+    "https://www.googleapis.com/compute/v1/projects/katalyststreet-public/zones/us-central1-c/instanceGroupManagers/gk3-pmomax-auto-pool-8-cbe9c85b-grp",
+    "https://www.googleapis.com/compute/v1/projects/katalyststreet-public/zones/us-central1-f/instanceGroupManagers/gk3-pmomax-auto-pool-8-4347495a-grp",
+    "https://www.googleapis.com/compute/v1/projects/katalyststreet-public/zones/us-central1-a/instanceGroupManagers/gk3-pmomax-auto-pool-9-af8d0252-grp",
+    "https://www.googleapis.com/compute/v1/projects/katalyststreet-public/zones/us-central1-b/instanceGroupManagers/gk3-pmomax-auto-pool-9-c341c96a-grp",
+    "https://www.googleapis.com/compute/v1/projects/katalyststreet-public/zones/us-central1-c/instanceGroupManagers/gk3-pmomax-auto-pool-9-39e446d3-grp",
+    "https://www.googleapis.com/compute/v1/projects/katalyststreet-public/zones/us-central1-f/instanceGroupManagers/gk3-pmomax-auto-pool-9-eeaf9df9-grp"
+  ],
+  "ipAllocationPolicy": {
+    "clusterIpv4Cidr": "10.23.0.0/17",
+    "clusterIpv4CidrBlock": "10.23.0.0/17",
+    "clusterSecondaryRangeName": "gke-pmomax-auto-pods-9fdece83",
+    "defaultPodIpv4RangeUtilization": 0.0039,
+    "networkTierConfig": {
+      "networkTier": "NETWORK_TIER_DEFAULT"
+    },
+    "podCidrOverprovisionConfig": {},
+    "servicesIpv4Cidr": "34.118.224.0/20",
+    "servicesIpv4CidrBlock": "34.118.224.0/20",
+    "stackType": "IPV4",
+    "useIpAliases": true
+  },
+  "labelFingerprint": "6b020b5f",
+  "legacyAbac": {},
+  "location": "us-central1",
+  "locations": [
+    "us-central1-a",
+    "us-central1-b",
+    "us-central1-c",
+    "us-central1-f"
+  ],
+  "loggingConfig": {
+    "componentConfig": {
+      "enableComponents": [
+        "SYSTEM_COMPONENTS",
+        "WORKLOADS"
+      ]
+    }
+  },
+  "loggingService": "logging.googleapis.com/kubernetes",
+  "maintenancePolicy": {
+    "resourceVersion": "e3b0c442"
+  },
+  "masterAuth": {
+    "clientCertificateConfig": {},
+    "clusterCaCertificate": "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUVMVENDQXBXZ0F3SUJBZ0lSQU1qZ1MxcExsUU5NQUd1RWs3Y29FbGN3RFFZSktvWklodmNOQVFFTEJRQXcKTHpFdE1Dc0dBMVVFQXhNa1pUVTBPR1E1TkRNdE5UZGlNeTAwWVdSakxXRmtOelV0WmpVelpqYzRaR1JsTlRoaApNQ0FYRFRJMk1ETXdNekl3TkRjeU1sb1lEekl3TlRZd01qSTBNakUwTnpJeVdqQXZNUzB3S3dZRFZRUURFeVJsCk5UUTRaRGswTXkwMU4ySXpMVFJoWkdNdFlXUTNOUzFtTlRObU56aGtaR1UxT0dFd2dnR2lNQTBHQ1NxR1NJYjMKRFFFQkFRVUFBNElCandBd2dnR0tBb0lCZ1FEWHVRZUtqL3RkOUk5alR3ZGpUdjY4eXNvTXcvQ05BT2hlaTlNSwpYNUxPdWpDNHNlOVNqS3BXMWdsa1UxNGdsSkd4clh1TGVpTzlvcjFIamxnRlNkdWh6NC94cXUzWTFHZTIxdmY0Ck45L215aVY3dEpDYjFDUGlBYnVSQjVBajhPZEl6NDVHTEZqb0U2Q1crMnBvT25wblRDM2RmdXI3ai9jajlXQ28KNVhZUzlGb01UZk41NFN1cHJtY1Nwd25mbnY5b0J2bFI1ZGRkREM5dy84Q2QwaTBOQ3N1NGE2d1M2OGUva1JHUQppeG5GUnJQY0UzSXBucEVHV1g2NzBpY3RHQTNDazF3bDNWZmNtRHliVFc1OUhKbjZJNmhkeElvRHZSMzl0blhNCmtxOEgvdGxiT094SXBDY292QUJ1WnRDL3h0SEFJdmhsNktVSnZ0SE1JQXNiQ2E4SXFueHR0RlJEaFd5aWRkM0wKMlVGb1FGbkZwTnpUR3Jjb2xWajdEcVFrU3U4RE56bU1odEoya2hFdGs5RC9MY2J3OGZmNFgyZ3p2VHV1Z1pEQQpRSDQ2SUpWcEE5akNjUXZzVDh2K0lyaktNdFpzb0FqL2xoWGhINCtXeStmMWZOUzhyY0ZYWWdSZCt2WEFtQkJTCmVITVBiSDJLYzQwSUlKVVdGVUp2TGlGMlJUTUNBd0VBQWFOQ01FQXdEZ1lEVlIwUEFRSC9CQVFEQWdJRU1BOEcKQTFVZEV3RUIvd1FGTUFNQkFmOHdIUVlEVlIwT0JCWUVGRnFwV1owa0lsTXlyMDRpQjJqTlFwN0wvYVpjTUEwRwpDU3FHU0liM0RRRUJDd1VBQTRJQmdRQkhIazJueldLdDdZdkVUNE9iM1Z0bjRCZEI0eDN3ZDlaOHhNWnFuTmY3CmEzR0VyVHA0WVhWNXRGQnQxWWx6V2ZJdTM3MHplVU1wNldTbElXaFBNajQ4MnRUNnB5THQ0ajZUZjVweDkxQ0QKeWpyYlE5QjR0ODFlK2RuOHU1bk5Ma29pZWlCblIwR1NXUGFCakp0MVZBaTdySVBBLzYrL3FpNFNCNUxKWkFuQgpNTlI0ZGZhUEdQbWxERlJTN0kxc0pZVFlrNzVPWS9FK2NFUElMVXZ5Q1RrNzZrTTlnVGE0YS9IR2U5NWgxV3hlCmlHd2lVZHpmQWhmNWZWazdtS1FZR3dWRkV4SWV3V3pjNFg1d3FLdVZnRW9LWjZ4ZFRYTS9lWEc5eEhwbzRKL20KMTlZL0JuNURjTklDRTdhSmpLeTUrUExjTFY0VG9WK0dSTGxVdHh3SS92dnU5SU5EK2M4RTBNOWZYKzZDaEpTKwpSbVBncUxJb0czbGNvNzBWMW9udVRVUHR5YjE4dUVEUWpGZmFqRllxVW5oREY4bnUrY0ZhUXpHUmowQ2hxM0lTClBOZzJoeGRXcmxNTVpZZjd0VjJPdVg4ZTNQajQrdUt1RmZBWlJ4SW10Z1lTVHpYcnBYWmY5T01mTmFna2dET0IKWmxKVi9vak82N0lRZGtCdWdrVWltM0k9Ci0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K"
+  },
+  "masterAuthorizedNetworksConfig": {},
+  "monitoringConfig": {
+    "advancedDatapathObservabilityConfig": {
+      "enableMetrics": true
+    },
+    "componentConfig": {
+      "enableComponents": [
+        "SYSTEM_COMPONENTS",
+        "DEPLOYMENT",
+        "STATEFULSET",
+        "JOBSET",
+        "STORAGE",
+        "HPA",
+        "POD",
+        "DAEMONSET",
+        "CADVISOR",
+        "KUBELET",
+        "DCGM"
+      ]
+    },
+    "managedPrometheusConfig": {
+      "enabled": true
+    }
+  },
+  "monitoringService": "monitoring.googleapis.com/kubernetes",
+  "name": "pmomax-auto",
+  "network": "default",
+  "networkConfig": {
+    "datapathProvider": "ADVANCED_DATAPATH",
+    "dnsConfig": {
+      "clusterDns": "CLOUD_DNS",
+      "clusterDnsDomain": "cluster.local",
+      "clusterDnsScope": "CLUSTER_SCOPE"
+    },
+    "enableIntraNodeVisibility": true,
+    "gatewayApiConfig": {
+      "channel": "CHANNEL_STANDARD"
+    },
+    "network": "projects/katalyststreet-public/global/networks/default",
+    "serviceExternalIpsConfig": {},
+    "subnetwork": "projects/katalyststreet-public/regions/us-central1/subnetworks/default"
+  },
+  "nodeConfig": {
+    "bootDisk": {
+      "diskType": "pd-balanced",
+      "sizeGb": "100"
+    },
+    "diskSizeGb": 100,
+    "diskType": "pd-balanced",
+    "effectiveCgroupMode": "EFFECTIVE_CGROUP_MODE_V2",
+    "gcfsConfig": {
+      "enabled": true
+    },
+    "gvnic": {
+      "enabled": true
+    },
+    "imageType": "COS_CONTAINERD",
+    "kubeletConfig": {
+      "insecureKubeletReadonlyPortEnabled": false,
+      "maxParallelImagePulls": 2
+    },
+    "machineType": "ek-standard-8",
+    "metadata": {
+      "disable-legacy-endpoints": "true"
+    },
+    "oauthScopes": [
+      "https://www.googleapis.com/auth/devstorage.read_only",
+      "https://www.googleapis.com/auth/logging.write",
+      "https://www.googleapis.com/auth/monitoring",
+      "https://www.googleapis.com/auth/service.management.readonly",
+      "https://www.googleapis.com/auth/servicecontrol",
+      "https://www.googleapis.com/auth/trace.append"
+    ],
+    "reservationAffinity": {
+      "consumeReservationType": "NO_RESERVATION"
+    },
+    "resourceLabels": {
+      "goog-gke-node-pool-provisioning-model": "on-demand"
+    },
+    "serviceAccount": "default",
+    "shieldedInstanceConfig": {
+      "enableIntegrityMonitoring": true,
+      "enableSecureBoot": true
+    },
+    "taints": [
+      {
+        "effect": "NO_SCHEDULE",
+        "key": "cloud.google.com/gke-quick-remove",
+        "value": "true"
+      }
+    ],
+    "windowsNodeConfig": {},
+    "workloadMetadataConfig": {
+      "mode": "GKE_METADATA"
+    }
+  },
+  "nodePoolAutoConfig": {
+    "nodeKubeletConfig": {
+      "insecureKubeletReadonlyPortEnabled": false
+    }
+  },
+  "nodePoolDefaults": {
+    "nodeConfigDefaults": {
+      "gcfsConfig": {
+        "enabled": true
+      },
+      "loggingConfig": {
+        "variantConfig": {
+          "variant": "DEFAULT"
+        }
+      },
+      "nodeKubeletConfig": {
+        "insecureKubeletReadonlyPortEnabled": false
+      }
+    }
+  },
+  "nodePools": [
+    {
+      "autoscaling": {
+        "enabled": true,
+        "locationPolicy": "BALANCED",
+        "maxNodeCount": 1000
+      },
+      "config": {
+        "bootDisk": {
+          "diskType": "pd-balanced",
+          "sizeGb": "100"
+        },
+        "diskSizeGb": 100,
+        "diskType": "pd-balanced",
+        "effectiveCgroupMode": "EFFECTIVE_CGROUP_MODE_V2",
+        "gcfsConfig": {
+          "enabled": true
+        },
+        "gvnic": {
+          "enabled": true
+        },
+        "imageType": "COS_CONTAINERD",
+        "kubeletConfig": {
+          "insecureKubeletReadonlyPortEnabled": false,
+          "maxParallelImagePulls": 2
+        },
+        "machineType": "ek-standard-8",
+        "metadata": {
+          "disable-legacy-endpoints": "true"
+        },
+        "oauthScopes": [
+          "https://www.googleapis.com/auth/devstorage.read_only",
+          "https://www.googleapis.com/auth/logging.write",
+          "https://www.googleapis.com/auth/monitoring",
+          "https://www.googleapis.com/auth/service.management.readonly",
+          "https://www.googleapis.com/auth/servicecontrol",
+          "https://www.googleapis.com/auth/trace.append"
+        ],
+        "reservationAffinity": {
+          "consumeReservationType": "NO_RESERVATION"
+        },
+        "resourceLabels": {
+          "goog-gke-node-pool-provisioning-model": "on-demand"
+        },
+        "serviceAccount": "default",
+        "shieldedInstanceConfig": {
+          "enableIntegrityMonitoring": true,
+          "enableSecureBoot": true
+        },
+        "taints": [
+          {
+            "effect": "NO_SCHEDULE",
+            "key": "cloud.google.com/gke-quick-remove",
+            "value": "true"
+          }
+        ],
+        "windowsNodeConfig": {},
+        "workloadMetadataConfig": {
+          "mode": "GKE_METADATA"
+        }
+      },
+      "etag": "302463bd-1c01-49c1-be17-7929ab8a5205",
+      "initialNodeCount": 1,
+      "instanceGroupUrls": [
+        "https://www.googleapis.com/compute/v1/projects/katalyststreet-public/zones/us-central1-a/instanceGroupManagers/gk3-pmomax-auto-default-pool-428c3988-grp"
+      ],
+      "locations": [
+        "us-central1-a"
+      ],
+      "management": {
+        "autoRepair": true,
+        "autoUpgrade": true
+      },
+      "maxPodsConstraint": {
+        "maxPodsPerNode": "32"
+      },
+      "name": "default-pool",
+      "networkConfig": {
+        "networkTierConfig": {
+          "networkTier": "NETWORK_TIER_DEFAULT"
+        },
+        "podIpv4CidrBlock": "10.23.0.0/17",
+        "podIpv4RangeUtilization": 0.0039,
+        "podRange": "gke-pmomax-auto-pods-9fdece83",
+        "subnetwork": "projects/katalyststreet-public/regions/us-central1/subnetworks/default"
+      },
+      "podIpv4CidrSize": 26,
+      "selfLink": "https://container.googleapis.com/v1/projects/katalyststreet-public/locations/us-central1/clusters/pmomax-auto/nodePools/default-pool",
+      "status": "RUNNING",
+      "upgradeSettings": {
+        "maxSurge": 1,
+        "strategy": "SURGE"
+      },
+      "version": "1.35.3-gke.1389000"
+    },
+    {
+      "autoscaling": {
+        "enabled": true,
+        "locationPolicy": "BALANCED",
+        "maxNodeCount": 1000
+      },
+      "config": {
+        "bootDisk": {
+          "diskType": "pd-balanced",
+          "sizeGb": "100"
+        },
+        "diskSizeGb": 100,
+        "diskType": "pd-balanced",
+        "effectiveCgroupMode": "EFFECTIVE_CGROUP_MODE_V2",
+        "gcfsConfig": {
+          "enabled": true
+        },
+        "gvnic": {
+          "enabled": true
+        },
+        "imageType": "COS_CONTAINERD",
+        "kubeletConfig": {
+          "insecureKubeletReadonlyPortEnabled": false,
+          "maxParallelImagePulls": 2
+        },
+        "machineType": "ek-standard-8",
+        "metadata": {
+          "disable-legacy-endpoints": "true"
+        },
+        "oauthScopes": [
+          "https://www.googleapis.com/auth/devstorage.read_only",
+          "https://www.googleapis.com/auth/logging.write",
+          "https://www.googleapis.com/auth/monitoring",
+          "https://www.googleapis.com/auth/service.management.readonly",
+          "https://www.googleapis.com/auth/servicecontrol",
+          "https://www.googleapis.com/auth/trace.append"
+        ],
+        "reservationAffinity": {
+          "consumeReservationType": "NO_RESERVATION"
+        },
+        "resourceLabels": {
+          "goog-gke-node-pool-provisioning-model": "on-demand"
+        },
+        "serviceAccount": "default",
+        "shieldedInstanceConfig": {
+          "enableIntegrityMonitoring": true,
+          "enableSecureBoot": true
+        },
+        "windowsNodeConfig": {},
+        "workloadMetadataConfig": {
+          "mode": "GKE_METADATA"
+        }
+      },
+      "etag": "c398fb3d-b2ef-4c93-bcef-47b10f817d74",
+      "instanceGroupUrls": [
+        "https://www.googleapis.com/compute/v1/projects/katalyststreet-public/zones/us-central1-a/instanceGroupManagers/gk3-pmomax-auto-pool-1-cc606720-grp",
+        "https://www.googleapis.com/compute/v1/projects/katalyststreet-public/zones/us-central1-b/instanceGroupManagers/gk3-pmomax-auto-pool-1-ee28cfe5-grp",
+        "https://www.googleapis.com/compute/v1/projects/katalyststreet-public/zones/us-central1-c/instanceGroupManagers/gk3-pmomax-auto-pool-1-b020ddf0-grp",
+        "https://www.googleapis.com/compute/v1/projects/katalyststreet-public/zones/us-central1-f/instanceGroupManagers/gk3-pmomax-auto-pool-1-fa02134b-grp"
+      ],
+      "locations": [
+        "us-central1-a",
+        "us-central1-b",
+        "us-central1-c",
+        "us-central1-f"
+      ],
+      "management": {
+        "autoRepair": true,
+        "autoUpgrade": true
+      },
+      "maxPodsConstraint": {
+        "maxPodsPerNode": "32"
+      },
+      "name": "pool-1",
+      "networkConfig": {
+        "networkTierConfig": {
+          "networkTier": "NETWORK_TIER_DEFAULT"
+        },
+        "podIpv4CidrBlock": "10.23.0.0/17",
+        "podIpv4RangeUtilization": 0.0039,
+        "podRange": "gke-pmomax-auto-pods-9fdece83",
+        "subnetwork": "projects/katalyststreet-public/regions/us-central1/subnetworks/default"
+      },
+      "podIpv4CidrSize": 26,
+      "selfLink": "https://container.googleapis.com/v1/projects/katalyststreet-public/locations/us-central1/clusters/pmomax-auto/nodePools/pool-1",
+      "status": "RUNNING",
+      "upgradeSettings": {
+        "maxSurge": 1,
+        "strategy": "SURGE"
+      },
+      "version": "1.35.3-gke.1389000"
+    },
+    {
+      "autoscaling": {
+        "enabled": true,
+        "locationPolicy": "BALANCED",
+        "maxNodeCount": 1000
+      },
+      "config": {
+        "bootDisk": {
+          "diskType": "pd-balanced",
+          "sizeGb": "100"
+        },
+        "diskSizeGb": 100,
+        "diskType": "pd-balanced",
+        "effectiveCgroupMode": "EFFECTIVE_CGROUP_MODE_V2",
+        "gcfsConfig": {
+          "enabled": true
+        },
+        "gvnic": {
+          "enabled": true
+        },
+        "imageType": "COS_CONTAINERD",
+        "kubeletConfig": {
+          "insecureKubeletReadonlyPortEnabled": false,
+          "maxParallelImagePulls": 2
+        },
+        "machineType": "ek-standard-16",
+        "metadata": {
+          "disable-legacy-endpoints": "true"
+        },
+        "oauthScopes": [
+          "https://www.googleapis.com/auth/devstorage.read_only",
+          "https://www.googleapis.com/auth/logging.write",
+          "https://www.googleapis.com/auth/monitoring",
+          "https://www.googleapis.com/auth/service.management.readonly",
+          "https://www.googleapis.com/auth/servicecontrol",
+          "https://www.googleapis.com/auth/trace.append"
+        ],
+        "reservationAffinity": {
+          "consumeReservationType": "NO_RESERVATION"
+        },
+        "resourceLabels": {
+          "goog-gke-node-pool-provisioning-model": "on-demand"
+        },
+        "serviceAccount": "default",
+        "shieldedInstanceConfig": {
+          "enableIntegrityMonitoring": true,
+          "enableSecureBoot": true
+        },
+        "windowsNodeConfig": {},
+        "workloadMetadataConfig": {
+          "mode": "GKE_METADATA"
+        }
+      },
+      "etag": "e958d584-0adf-4c88-a40c-3da4394312ed",
+      "instanceGroupUrls": [
+        "https://www.googleapis.com/compute/v1/projects/katalyststreet-public/zones/us-central1-a/instanceGroupManagers/gk3-pmomax-auto-pool-2-46493e36-grp",
+        "https://www.googleapis.com/compute/v1/projects/katalyststreet-public/zones/us-central1-b/instanceGroupManagers/gk3-pmomax-auto-pool-2-b5af5ad0-grp",
+        "https://www.googleapis.com/compute/v1/projects/katalyststreet-public/zones/us-central1-c/instanceGroupManagers/gk3-pmomax-auto-pool-2-08345165-grp",
+        "https://www.googleapis.com/compute/v1/projects/katalyststreet-public/zones/us-central1-f/instanceGroupManagers/gk3-pmomax-auto-pool-2-3eb71742-grp"
+      ],
+      "locations": [
+        "us-central1-a",
+        "us-central1-b",
+        "us-central1-c",
+        "us-central1-f"
+      ],
+      "management": {
+        "autoRepair": true,
+        "autoUpgrade": true
+      },
+      "maxPodsConstraint": {
+        "maxPodsPerNode": "32"
+      },
+      "name": "pool-2",
+      "networkConfig": {
+        "networkTierConfig": {
+          "networkTier": "NETWORK_TIER_DEFAULT"
+        },
+        "podIpv4CidrBlock": "10.23.0.0/17",
+        "podIpv4RangeUtilization": 0.0039,
+        "podRange": "gke-pmomax-auto-pods-9fdece83",
+        "subnetwork": "projects/katalyststreet-public/regions/us-central1/subnetworks/default"
+      },
+      "podIpv4CidrSize": 26,
+      "selfLink": "https://container.googleapis.com/v1/projects/katalyststreet-public/locations/us-central1/clusters/pmomax-auto/nodePools/pool-2",
+      "status": "RUNNING",
+      "upgradeSettings": {
+        "maxSurge": 1,
+        "strategy": "SURGE"
+      },
+      "version": "1.35.3-gke.1389000"
+    },
+    {
+      "autoscaling": {
+        "enabled": true,
+        "locationPolicy": "BALANCED",
+        "maxNodeCount": 1000
+      },
+      "config": {
+        "bootDisk": {
+          "diskType": "pd-balanced",
+          "sizeGb": "100"
+        },
+        "diskSizeGb": 100,
+        "diskType": "pd-balanced",
+        "effectiveCgroupMode": "EFFECTIVE_CGROUP_MODE_V2",
+        "gcfsConfig": {
+          "enabled": true
+        },
+        "gvnic": {
+          "enabled": true
+        },
+        "imageType": "COS_CONTAINERD",
+        "kubeletConfig": {
+          "insecureKubeletReadonlyPortEnabled": false,
+          "maxParallelImagePulls": 2
+        },
+        "machineType": "ek-standard-32",
+        "metadata": {
+          "disable-legacy-endpoints": "true"
+        },
+        "oauthScopes": [
+          "https://www.googleapis.com/auth/devstorage.read_only",
+          "https://www.googleapis.com/auth/logging.write",
+          "https://www.googleapis.com/auth/monitoring",
+          "https://www.googleapis.com/auth/service.management.readonly",
+          "https://www.googleapis.com/auth/servicecontrol",
+          "https://www.googleapis.com/auth/trace.append"
+        ],
+        "reservationAffinity": {
+          "consumeReservationType": "NO_RESERVATION"
+        },
+        "resourceLabels": {
+          "goog-gke-node-pool-provisioning-model": "on-demand"
+        },
+        "serviceAccount": "default",
+        "shieldedInstanceConfig": {
+          "enableIntegrityMonitoring": true,
+          "enableSecureBoot": true
+        },
+        "windowsNodeConfig": {},
+        "workloadMetadataConfig": {
+          "mode": "GKE_METADATA"
+        }
+      },
+      "etag": "ad3eb37c-6235-44ba-b8a2-8fc78e8ce25e",
+      "instanceGroupUrls": [
+        "https://www.googleapis.com/compute/v1/projects/katalyststreet-public/zones/us-central1-a/instanceGroupManagers/gk3-pmomax-auto-pool-3-4af3edff-grp",
+        "https://www.googleapis.com/compute/v1/projects/katalyststreet-public/zones/us-central1-b/instanceGroupManagers/gk3-pmomax-auto-pool-3-f2d91ccb-grp",
+        "https://www.googleapis.com/compute/v1/projects/katalyststreet-public/zones/us-central1-c/instanceGroupManagers/gk3-pmomax-auto-pool-3-57b9cd3c-grp",
+        "https://www.googleapis.com/compute/v1/projects/katalyststreet-public/zones/us-central1-f/instanceGroupManagers/gk3-pmomax-auto-pool-3-2aa84bc2-grp"
+      ],
+      "locations": [
+        "us-central1-a",
+        "us-central1-b",
+        "us-central1-c",
+        "us-central1-f"
+      ],
+      "management": {
+        "autoRepair": true,
+        "autoUpgrade": true
+      },
+      "maxPodsConstraint": {
+        "maxPodsPerNode": "32"
+      },
+      "name": "pool-3",
+      "networkConfig": {
+        "networkTierConfig": {
+          "networkTier": "NETWORK_TIER_DEFAULT"
+        },
+        "podIpv4CidrBlock": "10.23.0.0/17",
+        "podIpv4RangeUtilization": 0.0039,
+        "podRange": "gke-pmomax-auto-pods-9fdece83",
+        "subnetwork": "projects/katalyststreet-public/regions/us-central1/subnetworks/default"
+      },
+      "podIpv4CidrSize": 26,
+      "selfLink": "https://container.googleapis.com/v1/projects/katalyststreet-public/locations/us-central1/clusters/pmomax-auto/nodePools/pool-3",
+      "status": "RUNNING",
+      "upgradeSettings": {
+        "maxSurge": 1,
+        "strategy": "SURGE"
+      },
+      "version": "1.35.3-gke.1389000"
+    },
+    {
+      "autoscaling": {
+        "enabled": true,
+        "locationPolicy": "BALANCED",
+        "maxNodeCount": 1000
+      },
+      "config": {
+        "bootDisk": {
+          "diskType": "pd-balanced",
+          "sizeGb": "100"
+        },
+        "diskSizeGb": 100,
+        "diskType": "pd-balanced",
+        "effectiveCgroupMode": "EFFECTIVE_CGROUP_MODE_V2",
+        "gcfsConfig": {
+          "enabled": true
+        },
+        "gvnic": {
+          "enabled": true
+        },
+        "imageType": "COS_CONTAINERD",
+        "kubeletConfig": {
+          "insecureKubeletReadonlyPortEnabled": false,
+          "maxParallelImagePulls": 2
+        },
+        "machineType": "e2-medium",
+        "metadata": {
+          "disable-legacy-endpoints": "true"
+        },
+        "oauthScopes": [
+          "https://www.googleapis.com/auth/devstorage.read_only",
+          "https://www.googleapis.com/auth/logging.write",
+          "https://www.googleapis.com/auth/monitoring",
+          "https://www.googleapis.com/auth/service.management.readonly",
+          "https://www.googleapis.com/auth/servicecontrol",
+          "https://www.googleapis.com/auth/trace.append"
+        ],
+        "reservationAffinity": {
+          "consumeReservationType": "NO_RESERVATION"
+        },
+        "resourceLabels": {
+          "goog-gke-node-pool-provisioning-model": "on-demand"
+        },
+        "serviceAccount": "default",
+        "shieldedInstanceConfig": {
+          "enableIntegrityMonitoring": true,
+          "enableSecureBoot": true
+        },
+        "windowsNodeConfig": {},
+        "workloadMetadataConfig": {
+          "mode": "GKE_METADATA"
+        }
+      },
+      "etag": "7c54ace2-51cb-4682-9cc4-8873a3e7e2e7",
+      "instanceGroupUrls": [
+        "https://www.googleapis.com/compute/v1/projects/katalyststreet-public/zones/us-central1-a/instanceGroupManagers/gk3-pmomax-auto-pool-4-586b0a69-grp",
+        "https://www.googleapis.com/compute/v1/projects/katalyststreet-public/zones/us-central1-b/instanceGroupManagers/gk3-pmomax-auto-pool-4-a9b052d9-grp",
+        "https://www.googleapis.com/compute/v1/projects/katalyststreet-public/zones/us-central1-c/instanceGroupManagers/gk3-pmomax-auto-pool-4-bdfde659-grp",
+        "https://www.googleapis.com/compute/v1/projects/katalyststreet-public/zones/us-central1-f/instanceGroupManagers/gk3-pmomax-auto-pool-4-78abdf84-grp"
+      ],
+      "locations": [
+        "us-central1-a",
+        "us-central1-b",
+        "us-central1-c",
+        "us-central1-f"
+      ],
+      "management": {
+        "autoRepair": true,
+        "autoUpgrade": true
+      },
+      "maxPodsConstraint": {
+        "maxPodsPerNode": "32"
+      },
+      "name": "pool-4",
+      "networkConfig": {
+        "networkTierConfig": {
+          "networkTier": "NETWORK_TIER_DEFAULT"
+        },
+        "podIpv4CidrBlock": "10.23.0.0/17",
+        "podIpv4RangeUtilization": 0.0039,
+        "podRange": "gke-pmomax-auto-pods-9fdece83",
+        "subnetwork": "projects/katalyststreet-public/regions/us-central1/subnetworks/default"
+      },
+      "podIpv4CidrSize": 26,
+      "selfLink": "https://container.googleapis.com/v1/projects/katalyststreet-public/locations/us-central1/clusters/pmomax-auto/nodePools/pool-4",
+      "status": "RUNNING",
+      "upgradeSettings": {
+        "maxSurge": 1,
+        "strategy": "SURGE"
+      },
+      "version": "1.35.3-gke.1389000"
+    },
+    {
+      "autoscaling": {
+        "enabled": true,
+        "locationPolicy": "BALANCED",
+        "maxNodeCount": 1000
+      },
+      "config": {
+        "bootDisk": {
+          "diskType": "pd-balanced",
+          "sizeGb": "100"
+        },
+        "diskSizeGb": 100,
+        "diskType": "pd-balanced",
+        "effectiveCgroupMode": "EFFECTIVE_CGROUP_MODE_V2",
+        "gcfsConfig": {
+          "enabled": true
+        },
+        "gvnic": {
+          "enabled": true
+        },
+        "imageType": "COS_CONTAINERD",
+        "kubeletConfig": {
+          "insecureKubeletReadonlyPortEnabled": false,
+          "maxParallelImagePulls": 2
+        },
+        "machineType": "e2-standard-2",
+        "metadata": {
+          "disable-legacy-endpoints": "true"
+        },
+        "oauthScopes": [
+          "https://www.googleapis.com/auth/devstorage.read_only",
+          "https://www.googleapis.com/auth/logging.write",
+          "https://www.googleapis.com/auth/monitoring",
+          "https://www.googleapis.com/auth/service.management.readonly",
+          "https://www.googleapis.com/auth/servicecontrol",
+          "https://www.googleapis.com/auth/trace.append"
+        ],
+        "reservationAffinity": {
+          "consumeReservationType": "NO_RESERVATION"
+        },
+        "resourceLabels": {
+          "goog-gke-node-pool-provisioning-model": "on-demand"
+        },
+        "serviceAccount": "default",
+        "shieldedInstanceConfig": {
+          "enableIntegrityMonitoring": true,
+          "enableSecureBoot": true
+        },
+        "windowsNodeConfig": {},
+        "workloadMetadataConfig": {
+          "mode": "GKE_METADATA"
+        }
+      },
+      "etag": "c49f1f15-3067-43ce-82a0-f945e1406736",
+      "instanceGroupUrls": [
+        "https://www.googleapis.com/compute/v1/projects/katalyststreet-public/zones/us-central1-a/instanceGroupManagers/gk3-pmomax-auto-pool-5-b54a5c25-grp",
+        "https://www.googleapis.com/compute/v1/projects/katalyststreet-public/zones/us-central1-b/instanceGroupManagers/gk3-pmomax-auto-pool-5-4aaf9393-grp",
+        "https://www.googleapis.com/compute/v1/projects/katalyststreet-public/zones/us-central1-c/instanceGroupManagers/gk3-pmomax-auto-pool-5-363169c6-grp",
+        "https://www.googleapis.com/compute/v1/projects/katalyststreet-public/zones/us-central1-f/instanceGroupManagers/gk3-pmomax-auto-pool-5-fa2bd044-grp"
+      ],
+      "locations": [
+        "us-central1-a",
+        "us-central1-b",
+        "us-central1-c",
+        "us-central1-f"
+      ],
+      "management": {
+        "autoRepair": true,
+        "autoUpgrade": true
+      },
+      "maxPodsConstraint": {
+        "maxPodsPerNode": "32"
+      },
+      "name": "pool-5",
+      "networkConfig": {
+        "networkTierConfig": {
+          "networkTier": "NETWORK_TIER_DEFAULT"
+        },
+        "podIpv4CidrBlock": "10.23.0.0/17",
+        "podIpv4RangeUtilization": 0.0039,
+        "podRange": "gke-pmomax-auto-pods-9fdece83",
+        "subnetwork": "projects/katalyststreet-public/regions/us-central1/subnetworks/default"
+      },
+      "podIpv4CidrSize": 26,
+      "selfLink": "https://container.googleapis.com/v1/projects/katalyststreet-public/locations/us-central1/clusters/pmomax-auto/nodePools/pool-5",
+      "status": "RUNNING",
+      "upgradeSettings": {
+        "maxSurge": 1,
+        "strategy": "SURGE"
+      },
+      "version": "1.35.3-gke.1389000"
+    },
+    {
+      "autoscaling": {
+        "enabled": true,
+        "locationPolicy": "BALANCED",
+        "maxNodeCount": 1000
+      },
+      "config": {
+        "bootDisk": {
+          "diskType": "pd-balanced",
+          "sizeGb": "100"
+        },
+        "diskSizeGb": 100,
+        "diskType": "pd-balanced",
+        "effectiveCgroupMode": "EFFECTIVE_CGROUP_MODE_V2",
+        "gcfsConfig": {
+          "enabled": true
+        },
+        "gvnic": {
+          "enabled": true
+        },
+        "imageType": "COS_CONTAINERD",
+        "kubeletConfig": {
+          "insecureKubeletReadonlyPortEnabled": false,
+          "maxParallelImagePulls": 2
+        },
+        "machineType": "e2-standard-4",
+        "metadata": {
+          "disable-legacy-endpoints": "true"
+        },
+        "oauthScopes": [
+          "https://www.googleapis.com/auth/devstorage.read_only",
+          "https://www.googleapis.com/auth/logging.write",
+          "https://www.googleapis.com/auth/monitoring",
+          "https://www.googleapis.com/auth/service.management.readonly",
+          "https://www.googleapis.com/auth/servicecontrol",
+          "https://www.googleapis.com/auth/trace.append"
+        ],
+        "reservationAffinity": {
+          "consumeReservationType": "NO_RESERVATION"
+        },
+        "resourceLabels": {
+          "goog-gke-node-pool-provisioning-model": "on-demand"
+        },
+        "serviceAccount": "default",
+        "shieldedInstanceConfig": {
+          "enableIntegrityMonitoring": true,
+          "enableSecureBoot": true
+        },
+        "windowsNodeConfig": {},
+        "workloadMetadataConfig": {
+          "mode": "GKE_METADATA"
+        }
+      },
+      "etag": "c2d3c0d7-f005-43ab-b9cb-f85991f1d301",
+      "instanceGroupUrls": [
+        "https://www.googleapis.com/compute/v1/projects/katalyststreet-public/zones/us-central1-a/instanceGroupManagers/gk3-pmomax-auto-pool-6-2d0d4dd6-grp",
+        "https://www.googleapis.com/compute/v1/projects/katalyststreet-public/zones/us-central1-b/instanceGroupManagers/gk3-pmomax-auto-pool-6-c8b48955-grp",
+        "https://www.googleapis.com/compute/v1/projects/katalyststreet-public/zones/us-central1-c/instanceGroupManagers/gk3-pmomax-auto-pool-6-1c11fcc8-grp",
+        "https://www.googleapis.com/compute/v1/projects/katalyststreet-public/zones/us-central1-f/instanceGroupManagers/gk3-pmomax-auto-pool-6-eb96c26f-grp"
+      ],
+      "locations": [
+        "us-central1-a",
+        "us-central1-b",
+        "us-central1-c",
+        "us-central1-f"
+      ],
+      "management": {
+        "autoRepair": true,
+        "autoUpgrade": true
+      },
+      "maxPodsConstraint": {
+        "maxPodsPerNode": "32"
+      },
+      "name": "pool-6",
+      "networkConfig": {
+        "networkTierConfig": {
+          "networkTier": "NETWORK_TIER_DEFAULT"
+        },
+        "podIpv4CidrBlock": "10.23.0.0/17",
+        "podIpv4RangeUtilization": 0.0039,
+        "podRange": "gke-pmomax-auto-pods-9fdece83",
+        "subnetwork": "projects/katalyststreet-public/regions/us-central1/subnetworks/default"
+      },
+      "podIpv4CidrSize": 26,
+      "selfLink": "https://container.googleapis.com/v1/projects/katalyststreet-public/locations/us-central1/clusters/pmomax-auto/nodePools/pool-6",
+      "status": "RUNNING",
+      "upgradeSettings": {
+        "maxSurge": 1,
+        "strategy": "SURGE"
+      },
+      "version": "1.35.3-gke.1389000"
+    },
+    {
+      "autoscaling": {
+        "enabled": true,
+        "locationPolicy": "BALANCED",
+        "maxNodeCount": 1000
+      },
+      "config": {
+        "bootDisk": {
+          "diskType": "pd-balanced",
+          "sizeGb": "100"
+        },
+        "diskSizeGb": 100,
+        "diskType": "pd-balanced",
+        "effectiveCgroupMode": "EFFECTIVE_CGROUP_MODE_V2",
+        "gcfsConfig": {
+          "enabled": true
+        },
+        "gvnic": {
+          "enabled": true
+        },
+        "imageType": "COS_CONTAINERD",
+        "kubeletConfig": {
+          "insecureKubeletReadonlyPortEnabled": false,
+          "maxParallelImagePulls": 2
+        },
+        "machineType": "e2-standard-8",
+        "metadata": {
+          "disable-legacy-endpoints": "true"
+        },
+        "oauthScopes": [
+          "https://www.googleapis.com/auth/devstorage.read_only",
+          "https://www.googleapis.com/auth/logging.write",
+          "https://www.googleapis.com/auth/monitoring",
+          "https://www.googleapis.com/auth/service.management.readonly",
+          "https://www.googleapis.com/auth/servicecontrol",
+          "https://www.googleapis.com/auth/trace.append"
+        ],
+        "reservationAffinity": {
+          "consumeReservationType": "NO_RESERVATION"
+        },
+        "resourceLabels": {
+          "goog-gke-node-pool-provisioning-model": "on-demand"
+        },
+        "serviceAccount": "default",
+        "shieldedInstanceConfig": {
+          "enableIntegrityMonitoring": true,
+          "enableSecureBoot": true
+        },
+        "windowsNodeConfig": {},
+        "workloadMetadataConfig": {
+          "mode": "GKE_METADATA"
+        }
+      },
+      "etag": "b5daa6ee-acc3-4796-a316-6ad905d40fb4",
+      "instanceGroupUrls": [
+        "https://www.googleapis.com/compute/v1/projects/katalyststreet-public/zones/us-central1-a/instanceGroupManagers/gk3-pmomax-auto-pool-7-f44586b5-grp",
+        "https://www.googleapis.com/compute/v1/projects/katalyststreet-public/zones/us-central1-b/instanceGroupManagers/gk3-pmomax-auto-pool-7-37457f16-grp",
+        "https://www.googleapis.com/compute/v1/projects/katalyststreet-public/zones/us-central1-c/instanceGroupManagers/gk3-pmomax-auto-pool-7-7a581d41-grp",
+        "https://www.googleapis.com/compute/v1/projects/katalyststreet-public/zones/us-central1-f/instanceGroupManagers/gk3-pmomax-auto-pool-7-46acea48-grp"
+      ],
+      "locations": [
+        "us-central1-a",
+        "us-central1-b",
+        "us-central1-c",
+        "us-central1-f"
+      ],
+      "management": {
+        "autoRepair": true,
+        "autoUpgrade": true
+      },
+      "maxPodsConstraint": {
+        "maxPodsPerNode": "32"
+      },
+      "name": "pool-7",
+      "networkConfig": {
+        "networkTierConfig": {
+          "networkTier": "NETWORK_TIER_DEFAULT"
+        },
+        "podIpv4CidrBlock": "10.23.0.0/17",
+        "podIpv4RangeUtilization": 0.0039,
+        "podRange": "gke-pmomax-auto-pods-9fdece83",
+        "subnetwork": "projects/katalyststreet-public/regions/us-central1/subnetworks/default"
+      },
+      "podIpv4CidrSize": 26,
+      "selfLink": "https://container.googleapis.com/v1/projects/katalyststreet-public/locations/us-central1/clusters/pmomax-auto/nodePools/pool-7",
+      "status": "RUNNING",
+      "upgradeSettings": {
+        "maxSurge": 1,
+        "strategy": "SURGE"
+      },
+      "version": "1.35.3-gke.1389000"
+    },
+    {
+      "autoscaling": {
+        "enabled": true,
+        "locationPolicy": "BALANCED",
+        "maxNodeCount": 1000
+      },
+      "config": {
+        "bootDisk": {
+          "diskType": "pd-balanced",
+          "sizeGb": "100"
+        },
+        "diskSizeGb": 100,
+        "diskType": "pd-balanced",
+        "effectiveCgroupMode": "EFFECTIVE_CGROUP_MODE_V2",
+        "gcfsConfig": {
+          "enabled": true
+        },
+        "gvnic": {
+          "enabled": true
+        },
+        "imageType": "COS_CONTAINERD",
+        "kubeletConfig": {
+          "insecureKubeletReadonlyPortEnabled": false,
+          "maxParallelImagePulls": 2
+        },
+        "machineType": "e2-standard-16",
+        "metadata": {
+          "disable-legacy-endpoints": "true"
+        },
+        "oauthScopes": [
+          "https://www.googleapis.com/auth/devstorage.read_only",
+          "https://www.googleapis.com/auth/logging.write",
+          "https://www.googleapis.com/auth/monitoring",
+          "https://www.googleapis.com/auth/service.management.readonly",
+          "https://www.googleapis.com/auth/servicecontrol",
+          "https://www.googleapis.com/auth/trace.append"
+        ],
+        "reservationAffinity": {
+          "consumeReservationType": "NO_RESERVATION"
+        },
+        "resourceLabels": {
+          "goog-gke-node-pool-provisioning-model": "on-demand"
+        },
+        "serviceAccount": "default",
+        "shieldedInstanceConfig": {
+          "enableIntegrityMonitoring": true,
+          "enableSecureBoot": true
+        },
+        "windowsNodeConfig": {},
+        "workloadMetadataConfig": {
+          "mode": "GKE_METADATA"
+        }
+      },
+      "etag": "b54219b4-db7b-461e-b8cb-a2b30a0be8a9",
+      "instanceGroupUrls": [
+        "https://www.googleapis.com/compute/v1/projects/katalyststreet-public/zones/us-central1-a/instanceGroupManagers/gk3-pmomax-auto-pool-8-891f690f-grp",
+        "https://www.googleapis.com/compute/v1/projects/katalyststreet-public/zones/us-central1-b/instanceGroupManagers/gk3-pmomax-auto-pool-8-22a06987-grp",
+        "https://www.googleapis.com/compute/v1/projects/katalyststreet-public/zones/us-central1-c/instanceGroupManagers/gk3-pmomax-auto-pool-8-cbe9c85b-grp",
+        "https://www.googleapis.com/compute/v1/projects/katalyststreet-public/zones/us-central1-f/instanceGroupManagers/gk3-pmomax-auto-pool-8-4347495a-grp"
+      ],
+      "locations": [
+        "us-central1-a",
+        "us-central1-b",
+        "us-central1-c",
+        "us-central1-f"
+      ],
+      "management": {
+        "autoRepair": true,
+        "autoUpgrade": true
+      },
+      "maxPodsConstraint": {
+        "maxPodsPerNode": "32"
+      },
+      "name": "pool-8",
+      "networkConfig": {
+        "networkTierConfig": {
+          "networkTier": "NETWORK_TIER_DEFAULT"
+        },
+        "podIpv4CidrBlock": "10.23.0.0/17",
+        "podIpv4RangeUtilization": 0.0039,
+        "podRange": "gke-pmomax-auto-pods-9fdece83",
+        "subnetwork": "projects/katalyststreet-public/regions/us-central1/subnetworks/default"
+      },
+      "podIpv4CidrSize": 26,
+      "selfLink": "https://container.googleapis.com/v1/projects/katalyststreet-public/locations/us-central1/clusters/pmomax-auto/nodePools/pool-8",
+      "status": "RUNNING",
+      "upgradeSettings": {
+        "maxSurge": 1,
+        "strategy": "SURGE"
+      },
+      "version": "1.35.3-gke.1389000"
+    },
+    {
+      "autoscaling": {
+        "enabled": true,
+        "locationPolicy": "BALANCED",
+        "maxNodeCount": 1000
+      },
+      "config": {
+        "bootDisk": {
+          "diskType": "pd-balanced",
+          "sizeGb": "100"
+        },
+        "diskSizeGb": 100,
+        "diskType": "pd-balanced",
+        "effectiveCgroupMode": "EFFECTIVE_CGROUP_MODE_V2",
+        "gcfsConfig": {
+          "enabled": true
+        },
+        "gvnic": {
+          "enabled": true
+        },
+        "imageType": "COS_CONTAINERD",
+        "kubeletConfig": {
+          "insecureKubeletReadonlyPortEnabled": false,
+          "maxParallelImagePulls": 2
+        },
+        "machineType": "e2-standard-32",
+        "metadata": {
+          "disable-legacy-endpoints": "true"
+        },
+        "oauthScopes": [
+          "https://www.googleapis.com/auth/devstorage.read_only",
+          "https://www.googleapis.com/auth/logging.write",
+          "https://www.googleapis.com/auth/monitoring",
+          "https://www.googleapis.com/auth/service.management.readonly",
+          "https://www.googleapis.com/auth/servicecontrol",
+          "https://www.googleapis.com/auth/trace.append"
+        ],
+        "reservationAffinity": {
+          "consumeReservationType": "NO_RESERVATION"
+        },
+        "resourceLabels": {
+          "goog-gke-node-pool-provisioning-model": "on-demand"
+        },
+        "serviceAccount": "default",
+        "shieldedInstanceConfig": {
+          "enableIntegrityMonitoring": true,
+          "enableSecureBoot": true
+        },
+        "windowsNodeConfig": {},
+        "workloadMetadataConfig": {
+          "mode": "GKE_METADATA"
+        }
+      },
+      "etag": "76132a51-311e-4254-ad27-71a3ceab7a40",
+      "instanceGroupUrls": [
+        "https://www.googleapis.com/compute/v1/projects/katalyststreet-public/zones/us-central1-a/instanceGroupManagers/gk3-pmomax-auto-pool-9-af8d0252-grp",
+        "https://www.googleapis.com/compute/v1/projects/katalyststreet-public/zones/us-central1-b/instanceGroupManagers/gk3-pmomax-auto-pool-9-c341c96a-grp",
+        "https://www.googleapis.com/compute/v1/projects/katalyststreet-public/zones/us-central1-c/instanceGroupManagers/gk3-pmomax-auto-pool-9-39e446d3-grp",
+        "https://www.googleapis.com/compute/v1/projects/katalyststreet-public/zones/us-central1-f/instanceGroupManagers/gk3-pmomax-auto-pool-9-eeaf9df9-grp"
+      ],
+      "locations": [
+        "us-central1-a",
+        "us-central1-b",
+        "us-central1-c",
+        "us-central1-f"
+      ],
+      "management": {
+        "autoRepair": true,
+        "autoUpgrade": true
+      },
+      "maxPodsConstraint": {
+        "maxPodsPerNode": "32"
+      },
+      "name": "pool-9",
+      "networkConfig": {
+        "networkTierConfig": {
+          "networkTier": "NETWORK_TIER_DEFAULT"
+        },
+        "podIpv4CidrBlock": "10.23.0.0/17",
+        "podIpv4RangeUtilization": 0.0039,
+        "podRange": "gke-pmomax-auto-pods-9fdece83",
+        "subnetwork": "projects/katalyststreet-public/regions/us-central1/subnetworks/default"
+      },
+      "podIpv4CidrSize": 26,
+      "selfLink": "https://container.googleapis.com/v1/projects/katalyststreet-public/locations/us-central1/clusters/pmomax-auto/nodePools/pool-9",
+      "status": "RUNNING",
+      "upgradeSettings": {
+        "maxSurge": 1,
+        "strategy": "SURGE"
+      },
+      "version": "1.35.3-gke.1389000"
+    }
+  ],
+  "notificationConfig": {
+    "pubsub": {}
+  },
+  "podAutoscaling": {
+    "hpaProfile": "PERFORMANCE"
+  },
+  "privateClusterConfig": {
+    "privateEndpoint": "10.128.0.3",
+    "publicEndpoint": "34.60.95.73"
+  },
+  "rbacBindingConfig": {
+    "enableInsecureBindingSystemAuthenticated": false,
+    "enableInsecureBindingSystemUnauthenticated": false
+  },
+  "releaseChannel": {
+    "channel": "REGULAR"
+  },
+  "resourceLabels": {
+    "goog-k8s-display-name": "pmomax"
+  },
+  "satisfiesPzi": true,
+  "satisfiesPzs": false,
+  "securityPostureConfig": {
+    "mode": "BASIC",
+    "vulnerabilityMode": "VULNERABILITY_MODE_UNSPECIFIED"
+  },
+  "selfLink": "https://container.googleapis.com/v1/projects/katalyststreet-public/locations/us-central1/clusters/pmomax-auto",
+  "servicesIpv4Cidr": "34.118.224.0/20",
+  "shieldedNodes": {
+    "enabled": true
+  },
+  "status": "RUNNING",
+  "subnetwork": "default",
+  "userManagedKeysConfig": {},
+  "verticalPodAutoscaling": {
+    "enabled": true
+  },
+  "workloadIdentityConfig": {
+    "workloadPool": "katalyststreet-public.svc.id.goog"
+  },
+  "zone": "us-central1"
+}

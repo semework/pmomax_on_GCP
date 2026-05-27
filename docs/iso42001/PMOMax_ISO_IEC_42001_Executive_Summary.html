@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PMOMax PID as ISO/IEC 42001 Supporting Documented
+Information</title>
+  <style>
+    :root {
+      --ink: #172033;
+      --muted: #5b6678;
+      --soft: #f5f7fa;
+      --line: #d8dee8;
+      --brand: #ff6b1a;
+      --brand-dark: #b74a12;
+      --navy: #111827;
+    }
+    @page {
+      size: Letter;
+      margin: 0.72in 0.68in 0.76in;
+      @bottom-right {
+        content: "Page " counter(page);
+        color: #7b8494;
+        font-family: Inter, "Aptos", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        font-size: 8.4pt;
+      }
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      background: #fff;
+      color: var(--ink);
+      font-family: Inter, "Aptos", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      font-size: 11pt;
+      line-height: 1.52;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    .title-page {
+      min-height: 9.35in;
+      display: flex;
+      flex-direction: column;
+      background: linear-gradient(135deg, rgba(255,107,26,0.08), rgba(17,24,39,0.02) 42%, transparent 72%);
+      break-after: page;
+    }
+    .brand-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 0.34in;
+    }
+    .brand-row img { height: 0.72in; width: auto; }
+    .brand-text {
+      text-align: right;
+      color: var(--muted);
+      font-size: 10pt;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .eyebrow {
+      margin-top: 0.7in;
+      color: var(--brand-dark);
+      font-size: 10pt;
+      font-weight: 850;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+    }
+    .title-page h1 {
+      color: var(--navy);
+      font-size: 34pt;
+      line-height: 1.08;
+      max-width: 7in;
+      margin: 0.22in 0 0.16in;
+      letter-spacing: -0.01em;
+    }
+    .subtitle {
+      font-size: 18pt;
+      color: #344054;
+      font-weight: 650;
+    }
+    .rule {
+      width: 3.2in;
+      height: 3px;
+      background: var(--brand);
+      border-radius: 10px;
+      margin: 0.44in 0 0.34in;
+    }
+    .meta {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1.4fr;
+      gap: 0.16in;
+      max-width: 7.2in;
+    }
+    .meta-card {
+      border: 1px solid var(--line);
+      background: #fff;
+      border-radius: 10px;
+      padding: 0.16in 0.18in;
+    }
+    .meta-label {
+      color: var(--muted);
+      font-size: 8.4pt;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 850;
+    }
+    .meta-value {
+      margin-top: 0.04in;
+      font-weight: 750;
+    }
+    .title-footer {
+      margin-top: auto;
+      border-top: 1px solid var(--line);
+      padding-top: 0.18in;
+      color: var(--muted);
+      display: flex;
+      justify-content: space-between;
+      font-size: 9.5pt;
+    }
+    h1, h2, h3 { color: var(--navy); break-after: avoid; }
+    main h1 { font-size: 24pt; border-bottom: 2px solid var(--brand); padding-bottom: 0.08in; margin: 0 0 0.18in; }
+    h2 { font-size: 15pt; margin: 0.28in 0 0.1in; }
+    p { margin: 0 0 0.12in; color: #263145; }
+    ul { margin: 0.08in 0 0.2in 0.22in; padding-left: 0.15in; }
+    li { margin: 0.05in 0; }
+    blockquote {
+      margin: 0.18in 0 0.22in;
+      padding: 0.16in 0.2in 0.16in 0.22in;
+      border: 1px solid #f0c894;
+      border-left: 5px solid var(--brand);
+      border-radius: 10px;
+      background: linear-gradient(90deg, rgba(255,107,26,0.10), #fff);
+      break-inside: avoid;
+    }
+    blockquote p { margin: 0; }
+    .running-footer {
+      display: none;
+      position: fixed;
+      left: 0.68in;
+      right: 0.68in;
+      bottom: 0.34in;
+      display: flex;
+      justify-content: space-between;
+      color: #7b8494;
+      font-size: 8.4pt;
+      border-top: 1px solid #edf0f5;
+      padding-top: 0.06in;
+    }
+    @media print {
+      .running-footer { display: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <section class="title-page">
+    <div class="brand-row">
+      <img src="assets/pmomax_logo.png" alt="PMOMax">
+      <div class="brand-text">Katalyst Street<br>Executive Summary</div>
+    </div>
+    <div class="eyebrow">ISO/IEC 42001 Readiness Positioning</div>
+    <h1>PMOMax PID as ISO/IEC 42001 Supporting Documented
+Information</h1>
+    <div class="subtitle">Executive Summary</div>
+    <div class="rule"></div>
+    <div class="meta">
+      <div class="meta-card"><div class="meta-label">Version</div><div class="meta-value">v1.0</div></div>
+      <div class="meta-card"><div class="meta-label">Date</div><div class="meta-value">May 19, 2026</div></div>
+      <div class="meta-card"><div class="meta-label">Audience</div><div class="meta-value">Enterprise buyers, governance, PMO, risk, compliance, and procurement teams</div></div>
+    </div>
+    <div class="title-footer">
+      <span>Informational only; not a certification claim.</span>
+      <span>Katalyst Street / PMOMax</span>
+    </div>
+  </section>
+  <main><h1
+id="pmomax-pid-as-isoiec-42001-supporting-documented-information">PMOMax
+PID as ISO/IEC 42001 Supporting Documented Information</h1>
+<p><strong>Document version:</strong> v1.0<br />
+<strong>Document date:</strong> May 19, 2026<br />
+<strong>Prepared for:</strong> Enterprise AI governance, PMO,
+compliance, risk, procurement, and digital transformation review</p>
+<h2 id="executive-summary">Executive Summary</h2>
+<p>ISO/IEC 42001 is an international management system standard for
+Artificial Intelligence Management Systems. Public ISO descriptions
+explain that the standard supports responsible AI governance, risk and
+opportunity management, transparency, accountability, traceability, and
+lifecycle oversight for organizations that provide or use AI-based
+products or services.</p>
+<blockquote>
+<p><strong>Readiness positioning:</strong> PMOMax supports structured
+project initiation evidence for AI governance discussions. It is not a
+certification tool and does not guarantee ISO/IEC 42001 compliance.</p>
+</blockquote>
+<p>PMOMax is not an ISO/IEC 42001 certification tool and does not make
+an organization compliant. PMOMax can, however, help organizations
+structure project initiation information that may support AI governance
+readiness and AIMS documented information.</p>
+<h2 id="where-pmomax-helps">Where PMOMax Helps</h2>
+<p>The PMOMax PID is especially relevant where enterprise teams need a
+consistent project-level record of:</p>
+<ul>
+<li>AI project scope, objectives, intended outcomes, assumptions,
+constraints, and dependencies.</li>
+<li>Named sponsors, owners, stakeholders, and role accountability.</li>
+<li>Project risks, mitigations, contingencies, compliance notes, and
+privacy/security considerations.</li>
+<li>Human oversight signals such as governance gates, signoff
+requirements, decision records, and review cadence.</li>
+<li>Lifecycle planning through milestones, work breakdown tasks,
+dependencies, resources, KPIs, and follow-up actions.</li>
+<li>Traceability metadata for AI-assisted outputs where audit settings
+are enabled.</li>
+</ul>
+<p>The practical value for enterprise buyers is straightforward: PMOMax
+helps convert early AI project planning into structured, reviewable,
+exportable documentation that can be used by PMO, risk, compliance,
+procurement, digital transformation, and AI governance teams.</p>
+<h2 id="best-use">Best Use</h2>
+<p>The best use of PMOMax in ISO/IEC 42001 readiness is as a supporting
+documentation workflow inside a broader governance program. Enterprises
+should use PMOMax PID outputs as project-level evidence for internal
+review, readiness workshops, control mapping, and conversations with
+qualified ISO/IEC 42001 consultants, auditors, or certification
+bodies.</p>
+<p>PMOMax does not replace the organization’s AI Management System,
+legal review, risk management program, impact assessment process,
+internal audit program, management review, or certification process.
+Full ISO/IEC 42001 readiness requires organization-specific policies,
+procedures, controls, records, oversight, monitoring, and independent
+professional review.</p>
+<h2 id="intended-audience">Intended Audience</h2>
+<p>This summary is intended for enterprise AI governance teams, PMO
+leaders, compliance and risk teams, procurement leaders, digital
+transformation teams, and executives evaluating PMOMax as a structured
+AI project initiation and governance documentation tool.</p>
+<h2 id="positioning-statement">Positioning Statement</h2>
+<p>PMOMax helps teams produce structured project initiation
+documentation that can support ISO/IEC 42001 readiness discussions,
+especially around scope, objectives, accountability, risk, impact
+considerations, approvals, human oversight, lifecycle planning, and
+traceability. PMOMax is a supporting documentation and governance
+workflow tool, not a certification tool.</p>
+<h2 id="references">References</h2>
+<ul>
+<li>ISO/IEC 42001 official page: https://www.iso.org/standard/42001</li>
+<li>ISO 42001 explained:
+https://www.iso.org/home/insights-news/resources/iso-42001-explained-what-it-is.html</li>
+<li>ISO/IEC 42005 official page: https://www.iso.org/standard/42005</li>
+<li>ISO/IEC 23894 official page:
+https://www.iso.org/standard/77304.html</li>
+</ul>
+<h2 id="disclaimer">Disclaimer</h2>
+<p>This summary is informational. PMOMax is not represented as ISO/IEC
+42001 certified unless separately certified through an appropriate
+independent certification process. PMOMax does not guarantee compliance
+and does not replace legal, compliance, audit, consulting, or
+certification-body review.</p></main>
+</body>
+</html>

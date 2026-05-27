@@ -1,0 +1,406 @@
+=== AUTH / PROJECT ===
+       Credentialed Accounts
+ACTIVE  ACCOUNT
+*       mulugetas@katalyststreet.com
+katalyststreet-public
+
+=== ENABLED SERVICES ===
+NAME                                                TITLE
+aiplatform.googleapis.com                           Agent Platform API
+analytics.googleapis.com                            Google Analytics API
+analyticsadmin.googleapis.com                       Google Analytics Admin API
+analyticshub.googleapis.com                         Analytics Hub API
+anthosconfigmanagement.googleapis.com               Anthos Config Management API
+anthospolicycontroller.googleapis.com               Anthos Policy Controller API
+appengine.googleapis.com                            App Engine Admin API
+appenginereporting.googleapis.com                   App Engine
+appoptimize.googleapis.com                          App Optimize API
+artifactregistry.googleapis.com                     Artifact Registry API
+autoscaling.googleapis.com                          Cloud Autoscaling API
+bigquery.googleapis.com                             BigQuery API
+bigqueryconnection.googleapis.com                   BigQuery Connection API
+bigquerydatapolicy.googleapis.com                   BigQuery Data Policy API
+bigquerydatatransfer.googleapis.com                 BigQuery Data Transfer API
+bigquerymigration.googleapis.com                    BigQuery Migration API
+bigqueryreservation.googleapis.com                  BigQuery Reservation API
+bigquerystorage.googleapis.com                      BigQuery Storage API
+bigqueryunified.googleapis.com                      BigQuery Unified API
+cloudaicompanion.googleapis.com                     Gemini for Google Cloud API
+cloudapis.googleapis.com                            Google Cloud APIs
+cloudasset.googleapis.com                           Cloud Asset API
+cloudbuild.googleapis.com                           Cloud Build API
+cloudcommerceconsumerprocurement.googleapis.com     Cloud Commerce Consumer Procurement API
+cloudcommerceprocurement.googleapis.com             Cloud Commerce Partner Procurement API
+cloudcommerceproducer.googleapis.com                Cloud Commerce Producer API
+cloudresourcemanager.googleapis.com                 Cloud Resource Manager API
+cloudscheduler.googleapis.com                       Cloud Scheduler API
+cloudtrace.googleapis.com                           Cloud Trace API
+compute.googleapis.com                              Compute Engine API
+config.googleapis.com                               Infrastructure Manager API
+container.googleapis.com                            Kubernetes Engine API
+containeranalysis.googleapis.com                    Container Analysis API
+containerfilesystem.googleapis.com                  Container File System API
+containerregistry.googleapis.com                    Container Registry API
+containerscanning.googleapis.com                    Container Scanning API
+containerthreatdetection.googleapis.com             Container Threat Detection API
+dataform.googleapis.com                             Dataform API
+dataplex.googleapis.com                             Cloud Dataplex API
+dataproc-control.googleapis.com                     Cloud Dataproc Control API
+dataproc.googleapis.com                             Cloud Dataproc API
+dataprocrm.googleapis.com                           Dataproc Resource Manager API
+datastore.googleapis.com                            Cloud Datastore API
+datastream.googleapis.com                           Datastream API
+datastudio.googleapis.com                           Data Studio API
+deploymentmanager.googleapis.com                    Cloud Deployment Manager V2 API
+discoveryengine.googleapis.com                      Discovery Engine API
+dns.googleapis.com                                  Cloud DNS API
+geminicloudassist.googleapis.com                    Gemini Cloud Assist API
+generativelanguage.googleapis.com                   Gemini API
+gkebackup.googleapis.com                            Backup for GKE API
+gkeconnect.googleapis.com                           GKE Connect API
+gkehub.googleapis.com                               GKE Hub API
+iam.googleapis.com                                  Identity and Access Management (IAM) API
+iamcredentials.googleapis.com                       IAM Service Account Credentials API
+iap.googleapis.com                                  Cloud Identity-Aware Proxy API
+krmapihosting.googleapis.com                        KRM API Hosting API
+logging.googleapis.com                              Cloud Logging API
+monitoring.googleapis.com                           Cloud Monitoring API
+multiclustermetering.googleapis.com                 Multi cluster metering API
+networkconnectivity.googleapis.com                  Network Connectivity API
+networkmanagement.googleapis.com                    Network Management API
+ondemandscanning.googleapis.com                     On-Demand Scanning API
+orgpolicy.googleapis.com                            Organization Policy API
+oslogin.googleapis.com                              Cloud OS Login API
+pmo-max.endpoints.katalyststreet-public.cloud.goog  PMOMax
+pubsub.googleapis.com                               Cloud Pub/Sub API
+recommender.googleapis.com                          Recommender API
+run.googleapis.com                                  Cloud Run Admin API
+runtimeconfig.googleapis.com                        Cloud Runtime Configuration API
+secretmanager.googleapis.com                        Secret Manager API
+servicecontrol.googleapis.com                       Service Control API
+servicehealth.googleapis.com                        Service Health API
+servicemanagement.googleapis.com                    Service Management API
+servicenetworking.googleapis.com                    Service Networking API
+serviceusage.googleapis.com                         Service Usage API
+sql-component.googleapis.com                        Cloud SQL
+sqladmin.googleapis.com                             Cloud SQL Admin API
+storage-api.googleapis.com                          Google Cloud Storage JSON API
+storage-component.googleapis.com                    Cloud Storage
+storage.googleapis.com                              Cloud Storage API
+texttospeech.googleapis.com                         Cloud Text-to-Speech API
+vmmigration.googleapis.com                          VM Migration API
+vpcaccess.googleapis.com                            Serverless VPC Access API
+websecurityscanner.googleapis.com                   Web Security Scanner API
+
+=== CLOUD RUN SERVICES ===
+--- us-east1 ---
+   SERVICE        REGION    URL                                                  LAST DEPLOYED BY              LAST DEPLOYED AT
+[32m✔[39;0m  pmo-architect  us-east1  https://pmo-architect-839982691485.us-east1.run.app  mulugetas@katalyststreet.com  2026-05-07T01:18:39.805963Z
+--- us-central1 ---
+--- us-west1 ---
+
+=== CLOUD RUN DESCRIBE pmo-architect ===
+metadata:
+  name: pmo-architect
+spec:
+  template:
+    metadata:
+      annotations:
+        autoscaling.knative.dev/maxScale: '10'
+        run.googleapis.com/client-name: gcloud
+        run.googleapis.com/client-version: 556.0.0
+        run.googleapis.com/startup-cpu-boost: 'true'
+    spec:
+      containers:
+      - env:
+        - name: MARKETPLACE_ENABLED
+          value: 'true'
+        - name: MARKETPLACE_TEST_MODE
+          value: 'true'
+        - name: MARKETPLACE_SERVICE_NAME
+          value: services/pmo-max.endpoints.katalyststreet-public.cloud.goog
+        - name: MARKETPLACE_REPORT_ENDPOINT
+          value: https://servicecontrol.googleapis.com/v1/services/pmo-max.endpoints.katalyststreet-public.cloud.goog:report
+        - name: MARKETPLACE_USAGE_DEFAULT_METRIC
+          value: pmo-max.endpoints.katalyststreet-public.cloud.goog/M1
+        - name: MARKETPLACE_CONSUMER_ID
+          value: project:839982691485
+        - name: NAMESPACE
+          value: default
+        - name: OPENAI_MODEL
+          value: gpt-5.5
+        - name: OPENAI_ASSISTANT_MODEL
+          value: gpt-5.5
+        - name: OPENAI_PARSE_MODEL
+          value: gpt-5.5
+        - name: OPENAI_BUDGET_MODEL
+          value: gpt-5.5
+        - name: OPENAI_FALLBACK_MODEL
+          value: gpt-5.4-mini
+        image: us-east1-docker.pkg.dev/katalyststreet-public/apps/pmo-architect:1.4.2
+        ports:
+        - containerPort: 8080
+          name: http1
+        resources:
+          limits:
+            cpu: '1'
+            memory: 512Mi
+        startupProbe:
+          failureThreshold: 1
+          periodSeconds: 240
+          tcpSocket:
+            port: 8080
+          timeoutSeconds: 240
+status:
+  traffic:
+  - latestRevision: true
+    percent: 100
+    revisionName: pmo-architect-00032-nn7
+  url: https://pmo-architect-zxofcfyioq-ue.a.run.app
+
+=== GKE CLUSTERS ===
+NAME         LOCATION     MASTER_VERSION      MASTER_IP    MACHINE_TYPE   NODE_VERSION        NUM_NODES  STATUS   STACK_TYPE
+pmomax-auto  us-central1  1.34.6-gke.1154000  34.60.95.73  ek-standard-8  1.34.6-gke.1154000  2          RUNNING  IPV4
+
+=== GKE WORKLOADS: pmomax-auto ===
+NAME                           STATUS   AGE
+application-system             Active   58d
+default                        Active   64d
+forensic-1773343635            Active   55d
+forensic-1773343876-ca         Active   55d
+gke-gmp-system                 Active   64d
+gke-managed-cim                Active   64d
+gke-managed-filestorecsi       Active   64d
+gke-managed-parallelstorecsi   Active   64d
+gke-managed-system             Active   64d
+gke-managed-volumepopulator    Active   64d
+gmp-public                     Active   64d
+kube-node-lease                Active   64d
+kube-public                    Active   64d
+kube-system                    Active   64d
+pmomax                         Active   64d
+NAMESPACE            NAME                                                       READY   STATUS             RESTARTS   AGE
+application-system   kube-app-manager-controller-6c498f696c-82dzj               1/2     ImagePullBackOff   0          30m
+gke-gmp-system       collector-8qfk5                                            2/2     Running            0          30m
+gke-gmp-system       collector-v9fw5                                            2/2     Running            0          8h
+gke-gmp-system       gmp-operator-58d5d8b99f-9kzw2                              1/1     Running            0          7h31m
+gke-managed-cim      kube-state-metrics-0                                       2/2     Running            0          7h17m
+kube-system          anetd-l-k55jz                                              3/3     Running            0          8h
+kube-system          anetd-l-ww78c                                              3/3     Running            0          30m
+kube-system          antrea-controller-horizontal-autoscaler-86d48fdb65-5rswr   1/1     Running            0          7h31m
+kube-system          container-watcher-cfvsp                                    1/1     Running            0          8h
+kube-system          container-watcher-djftd                                    1/1     Running            0          30m
+kube-system          efficiency-daemon-6qrtt                                    1/1     Running            0          8h
+kube-system          efficiency-daemon-thp7z                                    1/1     Running            0          30m
+kube-system          egress-nat-controller-66c9b4d5f-fkk6b                      1/1     Running            0          7h31m
+kube-system          event-exporter-gke-5b98994d87-bsrfz                        2/2     Running            0          3h45m
+kube-system          filestore-lock-release-controller-74879f8cbb-fqtr2         2/2     Running            0          7h31m
+kube-system          filestore-node-h4gg5                                       4/4     Running            0          30m
+kube-system          filestore-node-rlx4w                                       4/4     Running            0          8h
+kube-system          fluentbit-gke-big-6xlbx                                    3/3     Running            0          30m
+kube-system          fluentbit-gke-big-sklg2                                    3/3     Running            0          8h
+kube-system          gcsfusecsi-node-nm77j                                      3/3     Running            0          30m
+kube-system          gcsfusecsi-node-ththd                                      3/3     Running            0          8h
+kube-system          gke-metadata-server-6bp4t                                  1/1     Running            0          30m
+kube-system          gke-metadata-server-9q6d2                                  1/1     Running            0          8h
+kube-system          gke-metrics-agent-d7zgt                                    3/3     Running            0          30m
+kube-system          gke-metrics-agent-wbm89                                    3/3     Running            0          8h
+kube-system          gke-system-balloon-pod-4tp86                               1/1     Running            0          3h46m
+kube-system          gke-system-balloon-pod-xkn6k                               1/1     Running            0          18m
+kube-system          ip-masq-agent-spcpk                                        1/1     Running            0          30m
+kube-system          ip-masq-agent-swmqx                                        1/1     Running            0          8h
+kube-system          konnectivity-agent-648dcc8785-2bp6p                        2/2     Running            0          30m
+kube-system          konnectivity-agent-648dcc8785-r2xgv                        2/2     Running            0          8h
+kube-system          konnectivity-agent-autoscaler-7d8dcdf756-mjtbf             1/1     Running            0          7h31m
+kube-system          kube-dns-5887fbf7b7-2q6tg                                  4/4     Running            0          7h31m
+kube-system          kube-dns-5887fbf7b7-78t2g                                  4/4     Running            0          7h31m
+kube-system          kube-dns-autoscaler-7fb7788d4-zj5f9                        1/1     Running            0          7h31m
+kube-system          l7-default-backend-66d4544744-lzxq4                        1/1     Running            0          7h31m
+kube-system          metrics-server-v1.34.1-559596f54-mlnmp                     1/1     Running            0          3h43m
+kube-system          netd-7vbnn                                                 3/3     Running            0          8h
+kube-system          netd-xrfx9                                                 3/3     Running            0          30m
+kube-system          node-local-dns-d6lwr                                       2/2     Running            0          30m
+kube-system          node-local-dns-tfwfn                                       2/2     Running            0          8h
+kube-system          parallelstore-csi-node-96jsc                               2/2     Running            0          30m
+kube-system          parallelstore-csi-node-mc265                               2/2     Running            0          8h
+kube-system          pdcsi-node-96rl9                                           2/2     Running            0          30m
+kube-system          pdcsi-node-ltqv9                                           2/2     Running            0          8h
+pmomax               pmo-architect-569577dbf4-ctdd8                             2/2     Running            0          7h27m
+pmomax               pmo-architect-569577dbf4-x8mdz                             2/2     Running            0          3h45m
+NAMESPACE            NAME                                      READY   UP-TO-DATE   AVAILABLE   AGE
+application-system   kube-app-manager-controller               0/1     1            0           58d
+gke-gmp-system       gmp-operator                              1/1     1            1           64d
+gke-gmp-system       rule-evaluator                            0/0     0            0           64d
+kube-system          antrea-controller                         0/0     0            0           64d
+kube-system          antrea-controller-horizontal-autoscaler   1/1     1            1           64d
+kube-system          egress-nat-controller                     1/1     1            1           64d
+kube-system          event-exporter-gke                        1/1     1            1           64d
+kube-system          filestore-lock-release-controller         1/1     1            1           64d
+kube-system          konnectivity-agent                        2/2     2            2           64d
+kube-system          konnectivity-agent-autoscaler             1/1     1            1           64d
+kube-system          kube-dns                                  2/2     2            2           64d
+kube-system          kube-dns-autoscaler                       1/1     1            1           64d
+kube-system          l7-default-backend                        1/1     1            1           64d
+kube-system          metrics-server-v1.34.1                    1/1     1            1           64d
+pmomax               deployer                                  0/0     0            0           64d
+pmomax               pmo-architect                             2/2     2            2           64d
+pmomax               pmo-architect-569577dbf4-ctdd8                             2/2     Running            0          7h27m
+pmomax               pmo-architect-569577dbf4-x8mdz                             2/2     Running            0          3h45m
+
+=== ARTIFACT REGISTRY ===
+                                                                               ARTIFACT_REGISTRY
+REPOSITORY  FORMAT  MODE                 DESCRIPTION                               LOCATION     LABELS  ENCRYPTION          CREATE_TIME          UPDATE_TIME          SIZE (MB)
+apps        DOCKER  STANDARD_REPOSITORY  PMOMax application images (multi-region)  us                   Google-managed key  2026-02-06T14:32:11  2026-02-16T21:37:20  751.499
+gcr.io      DOCKER  STANDARD_REPOSITORY                                            us                   Google-managed key  2026-03-09T22:28:33  2026-03-09T22:34:22  105.391
+pmomax      DOCKER  STANDARD_REPOSITORY                                            us                   Google-managed key  2026-02-16T20:14:38  2026-04-30T13:10:03  1867.255
+us.gcr.io   DOCKER  STANDARD_REPOSITORY                                            us                   Google-managed key  2024-09-29T08:25:44  2024-09-29T08:30:29  601.112
+apps        DOCKER  STANDARD_REPOSITORY  PMOMax application images                 us-central1          Google-managed key  2026-01-22T18:31:08  2026-01-22T18:31:08  0
+apps        DOCKER  STANDARD_REPOSITORY  PMOMax application images                 us-east1             Google-managed key  2026-01-22T18:38:53  2026-04-30T13:05:19  26672.122
+pmomax      DOCKER  STANDARD_REPOSITORY  PMOMax Docker images                      us-east1             Google-managed key  2026-02-02T01:06:47  2026-03-03T20:27:14  1206.914
+
+=== CLOUD SCHEDULER ===
+--- us-central1 ---
+--- us-east1 ---
+ID           LOCATION  SCHEDULE (TZ)        TARGET_TYPE  STATE
+crmint-cron  us-east1  * * * * * (Etc/UTC)  Pub/Sub      PAUSED
+
+=== PUBSUB ===
+---
+name: projects/katalyststreet-public/topics/crmint-start-task
+---
+name: projects/katalyststreet-public/topics/crmint-pipeline-finished
+---
+name: projects/katalyststreet-public/topics/crmint-ta[REDACTED_OPENAI_KEY]
+---
+name: projects/katalyststreet-public/topics/crmint-start-pipeline
+---
+labels:
+  goog-managed-by: artifact-analysis
+name: projects/katalyststreet-public/topics/container-analysis-occurrences-v1
+---
+labels:
+  goog-managed-by: artifact-analysis
+name: projects/katalyststreet-public/topics/container-analysis-notes-v1
+---
+labels:
+  goog-managed-by: artifact-analysis
+name: projects/katalyststreet-public/topics/container-analysis-occurrences-v1beta1
+---
+labels:
+  goog-managed-by: artifact-analysis
+name: projects/katalyststreet-public/topics/container-analysis-notes-v1beta1
+---
+ackDeadlineSeconds: 300
+expirationPolicy: {}
+messageRetentionDuration: 604800s
+name: projects/katalyststreet-public/subscriptions/crmint-start-pipeline-subscription
+pushConfig:
+  attributes:
+    x-goog-version: v1
+  oidcToken:
+    serviceAccountEmail: katalyststreet-public@appspot.gserviceaccount.com
+  pushEndpoint: https://katalyststreet-public.appspot.com/push/start-pipeline?token=7a467bc56c114a2b76e8528ebf9da8eb7a4bc1e8af3e071332fe40eb2d5143c9
+retryPolicy:
+  maximumBackoff: 600s
+  minimumBackoff: 10s
+state: ACTIVE
+topic: projects/katalyststreet-public/topics/crmint-start-pipeline
+---
+ackDeadlineSeconds: 600
+expirationPolicy: {}
+messageRetentionDuration: 604800s
+name: projects/katalyststreet-public/subscriptions/crmint-start-ta[REDACTED_OPENAI_KEY]
+pushConfig:
+  attributes:
+    x-goog-version: v1
+  oidcToken:
+    serviceAccountEmail: katalyststreet-public@appspot.gserviceaccount.com
+  pushEndpoint: https://katalyststreet-public.appspot.com/push/start-task?token=7a467bc56c114a2b76e8528ebf9da8eb7a4bc1e8af3e071332fe40eb2d5143c9
+retryPolicy:
+  maximumBackoff: 600s
+  minimumBackoff: 60s
+state: ACTIVE
+topic: projects/katalyststreet-public/topics/crmint-start-task
+---
+ackDeadlineSeconds: 300
+expirationPolicy: {}
+messageRetentionDuration: 604800s
+name: projects/katalyststreet-public/subscriptions/crmint-ta[REDACTED_OPENAI_KEY]
+pushConfig:
+  attributes:
+    x-goog-version: v1
+  oidcToken:
+    serviceAccountEmail: katalyststreet-public@appspot.gserviceaccount.com
+  pushEndpoint: https://katalyststreet-public.appspot.com/push/ta[REDACTED_OPENAI_KEY]?token=7a467bc56c114a2b76e8528ebf9da8eb7a4bc1e8af3e071332fe40eb2d5143c9
+retryPolicy:
+  maximumBackoff: 600s
+  minimumBackoff: 10s
+state: ACTIVE
+topic: projects/katalyststreet-public/topics/crmint-ta[REDACTED_OPENAI_KEY]
+
+=== APP ENGINE ===
+SERVICE            NUM_VERSIONS
+crmint-controller  1
+crmint-jobs        1
+default            1
+SERVICE            VERSION.ID  TRAFFIC_SPLIT  LAST_DEPLOYED              SERVING_STATUS
+crmint-controller  v1          1.00           2024-09-29T08:29:08-04:00  SERVING
+crmint-jobs        v1          1.00           2024-09-29T08:30:38-04:00  SERVING
+default            v1          1.00           2024-09-29T08:26:32-04:00  SERVING
+
+=== RECENT CLOUD BUILDS ===
+ID                                    CREATE_TIME                DURATION  SOURCE                                                                                               IMAGES                                                                                            STATUS
+ec7ab03f-5eb1-4b0f-956a-8ca637bd173b  2026-04-30T17:07:47+00:00  1M37S     gs://katalyststreet-public_cloudbuild/source/1777568864.223389-640450380f0d4e0e869c14a2cd13a156.tgz  us-docker.pkg.dev/katalyststreet-public/pmomax/ubbagent:1.4.2                                     SUCCESS
+2b0c9245-864f-44df-81fb-06b6bc6ad2d5  2026-04-30T17:06:33+00:00  57S       gs://katalyststreet-public_cloudbuild/source/1777568790.606655-99dc29c9f08549b9ba4faba6e98a1ae2.tgz  us-docker.pkg.dev/katalyststreet-public/pmomax/deployer:1.4.2                                     SUCCESS
+4aafa7f7-080b-43dc-a380-4b726e238adf  2026-04-30T17:02:36+00:00  1M50S     gs://katalyststreet-public_cloudbuild/source/1777568553.000984-82b1b46a4e394cbfb110641bceac03d0.tgz  us-east1-docker.pkg.dev/katalyststreet-public/apps/pmo-architect:1.4.2                            SUCCESS
+135d6251-6385-4030-a71a-4ebbf8c762b2  2026-04-29T21:51:26+00:00  1M51S     gs://katalyststreet-public_cloudbuild/source/1777499483.262999-ed9fc89ae7a44ee2925eac49c82e72ca.tgz  us-east1-docker.pkg.dev/katalyststreet-public/apps/pmo-architect:about-video-audit-20260429-1720  SUCCESS
+d4974851-4f86-46a2-98a5-2117f130051d  2026-04-29T17:25:00+00:00  2M15S     gs://katalyststreet-public_cloudbuild/source/1777483497.244271-7236b8d9787c4228beda520ac0d49e1a.tgz  us-docker.pkg.dev/katalyststreet-public/pmomax/ubbagent:1.4.2                                     SUCCESS
+748bf614-900e-45a4-b2bd-3800064fdc15  2026-04-29T17:23:53+00:00  49S       gs://katalyststreet-public_cloudbuild/source/1777483430.526677-0ef9a094bcb540aca5004dcff88342bc.tgz  us-docker.pkg.dev/katalyststreet-public/pmomax/deployer:1.4.2                                     SUCCESS
+b288d766-52d5-4cb6-b941-e95dca4d80ef  2026-04-29T17:21:58+00:00  1M9S      gs://katalyststreet-public_cloudbuild/source/1777483314.294919-c5a9e5787c5c4cf985863c70e9726cff.tgz  -                                                                                                 FAILURE
+ecd7b1c1-1136-4395-ba22-1baa9deb88b8  2026-04-29T16:55:09+00:00  2M24S     gs://katalyststreet-public_cloudbuild/source/1777481702.178238-5a6ca3db310445cfaed67ebb54e86fff.tgz  us-east1-docker.pkg.dev/katalyststreet-public/apps/pmo-architect:1.0.2                            SUCCESS
+aa205222-6897-4e36-b881-0a45feebebf7  2026-04-26T01:50:07+00:00  2M36S     gs://katalyststreet-public_cloudbuild/source/1777168202.361868-ce3a7f542849444e9ed7fa495b8f3a18.tgz  us-east1-docker.pkg.dev/katalyststreet-public/apps/pmo-architect:gpt55-20260425-212609            SUCCESS
+b82b14eb-9291-489c-8a36-e0ba1dcd2031  2026-04-26T01:48:25+00:00  1M7S      gs://katalyststreet-public_cloudbuild/source/1777168097.827032-0c4f15191ff04947a5eae52b1f125cc2.tgz  -                                                                                                 FAILURE
+3aff76fd-5056-47d0-b7db-7fc3a4f87ad2  2026-04-26T01:46:32+00:00  20S       gs://katalyststreet-public_cloudbuild/source/1777167984.935067-0c24c1f2274f4eb69b2679f85bc95a46.tgz  -                                                                                                 FAILURE
+6f2ba531-f019-4b66-a414-9503ef19b121  2026-04-20T21:58:25+00:00  2M1S      gs://katalyststreet-public_cloudbuild/source/1776722297.773591-9f7ee8bb5f32429ea31750344c57af56.tgz  us-east1-docker.pkg.dev/katalyststreet-public/apps/pmo-architect:createfix2-20260420215811        SUCCESS
+2a010a0d-ab4c-4804-a778-4be8f34a09a9  2026-04-20T21:26:25+00:00  2M20S     gs://katalyststreet-public_cloudbuild/source/1776720379.58275-f3a3305539ef45018174fde2b8ed9a10.tgz   us-east1-docker.pkg.dev/katalyststreet-public/apps/pmo-architect:createfix-20260420212617         SUCCESS
+652ba3ec-6573-4905-946a-e146a089c6c5  2026-04-17T17:44:18+00:00  2M19S     gs://katalyststreet-public_cloudbuild/source/1776447834.130578-53a8bd132cb540d4b44178c4e123952d.tgz  us-east1-docker.pkg.dev/katalyststreet-public/apps/pmo-architect:1776447808                       SUCCESS
+ef29aa44-2d7a-4656-872f-a0a37bec3b31  2026-04-17T17:39:39+00:00  22S       gs://katalyststreet-public_cloudbuild/source/1776447554.845338-d8130064f1fb449a89df43086e9dcdf1.tgz  -                                                                                                 FAILURE
+97cf048e-b2cd-46be-a2e5-6d17567e2da2  2026-04-15T05:23:51+00:00  2M12S     gs://katalyststreet-public_cloudbuild/source/1776230630.211764-ca77ef0eeedd4765ae57444f07a28980.tgz  us-docker.pkg.dev/katalyststreet-public/pmomax/ubbagent:1.4.1                                     SUCCESS
+2fba7a2b-b817-4944-b554-c18156dc916b  2026-04-15T05:22:44+00:00  53S       gs://katalyststreet-public_cloudbuild/source/1776230563.324809-e9414d0f795e4c8a9ccc91df4cb2c8cb.tgz  us-docker.pkg.dev/katalyststreet-public/pmomax/deployer:1.4.1                                     SUCCESS
+81b43e4f-0ff9-441f-ab47-d481f3a3cb23  2026-04-15T05:20:38+00:00  56S       gs://katalyststreet-public_cloudbuild/source/1776230437.282576-e8b64ffc328f42f4ba77bec6f30a6818.tgz  us-docker.pkg.dev/katalyststreet-public/pmomax/deployer:1.4.1                                     SUCCESS
+0bb85b1d-6960-479b-88c3-8c987b9f1b21  2026-04-15T03:57:21+00:00  59S       gs://katalyststreet-public_cloudbuild/source/1776225406.782315-042dba8d00f44b14a6109e4daa213cc4.tgz  us-docker.pkg.dev/katalyststreet-public/pmomax/deployer:1.4.0                                     SUCCESS
+152f81ba-79fc-4631-b263-cfb980dc266f  2026-04-15T03:44:30+00:00  1M1S      gs://katalyststreet-public_cloudbuild/source/1776224635.967759-21c26d4f34134dffb50719de53f4db7a.tgz  us-docker.pkg.dev/katalyststreet-public/pmomax/deployer:1.3                                       SUCCESS
+
+ID                                    CREATE_TIME                DURATION  SOURCE                                                                                               IMAGES                                                                                     STATUS
+195c8ef0-8597-4673-bb0d-4b516a69dace  2026-04-15T03:38:04+00:00  1M45S     gs://katalyststreet-public_cloudbuild/source/1776223788.492654-0f904c2dcd3540af868b85d5eb70efb8.tgz  us-docker.pkg.dev/katalyststreet-public/pmomax/deployer:1.3                                SUCCESS
+e46736cf-25a9-47ca-898e-934fccfaed8f  2026-04-15T02:36:05+00:00  52S       gs://katalyststreet-public_cloudbuild/source/1776220564.590392-6d4e06c64b3940d0aa81667d31e10e74.tgz  us-docker.pkg.dev/katalyststreet-public/pmomax/deployer:1.3.9                              SUCCESS
+39c58079-e07c-4b52-a1b4-38c1d07d3b05  2026-04-15T02:05:51+00:00  1M2S      gs://katalyststreet-public_cloudbuild/source/1776218750.742241-ebf24e539ddd450da10018694bd616ae.tgz  us-docker.pkg.dev/katalyststreet-public/pmomax/deployer:1.3.8                              SUCCESS
+8657b56b-1b0b-4568-9dc5-d57047c8115b  2026-04-15T01:41:55+00:00  50S       gs://katalyststreet-public_cloudbuild/source/1776217314.879352-09639ae0edb24851a0533c41da5bbea7.tgz  us-docker.pkg.dev/katalyststreet-public/pmomax/deployer:1.3.7                              SUCCESS
+efc68c7e-0f67-46fe-970d-d1e8cef0716c  2026-04-15T01:31:53+00:00  47S       gs://katalyststreet-public_cloudbuild/source/1776216712.484316-d27dc62bebe74511acc3e84d3809987c.tgz  us-docker.pkg.dev/katalyststreet-public/pmomax/deployer:1.3.7                              SUCCESS
+d1388ba7-bf8c-45fa-9683-9da6ceecb840  2026-04-15T00:10:47+00:00  59S       gs://katalyststreet-public_cloudbuild/source/1776211846.162531-6ed85ade70a84acda0d326fa9d88931a.tgz  us-docker.pkg.dev/katalyststreet-public/pmomax/deployer:1.3.5                              SUCCESS
+f82131db-039f-42b5-ade6-45c4ac987929  2026-04-14T21:48:48+00:00  53S       gs://katalyststreet-public_cloudbuild/source/1776203327.277402-8da4f63256bb424a9c4c253e59f08eb3.tgz  us-docker.pkg.dev/katalyststreet-public/pmomax/deployer:1.3.4                              SUCCESS
+4db9c1c4-992b-4499-800e-9bc8a562400d  2026-04-14T21:35:46+00:00  1M44S     gs://katalyststreet-public_cloudbuild/source/1776201955.231834-a93114f998eb4faeab529cdf66439610.tgz  us-docker.pkg.dev/katalyststreet-public/pmomax/deployer:1.3                                SUCCESS
+3d885ce5-d738-4b66-9633-3cf1422b29f7  2026-04-14T20:37:40+00:00  49S       gs://katalyststreet-public_cloudbuild/source/1776199059.852025-0f0fe02a12f94c93ab0dfe164a9f9221.tgz  us-docker.pkg.dev/katalyststreet-public/pmomax/deployer:1.3.3                              SUCCESS
+49ad2fbf-138a-42b0-a8a1-18319841c20a  2026-04-14T19:35:36+00:00  51S       gs://katalyststreet-public_cloudbuild/source/1776195335.379274-8c5f23650cb04c9cb04b7693146e3b20.tgz  us-docker.pkg.dev/katalyststreet-public/pmomax/deployer:1.3.2                              SUCCESS
+859bf597-4d8f-4004-a645-45a615739052  2026-04-10T15:13:22+00:00  1M        gs://katalyststreet-public_cloudbuild/source/1775834001.783879-0e9d53b929f6445fadbdd13b960ccc08.tgz  us-docker.pkg.dev/katalyststreet-public/pmomax/deployer:1.2                                SUCCESS
+8495b81f-285d-4870-b1d8-a2bf935f821a  2026-04-10T15:13:22+00:00  52S       gs://katalyststreet-public_cloudbuild/source/1775834001.573587-a85e80eee92149a3804b02bf9101ccfe.tgz  us-docker.pkg.dev/katalyststreet-public/pmomax/deployer:1.2                                SUCCESS
+c5cfb661-18b1-40f8-acae-a9788e1997d8  2026-04-07T16:42:46+00:00  2M4S      gs://katalyststreet-public_cloudbuild/source/1775580165.349984-52adcfbb1eac4db8a93dda079811929f.tgz  us-east1-docker.pkg.dev/katalyststreet-public/apps/pmo-architect:1775580161                SUCCESS
+406650ab-2b2a-441e-8219-36d0bee60b3c  2026-04-02T16:41:38+00:00  3M7S      gs://katalyststreet-public_cloudbuild/source/1775148096.08593-d3905ccd21584a72a422c869feded661.tgz   us-east1-docker.pkg.dev/katalyststreet-public/apps/pmo-architect:billingfix-auth-20260402  SUCCESS
+81b9f333-8a3e-4ead-98b9-4e079d4a5dd5  2026-03-31T17:35:37+00:00  51S       gs://katalyststreet-public_cloudbuild/source/1774978536.688246-44c330bf5c284fb9b3e3398473dabe68.tgz  us-docker.pkg.dev/katalyststreet-public/pmomax/deployer:1.0.10                             SUCCESS
+5d924e58-cdcf-4a96-9c4d-b88da35c0940  2026-03-31T16:47:19+00:00  52S       gs://katalyststreet-public_cloudbuild/source/1774975638.522081-a234485d92784218bef9428d315a765e.tgz  us-docker.pkg.dev/katalyststreet-public/pmomax/deployer:1.0.8                              SUCCESS
+b6747f84-b9b4-4aea-b0f1-d1bb50adac04  2026-03-31T16:43:46+00:00  47S       gs://katalyststreet-public_cloudbuild/source/1774975425.637358-03186a0239fa4df4bacddbf6a99c7abe.tgz  us-docker.pkg.dev/katalyststreet-public/pmomax/deployer:1.0.7                              SUCCESS
+635270da-2f1a-44b1-a552-4433b29d1938  2026-03-31T16:40:05+00:00  53S       gs://katalyststreet-public_cloudbuild/source/1774975204.192079-0e4d77d3117a46508644eb45e98b9405.tgz  us-docker.pkg.dev/katalyststreet-public/pmomax/deployer:1.0.6                              SUCCESS
+9f3453f7-e167-4711-b22c-f95fa7cf1ded  2026-03-31T16:33:34+00:00  55S       gs://katalyststreet-public_cloudbuild/source/1774974813.475206-2885ea6991964c0d83992c81d20606e8.tgz  us-docker.pkg.dev/katalyststreet-public/pmomax/deployer:1.0.5                              SUCCESS
+e0098400-46c0-4bda-bbb5-0a4ae2f8c9f5  2026-03-31T15:54:40+00:00  22S       gs://katalyststreet-public_cloudbuild/source/1774972479.178834-f722472ceb5c440fa27efb3d07a3c4f3.tgz  us-docker.pkg.dev/katalyststreet-public/pmomax/deployer:1.0.4                              SUCCESS
+
+ID                                    CREATE_TIME                DURATION  SOURCE                                                                                               IMAGES                                                                                STATUS
+14d3df1e-3d3d-4f0b-a46d-f32be565e7aa  2026-03-31T15:48:15+00:00  34S       gs://katalyststreet-public_cloudbuild/source/1774972094.423519-3c092c27ed0949bc980a9c8e4dca5de7.tgz  us-docker.pkg.dev/katalyststreet-public/pmomax/deployer:1.0.3                         SUCCESS
+b50ff76e-7d0b-4cc2-a1ec-f1649fc2de6b  2026-03-27T19:32:52+00:00  3M2S      gs://katalyststreet-public_cloudbuild/source/1774639970.08771-25f541bd81d5436abd7115509ded20f2.tgz   us-east1-docker.pkg.dev/katalyststreet-public/apps/pmo-architect:billingfix-20260327  SUCCESS
+2e1ef130-ed8c-47bc-a4cf-a3ee2ed8ba41  2026-03-13T16:19:07+00:00  21S       gs://katalyststreet-public_cloudbuild/source/1773418746.50098-43c16192cd2441d98e677cc468914846.tgz   us-docker.pkg.dev/katalyststreet-public/pmomax/deployer:1.0.1                         SUCCESS
+06419ce8-1cdf-4370-adf5-8d59072ac86b  2026-03-13T16:06:04+00:00  19S       gs://katalyststreet-public_cloudbuild/source/1773417963.183442-96e25ba51b7547bfac2729ba5cf261cb.tgz  us-docker.pkg.dev/katalyststreet-public/pmomax/deployer:1.0.1                         SUCCESS
+bc4e8fce-677d-45ba-8c63-156023805b46  2026-03-12T20:43:41+00:00  19S       gs://katalyststreet-public_cloudbuild/source/1773348220.220998-4671252e972b4261be0679db3625888a.tgz  us-docker.pkg.dev/katalyststreet-public/pmomax/deployer:1.0.1                         SUCCESS
+60a034dc-493d-4855-b691-ddb7c3257a78  2026-03-12T19:36:56+00:00  23S       gs://katalyststreet-public_cloudbuild/source/1773344215.421442-3354d7bdd15c4e6d87da72da462b3353.tgz  us-docker.pkg.dev/katalyststreet-public/pmomax/deployer:1.0.1                         SUCCESS
+b1dbd872-a956-408a-9216-a65dbf152bea  2026-03-12T18:17:05+00:00  20S       gs://katalyststreet-public_cloudbuild/source/1773339424.513009-ccecf36084094693b3ed5f2611c1016a.tgz  us-docker.pkg.dev/katalyststreet-public/pmomax/deployer:1.0.1                         SUCCESS
+7bb917e7-379d-4515-929b-6f4d7540faea  2026-03-12T17:18:08+00:00  18S       gs://katalyststreet-public_cloudbuild/source/1773335887.353526-1d9a04c508494c89b827fed2e4344154.tgz  us-docker.pkg.dev/katalyststreet-public/pmomax/deployer:1.0.1                         SUCCESS
+72f40a84-9085-4bae-b40c-2a1c2384bcb0  2026-03-12T17:11:00+00:00  21S       gs://katalyststreet-public_cloudbuild/source/1773335459.728597-97015f265abd4a788d8c1f8a3301641c.tgz  us-docker.pkg.dev/katalyststreet-public/pmomax/deployer:1.0.1                         SUCCESS
+07b7658f-4bef-433f-bc3a-9ace73a4279e  2026-03-12T16:33:13+00:00  23S       gs://katalyststreet-public_cloudbuild/source/1773333192.324742-010dc508a7944d18ae164cc6355c6a93.tgz  us-docker.pkg.dev/katalyststreet-public/pmomax/deployer:1.0.1                         SUCCESS

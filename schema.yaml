@@ -1,12 +1,12 @@
-title: PMOMax PID Architect
-description: Improved Create Agent, governance, AI audit logging, and CVE-2026-39892 mitigation.
 x-google-marketplace:
   schemaVersion: v2
   applicationApiVersion: v1beta1
+  partnerId: katalyststreet
+  solutionId: pmomax
   publishedVersion: "1.4.2"
   publishedVersionMetadata:
     releaseNote: >-
-      Improved Create Agent, governance, AI audit logging, and mitigated CVE-2026-39892.
+      Improved Create Agent, governance, AI audit logging, and mitigated CVE-2026-39892 (v1.4.2), YouTube link added.
     recommended: true
   managedUpdates:
     kalmSupported: false
@@ -27,6 +27,90 @@ x-google-marketplace:
           type: REPO_WITHOUT_REGISTRY
         ubbagentImageTag:
           type: TAG
+  deployerServiceAccount:
+    description: Used by deployer to manage PMOMax Kubernetes resources during installation, test, and cleanup.
+    roles:
+      - type: ClusterRole
+        rulesType: CUSTOM
+        rules:
+          - apiGroups: [""]
+            resources:
+              - pods
+              - services
+              - serviceaccounts
+              - configmaps
+              - secrets
+              - persistentvolumeclaims
+              - events
+            verbs:
+              - get
+              - list
+              - create
+              - update
+              - patch
+              - delete
+              - watch
+          - apiGroups: ["apps"]
+            resources:
+              - deployments
+              - statefulsets
+              - replicasets
+              - daemonsets
+            verbs:
+              - get
+              - list
+              - create
+              - update
+              - patch
+              - delete
+              - watch
+          - apiGroups: ["rbac.authorization.k8s.io"]
+            resources:
+              - roles
+              - rolebindings
+              - clusterroles
+              - clusterrolebindings
+            verbs:
+              - get
+              - list
+              - create
+              - update
+              - patch
+              - delete
+              - watch
+          - apiGroups: ["app.k8s.io"]
+            resources:
+              - applications
+            verbs:
+              - get
+              - list
+              - create
+              - update
+              - patch
+              - delete
+              - watch
+          - apiGroups: ["networking.k8s.io"]
+            resources:
+              - ingresses
+              - networkpolicies
+            verbs:
+              - get
+              - list
+              - create
+              - update
+              - patch
+              - delete
+          - apiGroups: ["batch"]
+            resources:
+              - jobs
+            verbs:
+              - get
+              - list
+              - create
+              - update
+              - patch
+              - delete
+              - watch
 
 properties:
   APP_INSTANCE_NAME:
@@ -51,7 +135,6 @@ properties:
 
   deployerServiceAccount:
     type: string
-    title: Service Account for deployer
     default: deployer-sa
     x-google-marketplace:
       type: SERVICE_ACCOUNT

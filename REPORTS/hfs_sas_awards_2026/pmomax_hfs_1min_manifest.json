@@ -1,0 +1,99 @@
+{
+  "project": "PMOMax HFS one-minute video",
+  "voice_used": "en-US-Chirp3-HD-Orus",
+  "speaking_rate_used": 1.0,
+  "cleaned_duration_sec": 60.0,
+  "tempo_factor": null,
+  "generation_mode": "cue-spaced normal cadence",
+  "cue_info": [
+    {
+      "cue": 1,
+      "speaking_rate": 1.1,
+      "duration_sec": 5.55,
+      "remaining_pause_sec": 0.45
+    },
+    {
+      "cue": 2,
+      "speaking_rate": 1.0,
+      "duration_sec": 5.395,
+      "remaining_pause_sec": 0.605
+    },
+    {
+      "cue": 3,
+      "speaking_rate": 1.15,
+      "duration_sec": 5.028,
+      "remaining_pause_sec": 0.972
+    },
+    {
+      "cue": 4,
+      "speaking_rate": 1.0,
+      "duration_sec": 4.733,
+      "remaining_pause_sec": 1.267
+    },
+    {
+      "cue": 5,
+      "speaking_rate": 1.0,
+      "duration_sec": 4.47,
+      "remaining_pause_sec": 1.53
+    },
+    {
+      "cue": 6,
+      "speaking_rate": 1.0,
+      "duration_sec": 5.219,
+      "remaining_pause_sec": 0.781
+    },
+    {
+      "cue": 7,
+      "speaking_rate": 1.0,
+      "duration_sec": 3.714,
+      "remaining_pause_sec": 2.286
+    },
+    {
+      "cue": 8,
+      "speaking_rate": 1.0,
+      "duration_sec": 4.446,
+      "remaining_pause_sec": 1.554
+    },
+    {
+      "cue": 9,
+      "speaking_rate": 1.0,
+      "duration_sec": 4.92,
+      "remaining_pause_sec": 1.08
+    },
+    {
+      "cue": 10,
+      "speaking_rate": 1.0,
+      "duration_sec": 3.851,
+      "remaining_pause_sec": 2.149
+    }
+  ],
+  "final_mp3_duration_sec": 60.0,
+  "final_wav_duration_sec": 60.0,
+  "final_video_duration_sec": 60.0,
+  "orus_used": true,
+  "fallback_voice_used": false,
+  "forbidden_token_scan": "passed",
+  "pronunciation_guardrail": "passed",
+  "srt_validation": "passed",
+  "audio_level_validation": {
+    "status": "passed",
+    "mean_db": -18.9,
+    "peak_db": -2.0,
+    "stream": {
+      "codec_name": "mp3",
+      "sample_rate": "48000",
+      "channels": 1
+    }
+  },
+  "files_created": [
+    "pmomax_hfs_1min_voice.mp3",
+    "pmomax_hfs_1min_voice.wav",
+    "pmomax_hfs_1min_subtitles.srt",
+    "pmomax_hfs_1min_spoken_script_tts_only.txt",
+    "pmomax_hfs_1min_timed_script.txt",
+    "pmomax_hfs_1min_manifest.json",
+    "pmomax_hfs_1min_video.mp4",
+    "PMOMAX_HFS_1MIN_AUDIO_REPORT.md"
+  ],
+  "tts_input": "Project initiation usually starts fragmented, P M O Max brings it into one structured workspace\n\nTeams can paste, upload, load a complete demo, or begin from a guided blank start\n\nFrom raw project material, P M O Max produces a complete, editable project initiation document\n\nProject information and context are normalized for decision-ready review\n\nObjectives and key performance indicators stay measurable, visible, and consistent\n\nScope, deliverables, constraints, and dependencies remain explicit from the start\n\nThe entire initiation package stays aligned in one shared system\n\nPlanning becomes executable when schedules turn into a live Gantt chart\n\nMilestones, sequencing, and delivery timing become visible at a glance\n\nExecution detail stays connected to the initiation document that produced it"
+}

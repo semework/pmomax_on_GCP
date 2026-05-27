@@ -1,0 +1,67 @@
+{
+  "status": "success",
+  "service": "pmo-architect",
+  "project": "katalyststreet-public",
+  "region": "us-east1",
+  "revision": "pmo-architect-00024-s6v",
+  "appImage": "us-east1-docker.pkg.dev/katalyststreet-public/apps/pmo-architect@sha256:01c10beb04ae5df531aa5a897461db8c837a01ff8d761b00126d82e26844d0e9",
+  "serviceControl": {
+    "serviceName": "pmo-max.endpoints.katalyststreet-public.cloud.goog",
+    "reportEndpoint": "https://servicecontrol.googleapis.com/v1/services/pmo-max.endpoints.katalyststreet-public.cloud.goog:report",
+    "consumerId": "project:839982691485",
+    "metric": "pmo-max.endpoints.katalyststreet-public.cloud.goog/M1"
+  },
+  "trigger": {
+    "endpoint": "POST /api/marketplace/usage/report",
+    "requestBody": {
+      "metric": "pmo-max.endpoints.katalyststreet-public.cloud.goog/M1",
+      "quantity": 1,
+      "flushImmediately": true
+    },
+    "httpStatus": 200,
+    "responseBody": {
+      "ok": true,
+      "queued": true,
+      "flushed": {
+        "ok": true,
+        "sent": 1
+      }
+    },
+    "timestamp": "2026-04-17T19:12:08Z"
+  },
+  "cloudRunRequestLog": {
+    "httpRequest": {
+      "latency": "1.087006629s",
+      "protocol": "HTTP/1.1",
+      "remoteIp": "37.19.199.116",
+      "requestMethod": "POST",
+      "requestSize": "1345",
+      "requestUrl": "https://pmo-architect-zxofcfyioq-ue.a.run.app/api/marketplace/usage/report",
+      "responseSize": "264",
+      "serverIp": "34.143.76.2",
+      "status": 200,
+      "userAgent": "curl/8.7.1"
+    },
+    "insertId": "69e2860800020a4b231ccc5b",
+    "logName": "projects/katalyststreet-public/logs/run.googleapis.com%2Frequests",
+    "receiveTimestamp": "2026-04-17T19:12:08.140872032Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "pmo-architect",
+        "location": "us-east1",
+        "project_id": "katalyststreet-public",
+        "revision_name": "pmo-architect-00024-s6v",
+        "service_name": "pmo-architect"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "spanId": "e692ff49beb6a653",
+    "timestamp": "2026-04-17T19:12:06.916860Z",
+    "trace": "projects/katalyststreet-public/traces/e927923371df1709b14b7a46f0d73c04",
+    "traceSampled": true
+  },
+  "deepSearchQuery": "resource.type=cloud_run_revision AND (textPayload:UBB OR jsonPayload.message:UBB)",
+  "deepSearchResult": [],
+  "note": "The current app image successfully flushed one usage report to Google Service Control, but it does not emit UBB_REPORT-prefixed application log lines. The successful Service Control transmission is evidenced by the trigger response flushed.ok=true and flushed.sent=1 plus the Cloud Run request log above."
+}

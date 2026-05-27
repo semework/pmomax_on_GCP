@@ -1,0 +1,101 @@
+month,project_id,service,gross_cost,credits,net_cost
+2026-03,optimax-build1,Security Command Center,0.0,0.0,0.0
+2026-03,optimax-build1,Cloud SQL,0.0,0.0,0.0
+2026-03,deltamax-464321,Compute Engine,0.0,0.0,0.0
+2026-03,deltamax-464321,Secret Manager,-0.0,0.0,0.0
+2026-03,katalyststreet-public,Kubernetes Engine,0.0,0.0,0.0
+2026-03,katalyststreet-public,Compute Engine,0.0,0.0,0.0
+2026-03,katalyststreet-public,Networking,0.0,0.0,0.0
+2026-03,katalyststreet-public,Secret Manager,-0.0,0.0,0.0
+2026-03,,AlloyDB,0.0,0.0,0.0
+2026-03,deltamax-v1,Secret Manager,-0.0,0.0,0.0
+2026-03,optimax-build1,BigQuery,0.0,0.0,0.0
+2026-03,optimax-build1,Networking,0.0,0.0,0.0
+2026-03,optimax-build1,Secret Manager,-0.0,0.0,0.0
+2026-03,pid-architect-ehlu1,Security Command Center,0.0,0.0,0.0
+2026-03,katalyststreet-public,Artifact Registry,0.0,0.0,0.0
+2026-03,optimax-build1,Compute Engine,0.0,0.0,0.0
+2026-03,optimax-build1,Notebooks,0.0,0.0,0.0
+2026-03,optimax-build1,Cloud Run,0.0,0.0,0.0
+2026-03,pid-architect-ehlu1,Secret Manager,-0.0,0.0,0.0
+2026-03,pid-architect-ehlu1,Cloud Run,0.0,0.0,0.0
+2026-03,deltamax-464321,BigQuery,0.0,0.0,0.0
+2026-03,deltamax-464321,Security Command Center,0.0,0.0,0.0
+2026-03,katalyststreet-public,App Engine,0.0,0.0,0.0
+2026-03,katalyststreet-public,Security Command Center,0.0,0.0,0.0
+2026-03,katalyststreet-public,Cloud Monitoring,0.0,0.0,0.0
+2026-04,optimax-build1,Cloud Run,84.72,-83.04,1.67
+2026-04,katalyststreet-public,Compute Engine,83.4,-82.05,1.35
+2026-04,katalyststreet-public,Kubernetes Engine,151.59,-150.36,1.23
+2026-04,deltamax-464321,Compute Engine,64.1,-63.32,0.78
+2026-04,,AlloyDB,37.67,-36.91,0.76
+2026-04,katalyststreet-public,App Engine,28.45,-27.92,0.54
+2026-04,katalyststreet-public,Cloud Monitoring,25.76,-25.25,0.51
+2026-04,katalyststreet-public,Networking,40.54,-40.2,0.34
+2026-04,optimax-build1,Networking,21.18,-20.84,0.34
+2026-04,katalyststreet-public,Security Command Center,21.7,-21.38,0.32
+2026-04,optimax-build1,Security Command Center,8.7,-8.52,0.18
+2026-04,katalyststreet-public,Artifact Registry,4.32,-4.23,0.09
+2026-04,optimax-build1,Notebooks,3.77,-3.7,0.08
+2026-04,deltamax-464321,Security Command Center,3.42,-3.36,0.06
+2026-04,deltamax-v1,Cloud Logging,0.0,0.0,0.0
+2026-04,optimax-build1,Cloud Scheduler,0.0,0.0,0.0
+2026-04,optimax-build1,Cloud Logging,0.0,0.0,0.0
+2026-04,optimax-build1,Cloud SQL,0.0,-0.0,0.0
+2026-04,rajesh-ai-agent,Cloud Storage,0.0,0.0,0.0
+2026-04,rajesh-ai-agent,Vertex AI Search,0.0,0.0,0.0
+2026-04,pid-architect-ehlu1,Cloud Run,0.03,-0.03,0.0
+2026-04,pid-architect-ehlu1,Security Command Center,0.0,-0.0,0.0
+2026-04,pid-architect-ehlu1,Secret Manager,0.04,-0.04,0.0
+2026-04,katalyststreet-finops,Cloud Logging,0.0,0.0,0.0
+2026-04,deltamax-464321,BigQuery,0.01,-0.01,0.0
+2026-04,deltamax-464321,Cloud Logging,0.0,0.0,0.0
+2026-04,katalyststreet-public,Cloud Storage,0.18,-0.18,0.0
+2026-04,ontomax,BigQuery,0.0,0.0,0.0
+2026-04,deltamax-464321,Cloud Monitoring,0.0,0.0,0.0
+2026-04,katalyststreet-finops,Security Command Center,0.0,0.0,0.0
+2026-04,katalyststreet-public,Cloud Build,0.3,-0.29,0.0
+2026-04,katalyststreet-public,On-Demand Scanning,0.52,-0.52,0.0
+2026-04,optimax-build1,Vertex AI,0.0,0.0,0.0
+2026-04,optimax-build1,VM Manager,0.14,-0.14,0.0
+2026-04,deltamax-agent,Cloud Logging,0.0,0.0,0.0
+2026-04,deltamax-v1,Secret Manager,0.03,-0.03,0.0
+2026-04,optimax-build1,Dataplex,0.03,-0.03,0.0
+2026-04,optimax-build1,Secret Manager,0.04,-0.04,0.0
+2026-04,optimax-build1,Cloud Storage,0.0,0.0,0.0
+2026-04,rajesh-ai-agent,Dataplex,0.0,0.0,0.0
+2026-04,rajesh-ai-agent,Cloud Logging,0.0,0.0,0.0
+2026-04,pid-architect-ehlu1,Cloud Logging,0.0,0.0,0.0
+2026-04,deltamax-464321,Secret Manager,0.03,-0.03,0.0
+2026-04,deltamax-464321,Cloud Storage,0.2,-0.2,0.0
+2026-04,katalyststreet-public,BigQuery,0.0,0.0,0.0
+2026-04,katalyststreet-public,Cloud Pub/Sub,0.0,0.0,0.0
+2026-04,katalyststreet-public,Cloud Scheduler,0.0,0.0,0.0
+2026-04,katalyststreet-public,Secret Manager,0.01,-0.01,0.0
+2026-04,ontomax,Cloud Logging,0.0,0.0,0.0
+2026-04,deltamax-464321,VM Manager,0.13,-0.13,0.0
+2026-04,katalyststreet-public,Cloud Run,0.01,-0.01,0.0
+2026-04,,Compute Engine,0.0,0.0,0.0
+2026-04,pid-architect-ehlu1,PMOMax,209.36,-209.36,0.0
+2026-04,katalyststreet-public,Google Service Control,0.0,0.0,0.0
+2026-04,deltamax-464321,BigQuery Storage API,0.0,0.0,0.0
+2026-04,optimax-build1,Cloud Monitoring,0.0,0.0,0.0
+2026-04,katalyststreet-public,Cloud Text-to-Speech API,0.0,0.0,0.0
+2026-04,optimax-build1,BigQuery,0.02,-0.02,0.0
+2026-04,optimax-build1,Cloud Pub/Sub,0.0,0.0,0.0
+2026-04,optimax-build1,Data Catalog,0.0,0.0,0.0
+2026-04,pid-architect-ehlu1,Cloud Storage,0.0,-0.0,0.0
+2026-04,pid-architect-ehlu1,Firebase Hosting,0.0,0.0,0.0
+2026-04,katalyststreet-finops,BigQuery,0.01,-0.01,0.0
+2026-04,katalyststreet-public,Dataplex,0.0,0.0,0.0
+2026-04,katalyststreet-public,Cloud Logging,0.0,0.0,0.0
+2026-04,deltamax-464321,Networking,0.25,-0.25,0.0
+2026-04,pid-architect-ehlu1,Artifact Registry,0.04,-0.04,0.0
+2026-04,,Invoice,-0.0,0.0,-0.0
+2026-04,katalyststreet-public,PMOMax,0.0,-0.0,0.0
+2026-04,ontomax,Security Command Center,0.0,0.0,0.0
+2026-04,optimax-build1,Compute Engine,55.86,-64.14,-8.28
+2026-05,optimax-build1,Cloud Run,20.26,-19.84,0.41
+2026-05,katalyststreet-public,Compute Engine,13.62,-13.24,0.39
+2026-05,,AlloyDB,7.35,-7.14,0.21
+2026-05,katalyststreet-public,Kubernetes Engine,28.62,-28.42,0.2
