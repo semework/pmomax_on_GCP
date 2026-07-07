@@ -1,7 +1,7 @@
 # Build a patched UBB agent from source instead of mirroring the vulnerable
 # upstream image. The module contains replace directives, so it must be built as
 # the main module rather than with `go install module@version`.
-FROM golang:1.26.2-alpine AS builder
+FROM golang:1.26.3-alpine AS builder
 
 RUN apk add --no-cache git make
 RUN git clone --depth 1 https://github.com/GoogleCloudPlatform/ubbagent.git /src
