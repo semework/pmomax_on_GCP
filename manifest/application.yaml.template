@@ -16,8 +16,8 @@ spec:
       kind: Service
   descriptor:
     type: "pmomax"
-    description: "PMOMax PID Architect - Improved Create Agent, governance, AI audit logging, mitigated CVE-2026-34182 in the UBB agent rebuild, and refreshed deployer validation tooling (v1.4.5)."
-    version: "1.4.5"
+    description: "PMOMax PID Architect - Patched UBB agent, pinned source provenance, and upgraded Marketplace deployer tooling (v1.4.8)."
+    version: "1.4.8"
     links:
       - description: "PMOMax documentation"
         url: "https://docs.pmomax.com"

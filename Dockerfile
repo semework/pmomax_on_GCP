@@ -1,4 +1,4 @@
-FROM gcr.io/cloud-marketplace-tools/k8s/deployer_envsubst/onbuild:13.0.2
+FROM gcr.io/cloud-marketplace-tools/k8s/deployer_envsubst/onbuild:13.0.9@sha256:52b87686e02c387838acf0fb96181efa9ce959d77fbd51e0ffee489ef38d3492
 LABEL "com.googleapis.cloudmarketplace.product.service.name"="services/pmo-max.endpoints.katalyststreet-public.cloud.goog"
 
 # Security hardening: refresh OS packages, kubectl binaries, and Python crypto stack.
@@ -7,15 +7,16 @@ RUN set -eux; \
     apt-get -y upgrade; \
     apt-get clean; \
     rm -rf /var/lib/apt/lists/*; \
-    KSAFE="$(wget -qO- https://dl.k8s.io/release/stable-1.35.txt)"; \
+    KSAFE="$(wget -qO- https://dl.k8s.io/release/stable-1.36.txt)"; \
     wget -qO /usr/local/bin/kubectl "https://dl.k8s.io/release/${KSAFE}/bin/linux/amd64/kubectl"; \
     rm -rf /opt/kubectl; \
-    mkdir -p /opt/kubectl/1.30 /opt/kubectl/1.31 /opt/kubectl/1.35; \
+    mkdir -p /opt/kubectl/1.30 /opt/kubectl/1.31 /opt/kubectl/1.35 /opt/kubectl/1.36; \
     install -m 0755 /usr/local/bin/kubectl /opt/kubectl/1.30/kubectl; \
     install -m 0755 /usr/local/bin/kubectl /opt/kubectl/1.31/kubectl; \
     install -m 0755 /usr/local/bin/kubectl /opt/kubectl/1.35/kubectl; \
-    ln -sfn /opt/kubectl/1.35 /opt/kubectl/default; \
-    chmod +x /usr/local/bin/kubectl /opt/kubectl/1.30/kubectl /opt/kubectl/1.31/kubectl /opt/kubectl/1.35/kubectl; \
+    install -m 0755 /usr/local/bin/kubectl /opt/kubectl/1.36/kubectl; \
+    ln -sfn /opt/kubectl/1.36 /opt/kubectl/default; \
+    chmod +x /usr/local/bin/kubectl /opt/kubectl/1.30/kubectl /opt/kubectl/1.31/kubectl /opt/kubectl/1.35/kubectl /opt/kubectl/1.36/kubectl; \
     pip3 install --no-cache-dir --upgrade pip setuptools wheel "pyOpenSSL>=26.0.0"; \
     rm -rf /usr/lib/python3/dist-packages/setuptools* /usr/lib/python3/dist-packages/wheel*
 

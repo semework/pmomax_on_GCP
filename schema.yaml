@@ -3,10 +3,10 @@ x-google-marketplace:
   applicationApiVersion: v1beta1
   partnerId: katalyststreet
   solutionId: pmomax
-  publishedVersion: "1.4.5"
+  publishedVersion: "1.4.8"
   publishedVersionMetadata:
     releaseNote: >-
-      Improved Create Agent, governance, AI audit logging, mitigated CVE-2026-34182 in the UBB agent rebuild, and refreshed deployer validation tooling (v1.4.5).
+      Rebuilt the UBB agent with patched OpenSSL and Go 1.26.5, pinned upstream source provenance, and upgraded the Marketplace deployer base to 13.0.9 (v1.4.8).
     recommended: true
   managedUpdates:
     kalmSupported: false
@@ -225,7 +225,7 @@ properties:
 
   deployer.image:
     type: string
-    default: us-docker.pkg.dev/katalyststreet-public/pmomax/deployer:1.4.5
+    default: us-docker.pkg.dev/katalyststreet-public/pmomax/deployer:1.4.8
     x-google-marketplace:
       type: DEPLOYER_IMAGE
 
@@ -239,7 +239,7 @@ properties:
 
   deployerImageTag:
     type: string
-    default: "1.4.5"
+    default: "1.4.8"
 
   ubbagentImageRegistry:
     type: string
@@ -251,7 +251,7 @@ properties:
 
   ubbagentImageTag:
     type: string
-    default: "1.4.5"
+    default: "1.4.8"
 
   PMOMAX_APP_IMAGE:
     type: string
