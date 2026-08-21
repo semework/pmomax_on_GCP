@@ -909,7 +909,7 @@ export const usePidLogic = () => {
         if (parseInFlightKey.current) parseInFlightKey.current = '';
       }
     },
-    [requestBudgetForPid],
+    [],
   );
 
   const cancelParsing = useCallback(() => {

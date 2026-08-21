@@ -41,7 +41,7 @@ export async function pdfToText(input: File | ArrayBuffer | Uint8Array): Promise
       : input;
     const isBrowser = typeof window !== 'undefined' && typeof window.document !== 'undefined';
     const start = Date.now();
-    const pdf = await withTimeout(
+    const pdf: any = await withTimeout<any>(
       (pdfjsLib as any).getDocument({
         data: arrayBuffer,
         verbosity: 0,
@@ -61,8 +61,8 @@ export async function pdfToText(input: File | ArrayBuffer | Uint8Array): Promise
       if (Date.now() - start > MAX_CLIENT_MS) {
         throw new Error(`PDF parsing exceeded ${Math.round(MAX_CLIENT_MS / 1000)}s. Will fallback to server parsing.`);
       }
-      const page = await withTimeout(pdf.getPage(i), 10_000, `PDF page ${i}`);
-      const content = await withTimeout(page.getTextContent(), 12_000, `PDF text ${i}`);
+      const page: any = await withTimeout<any>(pdf.getPage(i), 10_000, `PDF page ${i}`);
+      const content: any = await withTimeout<any>(page.getTextContent(), 12_000, `PDF text ${i}`);
       const strings = (content.items as any[])
         .map((item: any) => ('str' in item ? item.str : ''))
         .filter(Boolean);

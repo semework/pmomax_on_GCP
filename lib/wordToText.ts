@@ -47,7 +47,7 @@ function toArrayBuffer(input: ArrayBuffer | Uint8Array | any): ArrayBuffer {
   // Covers Uint8Array and Node Buffer (Buffer is a Uint8Array subclass)
   if (input instanceof Uint8Array) {
     // Respect byteOffset/byteLength so we don't leak a larger underlying buffer.
-    return input.buffer.slice(input.byteOffset, input.byteOffset + input.byteLength);
+    return new Uint8Array(input).buffer;
   }
 
   // Buffer-like objects with .buffer (rare)
@@ -71,7 +71,6 @@ export async function wordToText(input: ArrayBuffer | Uint8Array | any): Promise
     const size = byteLengthOf(input);
     if (size && size > 25_000_000) {
       // Keep as warning only — do not fail.
-      // eslint-disable-next-line no-console
       console.warn('[wordToText] Large DOCX detected; parsing may take longer.');
     }
 
@@ -79,7 +78,6 @@ export async function wordToText(input: ArrayBuffer | Uint8Array | any): Promise
 
     // Node path: if Buffer is available and input is Buffer, prefer { buffer }
     // (Mammoth Node build supports Buffer directly.)
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     if (isNodeRuntime() && typeof Buffer !== 'undefined' && Buffer?.isBuffer?.(input)) {
       const res = await mammoth.extractRawText({ buffer: input });

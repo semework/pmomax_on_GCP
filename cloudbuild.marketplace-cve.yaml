@@ -1,0 +1,57 @@
+steps:
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - build
+      - --pull
+      - --no-cache
+      - --platform
+      - linux/amd64
+      - -f
+      - Dockerfile
+      - -t
+      - us-docker.pkg.dev/katalyststreet-public/pmomax/deployer:1.4.15-unflattened
+      - .
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - push
+      - us-docker.pkg.dev/katalyststreet-public/pmomax/deployer:1.4.15-unflattened
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - build
+      - --pull
+      - --no-cache
+      - --platform
+      - linux/amd64
+      - -f
+      - ubbagent.Dockerfile
+      - -t
+      - us-docker.pkg.dev/katalyststreet-public/pmomax/ubbagent:1.4.15-unannotated
+      - .
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - push
+      - us-docker.pkg.dev/katalyststreet-public/pmomax/ubbagent:1.4.15-unannotated
+  - name: gcr.io/go-containerregistry/crane:debug
+    args:
+      - flatten
+      - us-docker.pkg.dev/katalyststreet-public/pmomax/deployer:1.4.15-unflattened
+      - --tag
+      - us-docker.pkg.dev/katalyststreet-public/pmomax/deployer:1.4.15-flattened
+  - name: gcr.io/go-containerregistry/crane:debug
+    args:
+      - mutate
+      - us-docker.pkg.dev/katalyststreet-public/pmomax/deployer:1.4.15-flattened
+      - --annotation
+      - com.googleapis.cloudmarketplace.product.service.name=services/pmo-max.endpoints.katalyststreet-public.cloud.goog
+      - --tag
+      - us-docker.pkg.dev/katalyststreet-public/pmomax/deployer:1.4.15
+  - name: gcr.io/go-containerregistry/crane:debug
+    args:
+      - mutate
+      - us-docker.pkg.dev/katalyststreet-public/pmomax/ubbagent:1.4.15-unannotated
+      - --annotation
+      - com.googleapis.cloudmarketplace.product.service.name=services/pmo-max.endpoints.katalyststreet-public.cloud.goog
+      - --tag
+      - us-docker.pkg.dev/katalyststreet-public/pmomax/ubbagent:1.4.15
+options:
+  logging: CLOUD_LOGGING_ONLY

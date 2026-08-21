@@ -1,0 +1,13 @@
+{
+  "done": true,
+  "metadata": {
+    "@type": "type.googleapis.com/google.cloud.ondemandscanning.v1.AnalyzePackagesMetadata",
+    "createTime": "2026-08-20T17:58:25.639711Z",
+    "resourceUri": "us-docker.pkg.dev/katalyststreet-public/pmomax/ubbagent@sha256:0cb489e85b6f20af554837cb9a8a5fb4350bcdf910064ca5a80105b07bd9cb40"
+  },
+  "name": "projects/katalyststreet-public/locations/us/operations/af07ab78-bf7a-423a-a9f4-6c6fc30838dc",
+  "response": {
+    "@type": "type.googleapis.com/google.cloud.ondemandscanning.v1.AnalyzePackagesResponse",
+    "scan": "projects/katalyststreet-public/locations/us/scans/a864d2c4-2819-4eca-a9b6-0dcdec5900c1"
+  }
+}

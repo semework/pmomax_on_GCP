@@ -8,7 +8,7 @@ deployerServiceAccount: deployer-sa
 # Deployer image used by Marketplace installer
 deployerImageRegistry: us-docker.pkg.dev
 deployerImageRepo: katalyststreet-public/pmomax/deployer
-deployerImageTag: "1.4.8"
+deployerImageTag: "1.4.15"
 
 # PMOMax app image
 pmomaxAppRegistry: us-east1-docker.pkg.dev

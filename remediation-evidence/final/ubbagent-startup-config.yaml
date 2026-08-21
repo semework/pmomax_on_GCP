@@ -1,0 +1,23 @@
+identities:
+  - name: gcp
+    gcp:
+      encodedServiceAccountKey: ${AGENT_ENCODED_KEY}
+metrics:
+  - name: M1
+    type: int
+    aggregation:
+      bufferSeconds: 60
+    endpoints:
+      - name: disk
+endpoints:
+  - name: disk
+    disk:
+      reportDir: /tmp/reports
+      expireSeconds: 3600
+sources:
+  - name: pmomax_heartbeat
+    heartbeat:
+      metric: M1
+      intervalSeconds: 60
+      value:
+        int64Value: 60

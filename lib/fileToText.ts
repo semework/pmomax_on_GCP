@@ -3,7 +3,7 @@
 // This module is intentionally defensive: it always returns a FileTextResult (never throws)
 // unless a caller explicitly chooses to throw.
 
-import * as XLSX from 'xlsx';
+import * as XLSX from '@e965/xlsx';
 import { INTERNAL_MAX_WORDS } from './supportedFormats';
 
 export type FileTextResult = {
@@ -652,7 +652,7 @@ export async function fileToText(file: File): Promise<FileTextResult> {
             text += `${sheetName}\n${narrative}\n`;
           } else {
             text += `${sheetName}\n`;
-            text += XLSX.utils.sheet_to_csv(sheet, { FS: '\t', range }) + '\n';
+            text += XLSX.utils.sheet_to_csv(sheet, { FS: '\t', range } as any) + '\n';
           }
         });
 

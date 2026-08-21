@@ -1,0 +1,1008 @@
++ KUBE_CONFIG=/Users/mulugetasemework/.kube/config
++ GCLOUD_CONFIG=/Users/mulugetasemework/.config/gcloud
++ EXTRA_DOCKER_PARAMS=
++ DOCKER_NETWORK=host
++ MARKETPLACE_TOOLS_TAG=latest
++ MARKETPLACE_TOOLS_IMAGE=gcr.io/cloud-marketplace-tools/k8s/dev
+++ date +%Y%m%d-%H%M%S
++ VERIFICATION_LOGS_PATH=/Users/mulugetasemework/.mpdev_logs/20260820-140007
++ kube_mount=
++ [[ -f /Users/mulugetasemework/.kube/config ]]
++ kube_mount=(--mount "type=bind,source=${KUBE_CONFIG},target=/mount/config/.kube/config,readonly")
++ gcloud_mount=
++ gcloud_original_path=
++ [[ -e /Users/mulugetasemework/.config/gcloud ]]
++ gcloud_mount=(--mount "type=bind,source=${GCLOUD_CONFIG},target=/mount/config/.config/gcloud,readonly")
+++ readlink -f /Users/mulugetasemework/.config/gcloud
++ canonical_gcloud_config=/Users/mulugetasemework/.config/gcloud
++ gcloud_original_path=(--env "GCLOUD_ORIGINAL_PATH=${canonical_gcloud_config}")
++ terminal_docker_param=-t
++ [[ -t 0 ]]
++ mkdir -p /Users/mulugetasemework/.mpdev_logs/20260820-140007
++ echo 'Logs stored in /Users/mulugetasemework/.mpdev_logs/20260820-140007'
++ tee /Users/mulugetasemework/.mpdev_logs/20260820-140007/verify.log
+Logs stored in /Users/mulugetasemework/.mpdev_logs/20260820-140007
++ docker run --init --mount type=bind,source=/var/run/docker.sock,target=/var/run/docker.sock,readonly --mount type=bind,source=/Users/mulugetasemework/.mpdev_logs/20260820-140007,target=/logs --net=host --env DOCKER_API_VERSION=1.41 --mount type=bind,source=/Users/mulugetasemework/.kube/config,target=/mount/config/.kube/config,readonly --mount type=bind,source=/Users/mulugetasemework/.config/gcloud,target=/mount/config/.config/gcloud,readonly --env GCLOUD_ORIGINAL_PATH=/Users/mulugetasemework/.config/gcloud -t --rm gcr.io/cloud-marketplace-tools/k8s/dev:latest verify --deployer=us-docker.pkg.dev/katalyststreet-public/pmomax/deployer@sha256:c423df13747dbb680ad7413c7b6aeafc2230d90fae715d8bd850af7596aa682b --wait_timeout=900
++ tee /Users/mulugetasemework/.mpdev_logs/20260820-140007/verify.log
+Successfully copied 7.36kB (transferred 9.22kB) to /data/schema.yaml
+c2dab8c81ee921f0b2629614fa2e522ff162be8a8aefed5548b951336817cef6
+INFO Parameters: {
+  "APP_INSTANCE_NAME": "apptest-25gfsgnr",
+  "NAMESPACE": "apptest-25gfsgnr"
+}
+INFO Creates namespace "apptest-25gfsgnr"
+Using /opt/kubectl/default/kubectl (server=1.35)
+namespace/apptest-25gfsgnr created
+Creating fake reporting secret fake-reporting-secret-5lrd392x
+Using /opt/kubectl/default/kubectl (server=1.35)
+secret/fake-reporting-secret-5lrd392x created
+INFO Initializes the deployer container which will deploy all the application components
+Successfully copied 7.36kB (transferred 9.22kB) to /data/schema.yaml
+350d1b9c4f4cdc2b2b8d0d976397eeddcebcc1c7e112aaae33ac51f257fc2e39
+INFO: /data/schema.yaml:
+x-google-marketplace:
+  schemaVersion: v2
+  applicationApiVersion: v1beta1
+  partnerId: katalyststreet
+  solutionId: pmomax
+  publishedVersion: "1.4.15"
+  publishedVersionMetadata:
+    releaseNote: >-
+      Remediates CVE-2026-39821 by replacing every kubectl copy with 1.36.3 built using Go 1.26.6 and golang.org/x/net 0.58.0, and rebuilding the UBB agent with Go 1.26.6 and golang.org/x/net 0.58.0 in a scan-compatible minimal runtime (v1.4.15).
+    recommended: true
+  managedUpdates:
+    kalmSupported: false
+  images:
+    deployer:
+      properties:
+        deployerImageRegistry:
+          type: REGISTRY
+        deployerImageRepo:
+          type: REPO_WITHOUT_REGISTRY
+        deployerImageTag:
+          type: TAG
+    ubbagent:
+      properties:
+        ubbagentImageRegistry:
+          type: REGISTRY
+        ubbagentImageRepo:
+          type: REPO_WITHOUT_REGISTRY
+        ubbagentImageTag:
+          type: TAG
+  deployerServiceAccount:
+    description: Used by deployer to manage PMOMax Kubernetes resources during installation, test, and cleanup.
+    roles:
+      - type: ClusterRole
+        rulesType: CUSTOM
+        rules:
+          - apiGroups: [""]
+            resources:
+              - pods
+              - services
+              - serviceaccounts
+              - configmaps
+              - secrets
+              - persistentvolumeclaims
+              - events
+            verbs:
+              - get
+              - list
+              - create
+              - update
+              - patch
+              - delete
+              - watch
+          - apiGroups: ["apps"]
+            resources:
+              - deployments
+              - statefulsets
+              - replicasets
+              - daemonsets
+            verbs:
+              - get
+              - list
+              - create
+              - update
+              - patch
+              - delete
+              - watch
+          - apiGroups: ["rbac.authorization.k8s.io"]
+            resources:
+              - roles
+              - rolebindings
+              - clusterroles
+              - clusterrolebindings
+            verbs:
+              - get
+              - list
+              - create
+              - update
+              - patch
+              - delete
+              - watch
+          - apiGroups: ["app.k8s.io"]
+            resources:
+              - applications
+            verbs:
+              - get
+              - list
+              - create
+              - update
+              - patch
+              - delete
+              - watch
+          - apiGroups: ["networking.k8s.io"]
+            resources:
+              - ingresses
+              - networkpolicies
+            verbs:
+              - get
+              - list
+              - create
+              - update
+              - patch
+              - delete
+          - apiGroups: ["batch"]
+            resources:
+              - jobs
+            verbs:
+              - get
+              - list
+              - create
+              - update
+              - patch
+              - delete
+              - watch
+
+properties:
+  APP_INSTANCE_NAME:
+    type: string
+    default: pmo-architect
+    x-google-marketplace:
+      type: NAME
+
+  NAMESPACE:
+    type: string
+    x-google-marketplace:
+      type: NAMESPACE
+
+  reportingSecret:
+    type: string
+    x-google-marketplace:
+      type: REPORTING_SECRET
+
+  DOMAIN:
+    type: string
+    default: pmomax.example.com
+
+  deployerServiceAccount:
+    type: string
+    default: deployer-sa
+    x-google-marketplace:
+      type: SERVICE_ACCOUNT
+      serviceAccount:
+        description: Used by deployer to manage Kubernetes resources during installation and cleanup.
+        roles:
+          - type: ClusterRole
+            rulesType: CUSTOM
+            rules:
+              - apiGroups: [""]
+                resources:
+                  - pods
+                  - services
+                  - serviceaccounts
+                  - configmaps
+                  - secrets
+                  - persistentvolumeclaims
+                  - events
+                verbs:
+                  - get
+                  - list
+                  - create
+                  - update
+                  - patch
+                  - delete
+                  - watch
+              - apiGroups: ["apps"]
+                resources:
+                  - deployments
+                  - statefulsets
+                  - replicasets
+                  - daemonsets
+                verbs:
+                  - get
+                  - list
+                  - create
+                  - update
+                  - patch
+                  - delete
+                  - watch
+              - apiGroups: ["rbac.authorization.k8s.io"]
+                resources:
+                  - roles
+                  - rolebindings
+                  - clusterroles
+                  - clusterrolebindings
+                verbs:
+                  - get
+                  - list
+                  - create
+                  - update
+                  - patch
+                  - delete
+                  - watch
+              - apiGroups: ["app.k8s.io"]
+                resources:
+                  - applications
+                verbs:
+                  - get
+                  - list
+                  - create
+                  - update
+                  - patch
+                  - delete
+                  - watch
+              - apiGroups: ["networking.k8s.io"]
+                resources:
+                  - ingresses
+                  - networkpolicies
+                verbs:
+                  - get
+                  - list
+                  - create
+                  - update
+                  - patch
+                  - delete
+              - apiGroups: ["batch"]
+                resources:
+                  - jobs
+                verbs:
+                  - get
+                  - list
+                  - create
+                  - update
+                  - patch
+                  - delete
+                  - watch
+
+  deployer.image:
+    type: string
+    default: us-docker.pkg.dev/katalyststreet-public/pmomax/deployer:1.4.15
+    x-google-marketplace:
+      type: DEPLOYER_IMAGE
+
+  deployerImageRegistry:
+    type: string
+    default: us-docker.pkg.dev
+
+  deployerImageRepo:
+    type: string
+    default: katalyststreet-public/pmomax/deployer
+
+  deployerImageTag:
+    type: string
+    default: "1.4.15"
+
+  ubbagentImageRegistry:
+    type: string
+    default: us-docker.pkg.dev
+
+  ubbagentImageRepo:
+    type: string
+    default: katalyststreet-public/pmomax/ubbagent
+
+  ubbagentImageTag:
+    type: string
+    default: "1.4.15"
+
+  PMOMAX_APP_IMAGE:
+    type: string
+    default: us-east1-docker.pkg.dev/katalyststreet-public/apps/pmo-architect:1.0.2
+
+  pmomaxAppRepo:
+    type: string
+    default: katalyststreet-public/apps/pmo-architect
+
+  pmomaxAppRegistry:
+    type: string
+    default: us-east1-docker.pkg.dev
+
+  pmomaxAppTag:
+    type: string
+    default: "1.0.2"
+
+  PMOMAX_APP_PORT:
+    type: integer
+    default: 8080
+
+  TESTER_IMAGE:
+    type: string
+    default: curlimages/curl:8.12.1
+
+  testerImageRegistry:
+    type: string
+    default: docker.io
+
+  PARTNER_ID:
+    type: string
+    default: katalyststreet
+
+  PRODUCT_ID:
+    type: string
+    default: pmomax
+
+  GCP_PROJECT_ID:
+    type: string
+    default: katalyststreet-public
+
+required:
+  - APP_INSTANCE_NAME
+  - NAMESPACE
+  - reportingSecret
+Using /opt/kubectl/default/kubectl (server=1.35)
+Using /opt/kubectl/default/kubectl (server=1.35)
+application.app.k8s.io/apptest-25gfsgnr created
+Using /opt/kubectl/default/kubectl (server=1.35)
+Using /opt/kubectl/default/kubectl (server=1.35)
+serviceaccount/apptest-25gfsgnr-deployer-sa created
+Using /opt/kubectl/default/kubectl (server=1.35)
+INFO Application 'apptest-25gfsgnr' owns 'ServiceAccount/apptest-25gfsgnr-deployerserviceaccount'
+INFO Application 'apptest-25gfsgnr' does not own cluster-scoped 'ClusterRole/apptest-25gfsgnr:apptest-25gfsgnr:deployerServiceAccount-r0'
+INFO Application 'apptest-25gfsgnr' does not own cluster-scoped 'ClusterRoleBinding/apptest-25gfsgnr:apptest-25gfsgnr:deployerServiceAccount-rb0'
+INFO Application 'apptest-25gfsgnr' owns 'ServiceAccount/apptest-25gfsgnr-deployer-sa'
+INFO Application 'apptest-25gfsgnr' owns 'Secret/apptest-25gfsgnr-deployer-config'
+INFO Application 'apptest-25gfsgnr' owns 'Job/apptest-25gfsgnr-deployer'
+INFO Application 'apptest-25gfsgnr' owns 'RoleBinding/apptest-25gfsgnr-deployer-rb'
+INFO Application 'apptest-25gfsgnr' does not own cluster-scoped 'ClusterRole/apptest-25gfsgnr:apptest-25gfsgnr:deployer-cr0'
+INFO Application 'apptest-25gfsgnr' does not own cluster-scoped 'ClusterRoleBinding/apptest-25gfsgnr:apptest-25gfsgnr:deployer-crb0'
+INFO: Applying the following manifests:
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  labels:
+    app.kubernetes.io/component: auto-provisioned.marketplace.cloud.google.com
+    app.kubernetes.io/name: apptest-25gfsgnr
+    marketplace.cloud.google.com/auto-provisioned-for-property: deployerServiceAccount
+  name: apptest-25gfsgnr-deployerserviceaccount
+  namespace: apptest-25gfsgnr
+  ownerReferences:
+  - apiVersion: app.k8s.io/v1beta1
+    blockOwnerDeletion: true
+    kind: Application
+    name: apptest-25gfsgnr
+    uid: ef0e8b40-bc63-45ee-87ce-b8f634edff01
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app.kubernetes.io/component: auto-provisioned.marketplace.cloud.google.com
+    app.kubernetes.io/name: apptest-25gfsgnr
+    app.kubernetes.io/namespace: apptest-25gfsgnr
+    marketplace.cloud.google.com/auto-provisioned-for-property: deployerServiceAccount
+  name: apptest-25gfsgnr:apptest-25gfsgnr:deployerServiceAccount-r0
+rules:
+- apiGroups:
+  - ''
+  resources:
+  - pods
+  - services
+  - serviceaccounts
+  - configmaps
+  - secrets
+  - persistentvolumeclaims
+  - events
+  verbs:
+  - get
+  - list
+  - create
+  - update
+  - patch
+  - delete
+  - watch
+- apiGroups:
+  - apps
+  resources:
+  - deployments
+  - statefulsets
+  - replicasets
+  - daemonsets
+  verbs:
+  - get
+  - list
+  - create
+  - update
+  - patch
+  - delete
+  - watch
+- apiGroups:
+  - rbac.authorization.k8s.io
+  resources:
+  - roles
+  - rolebindings
+  - clusterroles
+  - clusterrolebindings
+  verbs:
+  - get
+  - list
+  - create
+  - update
+  - patch
+  - delete
+  - watch
+- apiGroups:
+  - app.k8s.io
+  resources:
+  - applications
+  verbs:
+  - get
+  - list
+  - create
+  - update
+  - patch
+  - delete
+  - watch
+- apiGroups:
+  - networking.k8s.io
+  resources:
+  - ingresses
+  - networkpolicies
+  verbs:
+  - get
+  - list
+  - create
+  - update
+  - patch
+  - delete
+- apiGroups:
+  - batch
+  resources:
+  - jobs
+  verbs:
+  - get
+  - list
+  - create
+  - update
+  - patch
+  - delete
+  - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  labels:
+    app.kubernetes.io/component: auto-provisioned.marketplace.cloud.google.com
+    app.kubernetes.io/name: apptest-25gfsgnr
+    marketplace.cloud.google.com/auto-provisioned-for-property: deployerServiceAccount
+  name: apptest-25gfsgnr:apptest-25gfsgnr:deployerServiceAccount-rb0
+  namespace: apptest-25gfsgnr
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: apptest-25gfsgnr:apptest-25gfsgnr:deployerServiceAccount-r0
+subjects:
+- kind: ServiceAccount
+  name: apptest-25gfsgnr-deployerserviceaccount
+  namespace: apptest-25gfsgnr
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  labels:
+    app.kubernetes.io/component: deployer.marketplace.cloud.google.com
+    app.kubernetes.io/name: apptest-25gfsgnr
+    marketplace.cloud.google.com/deployer: Dependent
+  name: apptest-25gfsgnr-deployer-sa
+  namespace: apptest-25gfsgnr
+  ownerReferences:
+  - apiVersion: app.k8s.io/v1beta1
+    blockOwnerDeletion: true
+    kind: Application
+    name: apptest-25gfsgnr
+    uid: ef0e8b40-bc63-45ee-87ce-b8f634edff01
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  labels:
+    app.kubernetes.io/component: deployer.marketplace.cloud.google.com
+    app.kubernetes.io/name: apptest-25gfsgnr
+    marketplace.cloud.google.com/deployer: Dependent
+  name: apptest-25gfsgnr-deployer-config
+  namespace: apptest-25gfsgnr
+  ownerReferences:
+  - apiVersion: app.k8s.io/v1beta1
+    blockOwnerDeletion: true
+    kind: Application
+    name: apptest-25gfsgnr
+    uid: ef0e8b40-bc63-45ee-87ce-b8f634edff01
+stringData:
+  values.yaml: 'APP_INSTANCE_NAME: apptest-25gfsgnr
+
+    NAMESPACE: apptest-25gfsgnr
+
+    __image_repo_prefix__: us-docker.pkg.dev/katalyststreet-public/pmomax
+
+    deployer.image: us-docker.pkg.dev/katalyststreet-public/pmomax/deployer@sha256:c423df13747dbb680ad7413c7b6aeafc2230d90fae715d8bd850af7596aa682b
+
+    deployerServiceAccount: apptest-25gfsgnr-deployerserviceaccount
+
+    reportingSecret: fake-reporting-secret-5lrd392x
+
+    '
+type: Opaque
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  labels:
+    app.kubernetes.io/component: deployer.marketplace.cloud.google.com
+    app.kubernetes.io/name: apptest-25gfsgnr
+    marketplace.cloud.google.com/deployer: Main
+  name: apptest-25gfsgnr-deployer
+  namespace: apptest-25gfsgnr
+  ownerReferences:
+  - apiVersion: app.k8s.io/v1beta1
+    blockOwnerDeletion: true
+    kind: Application
+    name: apptest-25gfsgnr
+    uid: ef0e8b40-bc63-45ee-87ce-b8f634edff01
+spec:
+  backoffLimit: 0
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: 'false'
+    spec:
+      containers:
+      - command:
+        - /bin/deploy_with_tests.sh
+        image: us-docker.pkg.dev/katalyststreet-public/pmomax/deployer@sha256:c423df13747dbb680ad7413c7b6aeafc2230d90fae715d8bd850af7596aa682b
+        imagePullPolicy: Always
+        name: deployer
+        resources:
+          requests:
+            cpu: 100m
+            memory: 100Mi
+        volumeMounts:
+        - mountPath: /data/values.yaml
+          name: config-volume
+          readOnly: true
+          subPath: values.yaml
+      restartPolicy: Never
+      serviceAccountName: apptest-25gfsgnr-deployer-sa
+      volumes:
+      - name: config-volume
+        secret:
+          secretName: apptest-25gfsgnr-deployer-config
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  labels:
+    app.kubernetes.io/component: deployer-rbac.marketplace.cloud.google.com
+    app.kubernetes.io/name: apptest-25gfsgnr
+    marketplace.cloud.google.com/deployer: Dependent
+  name: apptest-25gfsgnr-deployer-rb
+  namespace: apptest-25gfsgnr
+  ownerReferences:
+  - apiVersion: app.k8s.io/v1beta1
+    blockOwnerDeletion: true
+    kind: Application
+    name: apptest-25gfsgnr
+    uid: ef0e8b40-bc63-45ee-87ce-b8f634edff01
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-admin
+subjects:
+- kind: ServiceAccount
+  name: apptest-25gfsgnr-deployer-sa
+  namespace: apptest-25gfsgnr
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app.kubernetes.io/component: deployer-rbac.marketplace.cloud.google.com
+    app.kubernetes.io/name: apptest-25gfsgnr
+    app.kubernetes.io/namespace: apptest-25gfsgnr
+    marketplace.cloud.google.com/deployer: Dependent
+  name: apptest-25gfsgnr:apptest-25gfsgnr:deployer-cr0
+rules:
+- apiGroups:
+  - ''
+  resources:
+  - pods
+  - services
+  - serviceaccounts
+  - configmaps
+  - secrets
+  - persistentvolumeclaims
+  - events
+  verbs:
+  - get
+  - list
+  - create
+  - update
+  - patch
+  - delete
+  - watch
+- apiGroups:
+  - apps
+  resources:
+  - deployments
+  - statefulsets
+  - replicasets
+  - daemonsets
+  verbs:
+  - get
+  - list
+  - create
+  - update
+  - patch
+  - delete
+  - watch
+- apiGroups:
+  - rbac.authorization.k8s.io
+  resources:
+  - roles
+  - rolebindings
+  - clusterroles
+  - clusterrolebindings
+  verbs:
+  - get
+  - list
+  - create
+  - update
+  - patch
+  - delete
+  - watch
+- apiGroups:
+  - app.k8s.io
+  resources:
+  - applications
+  verbs:
+  - get
+  - list
+  - create
+  - update
+  - patch
+  - delete
+  - watch
+- apiGroups:
+  - networking.k8s.io
+  resources:
+  - ingresses
+  - networkpolicies
+  verbs:
+  - get
+  - list
+  - create
+  - update
+  - patch
+  - delete
+- apiGroups:
+  - batch
+  resources:
+  - jobs
+  verbs:
+  - get
+  - list
+  - create
+  - update
+  - patch
+  - delete
+  - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  labels:
+    app.kubernetes.io/component: deployer-rbac.marketplace.cloud.google.com
+    app.kubernetes.io/name: apptest-25gfsgnr
+    app.kubernetes.io/namespace: apptest-25gfsgnr
+    marketplace.cloud.google.com/deployer: Dependent
+  name: apptest-25gfsgnr:apptest-25gfsgnr:deployer-crb0
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: apptest-25gfsgnr:apptest-25gfsgnr:deployer-cr0
+subjects:
+- kind: ServiceAccount
+  name: apptest-25gfsgnr-deployer-sa
+  namespace: apptest-25gfsgnr
+Using /opt/kubectl/default/kubectl (server=1.35)
+serviceaccount/apptest-25gfsgnr-deployerserviceaccount created
+clusterrole.rbac.authorization.k8s.io/apptest-25gfsgnr:apptest-25gfsgnr:deployerServiceAccount-r0 created
+clusterrolebinding.rbac.authorization.k8s.io/apptest-25gfsgnr:apptest-25gfsgnr:deployerServiceAccount-rb0 created
+serviceaccount/apptest-25gfsgnr-deployer-sa configured
+secret/apptest-25gfsgnr-deployer-config created
+job.batch/apptest-25gfsgnr-deployer created
+rolebinding.rbac.authorization.k8s.io/apptest-25gfsgnr-deployer-rb created
+clusterrole.rbac.authorization.k8s.io/apptest-25gfsgnr:apptest-25gfsgnr:deployer-cr0 created
+clusterrolebinding.rbac.authorization.k8s.io/apptest-25gfsgnr:apptest-25gfsgnr:deployer-crb0 created
+INFO wait for the deployer to succeed
+Using /opt/kubectl/default/kubectl (server=1.35)
+Elapsed 2sUsing /opt/kubectl/default/kubectl (server=1.35)
+Elapsed 7sUsing /opt/kubectl/default/kubectl (server=1.35)
+Elapsed 13sUsing /opt/kubectl/default/kubectl (server=1.35)
+Elapsed 18sUsing /opt/kubectl/default/kubectl (server=1.35)
+Elapsed 24sUsing /opt/kubectl/default/kubectl (server=1.35)
+Elapsed 30sUsing /opt/kubectl/default/kubectl (server=1.35)
+Elapsed 37sUsing /opt/kubectl/default/kubectl (server=1.35)
+Elapsed 42sUsing /opt/kubectl/default/kubectl (server=1.35)
+Elapsed 48sUsing /opt/kubectl/default/kubectl (server=1.35)
+Elapsed 54sUsing /opt/kubectl/default/kubectl (server=1.35)
+Elapsed 59sUsing /opt/kubectl/default/kubectl (server=1.35)
+Elapsed 65sUsing /opt/kubectl/default/kubectl (server=1.35)
+Elapsed 71sUsing /opt/kubectl/default/kubectl (server=1.35)
+Elapsed 77sUsing /opt/kubectl/default/kubectl (server=1.35)
+Elapsed 83sUsing /opt/kubectl/default/kubectl (server=1.35)
+Elapsed 88sUsing /opt/kubectl/default/kubectl (server=1.35)
+Elapsed 94sUsing /opt/kubectl/default/kubectl (server=1.35)
+Elapsed 100sUsing /opt/kubectl/default/kubectl (server=1.35)
+Elapsed 105sUsing /opt/kubectl/default/kubectl (server=1.35)
+Elapsed 111sUsing /opt/kubectl/default/kubectl (server=1.35)
+Elapsed 116sUsing /opt/kubectl/default/kubectl (server=1.35)
+Elapsed 122sUsing /opt/kubectl/default/kubectl (server=1.35)
+Elapsed 127sUsing /opt/kubectl/default/kubectl (server=1.35)
+Elapsed 132sUsing /opt/kubectl/default/kubectl (server=1.35)
+INFO Deployer job succeeded
+Using /opt/kubectl/default/kubectl (server=1.35)
+DEPLOYER [security] pyOpenSSL version check passed: 26.4.0
+DEPLOYER ====================================================
+DEPLOYER  PMOMax – Google Marketplace Deployer (v1.0)
+DEPLOYER ====================================================
+DEPLOYER [security] pyOpenSSL version check passed: 26.4.0
+DEPLOYER [INFO] Resolved values:
+DEPLOYER   APP_INSTANCE_NAME=apptest-25gfsgnr
+DEPLOYER   NAMESPACE=apptest-25gfsgnr
+DEPLOYER   PMOMAX_APP_IMAGE=us-east1-docker.pkg.dev/katalyststreet-public/apps/pmo-architect:1.0.2
+DEPLOYER   PMOMAX_APP_PORT=8080
+DEPLOYER   UBBAGENT_IMAGE=us-docker.pkg.dev/katalyststreet-public/pmomax/ubbagent:1.4.15
+DEPLOYER [INFO] Applying Application Resources to namespace: apptest-25gfsgnr
+DEPLOYER application.app.k8s.io/apptest-25gfsgnr configured
+DEPLOYER INFO Reading /tmp/pmomax-deploy.1TW7DX/manifests-flat.yaml
+DEPLOYER INFO Application 'apptest-25gfsgnr' owns 'ConfigMap/apptest-25gfsgnr-ubbagent-config'
+DEPLOYER INFO Application 'apptest-25gfsgnr' owns 'Deployment/apptest-25gfsgnr'
+DEPLOYER INFO Application 'apptest-25gfsgnr' owns 'Service/apptest-25gfsgnr'
+DEPLOYER configmap/apptest-25gfsgnr-ubbagent-config created
+DEPLOYER deployment.apps/apptest-25gfsgnr created
+DEPLOYER service/apptest-25gfsgnr created
+DEPLOYER [INFO] Waiting for apptest-25gfsgnr deployment to become available...
+DEPLOYER deployment.apps/apptest-25gfsgnr condition met
+DEPLOYER ✅ PMOMax deployment successful
+DEPLOYER NAME                                READY   STATUS    RESTARTS   AGE
+DEPLOYER apptest-25gfsgnr-6dd49ddcc4-9fvqn   2/2     Running   0          26s
+DEPLOYER apptest-25gfsgnr-6dd49ddcc4-bqvtj   2/2     Running   0          26s
+DEPLOYER apptest-25gfsgnr-deployer-mdxjp     1/1     Running   0          112s
+DEPLOYER NAME               TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)   AGE
+DEPLOYER apptest-25gfsgnr   ClusterIP   34.118.231.80   <none>        80/TCP    27s
+DEPLOYER No resources found in apptest-25gfsgnr namespace.
+DEPLOYER [test] Running tester job from /data-test/tester.yaml
+DEPLOYER job.batch/apptest-25gfsgnr-tester created
+DEPLOYER job.batch/apptest-25gfsgnr-tester condition met
+DEPLOYER {"ok":true}{"ok":true}[cleanup] Remaining resources in namespace apptest-25gfsgnr:
+DEPLOYER Warning: v1 Endpoints is deprecated in v1.33+; use discovery.k8s.io/v1 EndpointSlice
+DEPLOYER NAME                                      TYPE     VERSION   OWNER   READY   AGE
+DEPLOYER application.app.k8s.io/apptest-25gfsgnr   pmomax   1.4.15    true            2m20s
+DEPLOYER
+DEPLOYER NAME                               READY   UP-TO-DATE   AVAILABLE   AGE
+DEPLOYER deployment.apps/apptest-25gfsgnr   2/2     2            2           44s
+DEPLOYER
+DEPLOYER NAME                                          DESIRED   CURRENT   READY   AGE
+DEPLOYER replicaset.apps/apptest-25gfsgnr-6dd49ddcc4   2         2         2       44s
+DEPLOYER
+DEPLOYER NAME                       TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)   AGE
+DEPLOYER service/apptest-25gfsgnr   ClusterIP   34.118.231.80   <none>        80/TCP    43s
+DEPLOYER
+DEPLOYER NAME                         ENDPOINTS                         AGE
+DEPLOYER endpoints/apptest-25gfsgnr   10.109.1.8:8080,10.109.1.9:8080   43s
+DEPLOYER
+DEPLOYER NAME                                                    ADDRESSTYPE   PORTS   ENDPOINTS               AGE
+DEPLOYER endpointslice.discovery.k8s.io/apptest-25gfsgnr-b48r8   IPv4          8080    10.109.1.9,10.109.1.8   43s
+DEPLOYER
+DEPLOYER NAME                                    READY   STATUS    RESTARTS   AGE
+DEPLOYER pod/apptest-25gfsgnr-6dd49ddcc4-9fvqn   2/2     Running   0          43s
+DEPLOYER pod/apptest-25gfsgnr-6dd49ddcc4-bqvtj   2/2     Running   0          43s
+DEPLOYER pod/apptest-25gfsgnr-deployer-mdxjp     1/1     Running   0          2m9s
+DEPLOYER
+DEPLOYER NAME                                  STATUS    COMPLETIONS   DURATION   AGE
+DEPLOYER job.batch/apptest-25gfsgnr-deployer   Running   0/1           2m9s       2m9s
+DEPLOYER
+DEPLOYER NAME                                         DATA   AGE
+DEPLOYER configmap/apptest-25gfsgnr-ubbagent-config   1      44s
+DEPLOYER configmap/kube-root-ca.crt                   1      2m32s
+DEPLOYER [test] tester job passed
+DEPLOYER [cleanup] Remaining resources in namespace apptest-25gfsgnr:
+DEPLOYER Warning: v1 Endpoints is deprecated in v1.33+; use discovery.k8s.io/v1 EndpointSlice
+DEPLOYER NAME                                      TYPE     VERSION   OWNER   READY   AGE
+DEPLOYER application.app.k8s.io/apptest-25gfsgnr   pmomax   1.4.15    true            2m22s
+DEPLOYER
+DEPLOYER NAME                               READY   UP-TO-DATE   AVAILABLE   AGE
+DEPLOYER deployment.apps/apptest-25gfsgnr   2/2     2            2           46s
+DEPLOYER
+DEPLOYER NAME                                          DESIRED   CURRENT   READY   AGE
+DEPLOYER replicaset.apps/apptest-25gfsgnr-6dd49ddcc4   2         2         2       46s
+DEPLOYER
+DEPLOYER NAME                       TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)   AGE
+DEPLOYER service/apptest-25gfsgnr   ClusterIP   34.118.231.80   <none>        80/TCP    46s
+DEPLOYER
+DEPLOYER NAME                         ENDPOINTS                         AGE
+DEPLOYER endpoints/apptest-25gfsgnr   10.109.1.8:8080,10.109.1.9:8080   46s
+DEPLOYER
+DEPLOYER NAME                                                    ADDRESSTYPE   PORTS   ENDPOINTS               AGE
+DEPLOYER endpointslice.discovery.k8s.io/apptest-25gfsgnr-b48r8   IPv4          8080    10.109.1.9,10.109.1.8   46s
+DEPLOYER
+DEPLOYER NAME                                    READY   STATUS    RESTARTS   AGE
+DEPLOYER pod/apptest-25gfsgnr-6dd49ddcc4-9fvqn   2/2     Running   0          46s
+DEPLOYER pod/apptest-25gfsgnr-6dd49ddcc4-bqvtj   2/2     Running   0          46s
+DEPLOYER pod/apptest-25gfsgnr-deployer-mdxjp     1/1     Running   0          2m12s
+DEPLOYER
+DEPLOYER NAME                                  STATUS    COMPLETIONS   DURATION   AGE
+DEPLOYER job.batch/apptest-25gfsgnr-deployer   Running   0/1           2m12s      2m12s
+DEPLOYER
+DEPLOYER NAME                                         DATA   AGE
+DEPLOYER configmap/apptest-25gfsgnr-ubbagent-config   1      48s
+DEPLOYER configmap/kube-root-ca.crt                   1      2m36s
+Failed to find tester logs
+Using /opt/kubectl/default/kubectl (server=1.35)
+Using /opt/kubectl/default/kubectl (server=1.35)
+Using /opt/kubectl/default/kubectl (server=1.35)
+INFO Stop the application
+Using /opt/kubectl/default/kubectl (server=1.35)
+application.app.k8s.io "apptest-25gfsgnr" deleted from apptest-25gfsgnr namespace
+INFO Wait for the applications to be deleted
+INFO Checking if applications.app.k8s.io were deleted
+Using /opt/kubectl/default/kubectl (server=1.35)
+INFO Wait for standard resources were deleted.
+INFO Checking if all were deleted
+Using /opt/kubectl/default/kubectl (server=1.35)
+INFO Remaining: 2
+INFO Pod/apptest-25gfsgnr-6dd49ddcc4-9fvqn
+Pod/apptest-25gfsgnr-6dd49ddcc4-bqvtj
+INFO Checking if all were deleted
+Using /opt/kubectl/default/kubectl (server=1.35)
+INFO Remaining: 2
+INFO Pod/apptest-25gfsgnr-6dd49ddcc4-9fvqn
+Pod/apptest-25gfsgnr-6dd49ddcc4-bqvtj
+INFO Checking if all were deleted
+Using /opt/kubectl/default/kubectl (server=1.35)
+INFO Remaining: 2
+INFO Pod/apptest-25gfsgnr-6dd49ddcc4-9fvqn
+Pod/apptest-25gfsgnr-6dd49ddcc4-bqvtj
+INFO Checking if all were deleted
+Using /opt/kubectl/default/kubectl (server=1.35)
+INFO Remaining: 2
+INFO Pod/apptest-25gfsgnr-6dd49ddcc4-9fvqn
+Pod/apptest-25gfsgnr-6dd49ddcc4-bqvtj
+INFO Checking if all were deleted
+Using /opt/kubectl/default/kubectl (server=1.35)
+INFO Remaining: 2
+INFO Pod/apptest-25gfsgnr-6dd49ddcc4-9fvqn
+Pod/apptest-25gfsgnr-6dd49ddcc4-bqvtj
+INFO Checking if all were deleted
+Using /opt/kubectl/default/kubectl (server=1.35)
+INFO Wait for service accounts to be deleted.
+INFO Checking if serviceaccounts,roles,rolebindings were deleted
+Using /opt/kubectl/default/kubectl (server=1.35)
+INFO cleaning all resources.
+INFO Collecting events for namespace "apptest-25gfsgnr"
+Using /opt/kubectl/default/kubectl (server=1.35)
+LAST SEEN   TYPE      REASON                           OBJECT                                   MESSAGE
+99s         Normal    Scheduled                        pod/apptest-25gfsgnr-6dd49ddcc4-9fvqn    Successfully assigned apptest-25gfsgnr/apptest-25gfsgnr-6dd49ddcc4-9fvqn to gk3-pmomax-cve-validation-pool-3-53ea0f88-2nj8
+98s         Normal    Pulling                          pod/apptest-25gfsgnr-6dd49ddcc4-9fvqn    Pulling image "us-east1-docker.pkg.dev/katalyststreet-public/apps/pmo-architect:1.0.2"
+94s         Normal    Pulled                           pod/apptest-25gfsgnr-6dd49ddcc4-9fvqn    Successfully pulled image "us-east1-docker.pkg.dev/katalyststreet-public/apps/pmo-architect:1.0.2" in 2.661s (3.766s including waiting). Image size: 409306526 bytes.
+94s         Normal    Created                          pod/apptest-25gfsgnr-6dd49ddcc4-9fvqn    Container created
+94s         Normal    Started                          pod/apptest-25gfsgnr-6dd49ddcc4-9fvqn    Container started
+94s         Normal    Pulling                          pod/apptest-25gfsgnr-6dd49ddcc4-9fvqn    Pulling image "us-docker.pkg.dev/katalyststreet-public/pmomax/ubbagent:1.4.15"
+89s         Normal    Pulled                           pod/apptest-25gfsgnr-6dd49ddcc4-9fvqn    Successfully pulled image "us-docker.pkg.dev/katalyststreet-public/pmomax/ubbagent:1.4.15" in 385ms (4.945s including waiting). Image size: 13652351 bytes.
+89s         Normal    Created                          pod/apptest-25gfsgnr-6dd49ddcc4-9fvqn    Container created
+88s         Normal    Started                          pod/apptest-25gfsgnr-6dd49ddcc4-9fvqn    Container started
+39s         Normal    Killing                          pod/apptest-25gfsgnr-6dd49ddcc4-9fvqn    Stopping container app
+39s         Normal    Killing                          pod/apptest-25gfsgnr-6dd49ddcc4-9fvqn    Stopping container ubbagent
+101s        Normal    Scheduled                        pod/apptest-25gfsgnr-6dd49ddcc4-bqvtj    Successfully assigned apptest-25gfsgnr/apptest-25gfsgnr-6dd49ddcc4-bqvtj to gk3-pmomax-cve-validation-pool-3-53ea0f88-2nj8
+99s         Normal    Pulling                          pod/apptest-25gfsgnr-6dd49ddcc4-bqvtj    Pulling image "us-east1-docker.pkg.dev/katalyststreet-public/apps/pmo-architect:1.0.2"
+94s         Normal    Pulled                           pod/apptest-25gfsgnr-6dd49ddcc4-bqvtj    Successfully pulled image "us-east1-docker.pkg.dev/katalyststreet-public/apps/pmo-architect:1.0.2" in 3.229s (5.293s including waiting). Image size: 409306526 bytes.
+94s         Normal    Created                          pod/apptest-25gfsgnr-6dd49ddcc4-bqvtj    Container created
+94s         Normal    Started                          pod/apptest-25gfsgnr-6dd49ddcc4-bqvtj    Container started
+94s         Normal    Pulling                          pod/apptest-25gfsgnr-6dd49ddcc4-bqvtj    Pulling image "us-docker.pkg.dev/katalyststreet-public/pmomax/ubbagent:1.4.15"
+89s         Normal    Pulled                           pod/apptest-25gfsgnr-6dd49ddcc4-bqvtj    Successfully pulled image "us-docker.pkg.dev/katalyststreet-public/pmomax/ubbagent:1.4.15" in 3.086s (4.572s including waiting). Image size: 13652351 bytes.
+89s         Normal    Created                          pod/apptest-25gfsgnr-6dd49ddcc4-bqvtj    Container created
+89s         Normal    Started                          pod/apptest-25gfsgnr-6dd49ddcc4-bqvtj    Container started
+39s         Normal    Killing                          pod/apptest-25gfsgnr-6dd49ddcc4-bqvtj    Stopping container app
+39s         Normal    Killing                          pod/apptest-25gfsgnr-6dd49ddcc4-bqvtj    Stopping container ubbagent
+101s        Normal    SuccessfulCreate                 replicaset/apptest-25gfsgnr-6dd49ddcc4   Created pod: apptest-25gfsgnr-6dd49ddcc4-bqvtj
+100s        Normal    SuccessfulCreate                 replicaset/apptest-25gfsgnr-6dd49ddcc4   Created pod: apptest-25gfsgnr-6dd49ddcc4-9fvqn
+3m7s        Warning   FailedScheduling                 pod/apptest-25gfsgnr-deployer-mdxjp      0/1 nodes are available: 1 Insufficient memory. no new claims to deallocate, preemption: 0/1 nodes are available: 1 No preemption victims found for incoming pod.
+3m4s        Normal    TriggeredScaleUp                 pod/apptest-25gfsgnr-deployer-mdxjp      Pod triggered scale-up: [{https://www.googleapis.com/compute/v1/projects/katalyststreet-public/zones/us-central1-b/instanceGroups/gk3-pmomax-cve-validation-pool-3-53ea0f88-grp 0->1 (max: 1000)}]
+2m20s       Warning   FailedScheduling                 pod/apptest-25gfsgnr-deployer-mdxjp      0/2 nodes are available: 1 Insufficient memory, 1 node(s) had untolerated taint(s). no new claims to deallocate, preemption: 0/2 nodes are available: 1 No preemption victims found for incoming pod, 1 Preemption is not helpful for scheduling.
+2m18s       Normal    Scheduled                        pod/apptest-25gfsgnr-deployer-mdxjp      Successfully assigned apptest-25gfsgnr/apptest-25gfsgnr-deployer-mdxjp to gk3-pmomax-cve-validation-pool-3-53ea0f88-2nj8
+2m17s       Normal    TaintManagerEviction             pod/apptest-25gfsgnr-deployer-mdxjp      Cancelling deletion of Pod apptest-25gfsgnr/apptest-25gfsgnr-deployer-mdxjp
+2m16s       Normal    Pulling                          pod/apptest-25gfsgnr-deployer-mdxjp      Pulling image "us-docker.pkg.dev/katalyststreet-public/pmomax/deployer@sha256:c423df13747dbb680ad7413c7b6aeafc2230d90fae715d8bd850af7596aa682b"
+117s        Normal    Pulled                           pod/apptest-25gfsgnr-deployer-mdxjp      Successfully pulled image "us-docker.pkg.dev/katalyststreet-public/pmomax/deployer@sha256:c423df13747dbb680ad7413c7b6aeafc2230d90fae715d8bd850af7596aa682b" in 10.843s (19.105s including waiting). Image size: 182743325 bytes.
+117s        Normal    Created                          pod/apptest-25gfsgnr-deployer-mdxjp      Container created
+116s        Normal    Started                          pod/apptest-25gfsgnr-deployer-mdxjp      Container started
+3m7s        Normal    SuccessfulCreate                 job/apptest-25gfsgnr-deployer            Created pod: apptest-25gfsgnr-deployer-mdxjp
+51s         Normal    Completed                        job/apptest-25gfsgnr-deployer            Job completed
+71s         Normal    Scheduled                        pod/apptest-25gfsgnr-tester-b8csv        Successfully assigned apptest-25gfsgnr/apptest-25gfsgnr-tester-b8csv to gk3-pmomax-cve-validation-pool-3-53ea0f88-2nj8
+70s         Normal    Pulling                          pod/apptest-25gfsgnr-tester-b8csv        Pulling image "docker.io/curlimages/curl:8.12.1"
+68s         Normal    Pulled                           pod/apptest-25gfsgnr-tester-b8csv        Successfully pulled image "docker.io/curlimages/curl:8.12.1" in 1.841s (1.841s including waiting). Image size: 12434447 bytes.
+68s         Normal    Created                          pod/apptest-25gfsgnr-tester-b8csv        Container created
+68s         Normal    Started                          pod/apptest-25gfsgnr-tester-b8csv        Container started
+71s         Normal    SuccessfulCreate                 job/apptest-25gfsgnr-tester              Created pod: apptest-25gfsgnr-tester-b8csv
+60s         Normal    Completed                        job/apptest-25gfsgnr-tester              Job completed
+101s        Normal    ScalingReplicaSet                deployment/apptest-25gfsgnr              Scaled up replica set apptest-25gfsgnr-6dd49ddcc4 from 0 to 2
+101s        Normal    ADD                              service/apptest-25gfsgnr                 apptest-25gfsgnr/apptest-25gfsgnr
+38s         Normal    DNSRecordProvisioningSucceeded   service/apptest-25gfsgnr                 DNS records updated
+39s         Normal    DELETE                           service/apptest-25gfsgnr                 apptest-25gfsgnr/apptest-25gfsgnr
+LAST SEEN   TYPE      REASON                           OBJECT                                   MESSAGE
+99s         Normal    Scheduled                        pod/apptest-25gfsgnr-6dd49ddcc4-9fvqn    Successfully assigned apptest-25gfsgnr/apptest-25gfsgnr-6dd49ddcc4-9fvqn to gk3-pmomax-cve-validation-pool-3-53ea0f88-2nj8
+98s         Normal    Pulling                          pod/apptest-25gfsgnr-6dd49ddcc4-9fvqn    Pulling image "us-east1-docker.pkg.dev/katalyststreet-public/apps/pmo-architect:1.0.2"
+94s         Normal    Pulled                           pod/apptest-25gfsgnr-6dd49ddcc4-9fvqn    Successfully pulled image "us-east1-docker.pkg.dev/katalyststreet-public/apps/pmo-architect:1.0.2" in 2.661s (3.766s including waiting). Image size: 409306526 bytes.
+94s         Normal    Created                          pod/apptest-25gfsgnr-6dd49ddcc4-9fvqn    Container created
+94s         Normal    Started                          pod/apptest-25gfsgnr-6dd49ddcc4-9fvqn    Container started
+94s         Normal    Pulling                          pod/apptest-25gfsgnr-6dd49ddcc4-9fvqn    Pulling image "us-docker.pkg.dev/katalyststreet-public/pmomax/ubbagent:1.4.15"
+89s         Normal    Pulled                           pod/apptest-25gfsgnr-6dd49ddcc4-9fvqn    Successfully pulled image "us-docker.pkg.dev/katalyststreet-public/pmomax/ubbagent:1.4.15" in 385ms (4.945s including waiting). Image size: 13652351 bytes.
+89s         Normal    Created                          pod/apptest-25gfsgnr-6dd49ddcc4-9fvqn    Container created
+88s         Normal    Started                          pod/apptest-25gfsgnr-6dd49ddcc4-9fvqn    Container started
+39s         Normal    Killing                          pod/apptest-25gfsgnr-6dd49ddcc4-9fvqn    Stopping container app
+39s         Normal    Killing                          pod/apptest-25gfsgnr-6dd49ddcc4-9fvqn    Stopping container ubbagent
+101s        Normal    Scheduled                        pod/apptest-25gfsgnr-6dd49ddcc4-bqvtj    Successfully assigned apptest-25gfsgnr/apptest-25gfsgnr-6dd49ddcc4-bqvtj to gk3-pmomax-cve-validation-pool-3-53ea0f88-2nj8
+99s         Normal    Pulling                          pod/apptest-25gfsgnr-6dd49ddcc4-bqvtj    Pulling image "us-east1-docker.pkg.dev/katalyststreet-public/apps/pmo-architect:1.0.2"
+94s         Normal    Pulled                           pod/apptest-25gfsgnr-6dd49ddcc4-bqvtj    Successfully pulled image "us-east1-docker.pkg.dev/katalyststreet-public/apps/pmo-architect:1.0.2" in 3.229s (5.293s including waiting). Image size: 409306526 bytes.
+94s         Normal    Created                          pod/apptest-25gfsgnr-6dd49ddcc4-bqvtj    Container created
+94s         Normal    Started                          pod/apptest-25gfsgnr-6dd49ddcc4-bqvtj    Container started
+94s         Normal    Pulling                          pod/apptest-25gfsgnr-6dd49ddcc4-bqvtj    Pulling image "us-docker.pkg.dev/katalyststreet-public/pmomax/ubbagent:1.4.15"
+89s         Normal    Pulled                           pod/apptest-25gfsgnr-6dd49ddcc4-bqvtj    Successfully pulled image "us-docker.pkg.dev/katalyststreet-public/pmomax/ubbagent:1.4.15" in 3.086s (4.572s including waiting). Image size: 13652351 bytes.
+89s         Normal    Created                          pod/apptest-25gfsgnr-6dd49ddcc4-bqvtj    Container created
+89s         Normal    Started                          pod/apptest-25gfsgnr-6dd49ddcc4-bqvtj    Container started
+39s         Normal    Killing                          pod/apptest-25gfsgnr-6dd49ddcc4-bqvtj    Stopping container app
+39s         Normal    Killing                          pod/apptest-25gfsgnr-6dd49ddcc4-bqvtj    Stopping container ubbagent
+101s        Normal    SuccessfulCreate                 replicaset/apptest-25gfsgnr-6dd49ddcc4   Created pod: apptest-25gfsgnr-6dd49ddcc4-bqvtj
+100s        Normal    SuccessfulCreate                 replicaset/apptest-25gfsgnr-6dd49ddcc4   Created pod: apptest-25gfsgnr-6dd49ddcc4-9fvqn
+3m7s        Warning   FailedScheduling                 pod/apptest-25gfsgnr-deployer-mdxjp      0/1 nodes are available: 1 Insufficient memory. no new claims to deallocate, preemption: 0/1 nodes are available: 1 No preemption victims found for incoming pod.
+3m4s        Normal    TriggeredScaleUp                 pod/apptest-25gfsgnr-deployer-mdxjp      Pod triggered scale-up: [{https://www.googleapis.com/compute/v1/projects/katalyststreet-public/zones/us-central1-b/instanceGroups/gk3-pmomax-cve-validation-pool-3-53ea0f88-grp 0->1 (max: 1000)}]
+2m20s       Warning   FailedScheduling                 pod/apptest-25gfsgnr-deployer-mdxjp      0/2 nodes are available: 1 Insufficient memory, 1 node(s) had untolerated taint(s). no new claims to deallocate, preemption: 0/2 nodes are available: 1 No preemption victims found for incoming pod, 1 Preemption is not helpful for scheduling.
+2m18s       Normal    Scheduled                        pod/apptest-25gfsgnr-deployer-mdxjp      Successfully assigned apptest-25gfsgnr/apptest-25gfsgnr-deployer-mdxjp to gk3-pmomax-cve-validation-pool-3-53ea0f88-2nj8
+2m17s       Normal    TaintManagerEviction             pod/apptest-25gfsgnr-deployer-mdxjp      Cancelling deletion of Pod apptest-25gfsgnr/apptest-25gfsgnr-deployer-mdxjp
+2m16s       Normal    Pulling                          pod/apptest-25gfsgnr-deployer-mdxjp      Pulling image "us-docker.pkg.dev/katalyststreet-public/pmomax/deployer@sha256:c423df13747dbb680ad7413c7b6aeafc2230d90fae715d8bd850af7596aa682b"
+117s        Normal    Pulled                           pod/apptest-25gfsgnr-deployer-mdxjp      Successfully pulled image "us-docker.pkg.dev/katalyststreet-public/pmomax/deployer@sha256:c423df13747dbb680ad7413c7b6aeafc2230d90fae715d8bd850af7596aa682b" in 10.843s (19.105s including waiting). Image size: 182743325 bytes.
+117s        Normal    Created                          pod/apptest-25gfsgnr-deployer-mdxjp      Container created
+116s        Normal    Started                          pod/apptest-25gfsgnr-deployer-mdxjp      Container started
+3m7s        Normal    SuccessfulCreate                 job/apptest-25gfsgnr-deployer            Created pod: apptest-25gfsgnr-deployer-mdxjp
+51s         Normal    Completed                        job/apptest-25gfsgnr-deployer            Job completed
+71s         Normal    Scheduled                        pod/apptest-25gfsgnr-tester-b8csv        Successfully assigned apptest-25gfsgnr/apptest-25gfsgnr-tester-b8csv to gk3-pmomax-cve-validation-pool-3-53ea0f88-2nj8
+70s         Normal    Pulling                          pod/apptest-25gfsgnr-tester-b8csv        Pulling image "docker.io/curlimages/curl:8.12.1"
+68s         Normal    Pulled                           pod/apptest-25gfsgnr-tester-b8csv        Successfully pulled image "docker.io/curlimages/curl:8.12.1" in 1.841s (1.841s including waiting). Image size: 12434447 bytes.
+68s         Normal    Created                          pod/apptest-25gfsgnr-tester-b8csv        Container created
+68s         Normal    Started                          pod/apptest-25gfsgnr-tester-b8csv        Container started
+71s         Normal    SuccessfulCreate                 job/apptest-25gfsgnr-tester              Created pod: apptest-25gfsgnr-tester-b8csv
+60s         Normal    Completed                        job/apptest-25gfsgnr-tester              Job completed
+101s        Normal    ScalingReplicaSet                deployment/apptest-25gfsgnr              Scaled up replica set apptest-25gfsgnr-6dd49ddcc4 from 0 to 2
+101s        Normal    ADD                              service/apptest-25gfsgnr                 apptest-25gfsgnr/apptest-25gfsgnr
+38s         Normal    DNSRecordProvisioningSucceeded   service/apptest-25gfsgnr                 DNS records updated
+39s         Normal    DELETE                           service/apptest-25gfsgnr                 apptest-25gfsgnr/apptest-25gfsgnr
+Using /opt/kubectl/default/kubectl (server=1.35)
+Using /opt/kubectl/default/kubectl (server=1.35)
+INFO Deleting namespace "apptest-25gfsgnr"
+Using /opt/kubectl/default/kubectl (server=1.35)
+apiVersion: v1
+items: []
+kind: List
+metadata:
+  resourceVersion: ""
+Using /opt/kubectl/default/kubectl (server=1.35)
+namespace "apptest-25gfsgnr" deleted
+=== ERROR SUMMARY ===
+
+Error events found in namespace "apptest-25gfsgnr"
+LAST SEEN   TYPE      REASON             OBJECT                                MESSAGE
+3m8s        Warning   FailedScheduling   pod/apptest-25gfsgnr-deployer-mdxjp   0/1 nodes are available: 1 Insufficient memory. no new claims to deallocate, preemption: 0/1 nodes are available: 1 No preemption victims found for incoming pod.
+2m21s       Warning   FailedScheduling   pod/apptest-25gfsgnr-deployer-mdxjp   0/2 nodes are available: 1 Insufficient memory, 1 node(s) had untolerated taint(s). no new claims to deallocate, preemption: 0/2 nodes are available: 1 No preemption victims found for incoming pod, 1 Preemption is not helpful for scheduling.
+=====================
+
+=== VERIFICATION STATUS ===
+PASSED
+===========================

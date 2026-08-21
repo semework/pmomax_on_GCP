@@ -505,7 +505,6 @@ const App: React.FC = () => {
     if (typeof handleClearAll === 'function') {
       await handleClearAll(true); // Stay in Create mode after reset
     }
-    console.log('[App] onCreateMode: entering Create mode');
     setIsCreateMode(true);
     setNavOpen(false);
   };
@@ -685,12 +684,7 @@ const App: React.FC = () => {
       {/* App body: Left sidebar • Main • Right navigation */}
       {/* When a PID is focused/loaded we slightly shrink the left sidebar so the main content becomes wider. */}
       <div className="flex flex-1 min-h-0">
-        {/** compute a responsive class to reduce max-width by ~30% when a PID is present */}
-        {
-          /* eslint-disable @typescript-eslint/no-unused-vars */
-        }
-        {/* leftAsideClass toggles responsive max-widths for a subtle 25-30% shrink */}
-        {(() => {})()}
+        {/* The responsive width gives the PID workspace more room when a project is loaded. */}
         <aside
           className={(() => {
             const base = 'w-full flex-shrink-0 border-r border-brand-border transition-all duration-200';

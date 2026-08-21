@@ -13,7 +13,6 @@ export default class ErrorBoundary extends React.Component<React.PropsWithChildr
   }
 
   componentDidCatch(error: unknown, info: any) {
-    // eslint-disable-next-line no-console
     console.error('[ErrorBoundary] caught error', error, info);
     const stack = typeof info?.componentStack === 'string' ? info.componentStack : '';
     this.setState({ errorInfo: stack });

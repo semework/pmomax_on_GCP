@@ -137,11 +137,9 @@ export const CreateMode = (props: CreateModeProps) => {
 	const lastResetNonceRef = useRef<number | null>(null);
 
 	useEffect(() => {
-		console.log('[CreateMode] mounted (UI visible)');
 		if (typeof window !== 'undefined') {
 			if (window.innerWidth < 768) setStickyCollapsed(true);
 		}
-		return () => console.log('[CreateMode] unmounted');
 	}, []);
 
 	// When the app resets (e.g., Parse/Load Demo), clear Create Mode state automatically.

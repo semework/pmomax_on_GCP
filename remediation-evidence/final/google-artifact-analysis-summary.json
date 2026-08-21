@@ -1,0 +1,17 @@
+{
+  "scanTimestamp": "2026-08-20T17:58:47Z",
+  "deployer": {
+    "resourceUri": "us-docker.pkg.dev/katalyststreet-public/pmomax/deployer@sha256:c423df13747dbb680ad7413c7b6aeafc2230d90fae715d8bd850af7596aa682b",
+    "findings": 112,
+    "critical": 0,
+    "high": 0,
+    "CVE-2026-39821": "NOT DETECTED"
+  },
+  "ubbagent": {
+    "resourceUri": "us-docker.pkg.dev/katalyststreet-public/pmomax/ubbagent@sha256:0cb489e85b6f20af554837cb9a8a5fb4350bcdf910064ca5a80105b07bd9cb40",
+    "findings": 0,
+    "critical": 0,
+    "high": 0,
+    "CVE-2026-39821": "NOT DETECTED"
+  }
+}

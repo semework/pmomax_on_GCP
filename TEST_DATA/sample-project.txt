@@ -1,0 +1,22 @@
+Project Title: Secure Customer Portal Modernization
+
+Executive Summary:
+Modernize the customer portal over twelve weeks while preserving service continuity.
+
+Objectives:
+- Release the new portal by 2026-11-30 - All critical acceptance tests pass
+- Reduce median page load time - Under two seconds
+
+Scope Inclusions:
+- Accessible responsive user interface
+- Identity integration and audit logging
+
+Risks:
+- Identity provider integration may be delayed
+
+Compliance:
+- Apply least privilege and retain security audit events
+
+Milestones:
+- Design complete - 2026-09-15
+- Production release - 2026-11-30

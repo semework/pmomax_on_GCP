@@ -3,25 +3,22 @@
 ## Marketplace Package
 
 - Schema version: `v2`
-- Candidate version: `1.4.8`
-- Deployer image: `us-docker.pkg.dev/katalyststreet-public/pmomax/deployer:1.4.8`
-- Deployer digest: `sha256:091e081c36264630cee2f62b0242804a954dc5e42e26603e459272a629708386`
-- UBB agent image: `us-docker.pkg.dev/katalyststreet-public/pmomax/ubbagent:1.4.8`
-- UBB agent digest: `sha256:b8f8cb61ee602e2b26356e86b7b40bed12024b8ade3860aa7cc31fb01eed354d`
-- The moving `1.4` aliases now resolve to these same `1.4.8` digests for Producer Portal validation.
+- Candidate version: `1.4.15`
+- Deployer image: `us-docker.pkg.dev/katalyststreet-public/pmomax/deployer:1.4.15`
+- Deployer digest: `sha256:c423df13747dbb680ad7413c7b6aeafc2230d90fae715d8bd850af7596aa682b`
+- UBB agent image: `us-docker.pkg.dev/katalyststreet-public/pmomax/ubbagent:1.4.15`
+- UBB agent digest: `sha256:0cb489e85b6f20af554837cb9a8a5fb4350bcdf910064ca5a80105b07bd9cb40`
 - Marketplace metric name in manifest: `M1`
 
-## Online Validation Fix
+## CVE-2026-39821 Remediation
 
-The failed deployer digest `sha256:2433d22012fbda66239d25105e8b07f08fae13020400de0285f829406b0aa858` packaged `/data/schema.yaml` with invalid KubernetesAppSchemaV2 `title` fields. Google rejected it during `deployer-schema-extraction` with `Cannot find field: title in message cloud.commerce.common.display.v1.KubernetesAppSchemaV2`.
-
-Use the fixed 1.4.8 deployer digest for the next Marketplace validation:
+Use the fixed 1.4.15 deployer digest for Marketplace validation:
 
 ```text
-us-docker.pkg.dev/katalyststreet-public/pmomax/deployer@sha256:091e081c36264630cee2f62b0242804a954dc5e42e26603e459272a629708386
+us-docker.pkg.dev/katalyststreet-public/pmomax/deployer@sha256:c423df13747dbb680ad7413c7b6aeafc2230d90fae715d8bd850af7596aa682b
 ```
 
-The packaged `/data/schema.yaml` in that image has no `title:` entries and includes `partnerId: katalyststreet` and `solutionId: pmomax`. Google Artifact Analysis completed on 2026-08-08 with no effective `HIGH` or `CRITICAL` findings for either candidate image. The UBB agent scan returned no vulnerability occurrences at any severity; the deployer scan returned only `MEDIUM`, `LOW`, and `MINIMAL` findings. The source release note is: `Rebuilt the UBB agent with patched OpenSSL and Go 1.26.5, pinned upstream source provenance, and upgraded the Marketplace deployer base to 13.0.9 (v1.4.8).`
+Google On-Demand Artifact Analysis completed on 2026-08-20 with no effective `HIGH` or `CRITICAL` findings and no CVE-2026-39821 for either replacement image. Every deployer kubectl copy and the UBB agent use Go 1.26.6 and `golang.org/x/net v0.58.0`.
 
 ## Runtime Image
 

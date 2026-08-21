@@ -64,7 +64,7 @@ export function MonochromeMatrixGantt({
     return { min: new Date(Math.min(...starts)), max: new Date(Math.max(...ends)) };
   }, [safeTasks]);
 
-  // components/_archived_unused/MonochromeMatrixGantt.tsx
+  const dateToX = useMemo(
     () => dateToXFactory(bounds.min, bounds.max, Math.max(1, width - leftPad - rightPad)),
     [bounds.min, bounds.max, width],
   );

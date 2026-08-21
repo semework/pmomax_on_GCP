@@ -100,7 +100,7 @@ function ensureStrategicSections(pid: PMOMaxPID): PMOMaxPID {
 		}, {});
 		out.budgetSummary = {
 			currency: 'USD',
-			totalCostUsd: Object.values(subtotalByRoleUsd).reduce((sum, value) => sum + value, 0),
+			totalCostUsd: (Object.values(subtotalByRoleUsd) as number[]).reduce((sum, value) => sum + value, 0),
 			subtotalByRoleUsd,
 			notes: ['Budget summary derived from budget line items.'],
 		};
