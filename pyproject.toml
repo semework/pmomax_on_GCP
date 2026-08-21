@@ -1,0 +1,44 @@
+[project]
+name = "pmomax-enterprise-mcp"
+version = "1.0.0"
+description = "Enterprise Model Context Protocol gateway for PMOMax"
+requires-python = ">=3.12,<3.14"
+dependencies = [
+  "mcp==2.0.0",
+  "httpx==0.28.1",
+  "PyJWT[crypto]==2.13.0",
+  "pydantic-settings==2.11.0",
+]
+
+[project.optional-dependencies]
+dev = [
+  "mypy==1.18.2",
+  "pytest==8.4.2",
+  "pytest-asyncio==1.2.0",
+  "ruff==0.13.1",
+]
+
+[project.scripts]
+pmomax-mcp = "pmomax_mcp.server:main"
+
+[tool.pytest.ini_options]
+addopts = "-ra --strict-markers"
+asyncio_mode = "auto"
+testpaths = ["mcp_tests"]
+
+[tool.ruff]
+line-length = 110
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "S", "UP", "ASYNC"]
+ignore = ["S101"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+packages = ["pmomax_mcp"]
+
+[build-system]
+requires = ["hatchling==1.27.0"]
+build-backend = "hatchling.build"

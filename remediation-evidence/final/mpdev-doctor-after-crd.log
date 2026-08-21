@@ -1,0 +1,36 @@
++ KUBE_CONFIG=/Users/mulugetasemework/.kube/config
++ GCLOUD_CONFIG=/Users/mulugetasemework/.config/gcloud
++ EXTRA_DOCKER_PARAMS=
++ DOCKER_NETWORK=host
++ MARKETPLACE_TOOLS_TAG=latest
++ MARKETPLACE_TOOLS_IMAGE=gcr.io/cloud-marketplace-tools/k8s/dev
+++ date +%Y%m%d-%H%M%S
++ VERIFICATION_LOGS_PATH=/Users/mulugetasemework/.mpdev_logs/20260820-133544
++ kube_mount=
++ [[ -f /Users/mulugetasemework/.kube/config ]]
++ kube_mount=(--mount "type=bind,source=${KUBE_CONFIG},target=/mount/config/.kube/config,readonly")
++ gcloud_mount=
++ gcloud_original_path=
++ [[ -e /Users/mulugetasemework/.config/gcloud ]]
++ gcloud_mount=(--mount "type=bind,source=${GCLOUD_CONFIG},target=/mount/config/.config/gcloud,readonly")
+++ readlink -f /Users/mulugetasemework/.config/gcloud
++ canonical_gcloud_config=/Users/mulugetasemework/.config/gcloud
++ gcloud_original_path=(--env "GCLOUD_ORIGINAL_PATH=${canonical_gcloud_config}")
++ terminal_docker_param=-t
++ [[ -t 0 ]]
++ mkdir -p /Users/mulugetasemework/.mpdev_logs/20260820-133544
++ echo 'Logs stored in /Users/mulugetasemework/.mpdev_logs/20260820-133544'
++ tee /Users/mulugetasemework/.mpdev_logs/20260820-133544/verify.log
+Logs stored in /Users/mulugetasemework/.mpdev_logs/20260820-133544
++ docker run --init --mount type=bind,source=/var/run/docker.sock,target=/var/run/docker.sock,readonly --mount type=bind,source=/Users/mulugetasemework/.mpdev_logs/20260820-133544,target=/logs --net=host --env DOCKER_API_VERSION=1.41 --mount type=bind,source=/Users/mulugetasemework/.kube/config,target=/mount/config/.kube/config,readonly --mount type=bind,source=/Users/mulugetasemework/.config/gcloud,target=/mount/config/.config/gcloud,readonly --env GCLOUD_ORIGINAL_PATH=/Users/mulugetasemework/.config/gcloud -t --rm gcr.io/cloud-marketplace-tools/k8s/dev:latest doctor
++ tee /Users/mulugetasemework/.mpdev_logs/20260820-133544/verify.log
+
+Your gcloud default project: katalyststreet-public
+
+You can set an environment variables to record the GCR URL:
+
+  export REGISTRY=gcr.io/$(gcloud config get-value project | tr ':' '/')
+
+====
+
+Everything looks good to go!!

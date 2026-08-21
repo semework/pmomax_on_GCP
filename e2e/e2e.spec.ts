@@ -11,19 +11,19 @@ test('E2E smoke: Load Demo, Create, apply example — no runtime errors', async 
   await page.goto(base, { waitUntil: 'networkidle' });
   await page.waitForSelector('text=Load Demo', { timeout: 10000 });
   await page.click('text=Load Demo');
-  await page.waitForSelector('text=01 — Project Info', { timeout: 10000 });
-  await expect(page.locator('text=01 — Project Info')).toBeVisible();
+  const projectInfo = page.getByRole('heading', { name: /01 — Project Info/i });
+  await projectInfo.waitFor({ timeout: 10000 });
+  await expect(projectInfo).toBeVisible();
 
   // Open Create flow
-  await page.click('text=Create');
+  await page.getByRole('button', { name: 'Create', exact: true }).click();
   await page.waitForSelector('text=Examples — Click to load', { timeout: 8000 });
-  const examplesPanel = page.locator('text=Examples — Click to load').first();
-  const firstExample = examplesPanel.locator('..').locator('button').first();
+  const firstExample = page.getByRole('button', { name: /^Load example:/ }).first();
   await firstExample.click();
 
   // After applying an example, project info should appear
-  await page.waitForSelector('text=01 — Project Info', { timeout: 10000 });
-  await expect(page.locator('text=01 — Project Info')).toBeVisible();
+  await projectInfo.waitFor({ timeout: 10000 });
+  await expect(projectInfo).toBeVisible();
 
   // Ensure no console or page errors were observed
   expect(errors, 'No runtime errors').toHaveLength(0);

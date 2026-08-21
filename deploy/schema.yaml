@@ -3,10 +3,10 @@ x-google-marketplace:
   applicationApiVersion: v1beta1
   partnerId: katalyststreet
   solutionId: pmomax
-  publishedVersion: "1.4.2"
+  publishedVersion: "1.4.15"
   publishedVersionMetadata:
     releaseNote: >-
-      Improved Create Agent, governance, AI audit logging, and mitigated CVE-2026-39892 (v1.4.2), YouTube link added.
+      Remediates CVE-2026-39821 by replacing every kubectl copy with Go 1.26.6 and golang.org/x/net 0.58.0, and rebuilding UBB with the same patched dependency floor (v1.4.15).
     recommended: true
   managedUpdates:
     kalmSupported: false
@@ -225,7 +225,7 @@ properties:
 
   deployer.image:
     type: string
-    default: us-docker.pkg.dev/katalyststreet-public/pmomax/deployer:1.4.2
+    default: us-docker.pkg.dev/katalyststreet-public/pmomax/deployer:1.4.15
     x-google-marketplace:
       type: DEPLOYER_IMAGE
 
@@ -239,7 +239,7 @@ properties:
 
   deployerImageTag:
     type: string
-    default: "1.4.2"
+    default: "1.4.15"
 
   ubbagentImageRegistry:
     type: string
@@ -251,7 +251,7 @@ properties:
 
   ubbagentImageTag:
     type: string
-    default: "1.4.2"
+    default: "1.4.15"
 
   PMOMAX_APP_IMAGE:
     type: string

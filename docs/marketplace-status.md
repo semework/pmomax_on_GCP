@@ -3,26 +3,22 @@
 ## Marketplace Package
 
 - Schema version: `v2`
-- Published version: `1.4.2`
-- Deployer image: `us-docker.pkg.dev/katalyststreet-public/pmomax/deployer:1.4.2`
-- Deployer alias tag: `us-docker.pkg.dev/katalyststreet-public/pmomax/deployer:1.4`
-- Deployer digest: `sha256:12a649ff0f38b69b6410cf0ebc74d706016359d86b7ec20f7d43a7356484a4a7`
-- UBB agent image: `us-docker.pkg.dev/katalyststreet-public/pmomax/ubbagent:1.4.2`
-- UBB agent alias tag: `us-docker.pkg.dev/katalyststreet-public/pmomax/ubbagent:1.4`
-- UBB agent digest: `sha256:affb58eaa7a1e21c67b48aa97a73cac1ea53e33e0d57243a981ccf5fb47d2715`
+- Candidate version: `1.4.15`
+- Deployer image: `us-docker.pkg.dev/katalyststreet-public/pmomax/deployer:1.4.15`
+- Deployer digest: `sha256:c423df13747dbb680ad7413c7b6aeafc2230d90fae715d8bd850af7596aa682b`
+- UBB agent image: `us-docker.pkg.dev/katalyststreet-public/pmomax/ubbagent:1.4.15`
+- UBB agent digest: `sha256:0cb489e85b6f20af554837cb9a8a5fb4350bcdf910064ca5a80105b07bd9cb40`
 - Marketplace metric name in manifest: `M1`
 
-## Online Validation Fix
+## CVE-2026-39821 Remediation
 
-The failed deployer digest `sha256:2433d22012fbda66239d25105e8b07f08fae13020400de0285f829406b0aa858` packaged `/data/schema.yaml` with invalid KubernetesAppSchemaV2 `title` fields. Google rejected it during `deployer-schema-extraction` with `Cannot find field: title in message cloud.commerce.common.display.v1.KubernetesAppSchemaV2`.
-
-Use the fixed 1.4.2 deployer digest for the next Marketplace validation:
+Use the fixed 1.4.15 deployer digest for Marketplace validation:
 
 ```text
-us-docker.pkg.dev/katalyststreet-public/pmomax/deployer@sha256:12a649ff0f38b69b6410cf0ebc74d706016359d86b7ec20f7d43a7356484a4a7
+us-docker.pkg.dev/katalyststreet-public/pmomax/deployer@sha256:c423df13747dbb680ad7413c7b6aeafc2230d90fae715d8bd850af7596aa682b
 ```
 
-The packaged `/data/schema.yaml` in that image has no `title:` entries, includes `partnerId: katalyststreet` and `solutionId: pmomax`, and validates with the local Marketplace `config_helper` schema validator. The source release note is: `Improved Create Agent, governance, AI audit logging, and mitigated CVE-2026-39892 (v1.4.2), YouTube link added.`
+Google On-Demand Artifact Analysis completed on 2026-08-20 with no effective `HIGH` or `CRITICAL` findings and no CVE-2026-39821 for either replacement image. Every deployer kubectl copy and the UBB agent use Go 1.26.6 and `golang.org/x/net v0.58.0`.
 
 ## Runtime Image
 

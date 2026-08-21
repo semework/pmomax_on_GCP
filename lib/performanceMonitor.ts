@@ -54,11 +54,6 @@ class PerformanceMonitor {
         payload,
       };
       this.events.push(evt);
-      if (typeof console !== 'undefined') {
-        // Centralized debug logging so we can quickly inspect timings.
-        const safeLog = safeStringify({ durationMs, payload });
-        console.log('[PERF]', phase, safeLog);
-      }
     } catch (err) {
       // Never break the app due to telemetry.
       console.warn('[PERF] logEvent failed:', err);

@@ -192,12 +192,10 @@ async function main() {
   const buffer = await Packer.toBuffer(doc);
   const outPath = path.join(__dirname, '..', 'docs', 'google-marketplace-compliance.docx');
   writeFileSync(outPath, buffer);
-  // eslint-disable-next-line no-console
   console.log('Wrote', outPath);
 }
 
 main().catch((err) => {
-  // eslint-disable-next-line no-console
   console.error('Failed to generate google-marketplace-compliance.docx', err);
   process.exitCode = 1;
 });

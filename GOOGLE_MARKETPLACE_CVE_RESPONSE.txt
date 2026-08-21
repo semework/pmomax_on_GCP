@@ -1,0 +1,31 @@
+PMOMax Marketplace CVE remediation completed.
+
+Solution:
+pmo-max.endpoints.katalyststreet-public.cloud.goog
+
+CVE:
+CVE-2026-39821
+
+Affected deployer digest:
+sha256:091e081c36264630cee2f62b0242804a954dc5e42e26603e459272a629708386
+
+Fixed deployer digest:
+sha256:c423df13747dbb680ad7413c7b6aeafc2230d90fae715d8bd850af7596aa682b
+
+Affected UBB agent digest:
+sha256:b8f8cb61ee602e2b26356e86b7b40bed12024b8ade3860aa7cc31fb01eed354d
+
+Fixed UBB agent digest:
+sha256:0cb489e85b6f20af554837cb9a8a5fb4350bcdf910064ca5a80105b07bd9cb40
+
+The affected images were rebuilt using patched dependencies/components and rescanned.
+CVE-2026-39821 is not detected in the replacement images.
+
+PMOMax regression validation:
+11/11 Python/MCP, 16/16 Vitest, 6/6 Playwright, 13/13 MCP tools, and 7/7 MCP resources passed.
+
+Google Artifact Analysis:
+PASS — exact-digest scans completed with 0 Critical, 0 High, and CVE-2026-39821 not detected in both replacement images.
+
+Marketplace validation:
+PASS — mpdev doctor and mpdev verify completed successfully against the final immutable deployer digest.

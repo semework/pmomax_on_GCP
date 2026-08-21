@@ -16,7 +16,6 @@ export function useRenderStats(componentName: string, maxRendersPerSecond = 10) 
     const oneSecAgo = now - 1000;
     const renders = lastRender.current.filter((t) => t > oneSecAgo).length;
     if (renders > maxRendersPerSecond) {
-      // eslint-disable-next-line no-console
       console.warn(
         `[${componentName}] High render frequency: ${renders} renders in the last second.`
       );

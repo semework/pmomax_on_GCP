@@ -20,16 +20,16 @@ This package deploys the PMOMax runtime service (`pmo-architect`) through the Ma
 ## Current Baseline
 
 - Schema version: `v2`
-- Stable Marketplace approval build: `1.4.2`
-- `publishedVersion`: `1.4.2`
-- Default deployer tag: `1.4.2`
+- Stable Marketplace remediation build: `1.4.15`
+- `publishedVersion`: `1.4.15`
+- Default deployer tag: `1.4.15`
 - Major/minor alias tag: `1.4`
-- Deployer image: `us-docker.pkg.dev/katalyststreet-public/pmomax/deployer:1.4.2`
-- Deployer digest: `sha256:12a649ff0f38b69b6410cf0ebc74d706016359d86b7ec20f7d43a7356484a4a7`
+- Deployer image: `us-docker.pkg.dev/katalyststreet-public/pmomax/deployer:1.4.15`
+- Deployer digest: `sha256:c423df13747dbb680ad7413c7b6aeafc2230d90fae715d8bd850af7596aa682b`
 - Runtime app image: `us-east1-docker.pkg.dev/katalyststreet-public/apps/pmo-architect:1.0.2`
-- UBB agent image: `us-docker.pkg.dev/katalyststreet-public/pmomax/ubbagent:1.4.2`
-- UBB agent digest: `sha256:affb58eaa7a1e21c67b48aa97a73cac1ea53e33e0d57243a981ccf5fb47d2715`
-- Security posture: `1.4.2` keeps the patched Marketplace deployer base `deployer_envsubst/onbuild:0.12.17`, rebuilds the UBB agent from `ubbagent.Dockerfile`, points runtime traffic at app image `1.0.2`, and removes invalid KubernetesAppSchemaV2 `title` fields from the packaged schema.
+- UBB agent image: `us-docker.pkg.dev/katalyststreet-public/pmomax/ubbagent:1.4.15`
+- UBB agent digest: `sha256:0cb489e85b6f20af554837cb9a8a5fb4350bcdf910064ca5a80105b07bd9cb40`
+- Security posture: `1.4.15` uses Marketplace deployer base `deployer_envsubst/onbuild:13.0.9`, replaces every kubectl copy with `1.36.3` built using Go `1.26.6` and `golang.org/x/net v0.58.0`, and rebuilds the UBB agent from pinned source with Go `1.26.6`, `golang.org/x/net v0.58.0`, and a pinned distroless Debian 12 runtime to remediate CVE-2026-39821. Runtime traffic remains on app image `1.0.2`.
 - Required install fields:
   - `APP_INSTANCE_NAME`
   - `NAMESPACE`
@@ -104,7 +104,7 @@ See `docs/ai-audit-traceability.md`, `docs/future-agent-context.md`, and `docs/m
 
 ```bash
 cd PMOMax-On-GCP
-./publish_marketplace_deployer.sh 1.4.2
+./publish_marketplace_deployer.sh 1.4.15
 ```
 
 Optional buildx path:
@@ -118,7 +118,7 @@ cd PMOMax-On-GCP
 
 ```bash
 cd PMOMax-On-GCP
-./verify_marketplace_local.sh us-docker.pkg.dev/katalyststreet-public/pmomax/deployer:1.4.2
+./verify_marketplace_local.sh us-docker.pkg.dev/katalyststreet-public/pmomax/deployer:1.4.15
 ```
 
 Requires `mpdev` in `PATH`.

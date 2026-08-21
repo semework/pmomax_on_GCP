@@ -464,6 +464,8 @@ useEffect(() => {
 			window.clearTimeout(t);
       abort.abort();
     };
+    // pidSig is the stable semantic dependency; pidData identity changes during edits.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pidSig]);
   // Export current #gantt-fig as PNG/JPEG/SVG at 2× with active background
   const handleExport = async (type: 'svg' | 'png' | 'jpeg') => {

@@ -65,7 +65,7 @@ function guardDemoPid(pid, routePath, fallbackPid) {
 import express from 'express';
 import dotenv from 'dotenv';
 import multer from 'multer';
-import * as XLSX from 'xlsx';
+import * as XLSX from '@e965/xlsx';
 import cors from 'cors';
 // Removed express-rate-limit for /api/ai; replaced with job queue
 import path from 'node:path';
@@ -84,6 +84,7 @@ import {
 } from './lib/security/promptDefense.js';
 import { sanitizeBySchema, stripHighRiskContext, allowlistPatch } from './lib/security/pidGuard.js';
 import { validatePMOMaxPID } from './lib/validatePMOMaxPID.js';
+import { createEnterpriseRouter } from './lib/enterprise/router.mjs';
 
 let enqueueUsage = () => ({ ok: true, skipped: true });
 let flushUsage = async () => ({ ok: true, skipped: true });
@@ -285,6 +286,7 @@ app.use(cors({
   methods: ['POST', 'GET'],
 }));
 app.use(express.json({ limit: '5mb' }));
+app.use('/api/enterprise/v1', createEnterpriseRouter());
 
 // Rate limiting for AI endpoints
 // Removed aiLimiter setup; will use job queue for AI endpoints

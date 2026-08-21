@@ -4,6 +4,13 @@
 **/.DS_Store
 **/__pycache__
 **/*.pyc
+.venv/
+.venv-*/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+test-results/
+playwright-report/
 test/
 docs/
 Architecture/

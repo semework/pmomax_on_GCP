@@ -1,0 +1,28 @@
+steps:
+  - name: gcr.io/cloud-builders/docker
+    id: application-image
+    args:
+      - build
+      - --pull
+      - --no-cache
+      - -f
+      - Dockerfile.cloudrun
+      - -t
+      - us-docker.pkg.dev/katalyststreet-public/pmomax/application:cve-2026-39821-20260820
+      - .
+  - name: gcr.io/cloud-builders/docker
+    id: mcp-image
+    args:
+      - build
+      - --pull
+      - --no-cache
+      - -f
+      - Dockerfile.mcp
+      - -t
+      - us-docker.pkg.dev/katalyststreet-public/pmomax/mcp:cve-2026-39821-20260820
+      - .
+images:
+  - us-docker.pkg.dev/katalyststreet-public/pmomax/application:cve-2026-39821-20260820
+  - us-docker.pkg.dev/katalyststreet-public/pmomax/mcp:cve-2026-39821-20260820
+options:
+  logging: CLOUD_LOGGING_ONLY

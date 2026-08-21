@@ -202,8 +202,7 @@ export const InputPanel: React.FC<InputPanelProps> = ({
     setLastError(null);
     try {
       abortControllerRef.current = new AbortController();
-      console.log('[InputPanel] Create button clicked');
-      if (setIsCreateMode) {
+	      if (setIsCreateMode) {
         try {
           setIsCreateMode(true);
         } catch (e) {
@@ -213,8 +212,7 @@ export const InputPanel: React.FC<InputPanelProps> = ({
       }
       if (onCreateMode) {
         // Allow onCreateMode to be async and catch errors
-        console.log('[InputPanel] calling onCreateMode');
-        await Promise.resolve(onCreateMode());
+	        await Promise.resolve(onCreateMode());
       }
     } catch (err: any) {
       console.error('onCreateMode failed', err);

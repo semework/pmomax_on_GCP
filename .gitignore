@@ -19,6 +19,10 @@ ElexRatio-On-GCP/
 *.pfx
 *credentials*.json
 *service-account*.json
+*service-account*.yaml
+*service-account*.yml
+*credentials*.yaml
+*credentials*.yml
 secrets/
 
 # Python/cache outputs

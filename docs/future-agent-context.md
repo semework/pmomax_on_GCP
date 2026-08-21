@@ -5,11 +5,11 @@ This repository is the PMOMax Marketplace/GCP deployment repository: `https://gi
 ## Current Baseline
 
 - Project: `katalyststreet-public`
-- Marketplace deployer image: `us-docker.pkg.dev/katalyststreet-public/pmomax/deployer:1.4.2`
+- Marketplace deployer image: `us-docker.pkg.dev/katalyststreet-public/pmomax/deployer:1.4.15`
 - Marketplace deployer alias: `us-docker.pkg.dev/katalyststreet-public/pmomax/deployer:1.4`
-- Deployer digest: `sha256:12a649ff0f38b69b6410cf0ebc74d706016359d86b7ec20f7d43a7356484a4a7`
-- UBB agent digest: `sha256:affb58eaa7a1e21c67b48aa97a73cac1ea53e33e0d57243a981ccf5fb47d2715`
-- Last Marketplace validation fix: the current `1.4.2` and `1.4` tags remove invalid KubernetesAppSchemaV2 `title` fields from the packaged `/data/schema.yaml`; the failed old `1.4.2` digest was `sha256:2433d22012fbda66239d25105e8b07f08fae13020400de0285f829406b0aa858`.
+- Deployer digest: `sha256:c423df13747dbb680ad7413c7b6aeafc2230d90fae715d8bd850af7596aa682b`
+- UBB agent digest: `sha256:0cb489e85b6f20af554837cb9a8a5fb4350bcdf910064ca5a80105b07bd9cb40`
+- Last Marketplace validation fix: version `1.4.15` replaces all six kubectl copies and rebuilds UBB with Go 1.26.6 and `golang.org/x/net v0.58.0`; exact-digest Google scans report no CVE-2026-39821 and no effective High or Critical findings, and `mpdev verify` passes.
 - Marketplace app runtime baseline digest before the About Video redeploy: `sha256:c81ce8d1c4f8bef48fa431727d464632e197734ead2f186d6ef8090978c6de8b`
 - Hosted Cloud Run runtime after the About Video redeploy: `us-east1-docker.pkg.dev/katalyststreet-public/apps/pmo-architect:about-video-audit-20260429-1720`
 - Hosted Cloud Run runtime digest after the About Video redeploy: `sha256:b1bba17af4d969f6ca1073d745bb74d4b2fb559bdb63c689048caea765477ae4`
