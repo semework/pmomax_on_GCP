@@ -1,136 +1,90 @@
-# PMOMax-On-GCP
+# PMOMax on Google Cloud Marketplace
 
-Google Cloud Marketplace packaging assets for PMOMax Kubernetes deployment.
+This repository contains the public Kubernetes deployment package and command-line installation instructions for PMOMax.
 
-## Scope
+## Current release
 
-This package deploys the PMOMax runtime service (`pmo-architect`) through the Marketplace deployer flow.
-
-## Key Files
-
-- `schema.yaml`: Marketplace schema (v2 flattened format)
-- `deploy/schema.yaml`: mirrored deploy schema
-- `manifest/manifests.yaml.template`: Deployment + Service template
-- `manifest/application.yaml.template`: Kubernetes Application CR
-- `deployer/deploy.sh`: primary deploy script
-- `deployer/deploy_with_tests.sh`: deploy + tester-job validation
-- `publish_marketplace_deployer.sh`: build/publish deployer image
-- `verify_marketplace_local.sh`: run local `mpdev verify`
-
-## Current Baseline
-
-- Schema version: `v2`
-- Stable Marketplace remediation build: `1.4.16`
-- `publishedVersion`: `1.4.16`
-- Default deployer tag: `1.4.16`
-- Major/minor alias tag: `1.4`
-- Deployer image: `us-docker.pkg.dev/katalyststreet-public/pmomax/deployer:1.4.16`
+- Release track: `1.4`
+- Version: `1.4.16`
+- Deployer: `us-docker.pkg.dev/katalyststreet-public/pmomax/deployer:1.4.16`
 - Deployer digest: `sha256:175469c4513d2111942d76e7573abcc101c016488c1aaea542b33e6765971e52`
-- Runtime app image: `us-east1-docker.pkg.dev/katalyststreet-public/apps/pmo-architect:1.0.2`
-- UBB agent image: `us-docker.pkg.dev/katalyststreet-public/pmomax/ubbagent:1.4.16`
+- UBB agent: `us-docker.pkg.dev/katalyststreet-public/pmomax/ubbagent:1.4.16`
 - UBB agent digest: `sha256:8b68ab7d22b6f1b8159fe2ec93fecc5bf6b93faa471ee0eb324035997111c33f`
-- Security posture: `1.4.16` uses Marketplace deployer base `deployer_envsubst/onbuild:13.0.9`, replaces every kubectl copy with `1.36.3` built using Go `1.26.6` and `golang.org/x/net v0.58.0`, and rebuilds the UBB agent from pinned source with Go `1.26.6`, `golang.org/x/net v0.58.0`, gRPC `v1.83.2`, and a pinned distroless Debian 12 runtime to remediate CVE-2026-39821, CVE-2026-63073, and CVE-2026-84445. Google Artifact Analysis reports zero effective Critical and High findings for both exact 1.4.16 image digests, and exact-digest `mpdev verify` passed. Runtime traffic remains on app image `1.0.2`.
-- Required install fields:
-  - `APP_INSTANCE_NAME`
-  - `NAMESPACE`
-  - `reportingSecret`
 
-## Deployment Contract (Schema Fields)
+Version 1.4.16 remediates CVE-2026-39821, CVE-2026-63073, and CVE-2026-84445. The UBB agent uses gRPC v1.83.2. Google Artifact Analysis reports zero effective Critical and High findings for both exact image digests. Exact-digest `mpdev verify` passed.
 
-Primary image/runtime fields:
+## Prerequisites
 
-- `deployerImageRegistry`
-- `deployerImageRepo`
-- `deployerImageTag`
-- `PMOMAX_APP_IMAGE`
-- `pmomaxAppRegistry`
-- `pmomaxAppRepo`
-- `pmomaxAppTag`
-- `PMOMAX_APP_PORT`
-- `TESTER_IMAGE`
-- `testerImageRegistry`
+- A Google Kubernetes Engine cluster with `kubectl` configured
+- Docker and the Google Cloud CLI
+- The Marketplace Application CRD
+- The `mpdev` script from the [Google Marketplace Kubernetes tools](https://github.com/GoogleCloudPlatform/marketplace-k8s-app-tools/blob/master/docs/mpdev-references.md)
+- A reporting Secret obtained through the customer's Marketplace entitlement
 
-Other deployment metadata:
-
-- `DOMAIN`
-- `deployerServiceAccount`
-- `PARTNER_ID`
-- `PRODUCT_ID`
-- `GCP_PROJECT_ID`
-
-## Runtime Profile
-
-From `manifest/manifests.yaml.template`:
-
-- Replicas: `2`
-- Readiness probe: `/health`
-- Liveness probe: `/health`
-- Requests: `100m CPU`, `256Mi memory`
-- Limits: `500m CPU`, `1Gi memory`
-
-
-## Runtime Cloud Run Deployment
-
-`deploy-fast.sh` is the production Cloud Run runtime deployment helper for the hosted PMOMax demo/service. It creates a minimal allowlisted Cloud Build context, stages `Dockerfile.cloudrun` as the runtime `Dockerfile`, builds `us-east1-docker.pkg.dev/<project>/apps/pmo-architect:<tag>`, and deploys the image to Cloud Run service `pmo-architect`.
-
-The root `Dockerfile` is not the runtime app Dockerfile; it builds the Google Marketplace deployer image. Use `publish_marketplace_deployer.sh` only for Marketplace deployer/UBB image publication.
-
-Recommended hosted runtime deploy command:
+Install the Application CRD:
 
 ```bash
-PROJECT_ID=katalyststreet-public \
-REGION=us-east1 \
-SERVICE_NAME=pmo-architect \
-IMAGE_TAG=<release-tag> \
-./deploy-fast.sh
+kubectl apply -f "https://raw.githubusercontent.com/GoogleCloudPlatform/marketplace-k8s-app-tools/master/crd/app-crd.yaml"
 ```
 
-## AI Audit / Traceability
+## Command-line installation
 
-PMOMax supports configurable AI decision traceability for AI-assisted project outputs. The default path is structured Winston JSON emitted to stdout, captured by GKE or Cloud Run, and queryable in customer-owned Cloud Logging. The structured log event uses `message="ai_decision_trace"`.
-
-Traceability fields are attached to AI endpoint responses as `_auditMeta` and `_auditTrace`. `_auditMeta` includes `requestId`, `endpoint`, `modelId`, `source`, `inputLengthChars`, `fieldsPopulated`, `warningCount`, `durationMs`, and `generatedAt`. `_auditTrace` includes `requestId`, `endpoint`, `source`, `durationMs`, `timestamp`, `traceLevel`, `stepCount`, `stepLabels`, and `steps`.
-
-Controls:
-
-- `AUDIT_TRACE_LEVEL=meta|summary|full` controls whether steps include shapes only, redacted/truncated summaries, or full redacted content.
-- `AUDIT_MAX_FIELD_CHARS=8000` controls summary truncation.
-- `AUDIT_REDACT_KEYS=apiKey,password,token,authorization,secret,cookie,bearer` controls key-name redaction.
-- Optional backends are enabled only when `AUDIT_GCS_BUCKET`, `AUDIT_BIGQUERY_TABLE`, or `AUDIT_FIRESTORE_COLLECTION` is set. They use dynamic imports and do not create a required persistence layer.
-
-See `docs/ai-audit-traceability.md`, `docs/future-agent-context.md`, and `docs/marketplace-status.md` for retrieval and operating guidance.
-
-## Publish Deployer Image
+Clone this repository:
 
 ```bash
-cd PMOMax-On-GCP
+git clone https://github.com/semework/pmomax_on_GCP.git
+cd pmomax_on_GCP
+```
+
+Set the public Marketplace deployer image after Google publishes release track 1.4:
+
+```bash
+export PMOMAX_DEPLOYER="gcr.io/cloud-marketplace/katalyststreet-public/pmomax/deployer:1.4"
+```
+
+Install PMOMax. Replace `REPORTING_SECRET_NAME` with the reporting Secret provided for the customer's Marketplace entitlement:
+
+```bash
+mpdev install \
+  --deployer="${PMOMAX_DEPLOYER}" \
+  --parameters='{"APP_INSTANCE_NAME":"pmomax","NAMESPACE":"pmomax","reportingSecret":"REPORTING_SECRET_NAME"}'
+```
+
+Confirm that the application and its two-container pods are ready:
+
+```bash
+kubectl get application,pods,service -n pmomax
+```
+
+Uninstall PMOMax:
+
+```bash
+kubectl delete application pmomax -n pmomax
+```
+
+## Publisher validation
+
+Validate the submitted immutable deployer image:
+
+```bash
+./verify_marketplace_local.sh \
+  us-docker.pkg.dev/katalyststreet-public/pmomax/deployer@sha256:175469c4513d2111942d76e7573abcc101c016488c1aaea542b33e6765971e52
+```
+
+The release-tag helper validates existing immutable version images and makes both the deployer and UBB version tags available through the same release-track alias:
+
+```bash
 ./publish_marketplace_deployer.sh 1.4.16
 ```
 
-Optional buildx path:
+## Package contents
 
-```bash
-cd PMOMax-On-GCP
-./publish_marketplace_deployer_buildx.sh 1.3 3
-```
+- `schema.yaml` and `deploy/schema.yaml`: Marketplace schema v2
+- `Dockerfile`: Marketplace deployer build definition
+- `deployer/`: install and verification entrypoints
+- `manifest/`: Application, Deployment, and Service templates
+- `data-test/`: Marketplace verification configuration
+- `docs/user-guide.md`: operating guidance
+- `LICENSE`: repository license
 
-## Marketplace Validation (Local)
-
-```bash
-cd PMOMax-On-GCP
-./verify_marketplace_local.sh us-docker.pkg.dev/katalyststreet-public/pmomax/deployer:1.4.16
-```
-
-Requires `mpdev` in `PATH`.
-
-## Corrected External Materials
-
-Use `docs/corrected-materials/` as the source of truth for current PMOMax promo copy, whitepaper language, user-guide language, technical summaries, and claim corrections. Older copied decks, reports, and draft collateral may contain unsupported claims and should not be reused without checking against that folder.
-
-## Security / Hygiene
-
-- Build context ignores are provided:
-  - `.dockerignore`
-  - `.gcloudignore`
-- Local sensitive artifacts are ignored by `.gitignore` (credentials, temp files).
-- Do not commit runtime secrets or service-account keys.
+Runtime data and logs remain in the customer's Google Cloud environment.

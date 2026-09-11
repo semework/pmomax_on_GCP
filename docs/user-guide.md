@@ -1,66 +1,62 @@
-# PMOMax - User Guide (Marketplace Package)
+# PMOMax Marketplace user guide
 
-## Overview
-
-PMOMax is an AI-assisted Project Initiation Document (PID) workspace. This package provides a Marketplace-compatible Kubernetes deployment layout for PMOMax PID Architect.
-
-## What This Package Contains
-
-- Marketplace schema and parameter templates
-- Application CR template
-- PMOMax workload/service/ingress manifests
-- Deployer image build and install scripts
-- Pricing and log-storage guidance
+PMOMax is a Kubernetes application distributed through Google Cloud Marketplace. Version 1.4.16 deploys two PMOMax replicas with a usage-based billing agent sidecar.
 
 ## Prerequisites
 
-- Google Cloud project with billing enabled
-- GKE cluster access (`kubectl` configured)
-- IAM permissions for deployment and Artifact Registry
-- DNS/domain if ingress hostnames are used
+- A GKE cluster with `kubectl` configured
+- Docker and the Google Cloud CLI
+- The Google Marketplace Kubernetes `mpdev` script
+- A Marketplace reporting Secret for the customer's entitlement
 
-## Key Parameters
-
-Set in `params.env` or `deploy/params.env`:
-
-- `APP_INSTANCE_NAME` (default `pmo-architect`)
-- `NAMESPACE` (default `pmomax`)
-- `DOMAIN` (default `pmomax.example.com`)
-- `DEPLOYER_IMAGE`
-- `PMOMAX_APP_IMAGE`
-- `PMOMAX_APP_PORT`
-- `SERVICE_ACCOUNT`
-
-## Install Flow
-
-1. Populate values (`NAMESPACE`, `DOMAIN`, image tags).
-2. Build/publish deployer image if needed.
-3. Run deployer or apply manifests directly.
-4. Validate pods/service/ingress.
-
-## Quick Validation
+Install Google's Application CRD:
 
 ```bash
-kubectl get pods -n <namespace>
-kubectl get svc -n <namespace>
-kubectl get ingress -n <namespace>
+kubectl apply -f "https://raw.githubusercontent.com/GoogleCloudPlatform/marketplace-k8s-app-tools/master/crd/app-crd.yaml"
 ```
 
-## Main Documents
+## Install from the command line
 
-- `docs/PMOMax_Pricing_and_Log_Storage_Requirements.md`
-- `Architecture/PMOMax_PID_Architect_Infrastructure_Architecture.md`
+After Google publishes release track 1.4, set the public deployer image:
 
-## Operational Scripts
+```bash
+export PMOMAX_DEPLOYER="gcr.io/cloud-marketplace/katalyststreet-public/pmomax/deployer:1.4"
+```
 
-Use the current PMOMax deployment scripts according to target:
+Install the application, replacing the reporting Secret placeholder:
 
-- `publish_marketplace_deployer.sh`: builds and publishes the Marketplace deployer and UBB images.
-- `deployer/deploy_with_tests.sh`: Marketplace install/test entrypoint; it delegates install work to `deployer/deploy.sh`.
-- `deploy-fast.sh`: hosted Cloud Run runtime build and deployment helper.
+```bash
+mpdev install \
+  --deployer="${PMOMAX_DEPLOYER}" \
+  --parameters='{"APP_INSTANCE_NAME":"pmomax","NAMESPACE":"pmomax","reportingSecret":"REPORTING_SECRET_NAME"}'
+```
 
-The root `Dockerfile` builds the Marketplace deployer image. `Dockerfile.cloudrun` is the runtime app Dockerfile used by `deploy-fast.sh`.
+Optional schema properties include `DOMAIN`, `deployerServiceAccount`, `PMOMAX_APP_IMAGE`, and `PMOMAX_APP_PORT`.
 
-## Corrected Materials
+## Validate the deployment
 
-Use `docs/corrected-materials/` as the source of truth for current promo copy, whitepaper language, technical summaries, user-guide language, and claim corrections.
+```bash
+kubectl get application pmomax -n pmomax
+kubectl get pods -n pmomax
+kubectl get service pmomax -n pmomax
+```
+
+The two PMOMax pods should each report `2/2` ready containers. The service health endpoint is `/health`.
+
+## Uninstall
+
+Deleting the Application custom resource removes the resources owned by the PMOMax installation:
+
+```bash
+kubectl delete application pmomax -n pmomax
+```
+
+## Release information
+
+- Version: `1.4.16`
+- Release track: `1.4`
+- Deployer digest: `sha256:175469c4513d2111942d76e7573abcc101c016488c1aaea542b33e6765971e52`
+- UBB agent digest: `sha256:8b68ab7d22b6f1b8159fe2ec93fecc5bf6b93faa471ee0eb324035997111c33f`
+- Solution service: `pmo-max.endpoints.katalyststreet-public.cloud.goog`
+
+Version 1.4.16 remediates CVE-2026-39821, CVE-2026-63073, and CVE-2026-84445.
