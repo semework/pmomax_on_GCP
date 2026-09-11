@@ -1,0 +1,299 @@
+x-google-marketplace:
+  schemaVersion: v2
+  applicationApiVersion: v1beta1
+  partnerId: katalyststreet
+  solutionId: pmomax
+  publishedVersion: "1.4.16"
+  publishedVersionMetadata:
+    releaseNote: >-
+      Remediates CVE-2026-39821 and CVE-2026-84445 by replacing every kubectl copy with 1.36.3 built using Go 1.26.6 and golang.org/x/net 0.58.0, and rebuilding the UBB agent with Go 1.26.6, golang.org/x/net 0.58.0, and gRPC 1.83.2 in a scan-compatible minimal runtime (v1.4.16).
+    recommended: true
+  managedUpdates:
+    kalmSupported: false
+  images:
+    deployer:
+      properties:
+        deployerImageRegistry:
+          type: REGISTRY
+        deployerImageRepo:
+          type: REPO_WITHOUT_REGISTRY
+        deployerImageTag:
+          type: TAG
+    ubbagent:
+      properties:
+        ubbagentImageRegistry:
+          type: REGISTRY
+        ubbagentImageRepo:
+          type: REPO_WITHOUT_REGISTRY
+        ubbagentImageTag:
+          type: TAG
+  deployerServiceAccount:
+    description: Used by deployer to manage PMOMax Kubernetes resources during installation, test, and cleanup.
+    roles:
+      - type: ClusterRole
+        rulesType: CUSTOM
+        rules:
+          - apiGroups: [""]
+            resources:
+              - pods
+              - services
+              - serviceaccounts
+              - configmaps
+              - secrets
+              - persistentvolumeclaims
+              - events
+            verbs:
+              - get
+              - list
+              - create
+              - update
+              - patch
+              - delete
+              - watch
+          - apiGroups: ["apps"]
+            resources:
+              - deployments
+              - statefulsets
+              - replicasets
+              - daemonsets
+            verbs:
+              - get
+              - list
+              - create
+              - update
+              - patch
+              - delete
+              - watch
+          - apiGroups: ["rbac.authorization.k8s.io"]
+            resources:
+              - roles
+              - rolebindings
+              - clusterroles
+              - clusterrolebindings
+            verbs:
+              - get
+              - list
+              - create
+              - update
+              - patch
+              - delete
+              - watch
+          - apiGroups: ["app.k8s.io"]
+            resources:
+              - applications
+            verbs:
+              - get
+              - list
+              - create
+              - update
+              - patch
+              - delete
+              - watch
+          - apiGroups: ["networking.k8s.io"]
+            resources:
+              - ingresses
+              - networkpolicies
+            verbs:
+              - get
+              - list
+              - create
+              - update
+              - patch
+              - delete
+          - apiGroups: ["batch"]
+            resources:
+              - jobs
+            verbs:
+              - get
+              - list
+              - create
+              - update
+              - patch
+              - delete
+              - watch
+
+properties:
+  APP_INSTANCE_NAME:
+    type: string
+    default: pmo-architect
+    x-google-marketplace:
+      type: NAME
+
+  NAMESPACE:
+    type: string
+    x-google-marketplace:
+      type: NAMESPACE
+
+  reportingSecret:
+    type: string
+    x-google-marketplace:
+      type: REPORTING_SECRET
+
+  DOMAIN:
+    type: string
+    default: pmomax.example.com
+
+  deployerServiceAccount:
+    type: string
+    default: deployer-sa
+    x-google-marketplace:
+      type: SERVICE_ACCOUNT
+      serviceAccount:
+        description: Used by deployer to manage Kubernetes resources during installation and cleanup.
+        roles:
+          - type: ClusterRole
+            rulesType: CUSTOM
+            rules:
+              - apiGroups: [""]
+                resources:
+                  - pods
+                  - services
+                  - serviceaccounts
+                  - configmaps
+                  - secrets
+                  - persistentvolumeclaims
+                  - events
+                verbs:
+                  - get
+                  - list
+                  - create
+                  - update
+                  - patch
+                  - delete
+                  - watch
+              - apiGroups: ["apps"]
+                resources:
+                  - deployments
+                  - statefulsets
+                  - replicasets
+                  - daemonsets
+                verbs:
+                  - get
+                  - list
+                  - create
+                  - update
+                  - patch
+                  - delete
+                  - watch
+              - apiGroups: ["rbac.authorization.k8s.io"]
+                resources:
+                  - roles
+                  - rolebindings
+                  - clusterroles
+                  - clusterrolebindings
+                verbs:
+                  - get
+                  - list
+                  - create
+                  - update
+                  - patch
+                  - delete
+                  - watch
+              - apiGroups: ["app.k8s.io"]
+                resources:
+                  - applications
+                verbs:
+                  - get
+                  - list
+                  - create
+                  - update
+                  - patch
+                  - delete
+                  - watch
+              - apiGroups: ["networking.k8s.io"]
+                resources:
+                  - ingresses
+                  - networkpolicies
+                verbs:
+                  - get
+                  - list
+                  - create
+                  - update
+                  - patch
+                  - delete
+              - apiGroups: ["batch"]
+                resources:
+                  - jobs
+                verbs:
+                  - get
+                  - list
+                  - create
+                  - update
+                  - patch
+                  - delete
+                  - watch
+
+  deployer.image:
+    type: string
+    default: us-docker.pkg.dev/katalyststreet-public/pmomax/deployer:1.4.16
+    x-google-marketplace:
+      type: DEPLOYER_IMAGE
+
+  deployerImageRegistry:
+    type: string
+    default: us-docker.pkg.dev
+
+  deployerImageRepo:
+    type: string
+    default: katalyststreet-public/pmomax/deployer
+
+  deployerImageTag:
+    type: string
+    default: "1.4.16"
+
+  ubbagentImageRegistry:
+    type: string
+    default: us-docker.pkg.dev
+
+  ubbagentImageRepo:
+    type: string
+    default: katalyststreet-public/pmomax/ubbagent
+
+  ubbagentImageTag:
+    type: string
+    default: "1.4.16"
+
+  PMOMAX_APP_IMAGE:
+    type: string
+    default: us-east1-docker.pkg.dev/katalyststreet-public/apps/pmo-architect:1.0.2
+
+  pmomaxAppRepo:
+    type: string
+    default: katalyststreet-public/apps/pmo-architect
+
+  pmomaxAppRegistry:
+    type: string
+    default: us-east1-docker.pkg.dev
+
+  pmomaxAppTag:
+    type: string
+    default: "1.0.2"
+
+  PMOMAX_APP_PORT:
+    type: integer
+    default: 8080
+
+  TESTER_IMAGE:
+    type: string
+    default: curlimages/curl:8.12.1
+
+  testerImageRegistry:
+    type: string
+    default: docker.io
+
+  PARTNER_ID:
+    type: string
+    default: katalyststreet
+
+  PRODUCT_ID:
+    type: string
+    default: pmomax
+
+  GCP_PROJECT_ID:
+    type: string
+    default: katalyststreet-public
+
+required:
+  - APP_INSTANCE_NAME
+  - NAMESPACE
+  - reportingSecret

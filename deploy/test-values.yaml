@@ -1,0 +1,22 @@
+APP_INSTANCE_NAME: pmo-architect
+NAMESPACE: pmomax
+DOMAIN: pmomax.example.com
+reportingSecret: reporting-secret
+deployerServiceAccount: deployer-sa
+
+# Image properties
+# Deployer image used by Marketplace installer
+deployerImageRegistry: us-docker.pkg.dev
+deployerImageRepo: katalyststreet-public/pmomax/deployer
+deployerImageTag: "1.4.16"
+
+# PMOMax app image
+pmomaxAppRegistry: us-east1-docker.pkg.dev
+pmomaxAppRepo: katalyststreet-public/apps/pmo-architect
+pmomaxAppTag: "1.0.2"
+PMOMAX_APP_PORT: "8080"
+TESTER_IMAGE: curlimages/curl:8.12.1
+testerImageRegistry: docker.io
+PARTNER_ID: katalyststreet
+PRODUCT_ID: pmomax
+GCP_PROJECT_ID: katalyststreet-public
