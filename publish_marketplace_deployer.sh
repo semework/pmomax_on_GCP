@@ -17,6 +17,8 @@ VERSION="$1"
 BASE_TAG="${BASE_TAG:-${VERSION%.*}}"
 DEPLOYER_REPO="${AR_HOST}/${PROJECT_ID}/${AR_REPO}/deployer"
 UBBAGENT_REPO="${AR_HOST}/${PROJECT_ID}/${AR_REPO}/ubbagent"
+# The catalog key in schema.yaml is app, so Producer Portal resolves this path.
+APP_CATALOG_REPO="${AR_HOST}/${PROJECT_ID}/${AR_REPO}/app"
 
 for command in gcloud crane jq python3; do
   if ! command -v "${command}" >/dev/null 2>&1; then
@@ -108,6 +110,17 @@ check_image_vulnerabilities "${UBBAGENT_REPO}@${UBBAGENT_DIGEST}"
 check_image_vulnerabilities "${APP_REF}"
 verify_annotation "${APP_REF}"
 
+# Catalog image names determine the staging paths used by Producer Portal.
+# Keep the existing application source image and publish its identical manifest
+# at the app path declared by x-google-marketplace.images.app.
+crane copy "${APP_REF}" "${APP_CATALOG_REPO}:${VERSION}"
+CATALOG_APP_DIGEST="$(resolve_digest "${APP_CATALOG_REPO}:${VERSION}")"
+if [[ "${CATALOG_APP_DIGEST}" != "${APP_REF##*@}" ]]; then
+  echo "ERROR: Catalog app image does not match the scanned source digest."
+  exit 1
+fi
+verify_annotation "${APP_CATALOG_REPO}@${CATALOG_APP_DIGEST}"
+
 gcloud artifacts docker tags add \
   "${DEPLOYER_REPO}@${DEPLOYER_DIGEST}" \
   "${DEPLOYER_REPO}:${BASE_TAG}" \
@@ -122,11 +135,17 @@ gcloud artifacts docker tags add \
   "${AR_HOST}/${PROJECT_ID}/${AR_REPO}/application:${BASE_TAG}" \
   --project "${PROJECT_ID}" --quiet
 
+gcloud artifacts docker tags add \
+  "${APP_CATALOG_REPO}@${CATALOG_APP_DIGEST}" \
+  "${APP_CATALOG_REPO}:${BASE_TAG}" \
+  --project "${PROJECT_ID}" --quiet
+
 VERIFY_DEPLOYER="$(resolve_digest "${DEPLOYER_REPO}:${BASE_TAG}")"
 VERIFY_UBBAGENT="$(resolve_digest "${UBBAGENT_REPO}:${BASE_TAG}")"
 VERIFY_APP="$(resolve_digest "${AR_HOST}/${PROJECT_ID}/${AR_REPO}/application:${BASE_TAG}")"
+VERIFY_CATALOG_APP="$(resolve_digest "${APP_CATALOG_REPO}:${BASE_TAG}")"
 
-if [[ "${VERIFY_DEPLOYER}" != "${DEPLOYER_DIGEST}" || "${VERIFY_UBBAGENT}" != "${UBBAGENT_DIGEST}" || "${VERIFY_APP}" != "${APP_REF##*@}" ]]; then
+if [[ "${VERIFY_DEPLOYER}" != "${DEPLOYER_DIGEST}" || "${VERIFY_UBBAGENT}" != "${UBBAGENT_DIGEST}" || "${VERIFY_APP}" != "${APP_REF##*@}" || "${VERIFY_CATALOG_APP}" != "${CATALOG_APP_DIGEST}" ]]; then
   echo "ERROR: Release-track tag verification failed."
   exit 1
 fi
@@ -135,4 +154,5 @@ echo "Prepared publisher release track ${BASE_TAG} for version ${VERSION}:"
 echo "  deployer: ${DEPLOYER_DIGEST}"
 echo "  ubbagent: ${UBBAGENT_DIGEST}"
 echo "  application: ${VERIFY_APP}"
+echo "  catalog app: ${APP_CATALOG_REPO}@${VERIFY_CATALOG_APP}"
 echo "  annotation: ${MARKETPLACE_SERVICE_NAME}"

@@ -13,7 +13,7 @@ This repository contains the public Kubernetes deployment package and command-li
 
 Version 1.4.17 rebuilds kubectl and the billing agent with Go 1.26.9, refreshes OpenSSL, and includes the patched application in the Marketplace image catalog. Google Artifact Analysis reported zero effective Critical/High findings for all three exact image digests on 2026-10-17; the deployer retains lower-severity findings without vendor fixes. Exact-digest `mpdev verify` passed.
 
-The application image is `us-docker.pkg.dev/katalyststreet-public/pmomax/application:1.4.17`, digest `sha256:4db820a34749a5af3758e40b11ef06346520ad2b03df5fad2376a179cb4cf754`.
+The application image is `us-docker.pkg.dev/katalyststreet-public/pmomax/application:1.4.17`, digest `sha256:4db820a34749a5af3758e40b11ef06346520ad2b03df5fad2376a179cb4cf754`. The schema catalog key is `app`, so the identical image must also be available at `us-docker.pkg.dev/katalyststreet-public/pmomax/app:1.4.17` and `:1.4`. Producer Portal resolves the catalog key to this staging path; the publish helper creates and verifies these aliases.
 
 The publisher track tag remains **1.4**; **1.4.17** is the patch version. In Producer Portal, edit the existing 1.4 release and select the display tag associated with the updated deployer digest. Registry tags alone do not refresh the public Marketplace listing: use Done → Save and Validate → Submit, then Publish after approval. Existing installations are pinned to digests and require an explicit upgrade. See [Google’s update instructions](https://docs.cloud.google.com/marketplace/docs/partners/kubernetes/maintaining-product).
 

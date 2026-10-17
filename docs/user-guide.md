@@ -69,3 +69,5 @@ Version 1.4.17 rebuilds the deployer and UBB agent using Go 1.26.9, updates Open
 The publisher must refresh release track 1.4 in Producer Portal using Save and Validate, then Submit. Existing installations do not update automatically: select the approved patched application and UBB image digests, update both containers in the customer Deployment, and verify rollout, health, entitlement and usage reporting. Preserve the customer's namespace, reporting Secret, configuration and persistent data. Follow the organization's normal rollout and rollback process.
 
 The Display tag is the existing release track `1.4`; the patch version is `1.4.17`. The publisher deployer repository is `us-docker.pkg.dev/katalyststreet-public/pmomax/deployer`. Match its digest to the release information above.
+
+The schema image catalog key `app` resolves to staging image `us-docker.pkg.dev/katalyststreet-public/pmomax/app`. The publisher maintains `1.4.17` and `1.4` aliases there, matching application digest `sha256:4db820a34749a5af3758e40b11ef06346520ad2b03df5fad2376a179cb4cf754`.
