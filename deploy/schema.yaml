@@ -3,10 +3,10 @@ x-google-marketplace:
   applicationApiVersion: v1beta1
   partnerId: katalyststreet
   solutionId: pmomax
-  publishedVersion: "1.4.16"
+  publishedVersion: "1.4.17"
   publishedVersionMetadata:
     releaseNote: >-
-      Remediates CVE-2026-39821 and CVE-2026-84445 by replacing every kubectl copy with Go 1.26.6 and golang.org/x/net 0.58.0, and rebuilding UBB with gRPC 1.83.2 and the same patched dependency floor (v1.4.16).
+      Remediates CVE-2026-39821 and CVE-2026-84445 by replacing every kubectl copy with Go 1.26.9 and golang.org/x/net 0.58.0, and rebuilding UBB with gRPC 1.83.2 and the same patched dependency floor (v1.4.17).
     recommended: true
   managedUpdates:
     kalmSupported: false
@@ -26,6 +26,14 @@ x-google-marketplace:
         ubbagentImageRepo:
           type: REPO_WITHOUT_REGISTRY
         ubbagentImageTag:
+          type: TAG
+    app:
+      properties:
+        pmomaxAppRegistry:
+          type: REGISTRY
+        pmomaxAppRepo:
+          type: REPO_WITHOUT_REGISTRY
+        pmomaxAppTag:
           type: TAG
   deployerServiceAccount:
     description: Used by deployer to manage PMOMax Kubernetes resources during installation, test, and cleanup.
@@ -225,7 +233,7 @@ properties:
 
   deployer.image:
     type: string
-    default: us-docker.pkg.dev/katalyststreet-public/pmomax/deployer:1.4.16
+    default: us-docker.pkg.dev/katalyststreet-public/pmomax/deployer:1.4.17
     x-google-marketplace:
       type: DEPLOYER_IMAGE
 
@@ -239,7 +247,7 @@ properties:
 
   deployerImageTag:
     type: string
-    default: "1.4.16"
+    default: "1.4.17"
 
   ubbagentImageRegistry:
     type: string
@@ -251,23 +259,23 @@ properties:
 
   ubbagentImageTag:
     type: string
-    default: "1.4.16"
+    default: "1.4.17"
 
   PMOMAX_APP_IMAGE:
     type: string
-    default: us-east1-docker.pkg.dev/katalyststreet-public/apps/pmo-architect:1.0.2
+    default: ""
 
   pmomaxAppRepo:
     type: string
-    default: katalyststreet-public/apps/pmo-architect
+    default: katalyststreet-public/pmomax/application
 
   pmomaxAppRegistry:
     type: string
-    default: us-east1-docker.pkg.dev
+    default: us-docker.pkg.dev
 
   pmomaxAppTag:
     type: string
-    default: "1.0.2"
+    default: "1.4.17"
 
   PMOMAX_APP_PORT:
     type: integer

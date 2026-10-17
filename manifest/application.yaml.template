@@ -16,8 +16,8 @@ spec:
       kind: Service
   descriptor:
     type: "pmomax"
-    description: "PMOMax PID Architect - security-remediated deployer and UBB agent with gRPC 1.83.2 (v1.4.16)."
-    version: "1.4.16"
+    description: "PMOMax PID Architect - security-remediated deployer and UBB agent with gRPC 1.83.2 (v1.4.17)."
+    version: "1.4.17"
     links:
       - description: "PMOMax documentation"
         url: "https://docs.pmomax.com"

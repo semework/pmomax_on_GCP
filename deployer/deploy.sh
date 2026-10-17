@@ -116,15 +116,15 @@ export DOMAIN="${DOMAIN:-pmomax.example.com}"
 if [[ -z "${PMOMAX_APP_IMAGE:-}" ]]; then
   PMOMAX_APP_IMAGE="$(
     compose_image_ref \
-      "${pmomaxAppRegistry:-us-east1-docker.pkg.dev}" \
-      "${pmomaxAppRepo:-katalyststreet-public/apps/pmo-architect}" \
-      "${pmomaxAppTag:-1.0.2}"
+      "${pmomaxAppRegistry:-us-docker.pkg.dev}" \
+      "${pmomaxAppRepo:-katalyststreet-public/pmomax/application}" \
+      "${pmomaxAppTag:-1.4.17}"
   )"
 fi
 export PMOMAX_APP_PORT="${PMOMAX_APP_PORT:-8080}"
 export ubbagentImageRegistry="${ubbagentImageRegistry:-us-docker.pkg.dev}"
 export ubbagentImageRepo="${ubbagentImageRepo:-katalyststreet-public/pmomax/ubbagent}"
-export ubbagentImageTag="${ubbagentImageTag:-1.4.16}"
+export ubbagentImageTag="${ubbagentImageTag:-1.4.17}"
 if [[ -z "${TESTER_IMAGE:-}" ]]; then
   TESTER_IMAGE="$(
     compose_image_ref \

@@ -34,7 +34,7 @@ properties:
 
   PMOMAX_APP_IMAGE:
     type: string
-    default: us-east1-docker.pkg.dev/katalyststreet-public/apps/pmo-architect:1.0.1
+    default: us-docker.pkg.dev/katalyststreet-public/pmomax/application:1.4.17
 
   PMOMAX_APP_PORT:
     type: integer

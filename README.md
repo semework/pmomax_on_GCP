@@ -2,16 +2,20 @@
 
 This repository contains the public Kubernetes deployment package and command-line installation instructions for PMOMax.
 
-## Current release
+## Prepared publisher release
 
 - Release track: `1.4`
-- Version: `1.4.16`
-- Deployer: `us-docker.pkg.dev/katalyststreet-public/pmomax/deployer:1.4.16`
-- Deployer digest: `sha256:175469c4513d2111942d76e7573abcc101c016488c1aaea542b33e6765971e52`
-- UBB agent: `us-docker.pkg.dev/katalyststreet-public/pmomax/ubbagent:1.4.16`
-- UBB agent digest: `sha256:8b68ab7d22b6f1b8159fe2ec93fecc5bf6b93faa471ee0eb324035997111c33f`
+- Version: `1.4.17`
+- Deployer: `us-docker.pkg.dev/katalyststreet-public/pmomax/deployer:1.4.17`
+- Deployer digest: `sha256:51af78052a732356736c4e51b68c9a879fefd6ec02a2b777e94c3143b126d0bd`
+- UBB agent: `us-docker.pkg.dev/katalyststreet-public/pmomax/ubbagent:1.4.17`
+- UBB agent digest: `sha256:894baa6806e42a189700628e2fa1db66bebaab8342286accae8fd0a89210e4b8`
 
-Version 1.4.16 remediates CVE-2026-39821, CVE-2026-63073, and CVE-2026-84445. The UBB agent uses gRPC v1.83.2. Google Artifact Analysis reports zero effective Critical and High findings for both exact image digests. Exact-digest `mpdev verify` passed.
+Version 1.4.17 rebuilds kubectl and the billing agent with Go 1.26.9, refreshes OpenSSL, and includes the patched application in the Marketplace image catalog. Google Artifact Analysis reported zero effective Critical/High findings for all three exact image digests on 2026-10-17; the deployer retains lower-severity findings without vendor fixes. Exact-digest `mpdev verify` passed.
+
+The application image is `us-docker.pkg.dev/katalyststreet-public/pmomax/application:1.4.17`, digest `sha256:4db820a34749a5af3758e40b11ef06346520ad2b03df5fad2376a179cb4cf754`.
+
+The publisher track tag remains **1.4**; **1.4.17** is the patch version. In Producer Portal, edit the existing 1.4 release and select the display tag associated with the updated deployer digest. Registry tags alone do not refresh the public Marketplace listing: use Done → Save and Validate → Submit, then Publish after approval. Existing installations are pinned to digests and require an explicit upgrade. See [Google’s update instructions](https://docs.cloud.google.com/marketplace/docs/partners/kubernetes/maintaining-product).
 
 ## Prerequisites
 
@@ -68,13 +72,13 @@ Validate the submitted immutable deployer image:
 
 ```bash
 ./verify_marketplace_local.sh \
-  us-docker.pkg.dev/katalyststreet-public/pmomax/deployer@sha256:175469c4513d2111942d76e7573abcc101c016488c1aaea542b33e6765971e52
+  us-docker.pkg.dev/katalyststreet-public/pmomax/deployer@sha256:51af78052a732356736c4e51b68c9a879fefd6ec02a2b777e94c3143b126d0bd
 ```
 
-The release-tag helper validates existing immutable version images and makes both the deployer and UBB version tags available through the same release-track alias:
+The release-tag helper validates existing immutable version images and makes the deployer, application and UBB version tags available through the same release-track alias, after checking recent completed scans and rejecting effective Critical/High findings:
 
 ```bash
-./publish_marketplace_deployer.sh 1.4.16
+./publish_marketplace_deployer.sh 1.4.17
 ```
 
 ## Package contents
